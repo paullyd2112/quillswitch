@@ -15,7 +15,8 @@ import {
   Zap,
   BarChart2,
   Puzzle,
-  FileText
+  FileText,
+  Search
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
@@ -146,7 +147,10 @@ const Index = () => {
                 {filteredFlows.map((flow, index) => (
                   <OnboardingFlowCard 
                     key={flow.id} 
-                    flow={flow} 
+                    flow={{
+                      ...flow,
+                      status: flow.status as "active" | "draft" | "archived"
+                    }} 
                     delay={index < 5 ? `${(index + 1) * 100}` as "100" | "200" | "300" | "400" | "500" : "none"}
                   />
                 ))}
@@ -159,7 +163,13 @@ const Index = () => {
               {onboardingFlows
                 .filter(flow => flow.status === "active")
                 .map((flow, index) => (
-                  <OnboardingFlowCard key={flow.id} flow={flow} />
+                  <OnboardingFlowCard 
+                    key={flow.id} 
+                    flow={{
+                      ...flow,
+                      status: flow.status as "active" | "draft" | "archived"
+                    }}
+                  />
                 ))}
             </div>
           </TabsContent>
@@ -169,7 +179,13 @@ const Index = () => {
               {onboardingFlows
                 .filter(flow => flow.status === "draft")
                 .map((flow, index) => (
-                  <OnboardingFlowCard key={flow.id} flow={flow} />
+                  <OnboardingFlowCard 
+                    key={flow.id} 
+                    flow={{
+                      ...flow,
+                      status: flow.status as "active" | "draft" | "archived"
+                    }}
+                  />
                 ))}
             </div>
           </TabsContent>
@@ -179,7 +195,13 @@ const Index = () => {
               {onboardingFlows
                 .filter(flow => flow.status === "archived")
                 .map((flow, index) => (
-                  <OnboardingFlowCard key={flow.id} flow={flow} />
+                  <OnboardingFlowCard 
+                    key={flow.id} 
+                    flow={{
+                      ...flow,
+                      status: flow.status as "active" | "draft" | "archived"
+                    }}
+                  />
                 ))}
             </div>
           </TabsContent>
@@ -236,7 +258,6 @@ const Index = () => {
                   return Icon;
                 })()
               }
-              delay={index < 5 ? `${(index + 1) * 100}` as "100" | "200" | "300" | "400" | "500" : "none"}
             />
           ))}
         </div>
