@@ -1,168 +1,134 @@
 
 import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  ChevronDown,
-  Menu,
-  X,
-  Search,
-  Bell,
-  User,
-  Sliders,
+import { 
+  Menu, 
+  X, 
+  FileText,
+  Wand2,
+  BarChart2
 } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
-interface NavbarProps {
-  className?: string;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ className }) => {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
       }
     };
-
-    window.addEventListener("scroll", handleScroll);
+    
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, [scrolled]);
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+  }, []);
+  
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
-
+  
+  const navLinks = [
+    { text: "Dashboard", href: "/" },
+    { text: "API Docs", href: "/api-docs", icon: <FileText size={16} /> },
+    { text: "Setup Wizard", href: "/setup", icon: <Wand2 size={16} /> },
+  ];
+  
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
-        scrolled
-          ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b shadow-sm"
-          : "bg-transparent",
-        className
+        "fixed top-0 w-full z-50 transition-all duration-200",
+        isScrolled 
+          ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm" 
+          : "bg-transparent"
       )}
     >
-      <div className="container px-4 mx-auto">
-        <div className="flex items-center justify-between h-16">
+      <div className="container px-4 md:px-6">
+        <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <a href="/" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-semibold">O</div>
               <span className="font-medium text-lg">Onboardify</span>
-            </a>
+            </Link>
           </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="#features"
-              className="text-sm font-medium transition-colors hover:text-brand-500"
-            >
-              Features
-            </a>
-            <a
-              href="#templates"
-              className="text-sm font-medium transition-colors hover:text-brand-500"
-            >
-              Templates
-            </a>
-            <a
-              href="#workflows"
-              className="text-sm font-medium transition-colors hover:text-brand-500"
-            >
-              Workflows
-            </a>
-            <a
-              href="#analytics"
-              className="text-sm font-medium transition-colors hover:text-brand-500"
-            >
-              Analytics
-            </a>
+          
+          <nav className="hidden md:flex items-center space-x-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={cn(
+                  "px-3 py-2 text-sm rounded-md transition-colors",
+                  location.pathname === link.href
+                    ? "text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 font-medium"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                )}
+              >
+                <span className="flex items-center">
+                  {link.icon && <span className="mr-1.5">{link.icon}</span>}
+                  {link.text}
+                </span>
+              </Link>
+            ))}
+            
+            <div className="pl-2">
+              <Button size="sm">
+                <BarChart2 size={16} className="mr-1.5" />
+                Analytics
+              </Button>
+            </div>
           </nav>
-
-          {/* Right side actions */}
-          <div className="flex items-center space-x-4">
+          
+          <div className="flex md:hidden">
             <Button
               variant="ghost"
               size="icon"
-              className="hidden md:flex"
+              onClick={toggleMenu}
+              aria-label="Toggle Menu"
             >
-              <Search size={20} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden md:flex relative"
-            >
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden md:flex"
-            >
-              <Sliders size={20} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden md:flex overflow-hidden rounded-full"
-            >
-              <User size={20} />
-            </Button>
-
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={toggleMobileMenu}
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </Button>
           </div>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="absolute top-16 left-0 right-0 p-4 glass-panel border-t animate-fade-in md:hidden">
-          <nav className="flex flex-col space-y-4 py-4">
-            <a
-              href="#features"
-              className="text-sm font-medium px-4 py-2 rounded-md hover:bg-secondary"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Features
-            </a>
-            <a
-              href="#templates"
-              className="text-sm font-medium px-4 py-2 rounded-md hover:bg-secondary"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Templates
-            </a>
-            <a
-              href="#workflows"
-              className="text-sm font-medium px-4 py-2 rounded-md hover:bg-secondary"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Workflows
-            </a>
-            <a
-              href="#analytics"
-              className="text-sm font-medium px-4 py-2 rounded-md hover:bg-secondary"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Analytics
-            </a>
-          </nav>
+      
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t dark:border-gray-800">
+          <div className="container px-4 py-4 space-y-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={cn(
+                  "block px-4 py-2 text-sm rounded-md transition-colors",
+                  location.pathname === link.href
+                    ? "text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 font-medium"
+                    : "text-muted-foreground hover:bg-accent"
+                )}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="flex items-center">
+                  {link.icon && <span className="mr-1.5">{link.icon}</span>}
+                  {link.text}
+                </span>
+              </Link>
+            ))}
+            
+            <div className="pt-2">
+              <Button size="sm" className="w-full justify-center">
+                <BarChart2 size={16} className="mr-1.5" />
+                Analytics
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </header>
