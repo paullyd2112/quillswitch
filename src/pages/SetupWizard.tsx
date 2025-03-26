@@ -7,13 +7,14 @@ import {
   ChevronRight, 
   ArrowRight, 
   ArrowLeft,
-  Settings,
+  Database,
   FileCode,
   Users,
   Zap,
-  Database,
-  Puzzle,
-  Key
+  FileCheck,
+  Key,
+  RefreshCw,
+  Settings
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
@@ -39,44 +40,44 @@ const SetupWizard = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     companyName: "",
-    productName: "",
-    productType: "saas",
-    apiKey: "",
-    userRoles: "",
-    welcomeMessage: "",
-    integration: "api",
-    customizations: [] as string[],
+    sourceCrm: "salesforce",
+    destinationCrm: "hubspot",
+    salesforceApiKey: "",
+    hubspotApiKey: "",
+    dataTypes: [] as string[],
+    customMapping: "",
+    migrationStrategy: "full",
   });
   
   const steps: WizardStep[] = [
     {
-      id: "basics",
-      title: "Basic Information",
-      description: "Let's get to know your product",
+      id: "company",
+      title: "Company Info",
+      description: "Basic company information",
       icon: <Settings size={24} />
     },
     {
-      id: "integration",
-      title: "Integration Method",
-      description: "How you'll connect with our platform",
+      id: "source",
+      title: "Source CRM",
+      description: "Configure your current CRM",
+      icon: <Database size={24} />
+    },
+    {
+      id: "destination",
+      title: "Destination CRM",
+      description: "Setup your new CRM",
       icon: <FileCode size={24} />
     },
     {
-      id: "roles",
-      title: "User Roles",
-      description: "Define different user types",
-      icon: <Users size={24} />
+      id: "data",
+      title: "Data Selection",
+      description: "Choose what to migrate",
+      icon: <FileCheck size={24} />
     },
     {
-      id: "content",
-      title: "Content Setup",
-      description: "Customize your onboarding content",
-      icon: <Puzzle size={24} />
-    },
-    {
-      id: "complete",
-      title: "Complete",
-      description: "Ready to launch",
+      id: "confirmation",
+      title: "Confirmation",
+      description: "Review and confirm",
       icon: <CheckCircle size={24} />
     }
   ];
@@ -97,13 +98,13 @@ const SetupWizard = () => {
   };
   
   const handleCheckboxChange = (value: string) => {
-    const updatedCustomizations = formData.customizations.includes(value)
-      ? formData.customizations.filter(item => item !== value)
-      : [...formData.customizations, value];
+    const updatedDataTypes = formData.dataTypes.includes(value)
+      ? formData.dataTypes.filter(item => item !== value)
+      : [...formData.dataTypes, value];
       
     setFormData({
       ...formData,
-      customizations: updatedCustomizations
+      dataTypes: updatedDataTypes
     });
   };
   
@@ -122,27 +123,30 @@ const SetupWizard = () => {
   };
   
   const handleSubmit = () => {
-    // In a real app, this would submit the setup information to the backend
-    console.log("Setup complete:", formData);
+    // In a real app, this would submit the migration configuration to the backend
+    console.log("Migration configuration:", formData);
     toast({
-      title: "Setup Complete!",
-      description: "Your onboarding platform is now configured and ready to use.",
+      title: "Migration Setup Complete!",
+      description: "Your CRM migration has been configured and is ready to start.",
     });
   };
   
   const isStepValid = () => {
     switch (currentStep) {
-      case 0: // Basic Information
-        return formData.companyName.trim() !== "" && formData.productName.trim() !== "";
-      case 1: // Integration Method
-        if (formData.integration === "api") {
-          return formData.apiKey.trim() !== "";
+      case 0: // Company Info
+        return formData.companyName.trim() !== "";
+      case 1: // Source CRM
+        if (formData.sourceCrm === "salesforce") {
+          return formData.salesforceApiKey.trim() !== "";
         }
         return true;
-      case 2: // User Roles
-        return formData.userRoles.trim() !== "";
-      case 3: // Content Setup
-        return formData.welcomeMessage.trim() !== "";
+      case 2: // Destination CRM
+        if (formData.destinationCrm === "hubspot") {
+          return formData.hubspotApiKey.trim() !== "";
+        }
+        return true;
+      case 3: // Data Selection
+        return formData.dataTypes.length > 0;
       default:
         return true;
     }
@@ -157,17 +161,17 @@ const SetupWizard = () => {
           <div className="max-w-3xl mx-auto text-center">
             <FadeIn>
               <Badge className="mb-4 bg-brand-100 text-brand-700 hover:bg-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/40">
-                Platform Setup
+                Migration Setup
               </Badge>
             </FadeIn>
             <FadeIn delay="100">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-                Setup Wizard
+                CRM Migration Wizard
               </h1>
             </FadeIn>
             <FadeIn delay="200">
               <p className="text-xl text-muted-foreground mb-8">
-                Configure your onboarding platform in just a few steps to get started quickly
+                Configure your CRM migration in just a few steps to switch platforms seamlessly
               </p>
             </FadeIn>
           </div>
@@ -178,7 +182,7 @@ const SetupWizard = () => {
         <GlassPanel className="max-w-4xl mx-auto">
           <div className="p-6 md:p-8 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Setup Your Onboarding Platform</h2>
+              <h2 className="text-2xl font-semibold">Configure Your CRM Migration</h2>
               <p className="text-sm text-muted-foreground">
                 Step {currentStep + 1} of {steps.length}
               </p>
@@ -237,9 +241,9 @@ const SetupWizard = () => {
             <FadeIn>
               {currentStep === 0 && (
                 <div>
-                  <h3 className="text-xl font-medium mb-4">Basic Information</h3>
+                  <h3 className="text-xl font-medium mb-4">Company Information</h3>
                   <p className="text-muted-foreground mb-6">
-                    Tell us about your company and product to help us customize your onboarding platform.
+                    Tell us about your company to help us customize your CRM migration process.
                   </p>
                   
                   <div className="space-y-6">
@@ -253,318 +257,281 @@ const SetupWizard = () => {
                         onChange={handleChange}
                       />
                     </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="productName">Product Name</Label>
-                      <Input 
-                        id="productName"
-                        name="productName"
-                        placeholder="Acme Dashboard"
-                        value={formData.productName}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label>Product Type</Label>
-                      <RadioGroup 
-                        value={formData.productType} 
-                        onValueChange={(value) => handleRadioChange(value, "productType")}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="saas" id="saas" />
-                          <Label htmlFor="saas">SaaS Platform</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="mobile" id="mobile" />
-                          <Label htmlFor="mobile">Mobile App</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="enterprise" id="enterprise" />
-                          <Label htmlFor="enterprise">Enterprise Software</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
                   </div>
                 </div>
               )}
               
               {currentStep === 1 && (
                 <div>
-                  <h3 className="text-xl font-medium mb-4">Integration Method</h3>
+                  <h3 className="text-xl font-medium mb-4">Source CRM Configuration</h3>
                   <p className="text-muted-foreground mb-6">
-                    Choose how you want to integrate our onboarding platform with your product.
+                    Configure access to your current CRM system that you want to migrate from.
                   </p>
                   
                   <div className="space-y-6">
-                    <Tabs 
-                      defaultValue="api" 
-                      value={formData.integration}
-                      onValueChange={(value) => handleRadioChange(value, "integration")}
-                      className="w-full"
-                    >
-                      <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="api" className="flex items-center justify-center">
-                          <Key size={16} className="mr-2" />
-                          API
-                        </TabsTrigger>
-                        <TabsTrigger value="embed" className="flex items-center justify-center">
-                          <FileCode size={16} className="mr-2" />
-                          Embed
-                        </TabsTrigger>
-                        <TabsTrigger value="redirect" className="flex items-center justify-center">
-                          <ArrowRight size={16} className="mr-2" />
-                          Redirect
-                        </TabsTrigger>
-                      </TabsList>
-                      
-                      <TabsContent value="api" className="p-4 mt-6 border rounded-md">
-                        <div className="space-y-4">
-                          <div className="flex items-start">
-                            <div className="mr-4 bg-brand-50 text-brand-500 dark:bg-brand-900/20 dark:text-brand-400 p-2 rounded-full">
-                              <Zap size={20} />
-                            </div>
-                            <div>
-                              <h4 className="font-medium">API Integration</h4>
-                              <p className="text-sm text-muted-foreground">
-                                Use our API to create a seamless onboarding experience within your application.
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2 mt-4">
-                            <Label htmlFor="apiKey">API Key (optional)</Label>
-                            <Input 
-                              id="apiKey"
-                              name="apiKey"
-                              placeholder="Enter your API key"
-                              value={formData.apiKey}
-                              onChange={handleChange}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              You can generate an API key in your dashboard later.
-                            </p>
-                          </div>
+                    <div className="space-y-2">
+                      <Label>Source CRM Platform</Label>
+                      <RadioGroup 
+                        value={formData.sourceCrm} 
+                        onValueChange={(value) => handleRadioChange(value, "sourceCrm")}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="salesforce" id="salesforce" />
+                          <Label htmlFor="salesforce">Salesforce</Label>
                         </div>
-                      </TabsContent>
-                      
-                      <TabsContent value="embed" className="p-4 mt-6 border rounded-md">
-                        <div className="space-y-4">
-                          <div className="flex items-start">
-                            <div className="mr-4 bg-brand-50 text-brand-500 dark:bg-brand-900/20 dark:text-brand-400 p-2 rounded-full">
-                              <FileCode size={20} />
-                            </div>
-                            <div>
-                              <h4 className="font-medium">Embed Integration</h4>
-                              <p className="text-sm text-muted-foreground">
-                                Embed our onboarding flows directly into your application using our JavaScript SDK.
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-md font-mono text-sm">
-                            <code>{`<script src="https://onboardify.com/embed.js"></script>
-<script>
-  Onboardify.init({ productId: "YOUR_PRODUCT_ID" });
-</script>`}</code>
-                          </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="dynamics" id="dynamics" />
+                          <Label htmlFor="dynamics">Microsoft Dynamics</Label>
                         </div>
-                      </TabsContent>
-                      
-                      <TabsContent value="redirect" className="p-4 mt-6 border rounded-md">
-                        <div className="space-y-4">
-                          <div className="flex items-start">
-                            <div className="mr-4 bg-brand-50 text-brand-500 dark:bg-brand-900/20 dark:text-brand-400 p-2 rounded-full">
-                              <ArrowRight size={20} />
-                            </div>
-                            <div>
-                              <h4 className="font-medium">Redirect Integration</h4>
-                              <p className="text-sm text-muted-foreground">
-                                Redirect users to our hosted onboarding platform and then back to your application.
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-md">
-                            <p className="text-sm">Redirect URL Format:</p>
-                            <p className="font-mono text-sm mt-1">https://onboardify.com/flow/:flowId?user=:userId&return=:returnUrl</p>
-                          </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="zoho" id="zoho" />
+                          <Label htmlFor="zoho">Zoho CRM</Label>
                         </div>
-                      </TabsContent>
-                    </Tabs>
+                      </RadioGroup>
+                    </div>
+                    
+                    {formData.sourceCrm === "salesforce" && (
+                      <div className="space-y-2">
+                        <Label htmlFor="salesforceApiKey">Salesforce API Key</Label>
+                        <Input 
+                          id="salesforceApiKey"
+                          name="salesforceApiKey"
+                          placeholder="Enter your Salesforce API key"
+                          value={formData.salesforceApiKey}
+                          onChange={handleChange}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Your API key can be found in Salesforce Setup &gt; Apps &gt; App Manager &gt; Your Connected App &gt; Manage Consumer Details
+                        </p>
+                      </div>
+                    )}
+                    
+                    {formData.sourceCrm === "dynamics" && (
+                      <div className="p-4 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 rounded-md">
+                        Microsoft Dynamics integration guides will be provided after setup.
+                      </div>
+                    )}
+                    
+                    {formData.sourceCrm === "zoho" && (
+                      <div className="p-4 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400 rounded-md">
+                        Zoho CRM integration guides will be provided after setup.
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
               
               {currentStep === 2 && (
                 <div>
-                  <h3 className="text-xl font-medium mb-4">User Roles</h3>
+                  <h3 className="text-xl font-medium mb-4">Destination CRM Configuration</h3>
                   <p className="text-muted-foreground mb-6">
-                    Define the different types of users that will be onboarded to your product.
+                    Configure access to the CRM system you want to migrate to.
                   </p>
                   
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="userRoles">User Roles (one per line)</Label>
-                      <Textarea 
-                        id="userRoles"
-                        name="userRoles"
-                        placeholder="Administrator&#10;Standard User&#10;Read-only User"
-                        value={formData.userRoles}
-                        onChange={handleChange}
-                        className="min-h-32"
-                      />
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Enter each user role on a new line. For each role, we'll create a customized onboarding flow.
-                      </p>
+                      <Label>Destination CRM Platform</Label>
+                      <RadioGroup 
+                        value={formData.destinationCrm} 
+                        onValueChange={(value) => handleRadioChange(value, "destinationCrm")}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="hubspot" id="hubspot" />
+                          <Label htmlFor="hubspot">HubSpot</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="pipedrive" id="pipedrive" />
+                          <Label htmlFor="pipedrive">Pipedrive</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="monday" id="monday" />
+                          <Label htmlFor="monday">Monday Sales CRM</Label>
+                        </div>
+                      </RadioGroup>
                     </div>
                     
-                    <GlassPanel className="p-4">
-                      <h4 className="font-medium mb-3">Common Role Examples</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <Button 
-                          variant="outline" 
-                          className="justify-start" 
-                          onClick={() => setFormData({...formData, userRoles: "Administrator\nStandard User\nGuest"})}
-                        >
-                          Permission-based Roles
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          className="justify-start"
-                          onClick={() => setFormData({...formData, userRoles: "Owner\nManager\nTeam Member\nClient"})}
-                        >
-                          Team Hierarchy
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          className="justify-start"
-                          onClick={() => setFormData({...formData, userRoles: "Developer\nDesigner\nProject Manager\nStakeholder"})}
-                        >
-                          Project Roles
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          className="justify-start"
-                          onClick={() => setFormData({...formData, userRoles: "Teacher\nStudent\nAdministrator"})}
-                        >
-                          Educational Roles
-                        </Button>
+                    {formData.destinationCrm === "hubspot" && (
+                      <div className="space-y-2">
+                        <Label htmlFor="hubspotApiKey">HubSpot API Key</Label>
+                        <Input 
+                          id="hubspotApiKey"
+                          name="hubspotApiKey"
+                          placeholder="Enter your HubSpot API key"
+                          value={formData.hubspotApiKey}
+                          onChange={handleChange}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Your API key can be found in HubSpot &gt; Settings &gt; Integrations &gt; API Keys
+                        </p>
                       </div>
-                    </GlassPanel>
+                    )}
+                    
+                    {formData.destinationCrm === "pipedrive" && (
+                      <div className="p-4 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 rounded-md">
+                        Pipedrive integration guides will be provided after setup.
+                      </div>
+                    )}
+                    
+                    {formData.destinationCrm === "monday" && (
+                      <div className="p-4 bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400 rounded-md">
+                        Monday Sales CRM integration guides will be provided after setup.
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
               
               {currentStep === 3 && (
                 <div>
-                  <h3 className="text-xl font-medium mb-4">Content Setup</h3>
+                  <h3 className="text-xl font-medium mb-4">Data Selection</h3>
                   <p className="text-muted-foreground mb-6">
-                    Customize the content and features of your onboarding experience.
+                    Choose which data types you want to migrate from your current CRM to your new one.
                   </p>
                   
                   <div className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="welcomeMessage">Welcome Message</Label>
-                      <Textarea 
-                        id="welcomeMessage"
-                        name="welcomeMessage"
-                        placeholder="Welcome to [Product Name]! We're excited to help you get started..."
-                        value={formData.welcomeMessage}
-                        onChange={handleChange}
-                        className="min-h-24"
-                      />
-                    </div>
-                    
                     <div className="space-y-3">
-                      <Label>Onboarding Features</Label>
+                      <Label>Data Types to Migrate</Label>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="flex items-start space-x-2">
                           <input 
                             type="checkbox" 
-                            id="feature-interactive" 
+                            id="data-contacts" 
                             className="rounded border-gray-300 text-brand-500 mt-1"
-                            checked={formData.customizations.includes("interactive")}
-                            onChange={() => handleCheckboxChange("interactive")}
+                            checked={formData.dataTypes.includes("contacts")}
+                            onChange={() => handleCheckboxChange("contacts")}
                           />
                           <div>
-                            <Label htmlFor="feature-interactive" className="font-medium">Interactive Tutorials</Label>
-                            <p className="text-xs text-muted-foreground">Step-by-step interactive guides</p>
+                            <Label htmlFor="data-contacts" className="font-medium">Contacts & Leads</Label>
+                            <p className="text-xs text-muted-foreground">All contact and lead information</p>
                           </div>
                         </div>
                         
                         <div className="flex items-start space-x-2">
                           <input 
                             type="checkbox" 
-                            id="feature-video" 
+                            id="data-accounts" 
                             className="rounded border-gray-300 text-brand-500 mt-1"
-                            checked={formData.customizations.includes("video")}
-                            onChange={() => handleCheckboxChange("video")}
+                            checked={formData.dataTypes.includes("accounts")}
+                            onChange={() => handleCheckboxChange("accounts")}
                           />
                           <div>
-                            <Label htmlFor="feature-video" className="font-medium">Video Tutorials</Label>
-                            <p className="text-xs text-muted-foreground">Engaging video walkthroughs</p>
+                            <Label htmlFor="data-accounts" className="font-medium">Accounts & Companies</Label>
+                            <p className="text-xs text-muted-foreground">Organization information</p>
                           </div>
                         </div>
                         
                         <div className="flex items-start space-x-2">
                           <input 
                             type="checkbox" 
-                            id="feature-quiz" 
+                            id="data-opportunities" 
                             className="rounded border-gray-300 text-brand-500 mt-1"
-                            checked={formData.customizations.includes("quiz")}
-                            onChange={() => handleCheckboxChange("quiz")}
+                            checked={formData.dataTypes.includes("opportunities")}
+                            onChange={() => handleCheckboxChange("opportunities")}
                           />
                           <div>
-                            <Label htmlFor="feature-quiz" className="font-medium">Knowledge Quizzes</Label>
-                            <p className="text-xs text-muted-foreground">Test user comprehension</p>
+                            <Label htmlFor="data-opportunities" className="font-medium">Opportunities & Deals</Label>
+                            <p className="text-xs text-muted-foreground">Sales pipeline and deals</p>
                           </div>
                         </div>
                         
                         <div className="flex items-start space-x-2">
                           <input 
                             type="checkbox" 
-                            id="feature-progress" 
+                            id="data-cases" 
                             className="rounded border-gray-300 text-brand-500 mt-1"
-                            checked={formData.customizations.includes("progress")}
-                            onChange={() => handleCheckboxChange("progress")}
+                            checked={formData.dataTypes.includes("cases")}
+                            onChange={() => handleCheckboxChange("cases")}
                           />
                           <div>
-                            <Label htmlFor="feature-progress" className="font-medium">Progress Tracking</Label>
-                            <p className="text-xs text-muted-foreground">Monitor user completion</p>
+                            <Label htmlFor="data-cases" className="font-medium">Cases & Tickets</Label>
+                            <p className="text-xs text-muted-foreground">Support cases and tickets</p>
                           </div>
                         </div>
                         
                         <div className="flex items-start space-x-2">
                           <input 
                             type="checkbox" 
-                            id="feature-certificate" 
+                            id="data-activities" 
                             className="rounded border-gray-300 text-brand-500 mt-1"
-                            checked={formData.customizations.includes("certificate")}
-                            onChange={() => handleCheckboxChange("certificate")}
+                            checked={formData.dataTypes.includes("activities")}
+                            onChange={() => handleCheckboxChange("activities")}
                           />
                           <div>
-                            <Label htmlFor="feature-certificate" className="font-medium">Completion Certificates</Label>
-                            <p className="text-xs text-muted-foreground">Reward users for finishing</p>
+                            <Label htmlFor="data-activities" className="font-medium">Activities & Tasks</Label>
+                            <p className="text-xs text-muted-foreground">Call logs, emails, and tasks</p>
                           </div>
                         </div>
                         
                         <div className="flex items-start space-x-2">
                           <input 
                             type="checkbox" 
-                            id="feature-feedback" 
+                            id="data-custom" 
                             className="rounded border-gray-300 text-brand-500 mt-1"
-                            checked={formData.customizations.includes("feedback")}
-                            onChange={() => handleCheckboxChange("feedback")}
+                            checked={formData.dataTypes.includes("custom")}
+                            onChange={() => handleCheckboxChange("custom")}
                           />
                           <div>
-                            <Label htmlFor="feature-feedback" className="font-medium">Feedback Collection</Label>
-                            <p className="text-xs text-muted-foreground">Gather user opinions</p>
+                            <Label htmlFor="data-custom" className="font-medium">Custom Objects</Label>
+                            <p className="text-xs text-muted-foreground">Your custom data objects</p>
                           </div>
                         </div>
                       </div>
                     </div>
+                    
+                    <div className="space-y-2 pt-4">
+                      <Label>Migration Strategy</Label>
+                      <RadioGroup 
+                        value={formData.migrationStrategy} 
+                        onValueChange={(value) => handleRadioChange(value, "migrationStrategy")}
+                        className="grid grid-cols-1 gap-4 pt-2"
+                      >
+                        <div className="border rounded-md p-4">
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="full" id="full" />
+                            <div>
+                              <Label htmlFor="full" className="font-medium">Full Migration</Label>
+                              <p className="text-sm text-muted-foreground">Migrate all selected data at once</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="border rounded-md p-4">
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="incremental" id="incremental" />
+                            <div>
+                              <Label htmlFor="incremental" className="font-medium">Incremental Migration</Label>
+                              <p className="text-sm text-muted-foreground">Migrate in phases with testing between each phase</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="border rounded-md p-4">
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="parallel" id="parallel" />
+                            <div>
+                              <Label htmlFor="parallel" className="font-medium">Parallel Operation</Label>
+                              <p className="text-sm text-muted-foreground">Run both CRMs in parallel with continuous syncing</p>
+                            </div>
+                          </div>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                    
+                    {formData.dataTypes.includes("custom") && (
+                      <div className="space-y-2 pt-4">
+                        <Label htmlFor="customMapping">Custom Object Mapping</Label>
+                        <Textarea 
+                          id="customMapping"
+                          name="customMapping"
+                          placeholder="Describe your custom objects and how they should be mapped between systems..."
+                          value={formData.customMapping}
+                          onChange={handleChange}
+                          className="min-h-32"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -574,38 +541,34 @@ const SetupWizard = () => {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-6">
                     <CheckCircle size={32} />
                   </div>
-                  <h3 className="text-2xl font-medium mb-2">Setup Complete!</h3>
+                  <h3 className="text-2xl font-medium mb-2">Migration Setup Complete!</h3>
                   <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                    Your onboarding platform is now configured and ready to use. You can make additional changes in your dashboard.
+                    Your CRM migration is now configured. Review the details below and start your migration when ready.
                   </p>
                   
                   <SlideUp>
                     <GlassPanel className="p-6 max-w-md mx-auto">
-                      <h4 className="font-medium mb-4">Configuration Summary</h4>
+                      <h4 className="font-medium mb-4">Migration Summary</h4>
                       <ul className="space-y-2 text-left">
                         <li className="flex justify-between">
                           <span className="text-muted-foreground">Company:</span>
                           <span className="font-medium">{formData.companyName}</span>
                         </li>
                         <li className="flex justify-between">
-                          <span className="text-muted-foreground">Product:</span>
-                          <span className="font-medium">{formData.productName}</span>
+                          <span className="text-muted-foreground">Source CRM:</span>
+                          <span className="font-medium">{formData.sourceCrm === "salesforce" ? "Salesforce" : formData.sourceCrm === "dynamics" ? "Microsoft Dynamics" : "Zoho CRM"}</span>
                         </li>
                         <li className="flex justify-between">
-                          <span className="text-muted-foreground">Product Type:</span>
-                          <span className="font-medium">{formData.productType === "saas" ? "SaaS Platform" : formData.productType === "mobile" ? "Mobile App" : "Enterprise Software"}</span>
+                          <span className="text-muted-foreground">Destination CRM:</span>
+                          <span className="font-medium">{formData.destinationCrm === "hubspot" ? "HubSpot" : formData.destinationCrm === "pipedrive" ? "Pipedrive" : "Monday Sales CRM"}</span>
                         </li>
                         <li className="flex justify-between">
-                          <span className="text-muted-foreground">Integration:</span>
-                          <span className="font-medium">{formData.integration === "api" ? "API" : formData.integration === "embed" ? "Embed" : "Redirect"}</span>
+                          <span className="text-muted-foreground">Data Types:</span>
+                          <span className="font-medium">{formData.dataTypes.length} selected</span>
                         </li>
                         <li className="flex justify-between">
-                          <span className="text-muted-foreground">User Roles:</span>
-                          <span className="font-medium">{formData.userRoles.split("\n").length}</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span className="text-muted-foreground">Features:</span>
-                          <span className="font-medium">{formData.customizations.length}</span>
+                          <span className="text-muted-foreground">Strategy:</span>
+                          <span className="font-medium">{formData.migrationStrategy === "full" ? "Full Migration" : formData.migrationStrategy === "incremental" ? "Incremental Migration" : "Parallel Operation"}</span>
                         </li>
                       </ul>
                     </GlassPanel>
@@ -613,7 +576,7 @@ const SetupWizard = () => {
                   
                   <div className="mt-8">
                     <Button className="gap-2">
-                      Go to Dashboard <ArrowRight size={16} />
+                      Start Migration <ArrowRight size={16} />
                     </Button>
                   </div>
                 </div>

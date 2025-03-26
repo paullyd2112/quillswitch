@@ -1,361 +1,30 @@
 
-import React from "react";
-import { Badge } from "@/components/ui/badge";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Copy, Database, FileJson, Key } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Copy, Check, Code, FileJson, Server, Key, Webhook, Play, Book } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import FadeIn from "@/components/animations/FadeIn";
+import SlideUp from "@/components/animations/SlideUp";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
-import { useState } from "react";
-
-interface ApiEndpoint {
-  method: "GET" | "POST" | "PUT" | "DELETE";
-  endpoint: string;
-  description: string;
-  params?: {
-    name: string;
-    type: string;
-    required: boolean;
-    description: string;
-  }[];
-  response?: string;
-}
-
-// Example API endpoints data
-const apiEndpoints: Record<string, ApiEndpoint[]> = {
-  flows: [
-    {
-      method: "GET",
-      endpoint: "/api/flows",
-      description: "Get all onboarding flows",
-      response: `{
-  "flows": [
-    {
-      "id": "flow-1",
-      "title": "SaaS Product Onboarding",
-      "description": "Welcome new users",
-      "status": "active",
-      "usagePercent": 78,
-      "users": 1243,
-      "lastUpdated": "2 days ago"
-    },
-    // More flows...
-  ]
-}`
-    },
-    {
-      method: "POST",
-      endpoint: "/api/flows",
-      description: "Create a new onboarding flow",
-      params: [
-        {
-          name: "title",
-          type: "string",
-          required: true,
-          description: "Title of the flow"
-        },
-        {
-          name: "description",
-          type: "string",
-          required: true,
-          description: "Description of the flow"
-        },
-        {
-          name: "status",
-          type: "string",
-          required: true,
-          description: "Status of the flow (active, draft, archived)"
-        }
-      ],
-      response: `{
-  "id": "flow-123",
-  "title": "New Flow",
-  "description": "Description",
-  "status": "draft",
-  "usagePercent": 0,
-  "users": 0,
-  "lastUpdated": "just now"
-}`
-    },
-    {
-      method: "GET",
-      endpoint: "/api/flows/:id",
-      description: "Get a specific onboarding flow",
-      response: `{
-  "id": "flow-1",
-  "title": "SaaS Product Onboarding",
-  "description": "Welcome new users",
-  "status": "active",
-  "usagePercent": 78,
-  "users": 1243,
-  "lastUpdated": "2 days ago",
-  "steps": [
-    {
-      "id": "step-1",
-      "title": "Welcome",
-      "content": "Welcome to our platform"
-    },
-    // More steps...
-  ]
-}`
-    },
-    {
-      method: "PUT",
-      endpoint: "/api/flows/:id",
-      description: "Update an onboarding flow",
-      params: [
-        {
-          name: "title",
-          type: "string",
-          required: false,
-          description: "New title of the flow"
-        },
-        {
-          name: "description",
-          type: "string",
-          required: false,
-          description: "New description of the flow"
-        },
-        {
-          name: "status",
-          type: "string",
-          required: false,
-          description: "New status of the flow"
-        }
-      ],
-      response: `{
-  "id": "flow-1",
-  "title": "Updated Title",
-  "description": "Updated description",
-  "status": "active",
-  "usagePercent": 78,
-  "users": 1243,
-  "lastUpdated": "just now"
-}`
-    },
-    {
-      method: "DELETE",
-      endpoint: "/api/flows/:id",
-      description: "Delete an onboarding flow",
-      response: `{
-  "success": true,
-  "message": "Flow deleted successfully"
-}`
-    }
-  ],
-  templates: [
-    {
-      method: "GET",
-      endpoint: "/api/templates",
-      description: "Get all onboarding templates",
-      response: `{
-  "templates": [
-    {
-      "id": "template-1",
-      "title": "SaaS User Onboarding",
-      "description": "A complete onboarding flow",
-      "category": "User Onboarding",
-      "isNew": true
-    },
-    // More templates...
-  ]
-}`
-    },
-    {
-      method: "GET",
-      endpoint: "/api/templates/:id",
-      description: "Get a specific template",
-      response: `{
-  "id": "template-1",
-  "title": "SaaS User Onboarding",
-  "description": "A complete onboarding flow",
-  "category": "User Onboarding",
-  "isNew": true,
-  "content": {
-    // Template structure and content
-  }
-}`
-    }
-  ],
-  analytics: [
-    {
-      method: "GET",
-      endpoint: "/api/analytics/flows/:id",
-      description: "Get analytics for a specific flow",
-      response: `{
-  "flowId": "flow-1",
-  "usagePercent": 78,
-  "users": 1243,
-  "completionRate": 68.7,
-  "avgCompletionTime": "5m 32s",
-  "userFeedback": {
-    "positive": 85,
-    "neutral": 10,
-    "negative": 5
-  }
-}`
-    },
-    {
-      method: "GET",
-      endpoint: "/api/analytics/overview",
-      description: "Get overall platform analytics",
-      response: `{
-  "activeUsers": 2834,
-  "completionRate": 68.7,
-  "engagementScore": 7.9,
-  "avgCompletionTime": "5m 32s",
-  "totalFlows": 12,
-  "activeFlows": 8
-}`
-    }
-  ],
-  webhooks: [
-    {
-      method: "POST",
-      endpoint: "/api/webhooks",
-      description: "Register a new webhook",
-      params: [
-        {
-          name: "url",
-          type: "string",
-          required: true,
-          description: "URL to send webhook events to"
-        },
-        {
-          name: "events",
-          type: "array",
-          required: true,
-          description: "Array of events to subscribe to"
-        },
-        {
-          name: "secret",
-          type: "string",
-          required: true,
-          description: "Secret for webhook verification"
-        }
-      ],
-      response: `{
-  "id": "webhook-123",
-  "url": "https://example.com/webhook",
-  "events": ["flow.completed", "flow.started"],
-  "status": "active"
-}`
-    }
-  ]
-};
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 const ApiDocs = () => {
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const copyToClipboard = (text: string, id: string) => {
+  const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    setCopiedCode(id);
-    setTimeout(() => setCopiedCode(null), 2000);
-  };
-
-  const renderMethodBadge = (method: string) => {
-    const methodColors: Record<string, string> = {
-      GET: "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400",
-      POST: "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400",
-      PUT: "bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400",
-      DELETE: "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400",
-    };
-
-    return (
-      <Badge className={methodColors[method]}>
-        {method}
-      </Badge>
-    );
-  };
-
-  const renderEndpoint = (endpoint: ApiEndpoint, index: number) => {
-    const uniqueId = `${endpoint.method}-${endpoint.endpoint}-${index}`;
-    return (
-      <GlassPanel key={uniqueId} className="mb-8 overflow-hidden">
-        <div className="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            {renderMethodBadge(endpoint.method)}
-            <h3 className="text-lg font-mono">{endpoint.endpoint}</h3>
-          </div>
-        </div>
-
-        <div className="p-5">
-          <p className="text-muted-foreground mb-4">{endpoint.description}</p>
-          
-          {endpoint.params && endpoint.params.length > 0 && (
-            <div className="mt-4">
-              <h4 className="font-medium mb-2">Parameters</h4>
-              <div className="bg-slate-50 dark:bg-slate-900 rounded-md p-4 mb-4">
-                <table className="w-full text-sm">
-                  <thead className="text-left text-muted-foreground">
-                    <tr>
-                      <th className="pb-2">Name</th>
-                      <th className="pb-2">Type</th>
-                      <th className="pb-2">Required</th>
-                      <th className="pb-2">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {endpoint.params.map((param, i) => (
-                      <tr key={i} className="border-t border-gray-100 dark:border-gray-800">
-                        <td className="py-2 font-mono">{param.name}</td>
-                        <td className="py-2 font-mono">{param.type}</td>
-                        <td className="py-2">{param.required ? "Yes" : "No"}</td>
-                        <td className="py-2">{param.description}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-          
-          {endpoint.response && (
-            <div className="mt-4">
-              <h4 className="font-medium mb-2">Response</h4>
-              <div className="relative">
-                <pre className="bg-slate-50 dark:bg-slate-900 rounded-md p-4 overflow-x-auto font-mono text-sm">
-                  {endpoint.response}
-                </pre>
-                <button
-                  className="absolute top-2 right-2 p-1.5 rounded-md bg-white dark:bg-slate-800 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                  onClick={() => copyToClipboard(endpoint.response, uniqueId)}
-                >
-                  {copiedCode === uniqueId ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-muted-foreground" />}
-                </button>
-              </div>
-            </div>
-          )}
-          
-          <div className="mt-6">
-            <h4 className="font-medium mb-2">Example Request</h4>
-            <div className="relative">
-              <pre className="bg-slate-50 dark:bg-slate-900 rounded-md p-4 overflow-x-auto font-mono text-sm">
-                {`curl -X ${endpoint.method} \\
-  "https://api.onboardify.com${endpoint.endpoint}" \\
-  -H "Authorization: Bearer YOUR_API_KEY"${endpoint.method !== 'GET' && endpoint.params ? ` \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    ${endpoint.params.map(p => `"${p.name}": "${p.type === 'string' ? 'value' : p.type === 'array' ? '[]' : '0'}"${p.required ? ' // required' : ''}`).join(',\n    ')}
-  }'` : ''}`}
-              </pre>
-              <button
-                className="absolute top-2 right-2 p-1.5 rounded-md bg-white dark:bg-slate-800 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                onClick={() => copyToClipboard(`curl -X ${endpoint.method} "https://api.onboardify.com${endpoint.endpoint}" -H "Authorization: Bearer YOUR_API_KEY"${endpoint.method !== 'GET' && endpoint.params ? ` -H "Content-Type: application/json" -d '{"${endpoint.params[0]?.name}":"value"}'` : ''}`, `${uniqueId}-curl`)}
-              >
-                {copiedCode === `${uniqueId}-curl` ? <Check size={16} className="text-green-500" /> : <Copy size={16} className="text-muted-foreground" />}
-              </button>
-            </div>
-          </div>
-        </div>
-      </GlassPanel>
-    );
+    toast({
+      title: "Copied to clipboard",
+      description: "The code has been copied to your clipboard.",
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50">
+    <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
       <Navbar />
       
       <section className="pt-32 pb-16 md:pt-40 md:pb-20 relative">
@@ -363,187 +32,1201 @@ const ApiDocs = () => {
           <div className="max-w-3xl mx-auto text-center">
             <FadeIn>
               <Badge className="mb-4 bg-brand-100 text-brand-700 hover:bg-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/40">
-                Developer Resources
+                API Documentation
               </Badge>
             </FadeIn>
             <FadeIn delay="100">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-                API Documentation
+                CRM Migration API
               </h1>
             </FadeIn>
             <FadeIn delay="200">
               <p className="text-xl text-muted-foreground mb-8">
-                Integrate onboarding experiences directly into your SaaS platform with our comprehensive API.
+                Comprehensive documentation for our CRM migration REST API
               </p>
             </FadeIn>
           </div>
         </div>
       </section>
       
-      <ContentSection className="py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-20">
-              <GlassPanel className="p-5">
-                <h3 className="font-medium text-lg mb-4">Contents</h3>
-                <nav className="space-y-1">
-                  <a href="#getting-started" className="flex items-center py-2 px-3 rounded-md text-sm hover:bg-slate-100 dark:hover:bg-slate-800 text-brand-500 dark:text-brand-400">
-                    <Book size={16} className="mr-2" />
-                    Getting Started
-                  </a>
-                  <a href="#authentication" className="flex items-center py-2 px-3 rounded-md text-sm hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <Key size={16} className="mr-2" />
-                    Authentication
-                  </a>
-                  <a href="#flows" className="flex items-center py-2 px-3 rounded-md text-sm hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <Play size={16} className="mr-2" />
-                    Flows API
-                  </a>
-                  <a href="#templates" className="flex items-center py-2 px-3 rounded-md text-sm hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <FileJson size={16} className="mr-2" />
-                    Templates API
-                  </a>
-                  <a href="#analytics" className="flex items-center py-2 px-3 rounded-md text-sm hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <Server size={16} className="mr-2" />
-                    Analytics API
-                  </a>
-                  <a href="#webhooks" className="flex items-center py-2 px-3 rounded-md text-sm hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <Webhook size={16} className="mr-2" />
-                    Webhooks
-                  </a>
-                </nav>
-              </GlassPanel>
-            </div>
+      <ContentSection className="py-12 pb-32">
+        <div className="grid md:grid-cols-12 gap-8">
+          <div className="md:col-span-3">
+            <GlassPanel className="sticky top-24">
+              <div className="p-4">
+                <h3 className="font-medium mb-4">API Navigation</h3>
+                <ul className="space-y-1">
+                  <li>
+                    <Button
+                      variant={activeTab === "overview" ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("overview")}
+                    >
+                      Overview
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      variant={activeTab === "authentication" ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("authentication")}
+                    >
+                      Authentication
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      variant={activeTab === "contacts" ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("contacts")}
+                    >
+                      Contacts API
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      variant={activeTab === "accounts" ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("accounts")}
+                    >
+                      Accounts API
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      variant={activeTab === "opportunities" ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("opportunities")}
+                    >
+                      Opportunities API
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      variant={activeTab === "migration" ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("migration")}
+                    >
+                      Migration API
+                    </Button>
+                  </li>
+                  <li>
+                    <Button
+                      variant={activeTab === "webhooks" ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("webhooks")}
+                    >
+                      Webhooks
+                    </Button>
+                  </li>
+                </ul>
+              </div>
+            </GlassPanel>
           </div>
           
-          <div className="lg:col-span-3">
-            <section id="getting-started" className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4">Getting Started</h2>
-              <GlassPanel className="p-5 mb-6">
-                <p className="mb-4">
-                  Our API allows you to programmatically manage all aspects of your onboarding flows, templates, and user interactions.
-                  The API follows RESTful conventions and returns data in JSON format.
-                </p>
-                <p className="mb-4">
-                  To start using the API, you'll need to:
-                </p>
-                <ol className="list-decimal ml-5 space-y-2 mb-4">
-                  <li>Create an API key in your dashboard</li>
-                  <li>Include the key in all API requests in the Authorization header</li>
-                  <li>Make requests to our API endpoints</li>
-                </ol>
-                <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-md mb-4">
-                  <p className="text-sm font-medium mb-2">Base URL</p>
-                  <code className="font-mono text-sm">https://api.onboardify.com</code>
-                </div>
-              </GlassPanel>
-            </section>
-            
-            <section id="authentication" className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4">Authentication</h2>
-              <GlassPanel className="p-5 mb-6">
-                <p className="mb-4">
-                  All API requests must include your API key in the HTTP header:
-                </p>
-                <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-md font-mono text-sm">
-                  <p>Authorization: Bearer YOUR_API_KEY</p>
-                </div>
-                <div className="mt-4">
-                  <p className="font-medium mb-2">Getting your API key</p>
-                  <ol className="list-decimal ml-5 space-y-2">
-                    <li>Go to your account settings</li>
-                    <li>Navigate to the "API Keys" section</li>
-                    <li>Click "Generate New Key"</li>
-                    <li>Give your key a name and copy it immediately (it won't be shown again)</li>
-                  </ol>
-                </div>
-              </GlassPanel>
-            </section>
-            
-            <section id="flows" className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4">Flows API</h2>
-              <p className="text-muted-foreground mb-6">
-                Create and manage onboarding flows programmatically.
-              </p>
-              {apiEndpoints.flows.map((endpoint, index) => renderEndpoint(endpoint, index))}
-            </section>
-            
-            <section id="templates" className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4">Templates API</h2>
-              <p className="text-muted-foreground mb-6">
-                Access pre-built templates to quickly create onboarding experiences.
-              </p>
-              {apiEndpoints.templates.map((endpoint, index) => renderEndpoint(endpoint, index))}
-            </section>
-            
-            <section id="analytics" className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4">Analytics API</h2>
-              <p className="text-muted-foreground mb-6">
-                Retrieve analytics data for your onboarding flows.
-              </p>
-              {apiEndpoints.analytics.map((endpoint, index) => renderEndpoint(endpoint, index))}
-            </section>
-            
-            <section id="webhooks" className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4">Webhooks</h2>
-              <p className="text-muted-foreground mb-6">
-                Set up webhooks to receive real-time notifications about events.
-              </p>
-              {apiEndpoints.webhooks.map((endpoint, index) => renderEndpoint(endpoint, index))}
-              
-              <GlassPanel className="p-5 mt-6">
-                <h3 className="font-medium mb-3">Available Events</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-md">
-                    <p className="font-medium mb-2">flow.started</p>
-                    <p className="text-sm text-muted-foreground">Triggered when a user starts an onboarding flow</p>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-md">
-                    <p className="font-medium mb-2">flow.completed</p>
-                    <p className="text-sm text-muted-foreground">Triggered when a user completes an onboarding flow</p>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-md">
-                    <p className="font-medium mb-2">flow.abandoned</p>
-                    <p className="text-sm text-muted-foreground">Triggered when a user abandons an onboarding flow</p>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-md">
-                    <p className="font-medium mb-2">step.completed</p>
-                    <p className="text-sm text-muted-foreground">Triggered when a user completes a step in a flow</p>
-                  </div>
-                </div>
-              </GlassPanel>
-            </section>
-            
-            <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-4">SDKs & Libraries</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <GlassPanel className="p-5 hover:shadow-md transition-shadow">
-                  <div className="flex items-center mb-4">
-                    <div className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 p-2 rounded-md mr-3">
-                      <Code size={24} />
-                    </div>
-                    <h3 className="font-medium">JavaScript SDK</h3>
-                  </div>
-                  <p className="text-muted-foreground mb-4">
-                    Integrate onboarding flows directly into your web applications
-                  </p>
-                  <Button variant="outline" className="w-full">View Documentation</Button>
-                </GlassPanel>
+          <div className="md:col-span-9">
+            <GlassPanel>
+              <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="hidden">
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="authentication">Authentication</TabsTrigger>
+                  <TabsTrigger value="contacts">Contacts</TabsTrigger>
+                  <TabsTrigger value="accounts">Accounts</TabsTrigger>
+                  <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
+                  <TabsTrigger value="migration">Migration</TabsTrigger>
+                  <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+                </TabsList>
                 
-                <GlassPanel className="p-5 hover:shadow-md transition-shadow">
-                  <div className="flex items-center mb-4">
-                    <div className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 p-2 rounded-md mr-3">
-                      <Code size={24} />
+                <TabsContent value="overview" className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-2xl font-semibold mb-4">API Overview</h2>
+                      <p className="text-muted-foreground mb-4">
+                        Our CRM Migration API allows you to programmatically migrate data between different CRM platforms. The API follows REST principles and returns responses in JSON format.
+                      </p>
                     </div>
-                    <h3 className="font-medium">React Components</h3>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Base URL</h3>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <code>https://api.crmmigration.example.com/v1</code>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard("https://api.crmmigration.example.com/v1")}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Available Endpoints</h3>
+                      <ul className="space-y-2">
+                        <li className="flex gap-2">
+                          <Badge>GET</Badge>
+                          <span className="font-mono text-sm">/sources</span>
+                          <span className="text-muted-foreground">List available source CRMs</span>
+                        </li>
+                        <li className="flex gap-2">
+                          <Badge>GET</Badge>
+                          <span className="font-mono text-sm">/destinations</span>
+                          <span className="text-muted-foreground">List available destination CRMs</span>
+                        </li>
+                        <li className="flex gap-2">
+                          <Badge>POST</Badge>
+                          <span className="font-mono text-sm">/migrations</span>
+                          <span className="text-muted-foreground">Create a new migration</span>
+                        </li>
+                        <li className="flex gap-2">
+                          <Badge>GET</Badge>
+                          <span className="font-mono text-sm">/migrations/:id</span>
+                          <span className="text-muted-foreground">Get migration status</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Response Format</h3>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`{
+  "success": true,
+  "data": { ... },
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 42
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`{
+  "success": true,
+  "data": { ... },
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 42
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Error Handling</h3>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`{
+  "success": false,
+  "error": {
+    "code": "invalid_auth",
+    "message": "Invalid authentication credentials",
+    "details": { ... }
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`{
+  "success": false,
+  "error": {
+    "code": "invalid_auth",
+    "message": "Invalid authentication credentials",
+    "details": { ... }
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-muted-foreground mb-4">
-                    Drop-in React components for easy integration
-                  </p>
-                  <Button variant="outline" className="w-full">View Documentation</Button>
-                </GlassPanel>
-              </div>
-            </section>
+                </TabsContent>
+                
+                <TabsContent value="authentication" className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-2xl font-semibold mb-4">Authentication</h2>
+                      <p className="text-muted-foreground mb-4">
+                        All API requests require authentication using an API key. You'll receive your API key when you create an account.
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-start gap-4 p-4 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 rounded-md">
+                      <Key className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Keep Your API Key Secret</p>
+                        <p className="text-sm">Your API key provides access to your account and should be kept confidential.</p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">API Key Authentication</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Include your API key in the <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">Authorization</code> header of your requests.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`Authorization: Bearer YOUR_API_KEY`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`Authorization: Bearer YOUR_API_KEY`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Example Request</h3>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`curl --request GET \\
+  --url https://api.crmmigration.example.com/v1/sources \\
+  --header 'Authorization: Bearer YOUR_API_KEY'`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`curl --request GET \\
+  --url https://api.crmmigration.example.com/v1/sources \\
+  --header 'Authorization: Bearer YOUR_API_KEY'`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="contacts" className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-2xl font-semibold mb-4">Contacts API</h2>
+                      <p className="text-muted-foreground mb-4">
+                        The Contacts API allows you to manage and migrate contact data between CRM systems.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">List Contacts</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>GET</Badge>
+                        <span className="font-mono text-sm">/contacts</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Retrieve a list of contacts from the source CRM.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Request
+GET /contacts?source=salesforce&page=1&limit=20
+
+// Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "con_123456",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "+1234567890",
+      "company": "Acme Inc.",
+      "title": "CEO",
+      "createdAt": "2023-01-15T10:30:00Z",
+      "updatedAt": "2023-06-22T15:45:00Z"
+    },
+    ...
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 142
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Request
+GET /contacts?source=salesforce&page=1&limit=20
+
+// Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "con_123456",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "+1234567890",
+      "company": "Acme Inc.",
+      "title": "CEO",
+      "createdAt": "2023-01-15T10:30:00Z",
+      "updatedAt": "2023-06-22T15:45:00Z"
+    },
+    ...
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 142
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Migrate Contacts</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>POST</Badge>
+                        <span className="font-mono text-sm">/contacts/migrate</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Migrate contacts from the source CRM to the destination CRM.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Request
+POST /contacts/migrate
+{
+  "source": "salesforce",
+  "destination": "hubspot",
+  "filters": {
+    "updatedAfter": "2023-01-01T00:00:00Z",
+    "tags": ["vip", "customer"]
+  },
+  "fieldMapping": {
+    "firstName": "firstName",
+    "lastName": "lastName",
+    "email": "email",
+    "companyName": "company"
+  }
+}
+
+// Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_789012",
+    "status": "in_progress",
+    "totalRecords": 215,
+    "estimatedTimeMinutes": 5
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Request
+POST /contacts/migrate
+{
+  "source": "salesforce",
+  "destination": "hubspot",
+  "filters": {
+    "updatedAfter": "2023-01-01T00:00:00Z",
+    "tags": ["vip", "customer"]
+  },
+  "fieldMapping": {
+    "firstName": "firstName",
+    "lastName": "lastName",
+    "email": "email",
+    "companyName": "company"
+  }
+}
+
+// Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_789012",
+    "status": "in_progress",
+    "totalRecords": 215,
+    "estimatedTimeMinutes": 5
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="accounts" className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-2xl font-semibold mb-4">Accounts API</h2>
+                      <p className="text-muted-foreground mb-4">
+                        The Accounts API allows you to manage and migrate company/account data between CRM systems.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">List Accounts</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>GET</Badge>
+                        <span className="font-mono text-sm">/accounts</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Retrieve a list of accounts/companies from the source CRM.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Request
+GET /accounts?source=salesforce&page=1&limit=20
+
+// Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "acc_123456",
+      "name": "Acme Inc.",
+      "industry": "Technology",
+      "website": "https://acme.example.com",
+      "annualRevenue": 1500000,
+      "employeeCount": 250,
+      "createdAt": "2022-03-10T14:20:00Z",
+      "updatedAt": "2023-05-12T09:15:00Z"
+    },
+    ...
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 87
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Request
+GET /accounts?source=salesforce&page=1&limit=20
+
+// Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "acc_123456",
+      "name": "Acme Inc.",
+      "industry": "Technology",
+      "website": "https://acme.example.com",
+      "annualRevenue": 1500000,
+      "employeeCount": 250,
+      "createdAt": "2022-03-10T14:20:00Z",
+      "updatedAt": "2023-05-12T09:15:00Z"
+    },
+    ...
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 87
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Migrate Accounts</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>POST</Badge>
+                        <span className="font-mono text-sm">/accounts/migrate</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Migrate accounts/companies from the source CRM to the destination CRM.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Request
+POST /accounts/migrate
+{
+  "source": "salesforce",
+  "destination": "hubspot",
+  "filters": {
+    "updatedAfter": "2023-01-01T00:00:00Z",
+    "industries": ["Technology", "Healthcare"]
+  },
+  "fieldMapping": {
+    "name": "name",
+    "industry": "industry",
+    "website": "website",
+    "annualRevenue": "annual_revenue"
+  }
+}
+
+// Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_456789",
+    "status": "in_progress",
+    "totalRecords": 42,
+    "estimatedTimeMinutes": 3
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Request
+POST /accounts/migrate
+{
+  "source": "salesforce",
+  "destination": "hubspot",
+  "filters": {
+    "updatedAfter": "2023-01-01T00:00:00Z",
+    "industries": ["Technology", "Healthcare"]
+  },
+  "fieldMapping": {
+    "name": "name",
+    "industry": "industry",
+    "website": "website",
+    "annualRevenue": "annual_revenue"
+  }
+}
+
+// Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_456789",
+    "status": "in_progress",
+    "totalRecords": 42,
+    "estimatedTimeMinutes": 3
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="opportunities" className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-2xl font-semibold mb-4">Opportunities API</h2>
+                      <p className="text-muted-foreground mb-4">
+                        The Opportunities API allows you to manage and migrate deal/opportunity data between CRM systems.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">List Opportunities</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>GET</Badge>
+                        <span className="font-mono text-sm">/opportunities</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Retrieve a list of opportunities/deals from the source CRM.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Example Request
+GET /opportunities?source=salesforce&page=1&limit=20
+
+// Example Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "opp_123456",
+      "name": "Enterprise License Deal",
+      "accountId": "acc_123456",
+      "stage": "Negotiation",
+      "amount": 75000,
+      "probability": 80,
+      "expectedCloseDate": "2023-08-30",
+      "createdAt": "2023-04-15T11:20:00Z",
+      "updatedAt": "2023-06-22T13:45:00Z"
+    },
+    ...
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 58
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Example Request
+GET /opportunities?source=salesforce&page=1&limit=20
+
+// Example Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "opp_123456",
+      "name": "Enterprise License Deal",
+      "accountId": "acc_123456",
+      "stage": "Negotiation",
+      "amount": 75000,
+      "probability": 80,
+      "expectedCloseDate": "2023-08-30",
+      "createdAt": "2023-04-15T11:20:00Z",
+      "updatedAt": "2023-06-22T13:45:00Z"
+    },
+    ...
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 58
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Migrate Opportunities</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>POST</Badge>
+                        <span className="font-mono text-sm">/opportunities/migrate</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Migrate opportunities/deals from the source CRM to the destination CRM.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Example Request
+POST /opportunities/migrate
+{
+  "source": "salesforce",
+  "destination": "hubspot",
+  "filters": {
+    "updatedAfter": "2023-01-01T00:00:00Z",
+    "stages": ["Proposal", "Negotiation", "Closing"],
+    "minimumAmount": 10000
+  },
+  "fieldMapping": {
+    "name": "dealname",
+    "accountId": "company_id",
+    "amount": "amount",
+    "stage": "dealstage",
+    "expectedCloseDate": "closedate"
+  },
+  "stageMapping": {
+    "Proposal": "presentationscheduled",
+    "Negotiation": "contractsent",
+    "Closing": "closedwon"
+  }
+}
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_345678",
+    "status": "in_progress",
+    "totalRecords": 35,
+    "estimatedTimeMinutes": 4
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Example Request
+POST /opportunities/migrate
+{
+  "source": "salesforce",
+  "destination": "hubspot",
+  "filters": {
+    "updatedAfter": "2023-01-01T00:00:00Z",
+    "stages": ["Proposal", "Negotiation", "Closing"],
+    "minimumAmount": 10000
+  },
+  "fieldMapping": {
+    "name": "dealname",
+    "accountId": "company_id",
+    "amount": "amount",
+    "stage": "dealstage",
+    "expectedCloseDate": "closedate"
+  },
+  "stageMapping": {
+    "Proposal": "presentationscheduled",
+    "Negotiation": "contractsent",
+    "Closing": "closedwon"
+  }
+}
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_345678",
+    "status": "in_progress",
+    "totalRecords": 35,
+    "estimatedTimeMinutes": 4
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="migration" className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-2xl font-semibold mb-4">Migration API</h2>
+                      <p className="text-muted-foreground mb-4">
+                        The Migration API allows you to create, manage, and monitor bulk migration jobs between CRM systems.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Create Migration Job</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>POST</Badge>
+                        <span className="font-mono text-sm">/migrations</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Create a new migration job to move data between CRM systems.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Example Request
+POST /migrations
+{
+  "name": "Q3 2023 Salesforce to HubSpot Migration",
+  "source": {
+    "type": "salesforce",
+    "credentials": {
+      "apiKey": "YOUR_SALESFORCE_API_KEY"
+    }
+  },
+  "destination": {
+    "type": "hubspot",
+    "credentials": {
+      "apiKey": "YOUR_HUBSPOT_API_KEY"
+    }
+  },
+  "dataTypes": [
+    {
+      "type": "contacts",
+      "filters": {
+        "updatedAfter": "2023-01-01T00:00:00Z"
+      },
+      "fieldMapping": {
+        "firstName": "firstName",
+        "lastName": "lastName",
+        "email": "email"
+      }
+    },
+    {
+      "type": "accounts",
+      "filters": {
+        "industries": ["Technology", "Healthcare"]
+      },
+      "fieldMapping": {
+        "name": "name",
+        "industry": "industry",
+        "website": "website"
+      }
+    },
+    {
+      "type": "opportunities",
+      "filters": {
+        "minimumAmount": 10000
+      },
+      "fieldMapping": {
+        "name": "dealname",
+        "amount": "amount",
+        "stage": "dealstage"
+      }
+    }
+  ],
+  "schedule": {
+    "startNow": true
+  },
+  "options": {
+    "strategy": "full",
+    "notifyOnCompletion": true,
+    "skipDuplicates": true
+  }
+}
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_123456",
+    "name": "Q3 2023 Salesforce to HubSpot Migration",
+    "status": "scheduled",
+    "createdAt": "2023-07-15T10:30:00Z",
+    "estimatedCompletionTime": "2023-07-15T11:15:00Z"
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Example Request
+POST /migrations
+{
+  "name": "Q3 2023 Salesforce to HubSpot Migration",
+  "source": {
+    "type": "salesforce",
+    "credentials": {
+      "apiKey": "YOUR_SALESFORCE_API_KEY"
+    }
+  },
+  "destination": {
+    "type": "hubspot",
+    "credentials": {
+      "apiKey": "YOUR_HUBSPOT_API_KEY"
+    }
+  },
+  "dataTypes": [
+    {
+      "type": "contacts",
+      "filters": {
+        "updatedAfter": "2023-01-01T00:00:00Z"
+      },
+      "fieldMapping": {
+        "firstName": "firstName",
+        "lastName": "lastName",
+        "email": "email"
+      }
+    },
+    {
+      "type": "accounts",
+      "filters": {
+        "industries": ["Technology", "Healthcare"]
+      },
+      "fieldMapping": {
+        "name": "name",
+        "industry": "industry",
+        "website": "website"
+      }
+    },
+    {
+      "type": "opportunities",
+      "filters": {
+        "minimumAmount": 10000
+      },
+      "fieldMapping": {
+        "name": "dealname",
+        "amount": "amount",
+        "stage": "dealstage"
+      }
+    }
+  ],
+  "schedule": {
+    "startNow": true
+  },
+  "options": {
+    "strategy": "full",
+    "notifyOnCompletion": true,
+    "skipDuplicates": true
+  }
+}
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_123456",
+    "name": "Q3 2023 Salesforce to HubSpot Migration",
+    "status": "scheduled",
+    "createdAt": "2023-07-15T10:30:00Z",
+    "estimatedCompletionTime": "2023-07-15T11:15:00Z"
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Get Migration Status</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>GET</Badge>
+                        <span className="font-mono text-sm">/migrations/:id</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Get the current status of a migration job.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Example Request
+GET /migrations/mig_123456
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_123456",
+    "name": "Q3 2023 Salesforce to HubSpot Migration",
+    "status": "in_progress",
+    "progress": {
+      "contacts": {
+        "total": 1250,
+        "migrated": 843,
+        "failed": 12,
+        "percentage": 67.4
+      },
+      "accounts": {
+        "total": 87,
+        "migrated": 65,
+        "failed": 0,
+        "percentage": 74.7
+      },
+      "opportunities": {
+        "total": 138,
+        "migrated": 42,
+        "failed": 3,
+        "percentage": 30.4
+      },
+      "overall": {
+        "total": 1475,
+        "migrated": 950,
+        "failed": 15,
+        "percentage": 64.4
+      }
+    },
+    "startTime": "2023-07-15T10:35:12Z",
+    "estimatedCompletionTime": "2023-07-15T11:20:00Z"
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Example Request
+GET /migrations/mig_123456
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_123456",
+    "name": "Q3 2023 Salesforce to HubSpot Migration",
+    "status": "in_progress",
+    "progress": {
+      "contacts": {
+        "total": 1250,
+        "migrated": 843,
+        "failed": 12,
+        "percentage": 67.4
+      },
+      "accounts": {
+        "total": 87,
+        "migrated": 65,
+        "failed": 0,
+        "percentage": 74.7
+      },
+      "opportunities": {
+        "total": 138,
+        "migrated": 42,
+        "failed": 3,
+        "percentage": 30.4
+      },
+      "overall": {
+        "total": 1475,
+        "migrated": 950,
+        "failed": 15,
+        "percentage": 64.4
+      }
+    },
+    "startTime": "2023-07-15T10:35:12Z",
+    "estimatedCompletionTime": "2023-07-15T11:20:00Z"
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="webhooks" className="p-6">
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-2xl font-semibold mb-4">Webhooks</h2>
+                      <p className="text-muted-foreground mb-4">
+                        Set up webhooks to receive real-time notifications about migration events.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Register Webhook</h3>
+                      <div className="mb-2 flex gap-2 items-center">
+                        <Badge>POST</Badge>
+                        <span className="font-mono text-sm">/webhooks</span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">
+                        Register a new webhook endpoint to receive event notifications.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`// Example Request
+POST /webhooks
+{
+  "url": "https://your-app.example.com/webhooks/crm-migration",
+  "events": [
+    "migration.started",
+    "migration.completed",
+    "migration.failed",
+    "record.created",
+    "record.failed"
+  ],
+  "secret": "your_webhook_secret"
+}
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "webhookId": "wh_123456",
+    "url": "https://your-app.example.com/webhooks/crm-migration",
+    "events": [
+      "migration.started",
+      "migration.completed",
+      "migration.failed",
+      "record.created",
+      "record.failed"
+    ],
+    "createdAt": "2023-07-15T10:30:00Z"
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`// Example Request
+POST /webhooks
+{
+  "url": "https://your-app.example.com/webhooks/crm-migration",
+  "events": [
+    "migration.started",
+    "migration.completed",
+    "migration.failed",
+    "record.created",
+    "record.failed"
+  ],
+  "secret": "your_webhook_secret"
+}
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "webhookId": "wh_123456",
+    "url": "https://your-app.example.com/webhooks/crm-migration",
+    "events": [
+      "migration.started",
+      "migration.completed",
+      "migration.failed",
+      "record.created",
+      "record.failed"
+    ],
+    "createdAt": "2023-07-15T10:30:00Z"
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Webhook Event Format</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Example payload format for webhook events.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
+                        <pre>{`{
+  "event": "migration.completed",
+  "timestamp": "2023-07-15T11:45:00Z",
+  "data": {
+    "migrationId": "mig_123456",
+    "name": "Q3 2023 Salesforce to HubSpot Migration",
+    "source": "salesforce",
+    "destination": "hubspot",
+    "stats": {
+      "total": 1475,
+      "migrated": 1450,
+      "failed": 25,
+      "duration": "01:10:23"
+    }
+  }
+}`}</pre>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => copyToClipboard(`{
+  "event": "migration.completed",
+  "timestamp": "2023-07-15T11:45:00Z",
+  "data": {
+    "migrationId": "mig_123456",
+    "name": "Q3 2023 Salesforce to HubSpot Migration",
+    "source": "salesforce",
+    "destination": "hubspot",
+    "stats": {
+      "total": 1475,
+      "migrated": 1450,
+      "failed": 25,
+      "duration": "01:10:23"
+    }
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-medium mb-3">Webhook Security</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Every webhook request includes a signature for verification.
+                      </p>
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm">
+                        <pre>{`// The X-Signature header contains a HMAC SHA-256 hash of the request body
+// using your webhook secret as the key
+X-Signature: sha256=5257a869e7ecebeda32affa62cdca3fa51cad7e77a0e56ff536d0ce308b2cd7e
+
+// Verify the signature in your webhook handler
+const crypto = require('crypto');
+
+function verifyWebhookSignature(body, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(body))
+    .digest('hex');
+    
+  return signature === \`sha256=\${expectedSignature}\`;
+}`}</pre>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </GlassPanel>
           </div>
         </div>
       </ContentSection>
