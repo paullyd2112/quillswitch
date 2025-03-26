@@ -1,12 +1,11 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
 
 interface FeatureCardProps {
   title: string;
   description: string;
-  icon: LucideIcon;
+  icon: React.ReactNode;
   className?: string;
   iconClassName?: string;
   onClick?: () => void;
@@ -15,7 +14,7 @@ interface FeatureCardProps {
 export const FeatureCard: React.FC<FeatureCardProps> = ({
   title,
   description,
-  icon: Icon,
+  icon,
   className,
   iconClassName,
   onClick,
@@ -36,7 +35,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
             iconClassName
           )}
         >
-          <Icon size={24} strokeWidth={1.5} />
+          {icon}
         </div>
         <div className="ml-4">
           <h3 className="font-medium text-lg mb-1">{title}</h3>

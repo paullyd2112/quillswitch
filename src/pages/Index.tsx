@@ -24,18 +24,18 @@ const Index = () => {
                 CRM Migration Made Simple
               </Badge>
             </FadeIn>
-            <FadeIn delay="100">
+            <FadeIn delay={100}>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
                 Switch CRMs Without the Headache
               </h1>
             </FadeIn>
-            <FadeIn delay="200">
+            <FadeIn delay={200}>
               <p className="text-xl text-muted-foreground mb-8">
                 Painlessly migrate from Salesforce to HubSpot, or between any other CRMs, 
                 without expensive consultants or complicated processes.
               </p>
             </FadeIn>
-            <FadeIn delay="300">
+            <FadeIn delay={300}>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <Button asChild size="lg" className="gap-2">
                   <Link to="/setup">
@@ -55,28 +55,28 @@ const Index = () => {
       
       <ContentSection>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <SlideUp delay="0">
+          <SlideUp delay={0}>
             <FeatureCard
               icon={<Zap className="h-10 w-10 text-brand-500" />}
               title="Automated Mapping"
               description="Smart field mapping between different CRM systems with AI assistance"
             />
           </SlideUp>
-          <SlideUp delay="100">
+          <SlideUp delay={100}>
             <FeatureCard
               icon={<Database className="h-10 w-10 text-brand-500" />}
               title="Full Data Transfer"
               description="Move contacts, deals, tickets, and custom objects between systems"
             />
           </SlideUp>
-          <SlideUp delay="200">
+          <SlideUp delay={200}>
             <FeatureCard
               icon={<Shield className="h-10 w-10 text-brand-500" />}
               title="Data Security"
               description="Enterprise-grade security with encrypted data transfer and zero storage"
             />
           </SlideUp>
-          <SlideUp delay="300">
+          <SlideUp delay={300}>
             <FeatureCard
               icon={<Repeat className="h-10 w-10 text-brand-500" />}
               title="API-First Approach"
