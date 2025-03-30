@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -5,15 +6,26 @@ import {
   X, 
   FileText,
   Wand2,
-  BarChart2
+  BarChart2,
+  LogOut,
+  User
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -34,13 +46,21 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   
-  const navLinks = [
-    { text: "Dashboard", href: "/" },
-    { text: "API Docs", href: "/api-docs", icon: <FileText size={16} /> },
+  // Only show these links when logged in
+  const authenticatedLinks = [
+    { text: "Dashboard", href: "/migrations" },
     { text: "Setup Wizard", href: "/setup", icon: <Wand2 size={16} /> },
     { text: "Analytics", href: "/analytics", icon: <BarChart2 size={16} /> },
   ];
   
+  // Always show these links
+  const publicLinks = [
+    { text: "API Docs", href: "/api-docs", icon: <FileText size={16} /> },
+  ];
+  
+  // Determine which links to show based on authentication status
+  const navLinks = user ? [...authenticatedLinks, ...publicLinks] : publicLinks;
+
   return (
     <header
       className={cn(
@@ -77,6 +97,35 @@ const Navbar = () => {
                 </span>
               </Link>
             ))}
+
+            {!user ? (
+              <Link to="/auth">
+                <Button variant="default" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {user.email?.charAt(0).toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem className="flex items-center">
+                    <User className="mr-2 h-4 w-4" /> 
+                    {user.user_metadata?.full_name || user.email}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOut} className="flex items-center text-red-600 focus:text-red-600">
+                    <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </nav>
           
           <div className="flex md:hidden">
@@ -114,6 +163,26 @@ const Navbar = () => {
                 </span>
               </Link>
             ))}
+
+            {!user ? (
+              <Link 
+                to="/auth" 
+                className="block px-4 py-2 mt-2 text-sm bg-primary text-primary-foreground rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Sign In
+              </Link>
+            ) : (
+              <button 
+                onClick={() => {
+                  signOut();
+                  setIsMenuOpen(false);
+                }}
+                className="flex items-center w-full px-4 py-2 mt-2 text-sm text-red-600 rounded-md hover:bg-accent"
+              >
+                <LogOut className="mr-1.5 h-4 w-4" /> Sign Out
+              </button>
+            )}
           </div>
         </div>
       )}
