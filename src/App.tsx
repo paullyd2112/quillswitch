@@ -8,6 +8,7 @@ import ApiDocs from "./pages/ApiDocs";
 import SetupWizard from "./pages/SetupWizard";
 import MigrationsList from "./pages/MigrationsList";
 import MigrationDashboard from "./pages/MigrationDashboard";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/setup" element={<SetupWizard />} />
           <Route path="/migrations" element={<MigrationsList />} />
           <Route path="/migrations/:projectId" element={<MigrationDashboard />} />
+          <Route path="/analytics" element={<Analytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

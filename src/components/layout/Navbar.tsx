@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -39,6 +38,7 @@ const Navbar = () => {
     { text: "Dashboard", href: "/" },
     { text: "API Docs", href: "/api-docs", icon: <FileText size={16} /> },
     { text: "Setup Wizard", href: "/setup", icon: <Wand2 size={16} /> },
+    { text: "Analytics", href: "/analytics", icon: <BarChart2 size={16} /> },
   ];
   
   return (
@@ -77,13 +77,6 @@ const Navbar = () => {
                 </span>
               </Link>
             ))}
-            
-            <div className="pl-2">
-              <Button size="sm">
-                <BarChart2 size={16} className="mr-1.5" />
-                Analytics
-              </Button>
-            </div>
           </nav>
           
           <div className="flex md:hidden">
@@ -121,13 +114,6 @@ const Navbar = () => {
                 </span>
               </Link>
             ))}
-            
-            <div className="pt-2">
-              <Button size="sm" className="w-full justify-center">
-                <BarChart2 size={16} className="mr-1.5" />
-                Analytics
-              </Button>
-            </div>
           </div>
         </div>
       )}
