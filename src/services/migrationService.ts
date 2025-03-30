@@ -26,7 +26,7 @@ export const createMigrationProject = async (projectData: Omit<MigrationProject,
     
     if (error) throw error;
     
-    return data;
+    return data as MigrationProject;
   } catch (error: any) {
     toast({
       title: "Error creating migration project",
@@ -47,7 +47,7 @@ export const getMigrationProjects = async (): Promise<MigrationProject[]> => {
     
     if (error) throw error;
     
-    return data || [];
+    return data as MigrationProject[];
   } catch (error: any) {
     toast({
       title: "Error fetching migration projects",
@@ -69,7 +69,7 @@ export const getMigrationProject = async (id: string): Promise<MigrationProject 
     
     if (error) throw error;
     
-    return data;
+    return data as MigrationProject;
   } catch (error: any) {
     toast({
       title: "Error fetching migration project",
@@ -95,7 +95,7 @@ export const updateMigrationProject = async (id: string, updates: Partial<Migrat
     
     if (error) throw error;
     
-    return data;
+    return data as MigrationProject;
   } catch (error: any) {
     toast({
       title: "Error updating migration project",
@@ -118,7 +118,7 @@ export const getMigrationStages = async (projectId: string): Promise<MigrationSt
     
     if (error) throw error;
     
-    return data || [];
+    return data as MigrationStage[];
   } catch (error: any) {
     console.error("Error fetching migration stages:", error);
     return [];
@@ -135,7 +135,7 @@ export const createMigrationStage = async (stageData: Omit<MigrationStage, 'id'>
     
     if (error) throw error;
     
-    return data;
+    return data as MigrationStage;
   } catch (error: any) {
     console.error("Error creating migration stage:", error);
     return null;
@@ -153,7 +153,7 @@ export const updateMigrationStage = async (id: string, updates: Partial<Migratio
     
     if (error) throw error;
     
-    return data;
+    return data as MigrationStage;
   } catch (error: any) {
     console.error("Error updating migration stage:", error);
     return null;
@@ -170,7 +170,7 @@ export const getMigrationObjectTypes = async (projectId: string): Promise<Migrat
     
     if (error) throw error;
     
-    return data || [];
+    return data as MigrationObjectType[];
   } catch (error: any) {
     console.error("Error fetching migration object types:", error);
     return [];
@@ -187,7 +187,7 @@ export const createMigrationObjectType = async (objectTypeData: Omit<MigrationOb
     
     if (error) throw error;
     
-    return data;
+    return data as MigrationObjectType;
   } catch (error: any) {
     console.error("Error creating migration object type:", error);
     return null;
@@ -205,7 +205,7 @@ export const updateMigrationObjectType = async (id: string, updates: Partial<Mig
     
     if (error) throw error;
     
-    return data;
+    return data as MigrationObjectType;
   } catch (error: any) {
     console.error("Error updating migration object type:", error);
     return null;
@@ -250,7 +250,7 @@ export const getMigrationErrors = async (projectId: string): Promise<MigrationEr
 // Create a default migration project from setup wizard data
 export const createDefaultMigrationProject = async (formData: any): Promise<MigrationProject | null> => {
   try {
-    const projectData = {
+    const projectData: Omit<MigrationProject, 'id' | 'created_at' | 'updated_at' | 'user_id'> = {
       company_name: formData.companyName,
       source_crm: formData.sourceCrm,
       destination_crm: formData.destinationCrm,
@@ -258,7 +258,8 @@ export const createDefaultMigrationProject = async (formData: any): Promise<Migr
       status: 'pending' as const,
       total_objects: 0,
       migrated_objects: 0,
-      failed_objects: 0
+      failed_objects: 0,
+      completed_at: null
     };
     
     const project = await createMigrationProject(projectData);
@@ -280,7 +281,7 @@ export const createDefaultMigrationProject = async (formData: any): Promise<Migr
         project_id: project.id,
         name: stage.name,
         description: stage.description,
-        status: 'pending',
+        status: 'pending' as const,
         sequence_order: stage.sequence_order,
         started_at: null,
         completed_at: null,
@@ -309,7 +310,7 @@ export const createDefaultMigrationProject = async (formData: any): Promise<Migr
             total_records: 0,
             processed_records: 0,
             failed_records: 0,
-            status: 'pending'
+            status: 'pending' as const
           });
         }
       }

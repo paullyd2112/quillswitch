@@ -69,7 +69,9 @@ const useToast = () => {
 // This is the toast function from the shadcn/ui toast component
 // It's provided for backward compatibility, but we are using sonner for toasts
 const toast = ({ title, description, variant = "default", action }: ToastProps4) => {
+  const id = crypto.randomUUID();
   const options: SonnerToast = {
+    id,
     className: variant === "destructive" ? "destructive" : undefined,
     description,
     action,
