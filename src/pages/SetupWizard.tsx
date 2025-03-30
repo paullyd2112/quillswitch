@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -27,6 +28,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { createDefaultMigrationProject } from "@/services/migrationService";
 
 interface WizardStep {
   id: string;
@@ -36,8 +38,10 @@ interface WizardStep {
 }
 
 const SetupWizard = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     companyName: "",
     sourceCrm: "salesforce",
@@ -122,13 +126,33 @@ const SetupWizard = () => {
     }
   };
   
-  const handleSubmit = () => {
-    // In a real app, this would submit the migration configuration to the backend
-    console.log("Migration configuration:", formData);
-    toast({
-      title: "Migration Setup Complete!",
-      description: "Your CRM migration has been configured and is ready to start.",
-    });
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      // Create a migration project in Supabase and initialize tracking
+      const project = await createDefaultMigrationProject(formData);
+      
+      if (project) {
+        toast({
+          title: "Migration Setup Complete!",
+          description: "Your CRM migration has been configured and is ready to track.",
+        });
+        
+        // Redirect to the migration dashboard for the new project
+        navigate(`/migrations/${project.id}`);
+      } else {
+        throw new Error("Failed to create migration project");
+      }
+    } catch (error: any) {
+      console.error("Error setting up migration:", error);
+      toast({
+        title: "Setup Failed",
+        description: error.message || "There was an error setting up your migration. Please try again.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
   };
   
   const isStepValid = () => {
@@ -575,8 +599,21 @@ const SetupWizard = () => {
                   </SlideUp>
                   
                   <div className="mt-8">
-                    <Button className="gap-2">
-                      Start Migration <ArrowRight size={16} />
+                    <Button 
+                      className="gap-2" 
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          <span>Setting up migration...</span>
+                        </>
+                      ) : (
+                        <>
+                          Start Migration <ArrowRight size={16} />
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -588,7 +625,7 @@ const SetupWizard = () => {
             <Button
               variant="outline"
               onClick={handlePrevious}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || isSubmitting}
               className="gap-2"
             >
               <ArrowLeft size={16} /> Previous
@@ -596,7 +633,7 @@ const SetupWizard = () => {
             
             <Button
               onClick={handleNext}
-              disabled={!isStepValid()}
+              disabled={!isStepValid() || isSubmitting}
               className="gap-2"
             >
               {currentStep < steps.length - 1 ? (
