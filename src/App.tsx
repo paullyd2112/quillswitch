@@ -10,6 +10,7 @@ import MigrationsList from "./pages/MigrationsList";
 import MigrationDashboard from "./pages/MigrationDashboard";
 import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/migrations" element={<MigrationsList />} />
           <Route path="/migrations/:projectId" element={<MigrationDashboard />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
