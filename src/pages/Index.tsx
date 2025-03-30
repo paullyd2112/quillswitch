@@ -10,11 +10,8 @@ import SlideUp from "@/components/animations/SlideUp";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import FeatureCard from "@/components/ui-elements/FeatureCard";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const { user } = useAuth();
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
       <Navbar />
@@ -40,26 +37,16 @@ const Index = () => {
             </FadeIn>
             <FadeIn delay="300">
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                {user ? (
-                  <Button asChild size="lg" className="gap-2">
-                    <Link to="/migrations">
-                      Go to Dashboard <ArrowRight size={16} />
-                    </Link>
-                  </Button>
-                ) : (
-                  <>
-                    <Button asChild size="lg" className="gap-2">
-                      <Link to="/auth">
-                        Create an Account <ArrowRight size={16} />
-                      </Link>
-                    </Button>
-                    <Button asChild variant="outline" size="lg">
-                      <Link to="/api-docs">
-                        API Documentation
-                      </Link>
-                    </Button>
-                  </>
-                )}
+                <Button asChild size="lg" className="gap-2">
+                  <Link to="/setup">
+                    Start Migration <ArrowRight size={16} />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link to="/api-docs">
+                    API Documentation
+                  </Link>
+                </Button>
               </div>
             </FadeIn>
           </div>
@@ -125,13 +112,11 @@ const Index = () => {
                   <span>Preserve all your valuable customer data</span>
                 </li>
               </ul>
-              {!user && (
-                <Button asChild className="gap-2">
-                  <Link to="/auth">
-                    Create Your Account <ArrowRight size={16} />
-                  </Link>
-                </Button>
-              )}
+              <Button asChild className="gap-2">
+                <Link to="/setup">
+                  Start Your Migration <ArrowRight size={16} />
+                </Link>
+              </Button>
             </FadeIn>
           </div>
           <div>
@@ -175,19 +160,11 @@ const Index = () => {
             <p className="text-muted-foreground mb-8">
               Start your CRM migration today and experience a seamless transition without the typical headaches and costs.
             </p>
-            {user ? (
-              <Button asChild size="lg" className="gap-2">
-                <Link to="/setup">
-                  Start Your Migration <ArrowRight size={16} />
-                </Link>
-              </Button>
-            ) : (
-              <Button asChild size="lg" className="gap-2">
-                <Link to="/auth">
-                  Create Your Account <ArrowRight size={16} />
-                </Link>
-              </Button>
-            )}
+            <Button asChild size="lg" className="gap-2">
+              <Link to="/setup">
+                Start Your Migration <ArrowRight size={16} />
+              </Link>
+            </Button>
           </FadeIn>
         </div>
       </ContentSection>
