@@ -112,7 +112,7 @@ const Auth: React.FC = () => {
         
         <Card>
           <CardHeader>
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "login" | "signup")}>
+            <Tabs defaultValue={activeTab} onValueChange={(value) => setActiveTab(value as "login" | "signup")}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="signup">Create Account</TabsTrigger>
