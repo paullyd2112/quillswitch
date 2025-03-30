@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import {
   Form,
   FormControl,
@@ -102,9 +103,11 @@ const Auth: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-semibold text-xl mb-4">Q</div>
-          <h1 className="text-2xl font-bold">QuillSwitch</h1>
-          <p className="text-muted-foreground mt-2">Your data migration platform</p>
+          <Link to="/" className="inline-block">
+            <div className="mx-auto w-12 h-12 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-semibold text-xl mb-4">Q</div>
+            <h1 className="text-2xl font-bold">QuillSwitch</h1>
+            <p className="text-muted-foreground mt-2">Your data migration platform</p>
+          </Link>
         </div>
         
         <Card>
