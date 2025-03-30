@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,7 +10,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
-import { Mail, Github, Lock } from "lucide-react";
+import { Mail, Microsoft, Lock } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -104,7 +103,7 @@ const Auth = () => {
     }
   };
 
-  const handleSSOSignIn = async (provider: 'google' | 'github') => {
+  const handleSSOSignIn = async (provider: 'google' | 'microsoft' | 'yahoo') => {
     try {
       setIsLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
@@ -190,24 +189,35 @@ const Auth = () => {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-3">
                     <Button
                       variant="outline"
                       type="button"
                       onClick={() => handleSSOSignIn('google')}
                       disabled={isLoading}
                     >
-                      <Mail className="mr-2 h-4 w-4" />
-                      Google
+                      <Mail className="h-4 w-4" />
+                      <span className="sr-only">Google</span>
                     </Button>
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('github')}
+                      onClick={() => handleSSOSignIn('microsoft')}
                       disabled={isLoading}
                     >
-                      <Github className="mr-2 h-4 w-4" />
-                      GitHub
+                      <Microsoft className="h-4 w-4" />
+                      <span className="sr-only">Microsoft</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      type="button"
+                      onClick={() => handleSSOSignIn('yahoo')}
+                      disabled={isLoading}
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13.5,2.3c0.7,0.9,2.6,3.9,4.6,8.6c2.3,5.4,4,11.4,4.1,11.6l0.1,0.2h-3.7L18.3,22c-0.2-1-1.2-4.2-3-8.8C13,8.1,11.3,5,11.3,5h0c0,0-2,4.5-3.4,8C6,17,4.6,22,4.6,22H1l0.1-0.2C1.1,21.7,3,15.4,5.7,9.1c2-4.8,3.5-6.8,4.2-7.6c-1,0.1-2.3,0.1-3.5,0.1c-1.8,0-2.7-0.1-5.1-0.3l0-2.9C4.9,0,7,1.2,9,1.2c0.8,0,1.8-0.1,2.7-0.4c0.2-0.1,0.5-0.2,0.7-0.3C12.7,0.4,13,0.3,13.1,0.2C13.3,0.1,13.7,0,14,0h0c0.2,0,0.3,0.1,0.5,0.1l0,0c0.4,0.2,0.5,0.3,0.5,0.3l0,0.5c0,0.1,0,0.2-0.1,0.3c-0.3,0.5-0.7,0.8-1.5,1.1L13.5,2.3z" />
+                      </svg>
+                      <span className="sr-only">Yahoo</span>
                     </Button>
                   </div>
                 </form>
@@ -273,24 +283,35 @@ const Auth = () => {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-3">
                     <Button
                       variant="outline"
                       type="button"
                       onClick={() => handleSSOSignIn('google')}
                       disabled={isLoading}
                     >
-                      <Mail className="mr-2 h-4 w-4" />
-                      Google
+                      <Mail className="h-4 w-4" />
+                      <span className="sr-only">Google</span>
                     </Button>
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('github')}
+                      onClick={() => handleSSOSignIn('microsoft')}
                       disabled={isLoading}
                     >
-                      <Github className="mr-2 h-4 w-4" />
-                      GitHub
+                      <Microsoft className="h-4 w-4" />
+                      <span className="sr-only">Microsoft</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      type="button"
+                      onClick={() => handleSSOSignIn('yahoo')}
+                      disabled={isLoading}
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13.5,2.3c0.7,0.9,2.6,3.9,4.6,8.6c2.3,5.4,4,11.4,4.1,11.6l0.1,0.2h-3.7L18.3,22c-0.2-1-1.2-4.2-3-8.8C13,8.1,11.3,5,11.3,5h0c0,0-2,4.5-3.4,8C6,17,4.6,22,4.6,22H1l0.1-0.2C1.1,21.7,3,15.4,5.7,9.1c2-4.8,3.5-6.8,4.2-7.6c-1,0.1-2.3,0.1-3.5,0.1c-1.8,0-2.7-0.1-5.1-0.3l0-2.9C4.9,0,7,1.2,9,1.2c0.8,0,1.8-0.1,2.7-0.4c0.2-0.1,0.5-0.2,0.7-0.3C12.7,0.4,13,0.3,13.1,0.2C13.3,0.1,13.7,0,14,0h0c0.2,0,0.3,0.1,0.5,0.1l0,0c0.4,0.2,0.5,0.3,0.5,0.3l0,0.5c0,0.1,0,0.2-0.1,0.3c-0.3,0.5-0.7,0.8-1.5,1.1L13.5,2.3z" />
+                      </svg>
+                      <span className="sr-only">Yahoo</span>
                     </Button>
                   </div>
                 </form>
