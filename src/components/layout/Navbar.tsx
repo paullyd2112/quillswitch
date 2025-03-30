@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -5,7 +6,8 @@ import {
   X, 
   FileText,
   Wand2,
-  BarChart2
+  BarChart2,
+  UserPlus
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -79,15 +81,24 @@ const Navbar = () => {
             ))}
           </nav>
           
-          <div className="flex md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleMenu}
-              aria-label="Toggle Menu"
-            >
-              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </Button>
+          <div className="flex items-center gap-2">
+            <Link to="/auth">
+              <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1.5">
+                <UserPlus size={16} />
+                <span>Create Account</span>
+              </Button>
+            </Link>
+            
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMenu}
+                aria-label="Toggle Menu"
+              >
+                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -114,6 +125,17 @@ const Navbar = () => {
                 </span>
               </Link>
             ))}
+            
+            <Link
+              to="/auth"
+              className="block px-4 py-2 text-sm rounded-md transition-colors text-brand-600 dark:text-brand-400 hover:bg-accent"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <span className="flex items-center">
+                <span className="mr-1.5"><UserPlus size={16} /></span>
+                Create Account
+              </span>
+            </Link>
           </div>
         </div>
       )}
