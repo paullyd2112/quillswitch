@@ -7,7 +7,7 @@ import {
   FileText,
   Wand2,
   BarChart2,
-  UserPlus,
+  LogIn,
   User,
   Info,
   LayoutDashboard,
@@ -164,8 +164,8 @@ const Navbar = () => {
             ) : (
               <Link to="/auth">
                 <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1.5">
-                  <UserPlus size={16} />
-                  <span>Create Account</span>
+                  <LogIn size={16} />
+                  <span>Login / Signup</span>
                 </Button>
               </Link>
             )}
@@ -252,8 +252,8 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="flex items-center">
-                  <span className="mr-1.5"><UserPlus size={16} /></span>
-                  Create Account
+                  <span className="mr-1.5"><LogIn size={16} /></span>
+                  Login / Signup
                 </span>
               </Link>
             )}
