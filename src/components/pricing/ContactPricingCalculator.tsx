@@ -1,9 +1,9 @@
-
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Calculator, Users } from "lucide-react";
 import PricingEstimate from "./PricingEstimate";
 import { PricingTier, calculatePricing } from "./pricingUtils";
