@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, Database, FileJson, Key, CheckCircle, XCircle } from "lucide-react";
@@ -859,3 +860,46 @@ POST /opportunities/migrate
     "minimumAmount": 10000
   },
   "fieldMapping": {
+    "name": "dealname",
+    "accountId": "company_id",
+    "amount": "amount",
+    "stage": "dealstage",
+    "expectedCloseDate": "closedate"
+  },
+  "stageMapping": {
+    "Proposal": "presentationscheduled",
+    "Negotiation": "contractsent",
+    "Closing": "closedwon"
+  }
+}
+
+// Example Response
+{
+  "success": true,
+  "data": {
+    "migrationId": "mig_345678",
+    "status": "in_progress",
+    "totalRecords": 35,
+    "estimatedTimeMinutes": 4
+  }
+}`)}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                {renderApiTestSection()}
+                
+              </Tabs>
+            </GlassPanel>
+          </div>
+        </div>
+      </ContentSection>
+    </div>
+  );
+};
+
+export default ApiDocs;
