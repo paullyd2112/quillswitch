@@ -3,14 +3,14 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Calculator } from "lucide-react";
+import { Calculator, Users } from "lucide-react";
 import PricingEstimate from "./PricingEstimate";
 import { PricingTier, calculatePricing } from "./pricingUtils";
 
-const PricingCalculator: React.FC = () => {
+const ContactPricingCalculator: React.FC = () => {
+  const [userCount, setUserCount] = useState<number>(100);
+  const [averageContactsPerUser, setAverageContactsPerUser] = useState<number>(50);
   const [recordCount, setRecordCount] = useState<number>(5000);
   const [integrationCount, setIntegrationCount] = useState<number>(1);
   const [transformationCount, setTransformationCount] = useState<number>(10);
@@ -19,15 +19,24 @@ const PricingCalculator: React.FC = () => {
   const [tier, setTier] = useState<PricingTier>("quickStart");
   const [showEstimate, setShowEstimate] = useState<boolean>(false);
 
-  const handleCalculate = () => {
-    setShowEstimate(true);
+  const calculateEstimatedContacts = () => {
+    const estimate = userCount * averageContactsPerUser;
+    setRecordCount(estimate);
+    
+    // Adjust tier based on estimated contact count
+    if (estimate <= 10000) {
+      setTier("quickStart");
+    } else if (estimate <= 50000) {
+      setTier("scaleUp");
+    } else {
+      setTier("fullPower");
+    }
   };
 
-  const tierOptions = [
-    { value: "quickStart", label: "Quick Start (SMB: 1,000-10,000 records)" },
-    { value: "scaleUp", label: "Scale Up (Mid-Market: 10,000-50,000 records)" },
-    { value: "fullPower", label: "Full Power (Enterprise: 50,000+ records)" },
-  ];
+  const handleCalculate = () => {
+    calculateEstimatedContacts();
+    setShowEstimate(true);
+  };
 
   const pricing = calculatePricing({
     recordCount,
@@ -43,48 +52,41 @@ const PricingCalculator: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Record-Based Calculator</h2>
-            <p className="text-sm text-muted-foreground">Calculate costs based on your record count</p>
+            <h2 className="text-2xl font-bold">User-Based Calculator</h2>
+            <p className="text-sm text-muted-foreground">Estimate migration costs based on your user count</p>
           </div>
-          <Calculator className="h-6 w-6 text-primary" />
+          <Users className="h-6 w-6 text-primary" />
         </div>
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="tier">Select Your Business Scale</Label>
-            <Select 
-              value={tier} 
-              onValueChange={(value: PricingTier) => {
-                setTier(value);
-                // Adjust record count based on tier selection
-                if (value === "quickStart" && recordCount > 10000) setRecordCount(5000);
-                if (value === "scaleUp" && (recordCount < 10000 || recordCount > 50000)) setRecordCount(30000);
-                if (value === "fullPower" && recordCount < 50000) setRecordCount(100000);
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select your business scale" />
-              </SelectTrigger>
-              <SelectContent>
-                {tierOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="userCount">Number of users on your platform</Label>
+            <Input
+              id="userCount"
+              type="number"
+              min={1}
+              value={userCount}
+              onChange={(e) => setUserCount(parseInt(e.target.value) || 0)}
+              className="mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Total number of customers using your platform
+            </p>
           </div>
 
           <div>
-            <Label htmlFor="records">Number of Records</Label>
+            <Label htmlFor="contactsPerUser">Average contacts per user</Label>
             <Input
-              id="records"
+              id="contactsPerUser"
               type="number"
               min={1}
-              value={recordCount}
-              onChange={(e) => setRecordCount(parseInt(e.target.value) || 0)}
+              value={averageContactsPerUser}
+              onChange={(e) => setAverageContactsPerUser(parseInt(e.target.value) || 0)}
               className="mt-1"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              Average number of contacts each user maintains
+            </p>
           </div>
 
           <div>
@@ -135,21 +137,28 @@ const PricingCalculator: React.FC = () => {
         </div>
 
         {showEstimate && (
-          <PricingEstimate 
-            pricing={pricing} 
-            inputs={{
-              recordCount,
-              integrationCount,
-              transformationCount,
-              includeValidation,
-              includeRollback,
-              tier
-            }}
-          />
+          <div className="mt-6">
+            <div className="bg-muted/40 p-4 rounded-md text-center mb-6">
+              <p className="text-sm">Estimated Records:</p>
+              <p className="text-xl font-bold">{recordCount.toLocaleString()}</p>
+            </div>
+            
+            <PricingEstimate 
+              pricing={pricing} 
+              inputs={{
+                recordCount,
+                integrationCount,
+                transformationCount,
+                includeValidation,
+                includeRollback,
+                tier
+              }}
+            />
+          </div>
         )}
       </div>
     </Card>
   );
 };
 
-export default PricingCalculator;
+export default ContactPricingCalculator;

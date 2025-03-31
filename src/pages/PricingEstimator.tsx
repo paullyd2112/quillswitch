@@ -1,10 +1,14 @@
 
-import React from "react";
+import React, { useState } from "react";
 import PricingCalculator from "@/components/pricing/PricingCalculator";
+import ContactPricingCalculator from "@/components/pricing/ContactPricingCalculator";
 import { Card } from "@/components/ui/card";
-import { Calculator, DollarSign } from "lucide-react";
+import { Calculator, DollarSign, Users } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const PricingEstimator: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>("record-based");
+  
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="max-w-4xl mx-auto space-y-12">
@@ -43,7 +47,30 @@ const PricingEstimator: React.FC = () => {
           </Card>
         </div>
 
-        <PricingCalculator />
+        <Tabs
+          defaultValue="record-based"
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          <TabsList className="grid grid-cols-2 mb-8">
+            <TabsTrigger value="record-based" className="flex items-center gap-2">
+              <Calculator className="h-4 w-4" />
+              <span>Record-Based Calculator</span>
+            </TabsTrigger>
+            <TabsTrigger value="user-based" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span>User-Based Calculator</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="record-based">
+            <PricingCalculator />
+          </TabsContent>
+          <TabsContent value="user-based">
+            <ContactPricingCalculator />
+          </TabsContent>
+        </Tabs>
 
         <div className="bg-muted/30 p-6 rounded-lg">
           <h3 className="font-medium mb-2">Why Choose Our Pricing Model?</h3>
