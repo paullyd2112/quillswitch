@@ -5,7 +5,6 @@ import ContentSection from "@/components/layout/ContentSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   Info, 
-  HelpCircle, 
   BookOpen, 
   MessageCircle 
 } from "lucide-react";
@@ -44,12 +43,6 @@ const Resources = () => {
               description="Access our comprehensive collection of articles, guides, and documentation to better understand migration concepts and platform features."
               linkHref="/knowledge-base"
               linkText="Browse Knowledge Base"
-            />
-            
-            <ResourceCard
-              icon={HelpCircle}
-              title="Tutorials and Guides"
-              description="Step-by-step instructions to help you make the most of QuillSwitch, from initial setup to advanced migration scenarios."
             />
 
             <ResourceCard
