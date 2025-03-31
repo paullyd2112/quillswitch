@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
 import { CategoryType } from "./knowledgeBaseData";
+import { Link } from "react-router-dom";
 
 interface KnowledgeBaseCategoryProps {
   category: CategoryType;
@@ -27,13 +28,13 @@ const KnowledgeBaseCategory: React.FC<KnowledgeBaseCategoryProps> = ({
               <ul className="space-y-1.5">
                 {subcategory.articles.map((article, i) => (
                   <li key={i}>
-                    <a 
-                      href={`/knowledge-base/${category.id}/${subcategory.id}/${article.id}`}
+                    <Link 
+                      to={`/knowledge-base/${category.id}/${subcategory.id}/${article.id}`}
                       className="text-muted-foreground hover:text-foreground flex items-center group"
                     >
                       <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-brand-500 transition-colors mr-1 flex-shrink-0" />
                       <span className="group-hover:text-brand-500 transition-colors">{article.title}</span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

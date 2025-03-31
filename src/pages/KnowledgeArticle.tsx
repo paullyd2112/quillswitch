@@ -34,21 +34,6 @@ const KnowledgeArticle = () => {
     const foundArticle = subcategory.articles.find(a => a.id === articleId);
     if (!foundArticle) return;
     
-    // For now, we'll create some placeholder content since we don't have actual content in our data
-    const placeholderContent = `
-      <h1>${foundArticle.title}</h1>
-      <p>This is a placeholder for the article content. In a real application, this would contain the full text of the article "${foundArticle.title}".</p>
-      <p>The content would include detailed information, step-by-step instructions, screenshots, and other helpful resources related to ${foundArticle.title}.</p>
-      <h2>Key Points</h2>
-      <ul>
-        <li>Important point 1 about ${foundArticle.title}</li>
-        <li>Important point 2 about ${foundArticle.title}</li>
-        <li>Important point 3 about ${foundArticle.title}</li>
-      </ul>
-      <h2>Additional Information</h2>
-      <p>More details would be provided here, along with relevant examples and use cases.</p>
-    `;
-    
     // Find some related articles from the same subcategory
     const relatedArticles = subcategory.articles
       .filter(a => a.id !== articleId)
@@ -56,7 +41,7 @@ const KnowledgeArticle = () => {
     
     setArticle({
       title: foundArticle.title,
-      content: placeholderContent,
+      content: foundArticle.content || `<p>Content for "${foundArticle.title}" is not available yet.</p>`,
       categoryName: category.title,
       subcategoryName: subcategory.title,
       relatedArticles
@@ -91,16 +76,16 @@ const KnowledgeArticle = () => {
         <ContentSection>
           <div className="max-w-4xl mx-auto">
             {/* Breadcrumbs */}
-            <div className="flex items-center text-sm mb-6">
+            <div className="flex items-center text-sm mb-6 flex-wrap">
               <Link to="/knowledge-base" className="text-muted-foreground hover:text-foreground">
                 Knowledge Base
               </Link>
               <ChevronRight className="h-4 w-4 mx-1 text-muted-foreground" />
-              <Link to={`/knowledge-base/${categoryId}`} className="text-muted-foreground hover:text-foreground">
+              <Link to={`/knowledge-base`} className="text-muted-foreground hover:text-foreground">
                 {article.categoryName}
               </Link>
               <ChevronRight className="h-4 w-4 mx-1 text-muted-foreground" />
-              <Link to={`/knowledge-base/${categoryId}/${subcategoryId}`} className="text-muted-foreground hover:text-foreground">
+              <Link to={`/knowledge-base`} className="text-muted-foreground hover:text-foreground">
                 {article.subcategoryName}
               </Link>
               <ChevronRight className="h-4 w-4 mx-1 text-muted-foreground" />
@@ -122,8 +107,12 @@ const KnowledgeArticle = () => {
             
             {/* Main article */}
             <Card className="mb-8">
-              <CardContent className="p-6 prose max-w-none dark:prose-invert">
-                <div dangerouslySetInnerHTML={{ __html: article.content }} />
+              <CardContent className="p-6 prose max-w-none dark:prose-invert prose-headings:scroll-mt-20">
+                <h1 className="text-3xl font-bold mb-6">{article.title}</h1>
+                <div 
+                  className="prose-p:my-4 prose-strong:font-semibold prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic" 
+                  dangerouslySetInnerHTML={{ __html: article.content }} 
+                />
               </CardContent>
             </Card>
             
