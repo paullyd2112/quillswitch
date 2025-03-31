@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
-import { Mail, Microsoft, Lock } from "lucide-react";
+import { Mail, Globe, Lock } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ const Auth = () => {
     }
   };
 
-  const handleSSOSignIn = async (provider: 'google' | 'microsoft' | 'yahoo') => {
+  const handleSSOSignIn = async (provider: 'google' | 'azure' | 'yahoo') => {
     try {
       setIsLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
@@ -202,10 +202,10 @@ const Auth = () => {
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('microsoft')}
+                      onClick={() => handleSSOSignIn('azure')}
                       disabled={isLoading}
                     >
-                      <Microsoft className="h-4 w-4" />
+                      <Globe className="h-4 w-4" />
                       <span className="sr-only">Microsoft</span>
                     </Button>
                     <Button
@@ -296,10 +296,10 @@ const Auth = () => {
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('microsoft')}
+                      onClick={() => handleSSOSignIn('azure')}
                       disabled={isLoading}
                     >
-                      <Microsoft className="h-4 w-4" />
+                      <Globe className="h-4 w-4" />
                       <span className="sr-only">Microsoft</span>
                     </Button>
                     <Button
