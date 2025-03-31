@@ -29,7 +29,7 @@ const About = () => {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Our Story</h3>
                 <p className="text-muted-foreground">
-                  We felt trapped and disappointed. Like many businesses, we were promised a smooth, strategic CRM upgrade. 
+                  Founded in 2025, we felt trapped and disappointed. Like many businesses, we were promised a smooth, strategic CRM upgrade. 
                   Instead, we found ourselves navigating treacherous waters, drowning in the frustrating inefficiency of 
                   exorbitant consultant fees and labyrinthine managed service packages. What should have been a step forward 
                   became a costly, draining ordeal, a financial shipwreck of our strategic vision. We knew there had to be 
