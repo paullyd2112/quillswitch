@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import ResourceCard from "@/components/resources/ResourceCard";
 import FaqSection from "@/components/resources/FaqSection";
+import { Link } from "react-router-dom";
 
 const Resources = () => {
   return (
@@ -41,6 +42,8 @@ const Resources = () => {
               icon={BookOpen}
               title="Knowledge Base"
               description="Access our comprehensive collection of articles, guides, and documentation to better understand migration concepts and platform features."
+              linkHref="/knowledge-base"
+              linkText="Browse Knowledge Base"
             />
             
             <ResourceCard

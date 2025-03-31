@@ -16,6 +16,8 @@ import About from "./pages/About";
 import Reports from "./pages/Reports";
 import Resources from "./pages/Resources";
 import Settings from "./pages/Settings";
+import KnowledgeBase from "./pages/KnowledgeBase";
+import KnowledgeArticle from "./pages/KnowledgeArticle";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,8 @@ const App = () => (
           <Route path="/reports" element={<Reports />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/knowledge-base" element={<KnowledgeBase />} />
+          <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
