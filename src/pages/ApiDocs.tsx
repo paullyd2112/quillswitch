@@ -1,7 +1,6 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Database, FileJson, Key } from "lucide-react";
+import { Copy, Database, FileJson, Key, CheckCircle, XCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
@@ -10,10 +9,19 @@ import SlideUp from "@/components/animations/SlideUp";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/services/migration/apiClient";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const ApiDocs = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
+  const [testApiKey, setTestApiKey] = useState("demo_api_key_123456");
+  const [apiTestResult, setApiTestResult] = useState<{
+    success: boolean;
+    message: string;
+    data?: any;
+  } | null>(null);
+  const [isTestingApi, setIsTestingApi] = useState(false);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -21,6 +29,90 @@ const ApiDocs = () => {
       title: "Copied to clipboard",
       description: "The code has been copied to your clipboard.",
     });
+  };
+
+  const testApiConnection = async () => {
+    setIsTestingApi(true);
+    setApiTestResult(null);
+    
+    try {
+      // Set the API key for testing
+      apiClient.setApiKey(testApiKey);
+      
+      // Test the sources endpoint
+      const result = await apiClient.getSources();
+      
+      setApiTestResult({
+        success: true,
+        message: "API connection successful!",
+        data: result
+      });
+    } catch (error: any) {
+      setApiTestResult({
+        success: false,
+        message: `API connection failed: ${error.message}`
+      });
+    } finally {
+      setIsTestingApi(false);
+    }
+  };
+
+  const renderApiTestSection = () => {
+    return (
+      <TabsContent value="api-test" className="p-6">
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">API Connection Test</h2>
+            <p className="text-muted-foreground mb-4">
+              Test your API connection using the form below. This will make a real API call to verify that everything is working.
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="api-key" className="block text-sm font-medium mb-1">API Key</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  id="api-key" 
+                  value={testApiKey}
+                  onChange={(e) => setTestApiKey(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-input bg-background rounded-md text-sm"
+                  placeholder="Enter your API key"
+                />
+                <Button onClick={testApiConnection} disabled={isTestingApi}>
+                  {isTestingApi ? "Testing..." : "Test Connection"}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Default demo key: demo_api_key_123456
+              </p>
+            </div>
+            
+            {apiTestResult && (
+              <Alert variant={apiTestResult.success ? "default" : "destructive"}>
+                {apiTestResult.success ? (
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                ) : (
+                  <XCircle className="h-4 w-4 mr-2" />
+                )}
+                <AlertTitle>{apiTestResult.success ? "Success" : "Error"}</AlertTitle>
+                <AlertDescription>
+                  {apiTestResult.message}
+                  {apiTestResult.success && apiTestResult.data && (
+                    <div className="mt-2">
+                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-xs max-h-60 overflow-auto">
+                        <pre>{JSON.stringify(apiTestResult.data, null, 2)}</pre>
+                      </div>
+                    </div>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </div>
+      </TabsContent>
+    );
   };
 
   return (
@@ -119,6 +211,15 @@ const ApiDocs = () => {
                       Webhooks
                     </Button>
                   </li>
+                  <li>
+                    <Button
+                      variant={activeTab === "api-test" ? "secondary" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveTab("api-test")}
+                    >
+                      Test API
+                    </Button>
+                  </li>
                 </ul>
               </div>
             </GlassPanel>
@@ -135,6 +236,7 @@ const ApiDocs = () => {
                   <TabsTrigger value="opportunities">Opportunities</TabsTrigger>
                   <TabsTrigger value="migration">Migration</TabsTrigger>
                   <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+                  <TabsTrigger value="api-test">Test API</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="overview" className="p-6">
@@ -757,481 +859,3 @@ POST /opportunities/migrate
     "minimumAmount": 10000
   },
   "fieldMapping": {
-    "name": "dealname",
-    "accountId": "company_id",
-    "amount": "amount",
-    "stage": "dealstage",
-    "expectedCloseDate": "closedate"
-  },
-  "stageMapping": {
-    "Proposal": "presentationscheduled",
-    "Negotiation": "contractsent",
-    "Closing": "closedwon"
-  }
-}
-
-// Example Response
-{
-  "success": true,
-  "data": {
-    "migrationId": "mig_345678",
-    "status": "in_progress",
-    "totalRecords": 35,
-    "estimatedTimeMinutes": 4
-  }
-}`)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="migration" className="p-6">
-                  <div className="space-y-6">
-                    <div>
-                      <h2 className="text-2xl font-semibold mb-4">Migration API</h2>
-                      <p className="text-muted-foreground mb-4">
-                        The Migration API allows you to create, manage, and monitor bulk migration jobs between CRM systems.
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-xl font-medium mb-3">Create Migration Job</h3>
-                      <div className="mb-2 flex gap-2 items-center">
-                        <Badge>POST</Badge>
-                        <span className="font-mono text-sm">/migrations</span>
-                      </div>
-                      <p className="text-muted-foreground mb-4">
-                        Create a new migration job to move data between CRM systems.
-                      </p>
-                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
-                        <pre>{`// Example Request
-POST /migrations
-{
-  "name": "Q3 2023 Salesforce to HubSpot Migration",
-  "source": {
-    "type": "salesforce",
-    "credentials": {
-      "apiKey": "YOUR_SALESFORCE_API_KEY"
-    }
-  },
-  "destination": {
-    "type": "hubspot",
-    "credentials": {
-      "apiKey": "YOUR_HUBSPOT_API_KEY"
-    }
-  },
-  "dataTypes": [
-    {
-      "type": "contacts",
-      "filters": {
-        "updatedAfter": "2023-01-01T00:00:00Z"
-      },
-      "fieldMapping": {
-        "firstName": "firstName",
-        "lastName": "lastName",
-        "email": "email"
-      }
-    },
-    {
-      "type": "accounts",
-      "filters": {
-        "industries": ["Technology", "Healthcare"]
-      },
-      "fieldMapping": {
-        "name": "name",
-        "industry": "industry",
-        "website": "website"
-      }
-    },
-    {
-      "type": "opportunities",
-      "filters": {
-        "minimumAmount": 10000
-      },
-      "fieldMapping": {
-        "name": "dealname",
-        "amount": "amount",
-        "stage": "dealstage"
-      }
-    }
-  ],
-  "schedule": {
-    "startNow": true
-  },
-  "options": {
-    "strategy": "full",
-    "notifyOnCompletion": true,
-    "skipDuplicates": true
-  }
-}
-
-// Example Response
-{
-  "success": true,
-  "data": {
-    "migrationId": "mig_123456",
-    "name": "Q3 2023 Salesforce to HubSpot Migration",
-    "status": "scheduled",
-    "createdAt": "2023-07-15T10:30:00Z",
-    "estimatedCompletionTime": "2023-07-15T11:15:00Z"
-  }
-}`}</pre>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => copyToClipboard(`// Example Request
-POST /migrations
-{
-  "name": "Q3 2023 Salesforce to HubSpot Migration",
-  "source": {
-    "type": "salesforce",
-    "credentials": {
-      "apiKey": "YOUR_SALESFORCE_API_KEY"
-    }
-  },
-  "destination": {
-    "type": "hubspot",
-    "credentials": {
-      "apiKey": "YOUR_HUBSPOT_API_KEY"
-    }
-  },
-  "dataTypes": [
-    {
-      "type": "contacts",
-      "filters": {
-        "updatedAfter": "2023-01-01T00:00:00Z"
-      },
-      "fieldMapping": {
-        "firstName": "firstName",
-        "lastName": "lastName",
-        "email": "email"
-      }
-    },
-    {
-      "type": "accounts",
-      "filters": {
-        "industries": ["Technology", "Healthcare"]
-      },
-      "fieldMapping": {
-        "name": "name",
-        "industry": "industry",
-        "website": "website"
-      }
-    },
-    {
-      "type": "opportunities",
-      "filters": {
-        "minimumAmount": 10000
-      },
-      "fieldMapping": {
-        "name": "dealname",
-        "amount": "amount",
-        "stage": "dealstage"
-      }
-    }
-  ],
-  "schedule": {
-    "startNow": true
-  },
-  "options": {
-    "strategy": "full",
-    "notifyOnCompletion": true,
-    "skipDuplicates": true
-  }
-}
-
-// Example Response
-{
-  "success": true,
-  "data": {
-    "migrationId": "mig_123456",
-    "name": "Q3 2023 Salesforce to HubSpot Migration",
-    "status": "scheduled",
-    "createdAt": "2023-07-15T10:30:00Z",
-    "estimatedCompletionTime": "2023-07-15T11:15:00Z"
-  }
-}`)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-xl font-medium mb-3">Get Migration Status</h3>
-                      <div className="mb-2 flex gap-2 items-center">
-                        <Badge>GET</Badge>
-                        <span className="font-mono text-sm">/migrations/:id</span>
-                      </div>
-                      <p className="text-muted-foreground mb-4">
-                        Get the current status of a migration job.
-                      </p>
-                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
-                        <pre>{`// Example Request
-GET /migrations/mig_123456
-
-// Example Response
-{
-  "success": true,
-  "data": {
-    "migrationId": "mig_123456",
-    "name": "Q3 2023 Salesforce to HubSpot Migration",
-    "status": "in_progress",
-    "progress": {
-      "contacts": {
-        "total": 1250,
-        "migrated": 843,
-        "failed": 12,
-        "percentage": 67.4
-      },
-      "accounts": {
-        "total": 87,
-        "migrated": 65,
-        "failed": 0,
-        "percentage": 74.7
-      },
-      "opportunities": {
-        "total": 138,
-        "migrated": 42,
-        "failed": 3,
-        "percentage": 30.4
-      },
-      "overall": {
-        "total": 1475,
-        "migrated": 950,
-        "failed": 15,
-        "percentage": 64.4
-      }
-    },
-    "startTime": "2023-07-15T10:35:12Z",
-    "estimatedCompletionTime": "2023-07-15T11:20:00Z"
-  }
-}`}</pre>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => copyToClipboard(`// Example Request
-GET /migrations/mig_123456
-
-// Example Response
-{
-  "success": true,
-  "data": {
-    "migrationId": "mig_123456",
-    "name": "Q3 2023 Salesforce to HubSpot Migration",
-    "status": "in_progress",
-    "progress": {
-      "contacts": {
-        "total": 1250,
-        "migrated": 843,
-        "failed": 12,
-        "percentage": 67.4
-      },
-      "accounts": {
-        "total": 87,
-        "migrated": 65,
-        "failed": 0,
-        "percentage": 74.7
-      },
-      "opportunities": {
-        "total": 138,
-        "migrated": 42,
-        "failed": 3,
-        "percentage": 30.4
-      },
-      "overall": {
-        "total": 1475,
-        "migrated": 950,
-        "failed": 15,
-        "percentage": 64.4
-      }
-    },
-    "startTime": "2023-07-15T10:35:12Z",
-    "estimatedCompletionTime": "2023-07-15T11:20:00Z"
-  }
-}`)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="webhooks" className="p-6">
-                  <div className="space-y-6">
-                    <div>
-                      <h2 className="text-2xl font-semibold mb-4">Webhooks</h2>
-                      <p className="text-muted-foreground mb-4">
-                        Set up webhooks to receive real-time notifications about migration events.
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-xl font-medium mb-3">Register Webhook</h3>
-                      <div className="mb-2 flex gap-2 items-center">
-                        <Badge>POST</Badge>
-                        <span className="font-mono text-sm">/webhooks</span>
-                      </div>
-                      <p className="text-muted-foreground mb-4">
-                        Register a new webhook endpoint to receive event notifications.
-                      </p>
-                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
-                        <pre>{`// Example Request
-POST /webhooks
-{
-  "url": "https://your-app.example.com/webhooks/crm-migration",
-  "events": [
-    "migration.started",
-    "migration.completed",
-    "migration.failed",
-    "record.created",
-    "record.failed"
-  ],
-  "secret": "your_webhook_secret"
-}
-
-// Example Response
-{
-  "success": true,
-  "data": {
-    "webhookId": "wh_123456",
-    "url": "https://your-app.example.com/webhooks/crm-migration",
-    "events": [
-      "migration.started",
-      "migration.completed",
-      "migration.failed",
-      "record.created",
-      "record.failed"
-    ],
-    "createdAt": "2023-07-15T10:30:00Z"
-  }
-}`}</pre>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => copyToClipboard(`// Example Request
-POST /webhooks
-{
-  "url": "https://your-app.example.com/webhooks/crm-migration",
-  "events": [
-    "migration.started",
-    "migration.completed",
-    "migration.failed",
-    "record.created",
-    "record.failed"
-  ],
-  "secret": "your_webhook_secret"
-}
-
-// Example Response
-{
-  "success": true,
-  "data": {
-    "webhookId": "wh_123456",
-    "url": "https://your-app.example.com/webhooks/crm-migration",
-    "events": [
-      "migration.started",
-      "migration.completed",
-      "migration.failed",
-      "record.created",
-      "record.failed"
-    ],
-    "createdAt": "2023-07-15T10:30:00Z"
-  }
-}`)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-xl font-medium mb-3">Webhook Event Format</h3>
-                      <p className="text-muted-foreground mb-4">
-                        Example payload format for webhook events.
-                      </p>
-                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm relative group">
-                        <pre>{`{
-  "event": "migration.completed",
-  "timestamp": "2023-07-15T11:45:00Z",
-  "data": {
-    "migrationId": "mig_123456",
-    "name": "Q3 2023 Salesforce to HubSpot Migration",
-    "source": "salesforce",
-    "destination": "hubspot",
-    "stats": {
-      "total": 1475,
-      "migrated": 1450,
-      "failed": 25,
-      "duration": "01:10:23"
-    }
-  }
-}`}</pre>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => copyToClipboard(`{
-  "event": "migration.completed",
-  "timestamp": "2023-07-15T11:45:00Z",
-  "data": {
-    "migrationId": "mig_123456",
-    "name": "Q3 2023 Salesforce to HubSpot Migration",
-    "source": "salesforce",
-    "destination": "hubspot",
-    "stats": {
-      "total": 1475,
-      "migrated": 1450,
-      "failed": 25,
-      "duration": "01:10:23"
-    }
-  }
-}`)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-xl font-medium mb-3">Webhook Security</h3>
-                      <p className="text-muted-foreground mb-4">
-                        Every webhook request includes a signature for verification.
-                      </p>
-                      <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-md font-mono text-sm">
-                        <pre>{`// The X-Signature header contains a HMAC SHA-256 hash of the request body
-// using your webhook secret as the key
-X-Signature: sha256=5257a869e7ecebeda32affa62cdca3fa51cad7e77a0e56ff536d0ce308b2cd7e
-
-// Verify the signature in your webhook handler
-const crypto = require('crypto');
-
-function verifyWebhookSignature(body, signature, secret) {
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(JSON.stringify(body))
-    .digest('hex');
-    
-  return signature === \`sha256=\${expectedSignature}\`;
-}`}</pre>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </GlassPanel>
-          </div>
-        </div>
-      </ContentSection>
-    </div>
-  );
-};
-
-export default ApiDocs;
