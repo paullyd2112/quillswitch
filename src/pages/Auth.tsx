@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
 import { Mail, Globe, Lock } from "lucide-react";
+import { Provider } from "@supabase/supabase-js";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -103,7 +104,8 @@ const Auth = () => {
     }
   };
 
-  const handleSSOSignIn = async (provider: 'google' | 'azure' | 'yahoo') => {
+  // Update the function to use proper Provider type from Supabase
+  const handleSSOSignIn = async (provider: Provider) => {
     try {
       setIsLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
@@ -193,7 +195,7 @@ const Auth = () => {
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('google')}
+                      onClick={() => handleSSOSignIn("google")}
                       disabled={isLoading}
                     >
                       <Mail className="h-4 w-4" />
@@ -202,7 +204,7 @@ const Auth = () => {
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('azure')}
+                      onClick={() => handleSSOSignIn("azure")}
                       disabled={isLoading}
                     >
                       <Globe className="h-4 w-4" />
@@ -211,7 +213,7 @@ const Auth = () => {
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('yahoo')}
+                      onClick={() => handleSSOSignIn("yahoo_oidc")}
                       disabled={isLoading}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
@@ -287,7 +289,7 @@ const Auth = () => {
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('google')}
+                      onClick={() => handleSSOSignIn("google")}
                       disabled={isLoading}
                     >
                       <Mail className="h-4 w-4" />
@@ -296,7 +298,7 @@ const Auth = () => {
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('azure')}
+                      onClick={() => handleSSOSignIn("azure")}
                       disabled={isLoading}
                     >
                       <Globe className="h-4 w-4" />
@@ -305,7 +307,7 @@ const Auth = () => {
                     <Button
                       variant="outline"
                       type="button"
-                      onClick={() => handleSSOSignIn('yahoo')}
+                      onClick={() => handleSSOSignIn("yahoo_oidc")}
                       disabled={isLoading}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
