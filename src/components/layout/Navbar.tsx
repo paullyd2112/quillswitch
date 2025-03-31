@@ -8,7 +8,8 @@ import {
   Wand2,
   BarChart2,
   UserPlus,
-  User
+  User,
+  Info
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -67,6 +68,7 @@ const Navbar = () => {
     { text: "API Docs", href: "/api-docs", icon: <FileText size={16} /> },
     { text: "Setup Wizard", href: "/setup", icon: <Wand2 size={16} /> },
     { text: "Analytics", href: "/analytics", icon: <BarChart2 size={16} /> },
+    { text: "About", href: "/about", icon: <Info size={16} /> },
   ];
   
   return (
