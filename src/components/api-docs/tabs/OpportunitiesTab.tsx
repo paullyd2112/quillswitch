@@ -23,7 +23,7 @@ const OpportunitiesTab = () => {
           Retrieve a list of opportunities/deals from the source CRM.
         </p>
         <CodeBlock code={`// Request
-GET /opportunities?source=salesforce&page=1&limit=20
+GET https://api.crm-migration-service.com/v1/opportunities?source=salesforce&page=1&limit=20
 
 // Response
 {
@@ -60,7 +60,7 @@ GET /opportunities?source=salesforce&page=1&limit=20
           Migrate opportunities/deals from the source CRM to the destination CRM.
         </p>
         <CodeBlock code={`// Request
-POST /opportunities/migrate
+POST https://api.crm-migration-service.com/v1/opportunities/migrate
 {
   "source": "salesforce",
   "destination": "hubspot",

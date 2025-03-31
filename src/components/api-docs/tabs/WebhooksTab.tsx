@@ -23,7 +23,7 @@ const WebhooksTab = () => {
           Register a new webhook to receive notifications.
         </p>
         <CodeBlock code={`// Request
-POST /webhooks
+POST https://api.crm-migration-service.com/v1/webhooks
 {
   "url": "https://your-server.example.com/webhook",
   "events": ["migration.started", "migration.completed", "migration.failed"],
@@ -52,7 +52,7 @@ POST /webhooks
           List all registered webhooks.
         </p>
         <CodeBlock code={`// Request
-GET /webhooks
+GET https://api.crm-migration-service.com/v1/webhooks
 
 // Response
 {
@@ -84,7 +84,7 @@ GET /webhooks
           Delete a registered webhook.
         </p>
         <CodeBlock code={`// Request
-DELETE /webhooks/wh_123456
+DELETE https://api.crm-migration-service.com/v1/webhooks/wh_123456
 
 // Response
 {

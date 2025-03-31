@@ -23,7 +23,7 @@ const AccountsTab = () => {
           Retrieve a list of accounts/companies from the source CRM.
         </p>
         <CodeBlock code={`// Request
-GET /accounts?source=salesforce&page=1&limit=20
+GET https://api.crm-migration-service.com/v1/accounts?source=salesforce&page=1&limit=20
 
 // Response
 {
@@ -59,7 +59,7 @@ GET /accounts?source=salesforce&page=1&limit=20
           Migrate accounts/companies from the source CRM to the destination CRM.
         </p>
         <CodeBlock code={`// Request
-POST /accounts/migrate
+POST https://api.crm-migration-service.com/v1/accounts/migrate
 {
   "source": "salesforce",
   "destination": "hubspot",

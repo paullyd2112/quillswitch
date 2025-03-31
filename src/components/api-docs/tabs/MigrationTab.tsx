@@ -23,7 +23,7 @@ const MigrationTab = () => {
           Create a new migration job to transfer data between CRMs.
         </p>
         <CodeBlock code={`// Request
-POST /migrations
+POST https://api.crm-migration-service.com/v1/migrations
 {
   "name": "Full CRM Migration",
   "source": {
@@ -86,7 +86,7 @@ POST /migrations
           Check the status of an ongoing migration.
         </p>
         <CodeBlock code={`// Request
-GET /migrations/mig_123456
+GET https://api.crm-migration-service.com/v1/migrations/mig_123456
 
 // Response
 {
@@ -116,7 +116,7 @@ GET /migrations/mig_123456
           Cancel an in-progress migration.
         </p>
         <CodeBlock code={`// Request
-DELETE /migrations/mig_123456
+DELETE https://api.crm-migration-service.com/v1/migrations/mig_123456
 
 // Response
 {
