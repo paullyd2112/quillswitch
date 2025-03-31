@@ -1,3 +1,4 @@
+
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
@@ -28,10 +29,11 @@ const About = () => {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Our Story</h3>
                 <p className="text-muted-foreground">
-                  Founded in 2023, QuillSwitch was born from the realization that data migration remains 
-                  one of the most challenging aspects of adopting new technologies. Our team of experts has 
-                  combined years of experience in database management, cloud computing, and enterprise software 
-                  to create a solution that makes migrations intuitive and reliable.
+                  We felt trapped and disappointed. Like many businesses, we were promised a smooth, strategic CRM upgrade. 
+                  Instead, we found ourselves navigating treacherous waters, drowning in the frustrating inefficiency of 
+                  exorbitant consultant fees and labyrinthine managed service packages. What should have been a step forward 
+                  became a costly, draining ordeal, a financial shipwreck of our strategic vision. We knew there had to be 
+                  a lifeline for businesses caught in this storm, a way to cut through the red tape and bring sanity back to the process.
                 </p>
               </CardContent>
             </Card>
