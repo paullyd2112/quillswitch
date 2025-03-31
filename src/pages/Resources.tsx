@@ -32,6 +32,22 @@ const Resources = () => {
             <Card className="border border-border shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <Info className="h-5 w-5 text-brand-500" />
+                  About QuillSwitch
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  QuillSwitch was created to simplify data migration between CRMs and other enterprise systems.
+                  Our platform reduces the typical technical challenges and risks associated with migrations.
+                </p>
+                <Button variant="outline" asChild>
+                  <a href="/about">Learn More</a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border border-border shadow-sm">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                   <FileQuestion className="h-5 w-5 text-brand-500" />
                   Frequently Asked Questions
                 </h3>
@@ -186,22 +202,6 @@ const Resources = () => {
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
-              </CardContent>
-            </Card>
-            
-            <Card className="border border-border shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <Info className="h-5 w-5 text-brand-500" />
-                  About QuillSwitch
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  QuillSwitch was created to simplify data migration between CRMs and other enterprise systems.
-                  Our platform reduces the typical technical challenges and risks associated with migrations.
-                </p>
-                <Button variant="outline" asChild>
-                  <a href="/about">Learn More</a>
-                </Button>
               </CardContent>
             </Card>
             
