@@ -19,6 +19,7 @@ const PricingEstimate: React.FC<PricingEstimateProps> = ({ pricing, inputs }) =>
     }
   };
   
+  // Get the minimum consultant cost for comparison based on tier
   const getConsultantRange = () => {
     switch (inputs.tier) {
       case "quickStart": return "$8,000 - $15,000+";
@@ -28,8 +29,28 @@ const PricingEstimate: React.FC<PricingEstimateProps> = ({ pricing, inputs }) =>
     }
   };
 
-  const savingsLow = inputs.tier === "quickStart" ? 8000 : inputs.tier === "scaleUp" ? 25000 : 80000;
-  const savingsPercentage = Math.round(((savingsLow - pricing.total) / savingsLow) * 100);
+  // Get minimum and maximum consultant costs for savings calculation
+  const getConsultantCosts = () => {
+    switch (inputs.tier) {
+      case "quickStart": return { min: 8000, max: 15000 };
+      case "scaleUp": return { min: 25000, max: 60000 };
+      case "fullPower": return { min: 80000, max: 250000 };
+      default: return { min: 10000, max: 20000 };
+    }
+  };
+
+  const consultantCosts = getConsultantCosts();
+  const savingsLow = consultantCosts.min;
+  const savingsHigh = consultantCosts.max;
+  
+  // Calculate percentage savings range
+  const savingsPercentageLow = Math.round(((savingsLow - pricing.total) / savingsLow) * 100);
+  const savingsPercentageHigh = Math.round(((savingsHigh - pricing.total) / savingsHigh) * 100);
+  
+  // Format the savings range as a string
+  const savingsRange = savingsPercentageLow === savingsPercentageHigh 
+    ? `${savingsPercentageLow}%` 
+    : `${savingsPercentageLow}-${savingsPercentageHigh}%`;
 
   return (
     <Card className="p-6 mt-8 border-2 border-green-100 bg-green-50/30">
@@ -78,7 +99,11 @@ const PricingEstimate: React.FC<PricingEstimateProps> = ({ pricing, inputs }) =>
             
             <div className="flex items-center gap-2 text-green-700">
               <Check className="h-5 w-5" />
-              <span>Save approximately {savingsPercentage}%+ compared to consultants</span>
+              <span>Save approximately {savingsRange} compared to consultants</span>
+            </div>
+            
+            <div className="text-xs text-muted-foreground">
+              Based on typical consultant rates for {getTierName()} tier projects
             </div>
           </div>
         </div>
