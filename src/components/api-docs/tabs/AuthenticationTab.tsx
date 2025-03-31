@@ -32,7 +32,7 @@ const AuthenticationTab = () => {
       <div>
         <h3 className="text-xl font-medium mb-3">Example Request</h3>
         <CodeBlock code={`curl --request GET \\
-  --url https://api.crmmigration.example.com/v1/sources \\
+  --url https://api.crm-migration-service.com/v1/sources \\
   --header 'Authorization: Bearer YOUR_API_KEY'`} />
       </div>
     </div>

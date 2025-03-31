@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import CodeBlock from "../CodeBlock";
@@ -15,7 +14,7 @@ const OverviewTab = () => {
       
       <div>
         <h3 className="text-xl font-medium mb-3">Base URL</h3>
-        <CodeBlock code="https://api.crmmigration.example.com/v1" />
+        <CodeBlock code="https://api.crm-migration-service.com/v1" />
       </div>
       
       <div>
