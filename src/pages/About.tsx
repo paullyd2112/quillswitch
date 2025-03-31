@@ -1,4 +1,3 @@
-
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
@@ -19,9 +18,8 @@ const About = () => {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">Our Mission</h3>
                 <p className="text-muted-foreground">
-                  At QuillSwitch, we are dedicated to simplifying data migration processes for businesses of all sizes. 
-                  Our platform empowers organizations to seamlessly transition between systems without the typical 
-                  headaches and technical challenges that come with data migrations.
+                  QuillSwitch simplifies CRM migrations with our API-driven platform, giving businesses of all sizes 
+                  the tools and control to seamlessly move their data, without the need for costly and time-consuming consultants.
                 </p>
               </CardContent>
             </Card>
