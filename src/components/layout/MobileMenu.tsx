@@ -38,7 +38,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, user, 
                 "block px-4 py-2 text-sm rounded-md transition-colors",
                 (
                   link.href === "/" && location.pathname === "/" ||
-                  link.href !== "/" && location.pathname.includes(link.href)
+                  link.href !== "/" && link.href !== "#" && location.pathname === link.href
                 )
                   ? "text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 font-medium"
                   : "text-muted-foreground hover:bg-accent"

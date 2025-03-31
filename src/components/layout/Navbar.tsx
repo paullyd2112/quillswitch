@@ -59,8 +59,8 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   
-  // Get navigation data from our config
-  const navLinks = getNavLinks();
+  // Get navigation data from our config and pass the user
+  const navLinks = getNavLinks(user);
   
   return (
     <header
