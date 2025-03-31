@@ -18,6 +18,7 @@ import Resources from "./pages/Resources";
 import Settings from "./pages/Settings";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import KnowledgeArticle from "./pages/KnowledgeArticle";
+import PricingEstimator from "./pages/PricingEstimator";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="/knowledge-base" element={<KnowledgeBase />} />
           <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
+          <Route path="/pricing" element={<PricingEstimator />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

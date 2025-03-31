@@ -1,0 +1,98 @@
+
+import React from "react";
+import { Card } from "@/components/ui/card";
+import { PricingDetails, PricingInput, formatCurrency } from "./pricingUtils";
+import { Check } from "lucide-react";
+
+interface PricingEstimateProps {
+  pricing: PricingDetails;
+  inputs: PricingInput;
+}
+
+const PricingEstimate: React.FC<PricingEstimateProps> = ({ pricing, inputs }) => {
+  const getTierName = () => {
+    switch (inputs.tier) {
+      case "quickStart": return "Quick Start (SMB)";
+      case "scaleUp": return "Scale Up (Mid-Market)";
+      case "fullPower": return "Full Power (Enterprise)";
+      default: return "Custom";
+    }
+  };
+  
+  const getConsultantRange = () => {
+    switch (inputs.tier) {
+      case "quickStart": return "$8,000 - $15,000+";
+      case "scaleUp": return "$25,000 - $60,000+";
+      case "fullPower": return "$80,000 - $250,000+";
+      default: return "Significantly higher";
+    }
+  };
+
+  const savingsLow = inputs.tier === "quickStart" ? 8000 : inputs.tier === "scaleUp" ? 25000 : 80000;
+  const savingsPercentage = Math.round(((savingsLow - pricing.total) / savingsLow) * 100);
+
+  return (
+    <Card className="p-6 mt-8 border-2 border-green-100 bg-green-50/30">
+      <h3 className="text-xl font-bold mb-6">Your Migration Cost Estimate</h3>
+      
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground">Pricing Tier:</span>
+          <span className="font-medium">{getTierName()}</span>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Records Cost:</span>
+              <span>{formatCurrency(pricing.recordsCost)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Transformations Cost:</span>
+              <span>{formatCurrency(pricing.transformationsCost)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Integrations Cost:</span>
+              <span>{formatCurrency(pricing.integrationsCost)}</span>
+            </div>
+            {inputs.includeValidation && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Validation Cost:</span>
+                <span>{formatCurrency(pricing.validationCost)}</span>
+              </div>
+            )}
+            {inputs.includeRollback && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Rollback Cost:</span>
+                <span>{formatCurrency(pricing.rollbackCost)}</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="space-y-3">
+            <div className="p-4 bg-green-100/50 rounded-lg">
+              <div className="text-lg font-bold text-green-800 mb-2">Total Cost</div>
+              <div className="text-2xl font-bold">{formatCurrency(pricing.total)}</div>
+              <div className="text-sm text-muted-foreground mt-1">Compared to consultant cost: {getConsultantRange()}</div>
+            </div>
+            
+            <div className="flex items-center gap-2 text-green-700">
+              <Check className="h-5 w-5" />
+              <span>Save approximately {savingsPercentage}%+ compared to consultants</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <h4 className="font-medium mb-2">About This Estimate</h4>
+          <p className="text-sm text-muted-foreground">
+            This is an estimate based on your inputs. The final price may vary depending on specific 
+            requirements and complexity. Contact our sales team for a detailed quote tailored to your needs.
+          </p>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+export default PricingEstimate;

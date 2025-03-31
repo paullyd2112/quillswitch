@@ -9,7 +9,8 @@ import {
   BarChart3,
   FileBarChart,
   LifeBuoy,
-  Settings
+  Settings,
+  DollarSign
 } from "lucide-react";
 
 export const getNavLinks = () => [
@@ -26,6 +27,7 @@ export const getNavLinks = () => [
     ] 
   },
   { text: "Reports", href: "/reports", icon: <FileBarChart size={16} /> },
+  { text: "Pricing", href: "/pricing", icon: <DollarSign size={16} /> },
   { text: "Resources", href: "/resources", icon: <LifeBuoy size={16} /> },
   { text: "Settings", href: "/settings", icon: <Settings size={16} /> },
 ];
