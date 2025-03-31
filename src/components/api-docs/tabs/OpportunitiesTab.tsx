@@ -22,10 +22,10 @@ const OpportunitiesTab = () => {
         <p className="text-muted-foreground mb-4">
           Retrieve a list of opportunities/deals from the source CRM.
         </p>
-        <CodeBlock code={`// Example Request
+        <CodeBlock code={`// Request
 GET /opportunities?source=salesforce&page=1&limit=20
 
-// Example Response
+// Response
 {
   "success": true,
   "data": [
@@ -59,7 +59,7 @@ GET /opportunities?source=salesforce&page=1&limit=20
         <p className="text-muted-foreground mb-4">
           Migrate opportunities/deals from the source CRM to the destination CRM.
         </p>
-        <CodeBlock code={`// Example Request
+        <CodeBlock code={`// Request
 POST /opportunities/migrate
 {
   "source": "salesforce",
@@ -83,7 +83,7 @@ POST /opportunities/migrate
   }
 }
 
-// Example Response
+// Response
 {
   "success": true,
   "data": {

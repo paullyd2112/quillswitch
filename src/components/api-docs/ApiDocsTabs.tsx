@@ -6,6 +6,8 @@ import AuthenticationTab from "./tabs/AuthenticationTab";
 import ContactsTab from "./tabs/ContactsTab";
 import AccountsTab from "./tabs/AccountsTab";
 import OpportunitiesTab from "./tabs/OpportunitiesTab";
+import MigrationTab from "./tabs/MigrationTab";
+import WebhooksTab from "./tabs/WebhooksTab";
 import ApiTestSection from "./ApiTestSection";
 
 interface ApiDocsTabsProps {
@@ -51,33 +53,12 @@ const ApiDocsTabs = ({ activeTab, onTabChange }: ApiDocsTabsProps) => {
         <OpportunitiesTab />
       </TabsContent>
       
-      {/* Placeholders for Migration and Webhooks tabs */}
       <TabsContent value="migration" className="p-6">
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Migration API</h2>
-            <p className="text-muted-foreground mb-4">
-              The Migration API allows you to manage and monitor data migration processes.
-            </p>
-            <p className="text-muted-foreground">
-              Documentation for this section is coming soon.
-            </p>
-          </div>
-        </div>
+        <MigrationTab />
       </TabsContent>
       
       <TabsContent value="webhooks" className="p-6">
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Webhooks</h2>
-            <p className="text-muted-foreground mb-4">
-              Use webhooks to receive real-time notifications about events in your migrations.
-            </p>
-            <p className="text-muted-foreground">
-              Documentation for this section is coming soon.
-            </p>
-          </div>
-        </div>
+        <WebhooksTab />
       </TabsContent>
       
       <TabsContent value="api-test" className="p-6">
