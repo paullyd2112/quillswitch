@@ -7,14 +7,17 @@ import {
   FileText,
   Wand2,
   BarChart2,
-  UserPlus
+  UserPlus,
+  User
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const location = useLocation();
   
   useEffect(() => {
@@ -29,6 +32,29 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+
+    fetchUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_OUT') {
+          setUser(null);
+        } else if (session?.user && event === 'SIGNED_IN') {
+          setUser(session.user);
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
     };
   }, []);
   
@@ -82,12 +108,21 @@ const Navbar = () => {
           </nav>
           
           <div className="flex items-center gap-2">
-            <Link to="/auth">
-              <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1.5">
-                <UserPlus size={16} />
-                <span>Create Account</span>
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/profile">
+                <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1.5">
+                  <User size={16} />
+                  <span>Profile</span>
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1.5">
+                  <UserPlus size={16} />
+                  <span>Create Account</span>
+                </Button>
+              </Link>
+            )}
             
             <div className="md:hidden">
               <Button
@@ -126,16 +161,29 @@ const Navbar = () => {
               </Link>
             ))}
             
-            <Link
-              to="/auth"
-              className="block px-4 py-2 text-sm rounded-md transition-colors text-brand-600 dark:text-brand-400 hover:bg-accent"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <span className="flex items-center">
-                <span className="mr-1.5"><UserPlus size={16} /></span>
-                Create Account
-              </span>
-            </Link>
+            {user ? (
+              <Link
+                to="/profile"
+                className="block px-4 py-2 text-sm rounded-md transition-colors text-brand-600 dark:text-brand-400 hover:bg-accent"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="flex items-center">
+                  <span className="mr-1.5"><User size={16} /></span>
+                  Profile
+                </span>
+              </Link>
+            ) : (
+              <Link
+                to="/auth"
+                className="block px-4 py-2 text-sm rounded-md transition-colors text-brand-600 dark:text-brand-400 hover:bg-accent"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="flex items-center">
+                  <span className="mr-1.5"><UserPlus size={16} /></span>
+                  Create Account
+                </span>
+              </Link>
+            )}
           </div>
         </div>
       )}
