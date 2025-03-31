@@ -6,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calculator } from "lucide-react";
+import { Calculator, Users } from "lucide-react";
 import PricingEstimate from "./PricingEstimate";
+import ContactEstimator from "./ContactEstimator";
 import { PricingTier, calculatePricing } from "./pricingUtils";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const PricingCalculator: React.FC = () => {
   const [recordCount, setRecordCount] = useState<number>(5000);
@@ -18,9 +20,24 @@ const PricingCalculator: React.FC = () => {
   const [includeRollback, setIncludeRollback] = useState<boolean>(false);
   const [tier, setTier] = useState<PricingTier>("quickStart");
   const [showEstimate, setShowEstimate] = useState<boolean>(false);
+  const [showEstimator, setShowEstimator] = useState<boolean>(false);
 
   const handleCalculate = () => {
     setShowEstimate(true);
+  };
+
+  const handleEstimateComplete = (estimatedContacts: number) => {
+    setRecordCount(estimatedContacts);
+    setShowEstimator(false);
+    
+    // Adjust tier based on estimated contact count
+    if (estimatedContacts <= 10000) {
+      setTier("quickStart");
+    } else if (estimatedContacts <= 50000) {
+      setTier("scaleUp");
+    } else {
+      setTier("fullPower");
+    }
   };
 
   const tierOptions = [
@@ -73,7 +90,20 @@ const PricingCalculator: React.FC = () => {
           </div>
 
           <div>
-            <Label htmlFor="records">Number of Records</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="records">Number of Records</Label>
+              <Dialog open={showEstimator} onOpenChange={setShowEstimator}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 px-2 text-xs">
+                    <Users className="mr-1 h-3 w-3" />
+                    Estimate Records
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <ContactEstimator onEstimateComplete={handleEstimateComplete} />
+                </DialogContent>
+              </Dialog>
+            </div>
             <Input
               id="records"
               type="number"
