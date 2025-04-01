@@ -3,33 +3,34 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Check, CreditCard, Download, PlusCircle } from "lucide-react";
+import { Check, CreditCard, Download, PlusCircle, Calculator } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 const BillingSettings = () => {
   const invoices = [
     {
       id: "INV-001",
       date: "May 15, 2023",
-      amount: "$99.00",
+      amount: "$518.00",
       status: "paid",
     },
     {
       id: "INV-002",
       date: "June 15, 2023",
-      amount: "$99.00",
+      amount: "$876.00",
       status: "paid",
     },
     {
       id: "INV-003",
       date: "July 15, 2023",
-      amount: "$99.00",
+      amount: "$1,243.00",
       status: "paid",
     },
     {
       id: "INV-004",
       date: "August 15, 2023",
-      amount: "$99.00",
+      amount: "$692.00",
       status: "pending",
     },
   ];
@@ -51,34 +52,104 @@ const BillingSettings = () => {
     },
   ];
 
+  const usageSummary = {
+    currentMonth: {
+      recordsProcessed: 3450,
+      transformationsUsed: 12,
+      integrationsUsed: 3,
+      estimatedCost: "$692.00"
+    },
+    previousMonth: {
+      recordsProcessed: 6215,
+      transformationsUsed: 15,
+      integrationsUsed: 4,
+      totalCost: "$1,243.00"
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Subscription Details</CardTitle>
+          <CardTitle>Pay-As-You-Go Billing</CardTitle>
           <CardDescription>
-            Manage your subscription and billing information.
+            View your current usage and billing information. You are billed based on your actual usage.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 border rounded-lg">
-              <div className="text-sm text-muted-foreground">Current Plan</div>
-              <div className="text-lg font-medium mt-1">Professional</div>
+              <div className="text-sm text-muted-foreground">Current Month Usage</div>
+              <div className="text-lg font-medium mt-1">
+                {usageSummary.currentMonth.recordsProcessed.toLocaleString()} Records
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Est. Cost: {usageSummary.currentMonth.estimatedCost}
+              </div>
             </div>
             <div className="p-4 border rounded-lg">
-              <div className="text-sm text-muted-foreground">Billing Cycle</div>
-              <div className="text-lg font-medium mt-1">Monthly</div>
+              <div className="text-sm text-muted-foreground">Usage Model</div>
+              <div className="text-lg font-medium mt-1">Pay-Per-Use</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Only pay for what you use
+              </div>
             </div>
             <div className="p-4 border rounded-lg">
-              <div className="text-sm text-muted-foreground">Next Payment</div>
-              <div className="text-lg font-medium mt-1">August 15, 2023</div>
+              <div className="text-sm text-muted-foreground">Next Invoice Date</div>
+              <div className="text-lg font-medium mt-1">September 1, 2023</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                For August usage
+              </div>
             </div>
           </div>
         </CardContent>
         <CardFooter>
-          <Button>Change Plan</Button>
+          <Link to="/pricing">
+            <Button className="flex items-center gap-2">
+              <Calculator className="h-4 w-4" />
+              View Pricing Calculator
+            </Button>
+          </Link>
         </CardFooter>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Current Month's Usage Details</CardTitle>
+          <CardDescription>
+            Breakdown of your usage for the current billing period.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="text-sm font-medium">Records Processed</div>
+                <div className="text-2xl font-bold mt-1">{usageSummary.currentMonth.recordsProcessed.toLocaleString()}</div>
+              </div>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="text-sm font-medium">Transformations</div>
+                <div className="text-2xl font-bold mt-1">{usageSummary.currentMonth.transformationsUsed}</div>
+              </div>
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="text-sm font-medium">Integrations</div>
+                <div className="text-2xl font-bold mt-1">{usageSummary.currentMonth.integrationsUsed}</div>
+              </div>
+            </div>
+            
+            <div className="p-4 border border-green-100 bg-green-50/30 rounded-lg mt-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-sm font-medium text-muted-foreground">Estimated Cost So Far</div>
+                  <div className="text-2xl font-bold text-green-700">{usageSummary.currentMonth.estimatedCost}</div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Final invoice generated at end of month
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
       </Card>
 
       <Card>
