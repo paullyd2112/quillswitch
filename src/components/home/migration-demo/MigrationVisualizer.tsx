@@ -1,10 +1,12 @@
 
 import React from "react";
-import { Database, Check } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import MigrationStep from "./MigrationStep";
+import { Database } from "lucide-react";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
+import MigrationHeader from "./MigrationHeader";
+import MigrationProgressBar from "./MigrationProgressBar";
+import MigrationStepsList from "./MigrationStepsList";
+import MigrationStatus from "./MigrationStatus";
+import MigrationFooter from "./MigrationFooter";
 
 type MigrationStep = {
   name: string;
@@ -34,80 +36,31 @@ const MigrationVisualizer = ({
       intensity="medium"
     >
       <div className="space-y-4">
-        <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800">
-          <div className="flex items-center gap-3">
-            <div className="bg-red-100 text-red-600 p-2 rounded-full">
-              <Database size={20} />
-            </div>
-            <span className="font-medium">Salesforce</span>
-          </div>
-          <Badge variant="outline" className="backdrop-blur-sm">Source</Badge>
-        </div>
+        <MigrationHeader 
+          title="Salesforce" 
+          type="source" 
+          icon={<Database size={20} />} 
+        />
         
-        {migrationStatus === "idle" && (
-          <div className="flex items-center justify-center py-12 opacity-80">
-            <Database className="h-8 w-8 text-brand-500 animate-pulse" />
-          </div>
-        )}
+        {migrationStatus === "idle" && <MigrationStatus status="idle" />}
         
         {migrationStatus === "loading" && (
-          <div className="py-4 space-y-6">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Migration Progress</span>
-              <span className="text-sm font-medium">{overallProgress}%</span>
-            </div>
-            <Progress 
-              value={overallProgress} 
-              className="h-2 transition-all duration-700 ease-in-out" 
-            />
-            
-            <div className="space-y-4 max-h-48 overflow-y-auto py-2 pr-1 scrollbar-thin">
-              {steps.map((step) => (
-                <MigrationStep 
-                  key={step.name} 
-                  name={step.name} 
-                  status={step.status} 
-                  progress={step.progress} 
-                />
-              ))}
-            </div>
-          </div>
+          <>
+            <MigrationProgressBar progress={overallProgress} />
+            <MigrationStepsList steps={steps} />
+          </>
         )}
         
-        {migrationStatus === "success" && (
-          <div className="flex flex-col items-center justify-center py-12 space-y-3">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-full bg-green-500/20 animate-ping"></div>
-              <div className="relative bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-full backdrop-blur-sm">
-                <Check className="h-8 w-8" />
-              </div>
-            </div>
-            <div className="text-green-600 dark:text-green-400 font-medium">All data migrated successfully!</div>
-          </div>
-        )}
+        {migrationStatus === "success" && <MigrationStatus status="success" />}
         
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800 mt-2">
-          <div className="flex items-center gap-3">
-            <div className="bg-orange-100 text-orange-600 p-2 rounded-full">
-              <Database size={20} />
-            </div>
-            <span className="font-medium">HubSpot</span>
-          </div>
-          <Badge variant="outline" className="backdrop-blur-sm">Destination</Badge>
-        </div>
+        <MigrationHeader 
+          title="HubSpot" 
+          type="destination" 
+          icon={<Database size={20} />} 
+        />
       </div>
       
-      {migrationStatus === "idle" && (
-        <div className="text-center mt-6 text-sm text-muted-foreground animate-pulse">
-          Click to see a demo migration
-        </div>
-      )}
-      
-      {migrationStatus === "success" && (
-        <div className="text-center mt-6 text-sm font-medium text-green-500">
-          Migration complete! Click to run again.
-        </div>
-      )}
+      <MigrationFooter status={migrationStatus} />
     </GlassPanel>
   );
 };
