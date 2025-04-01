@@ -1,6 +1,7 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Database, Repeat, Shield, Zap } from "lucide-react";
+import { ArrowRight, Check, Database, Loader, Repeat, Shield, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
@@ -9,8 +10,26 @@ import SlideUp from "@/components/animations/SlideUp";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import FeatureCard from "@/components/ui-elements/FeatureCard";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const [migrationStatus, setMigrationStatus] = useState<"idle" | "loading" | "success">("idle");
+  
+  const handleMigrationDemo = () => {
+    if (migrationStatus !== "idle") return;
+    
+    setMigrationStatus("loading");
+    
+    // Simulate migration process
+    setTimeout(() => {
+      setMigrationStatus("success");
+      toast({
+        title: "Demo Migration Complete",
+        description: "Your demonstration migration has completed successfully!",
+      });
+    }, 2000);
+  };
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
       <Navbar />
@@ -120,7 +139,10 @@ const Index = () => {
           </div>
           <div>
             <SlideUp>
-              <GlassPanel className="p-6">
+              <GlassPanel 
+                className={`p-6 transition-all duration-300 ${migrationStatus !== "idle" ? "cursor-default" : "cursor-pointer hover:shadow-lg hover:scale-105"}`}
+                onClick={handleMigrationDemo}
+              >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800">
                     <div className="flex items-center gap-3">
@@ -132,7 +154,15 @@ const Index = () => {
                     <Badge variant="outline">Source</Badge>
                   </div>
                   <div className="flex items-center justify-center py-4">
-                    <Repeat className="h-8 w-8 text-brand-500" />
+                    {migrationStatus === "idle" && (
+                      <Repeat className="h-8 w-8 text-brand-500" />
+                    )}
+                    {migrationStatus === "loading" && (
+                      <Loader className="h-8 w-8 text-brand-500 animate-spin" />
+                    )}
+                    {migrationStatus === "success" && (
+                      <Check className="h-8 w-8 text-green-500" />
+                    )}
                   </div>
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
                     <div className="flex items-center gap-3">
@@ -144,6 +174,21 @@ const Index = () => {
                     <Badge variant="outline">Destination</Badge>
                   </div>
                 </div>
+                {migrationStatus === "idle" && (
+                  <div className="text-center mt-4 text-sm text-muted-foreground">
+                    Click to see a demo migration
+                  </div>
+                )}
+                {migrationStatus === "loading" && (
+                  <div className="text-center mt-4 text-sm text-brand-500 font-medium">
+                    Migration in progress...
+                  </div>
+                )}
+                {migrationStatus === "success" && (
+                  <div className="text-center mt-4 text-sm text-green-500 font-medium">
+                    Migration complete!
+                  </div>
+                )}
               </GlassPanel>
             </SlideUp>
           </div>
@@ -154,7 +199,7 @@ const Index = () => {
         <div className="text-center max-w-2xl mx-auto">
           <FadeIn>
             <h2 className="text-3xl font-bold tracking-tight mb-4">
-              Ready to Switch CRMs?
+              Ready to Switch CRM?
             </h2>
             <p className="text-muted-foreground mb-8">
               Start your CRM migration today and experience a seamless transition without the typical headaches and costs.
