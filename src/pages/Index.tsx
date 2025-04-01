@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Database, Repeat, Shield, Zap } from "lucide-react";
@@ -26,7 +25,7 @@ const Index = () => {
             </FadeIn>
             <FadeIn delay="100">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-                Switch CRMs Without the Headache
+                Seamless CRM Migration, Simplified
               </h1>
             </FadeIn>
             <FadeIn delay="200">
