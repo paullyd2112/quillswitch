@@ -31,7 +31,7 @@ const MigrationDemoSection = () => {
   ]);
   const [overallProgress, setOverallProgress] = useState(0);
   
-  // Update the progress of the current step
+  // Update the progress of the current step with smoother animation
   useEffect(() => {
     if (migrationStatus !== "loading") return;
     
@@ -40,9 +40,10 @@ const MigrationDemoSection = () => {
         const newSteps = [...prevSteps];
         const currentStep = newSteps[currentStepIndex];
         
-        // Update progress of current step
+        // Update progress of current step with smaller increments for smoother animation
         if (currentStep && currentStep.status === 'in_progress') {
-          currentStep.progress = Math.min(100, currentStep.progress + 10);
+          // Smaller increments (5 instead of 10) for smoother transitions
+          currentStep.progress = Math.min(100, currentStep.progress + 5);
           
           // If step is complete, move to next step
           if (currentStep.progress === 100) {
@@ -72,7 +73,7 @@ const MigrationDemoSection = () => {
         
         return newSteps;
       });
-    }, 200);
+    }, 100); // Reduced interval time (100ms instead of 200ms) for smoother animations
     
     return () => clearInterval(interval);
   }, [currentStepIndex, migrationStatus]);
@@ -137,8 +138,11 @@ const MigrationDemoSection = () => {
         <div>
           <SlideUp>
             <GlassPanel 
-              className={`p-6 transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105`}
+              className={`p-6 transition-all duration-500 cursor-pointer hover:shadow-lg hover:scale-105 ${
+                migrationStatus === "success" ? "bg-gradient-to-br from-green-50/20 to-green-100/10 dark:from-green-900/10 dark:to-green-800/5" : ""
+              }`}
               onClick={handleMigrationDemo}
+              intensity="medium"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-800">
@@ -148,40 +152,76 @@ const MigrationDemoSection = () => {
                     </div>
                     <span className="font-medium">Salesforce</span>
                   </div>
-                  <Badge variant="outline">Source</Badge>
+                  <Badge variant="outline" className="backdrop-blur-sm">Source</Badge>
                 </div>
                 
                 {migrationStatus === "idle" && (
-                  <div className="flex items-center justify-center py-8">
-                    <Repeat className="h-8 w-8 text-brand-500" />
+                  <div className="flex items-center justify-center py-12 opacity-80">
+                    <Repeat className="h-8 w-8 text-brand-500 animate-pulse" />
                   </div>
                 )}
                 
                 {migrationStatus === "loading" && (
-                  <div className="py-2 space-y-4">
+                  <div className="py-4 space-y-6">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Migration Progress</span>
                       <span className="text-sm font-medium">{overallProgress}%</span>
                     </div>
-                    <Progress value={overallProgress} className="h-2" />
+                    <Progress 
+                      value={overallProgress} 
+                      className="h-2 transition-all duration-700 ease-in-out" 
+                    />
                     
-                    <div className="space-y-3 max-h-40 overflow-y-auto py-2">
+                    <div className="space-y-4 max-h-48 overflow-y-auto py-2 pr-1 scrollbar-thin">
                       {steps.map((step, index) => (
-                        <div key={step.name} className="space-y-1">
+                        <div 
+                          key={step.name} 
+                          className={`space-y-1.5 transition-all duration-500 ease-out ${
+                            step.status === 'in_progress' 
+                              ? 'scale-105 transform' 
+                              : step.status === 'complete' 
+                                ? 'opacity-90' 
+                                : 'opacity-60'
+                          }`}
+                        >
                           <div className="flex items-center justify-between text-xs">
                             <div className="flex items-center gap-2">
-                              {step.status === 'pending' && <div className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-700" />}
-                              {step.status === 'in_progress' && <Loader className="w-3 h-3 text-brand-500 animate-spin" />}
-                              {step.status === 'complete' && <Check className="w-3 h-3 text-green-500" />}
-                              <span className={step.status === 'in_progress' ? "font-medium text-brand-500" : 
-                                      step.status === 'complete' ? "font-medium text-green-500" : ""}>
+                              {step.status === 'pending' && 
+                                <div className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-700" />
+                              }
+                              {step.status === 'in_progress' && 
+                                <Loader className="w-3 h-3 text-brand-500 animate-spin" />
+                              }
+                              {step.status === 'complete' && 
+                                <Check className="w-3 h-3 text-green-500" />
+                              }
+                              <span 
+                                className={`${
+                                  step.status === 'in_progress' 
+                                    ? "font-medium text-brand-500" 
+                                    : step.status === 'complete' 
+                                      ? "font-medium text-green-500" 
+                                      : ""
+                                } transition-colors duration-300`}
+                              >
                                 {step.name}
                               </span>
                             </div>
-                            <span>{step.progress}%</span>
+                            <span 
+                              className={`transition-opacity duration-300 ${
+                                step.status === 'pending' ? 'opacity-50' : 'opacity-100'
+                              }`}
+                            >
+                              {step.progress}%
+                            </span>
                           </div>
                           {step.status !== 'pending' && (
-                            <Progress value={step.progress} className="h-1" />
+                            <Progress 
+                              value={step.progress} 
+                              className={`h-1 transition-all duration-300 ease-out ${
+                                step.status === 'in_progress' ? 'bg-opacity-80' : ''
+                              }`} 
+                            />
                           )}
                         </div>
                       ))}
@@ -190,31 +230,36 @@ const MigrationDemoSection = () => {
                 )}
                 
                 {migrationStatus === "success" && (
-                  <div className="flex flex-col items-center justify-center py-8 space-y-2">
-                    <Check className="h-8 w-8 text-green-500" />
-                    <div className="text-green-500 font-medium text-sm">All data migrated successfully!</div>
+                  <div className="flex flex-col items-center justify-center py-12 space-y-3">
+                    <div className="relative">
+                      <div className="absolute inset-0 rounded-full bg-green-500/20 animate-ping"></div>
+                      <div className="relative bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-full backdrop-blur-sm">
+                        <Check className="h-8 w-8" />
+                      </div>
+                    </div>
+                    <div className="text-green-600 dark:text-green-400 font-medium">All data migrated successfully!</div>
                   </div>
                 )}
                 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800 mt-2">
                   <div className="flex items-center gap-3">
                     <div className="bg-orange-100 text-orange-600 p-2 rounded-full">
                       <Database size={20} />
                     </div>
                     <span className="font-medium">HubSpot</span>
                   </div>
-                  <Badge variant="outline">Destination</Badge>
+                  <Badge variant="outline" className="backdrop-blur-sm">Destination</Badge>
                 </div>
               </div>
               
               {migrationStatus === "idle" && (
-                <div className="text-center mt-4 text-sm text-muted-foreground">
+                <div className="text-center mt-6 text-sm text-muted-foreground animate-pulse">
                   Click to see a demo migration
                 </div>
               )}
               
               {migrationStatus === "success" && (
-                <div className="text-center mt-4 text-sm text-green-500 font-medium">
+                <div className="text-center mt-6 text-sm font-medium text-green-500">
                   Migration complete! Click to run again.
                 </div>
               )}
