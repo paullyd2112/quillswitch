@@ -1,24 +1,21 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import FadeIn from "../animations/FadeIn";
 
 interface ContentSectionProps {
   children: React.ReactNode;
   className?: string;
   title?: string;
   description?: string;
-  fullWidth?: boolean;
   centered?: boolean;
   id?: string;
 }
 
-export const ContentSection: React.FC<ContentSectionProps> = ({
+const ContentSection: React.FC<ContentSectionProps> = ({
   children,
   className,
   title,
   description,
-  fullWidth = false,
   centered = false,
   id,
 }) => {
@@ -31,20 +28,16 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
       )}
     >
       <div className={cn(
-        !fullWidth && "container px-4 md:px-6",
+        "container px-4 md:px-6",
         centered && "text-center"
       )}>
         {(title || description) && (
           <div className={cn("mx-auto mb-10", centered && "max-w-3xl")}>
             {title && (
-              <FadeIn delay="100">
-                <h2 className={cn("section-title font-semibold tracking-tight")}>{title}</h2>
-              </FadeIn>
+              <h2 className="section-title font-semibold tracking-tight">{title}</h2>
             )}
             {description && (
-              <FadeIn delay="200">
-                <p className="text-muted-foreground mt-3">{description}</p>
-              </FadeIn>
+              <p className="text-muted-foreground mt-3">{description}</p>
             )}
           </div>
         )}
