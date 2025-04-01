@@ -97,9 +97,19 @@ const memberFormSchema = z.object({
 
 type MemberFormValues = z.infer<typeof memberFormSchema>;
 
+const editMemberFormSchema = z.object({
+  role: z.string().min(1, {
+    message: "Please select a role.",
+  }),
+});
+
+type EditMemberFormValues = z.infer<typeof editMemberFormSchema>;
+
 const UserManagementSettings = () => {
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+  const [isEditMemberOpen, setIsEditMemberOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   const form = useForm<MemberFormValues>({
     resolver: zodResolver(memberFormSchema),
@@ -109,11 +119,31 @@ const UserManagementSettings = () => {
     },
   });
 
+  const editForm = useForm<EditMemberFormValues>({
+    resolver: zodResolver(editMemberFormSchema),
+    defaultValues: {
+      role: "",
+    },
+  });
+
   function onSubmit(data: MemberFormValues) {
     console.log(data);
     setIsAddMemberOpen(false);
     form.reset();
     // In a real app, you would send an invitation to the user
+  }
+
+  function onEditSubmit(data: EditMemberFormValues) {
+    console.log("Editing member:", selectedMember?.id, "with new role:", data.role);
+    setIsEditMemberOpen(false);
+    editForm.reset();
+    // In a real app, you would update the user's role in the database
+  }
+
+  function handleEditMember(member: TeamMember) {
+    setSelectedMember(member);
+    editForm.setValue("role", roles.find(r => r.name === member.role)?.id || "");
+    setIsEditMemberOpen(true);
   }
 
   function getRoleBadgeVariant(role: string) {
@@ -210,6 +240,58 @@ const UserManagementSettings = () => {
               </Form>
             </DialogContent>
           </Dialog>
+
+          {/* Edit Member Dialog */}
+          <Dialog open={isEditMemberOpen} onOpenChange={setIsEditMemberOpen}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Edit Team Member</DialogTitle>
+                <DialogDescription>
+                  Change role for {selectedMember?.name}
+                </DialogDescription>
+              </DialogHeader>
+              <Form {...editForm}>
+                <form onSubmit={editForm.handleSubmit(onEditSubmit)}>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-1">
+                      <p className="font-medium">{selectedMember?.name}</p>
+                      <p className="text-sm text-muted-foreground">{selectedMember?.email}</p>
+                    </div>
+                    <FormField
+                      control={editForm.control}
+                      name="role"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Role</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a role" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {roles.map((role) => (
+                                <SelectItem key={role.id} value={role.id}>
+                                  {role.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsEditMemberOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit">Save Changes</Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
         </CardHeader>
         <CardContent>
           <Table>
@@ -237,7 +319,11 @@ const UserManagementSettings = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon">
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => handleEditMember(member)}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button variant="ghost" size="icon">
