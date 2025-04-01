@@ -59,8 +59,8 @@ const MigrationDemoSection = () => {
               clearInterval(interval);
               setMigrationStatus("success");
               toast({
-                title: "Demo Migration Complete",
-                description: "Your demonstration migration has completed successfully!",
+                title: "Migration Complete",
+                description: "Your migration has completed successfully!",
               });
             }
           }
