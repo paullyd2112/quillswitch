@@ -1,11 +1,17 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
-import { Card, CardContent } from "@/components/ui/card";
-import { UserCog, CreditCard, BellRing, Shield, Users } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProfileSettings from "@/components/settings/ProfileSettings";
+import UserManagementSettings from "@/components/settings/UserManagementSettings";
+import NotificationSettings from "@/components/settings/NotificationSettings";
+import BillingSettings from "@/components/settings/BillingSettings";
+import SecuritySettings from "@/components/settings/SecuritySettings";
 
 const Settings = () => {
+  const [activeTab, setActiveTab] = useState<string>("profile");
+  
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -13,73 +19,43 @@ const Settings = () => {
         <ContentSection 
           title="Settings"
           description="Manage your account preferences and configurations."
-          centered
+          centered={false}
         >
-          <div className="grid gap-8 mt-10">
-            <Card className="border border-border shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <UserCog className="h-5 w-5 text-brand-500" />
-                  Account Settings
-                </h3>
-                <p className="text-muted-foreground">
-                  Update your profile information, change your password, and manage 
-                  your personal preferences for the QuillSwitch platform.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-border shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <Users className="h-5 w-5 text-brand-500" />
-                  User Management
-                </h3>
-                <p className="text-muted-foreground">
-                  Add team members, assign roles and permissions, and control who has
-                  access to your organization's migration projects.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border border-border shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <BellRing className="h-5 w-5 text-brand-500" />
-                  Notification Settings
-                </h3>
-                <p className="text-muted-foreground">
-                  Configure alerts, updates, and notification preferences to stay informed
-                  about important events related to your migration projects.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border border-border shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-brand-500" />
-                  Billing
-                </h3>
-                <p className="text-muted-foreground">
-                  Manage your subscription, view payment history, update payment methods,
-                  and download invoices for your QuillSwitch account.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-border shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-brand-500" />
-                  Security Settings
-                </h3>
-                <p className="text-muted-foreground">
-                  Configure security options like two-factor authentication, session management,
-                  and API access to protect your account and data.
-                </p>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 gap-6 mt-6">
+            <Tabs 
+              defaultValue="profile" 
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
+              <TabsList className="mb-8 grid w-full grid-cols-5">
+                <TabsTrigger value="profile">Profile</TabsTrigger>
+                <TabsTrigger value="user-management">User Management</TabsTrigger>
+                <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                <TabsTrigger value="billing">Billing</TabsTrigger>
+                <TabsTrigger value="security">Security</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="profile" className="space-y-4">
+                <ProfileSettings />
+              </TabsContent>
+              
+              <TabsContent value="user-management" className="space-y-4">
+                <UserManagementSettings />
+              </TabsContent>
+              
+              <TabsContent value="notifications" className="space-y-4">
+                <NotificationSettings />
+              </TabsContent>
+              
+              <TabsContent value="billing" className="space-y-4">
+                <BillingSettings />
+              </TabsContent>
+              
+              <TabsContent value="security" className="space-y-4">
+                <SecuritySettings />
+              </TabsContent>
+            </Tabs>
           </div>
         </ContentSection>
       </div>
