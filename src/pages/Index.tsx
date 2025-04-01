@@ -34,10 +34,7 @@ const Index = () => {
         description: "Your demonstration migration has completed successfully!",
       });
       
-      // Reset after 3 seconds to allow viewing the success state
-      setTimeout(() => {
-        setMigrationStatus("idle");
-      }, 3000);
+      // Remove the automatic reset timer
     }, 2000);
   };
   
