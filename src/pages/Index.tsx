@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, Database, Loader, Repeat, Shield, Zap } from "lucide-react";
@@ -16,8 +15,15 @@ const Index = () => {
   const [migrationStatus, setMigrationStatus] = useState<"idle" | "loading" | "success">("idle");
   
   const handleMigrationDemo = () => {
-    if (migrationStatus !== "idle") return;
+    if (migrationStatus === "loading") return;
     
+    // If already completed, reset to idle and return
+    if (migrationStatus === "success") {
+      setMigrationStatus("idle");
+      return;
+    }
+    
+    // Start migration process
     setMigrationStatus("loading");
     
     // Simulate migration process
@@ -27,6 +33,11 @@ const Index = () => {
         title: "Demo Migration Complete",
         description: "Your demonstration migration has completed successfully!",
       });
+      
+      // Reset after 3 seconds to allow viewing the success state
+      setTimeout(() => {
+        setMigrationStatus("idle");
+      }, 3000);
     }, 2000);
   };
   
@@ -140,7 +151,7 @@ const Index = () => {
           <div>
             <SlideUp>
               <GlassPanel 
-                className={`p-6 transition-all duration-300 ${migrationStatus !== "idle" ? "cursor-default" : "cursor-pointer hover:shadow-lg hover:scale-105"}`}
+                className={`p-6 transition-all duration-300 cursor-pointer hover:shadow-lg hover:scale-105`}
                 onClick={handleMigrationDemo}
               >
                 <div className="space-y-4">
@@ -186,7 +197,7 @@ const Index = () => {
                 )}
                 {migrationStatus === "success" && (
                   <div className="text-center mt-4 text-sm text-green-500 font-medium">
-                    Migration complete!
+                    Migration complete! Click to run again.
                   </div>
                 )}
               </GlassPanel>
