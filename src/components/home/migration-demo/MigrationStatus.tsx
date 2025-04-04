@@ -8,6 +8,26 @@ type MigrationStatusProps = {
   activeStep?: MigrationStep;
 };
 
+// Helper function to get action verb based on step name
+const getActionVerb = (stepName: string): string => {
+  switch (stepName) {
+    case "Contacts":
+      return "importing";
+    case "Opportunities & Deals":
+      return "syncing";
+    case "Activities & Tasks":
+      return "transferring";
+    case "Cases & Tickets":
+      return "processing";
+    case "Accounts & Companies":
+      return "connecting";
+    case "Custom Objects":
+      return "configuring";
+    default:
+      return "migrating";
+  }
+};
+
 const MigrationStatus = ({ status, activeStep }: MigrationStatusProps) => {
   if (status === "idle") {
     return (
@@ -46,7 +66,7 @@ const MigrationStatus = ({ status, activeStep }: MigrationStatusProps) => {
           <div className="text-sm text-brand-400 animate-pulse">
             <span>{activeStep.name} </span>
             <span className="opacity-80">
-              {activeStep.status === 'in_progress' ? 'migrating' : activeStep.status}
+              {activeStep.status === 'in_progress' ? getActionVerb(activeStep.name) : activeStep.status}
               <span className="inline-flex">
                 <span className="animate-bounce delay-100">.</span>
                 <span className="animate-bounce delay-200">.</span>
