@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 
 // Import pages
@@ -53,6 +53,8 @@ function App() {
           <Route path="/migrations/:projectId" element={<MigrationDashboard />} />
           <Route path="/migrations/setup" element={<SetupWizard />} />
           <Route path="/migrations/enterprise-test" element={<EnterpriseMigrationTest />} />
+          {/* Add redirect from /setup to /migrations/setup */}
+          <Route path="/setup" element={<Navigate to="/migrations/setup" replace />} />
           <Route path="/auth/:mode" element={<Auth />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/knowledge-base" element={<KnowledgeBase />} />

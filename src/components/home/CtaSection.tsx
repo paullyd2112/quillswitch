@@ -18,7 +18,7 @@ const CtaSection = () => {
             Start your CRM migration today and experience a seamless transition without the typical headaches and costs.
           </p>
           <Button asChild size="lg" className="gap-2">
-            <Link to="/setup">
+            <Link to="/migrations/setup">
               Start Your Migration <ArrowRight size={16} />
             </Link>
           </Button>

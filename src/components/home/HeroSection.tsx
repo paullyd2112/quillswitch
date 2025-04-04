@@ -30,7 +30,7 @@ const HeroSection = () => {
           <FadeIn delay="300">
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button asChild size="lg" className="gap-2">
-                <Link to="/setup">
+                <Link to="/migrations/setup">
                   Start Migration <ArrowRight size={16} />
                 </Link>
               </Button>
