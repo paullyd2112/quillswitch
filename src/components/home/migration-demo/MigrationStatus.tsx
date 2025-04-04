@@ -10,32 +10,55 @@ const MigrationStatus = ({ status }: MigrationStatusProps) => {
   if (status === "idle") {
     return (
       <div className="flex items-center justify-center py-12 opacity-80">
-        <Database className="h-8 w-8 text-brand-500 animate-pulse" />
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full bg-brand-400/20 animate-pulse"></div>
+          <Database className="h-10 w-10 text-brand-500 relative" />
+        </div>
       </div>
     );
   }
 
   if (status === "loading") {
     return (
-      <div className="flex flex-col items-center justify-center py-12 space-y-3">
+      <div className="flex flex-col items-center justify-center py-8 space-y-4">
         <div className="relative">
-          <Loader className="h-12 w-12 text-brand-500 animate-spin" />
+          {/* Outer rings */}
+          <div className="absolute inset-0 rounded-full bg-brand-400/10 animate-ping" style={{ animationDuration: '2s' }}></div>
+          <div className="absolute inset-[-8px] rounded-full border-2 border-brand-300/30 animate-spin" style={{ animationDuration: '4s' }}></div>
+          
+          {/* Inner spinning loader */}
+          <div className="relative bg-gradient-to-br from-brand-100 to-transparent p-4 rounded-full backdrop-blur-sm">
+            <Loader className="h-12 w-12 text-brand-500 animate-spin" />
+          </div>
         </div>
-        <div className="text-brand-500 font-medium">Migration in progress...</div>
+        <div className="text-brand-500 font-medium tracking-wide">
+          <span className="inline-block mr-2 shimmer">Migration in progress</span>
+          <span className="inline-flex">
+            <span className="animate-bounce delay-100">.</span>
+            <span className="animate-bounce delay-200">.</span>
+            <span className="animate-bounce delay-300">.</span>
+          </span>
+        </div>
       </div>
     );
   }
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center py-12 space-y-3">
+      <div className="flex flex-col items-center justify-center py-8 space-y-4">
         <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-green-500/20 animate-ping"></div>
-          <div className="relative bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-full backdrop-blur-sm">
-            <Check className="h-8 w-8" />
+          {/* Success glow effect */}
+          <div className="absolute inset-0 rounded-full bg-green-500/20 animate-ping" style={{ animationDuration: '1.5s' }}></div>
+          <div className="absolute inset-[-4px] rounded-full bg-gradient-to-r from-green-400/30 to-emerald-500/30 animate-pulse"></div>
+          
+          {/* Success icon with glassy effect */}
+          <div className="relative bg-gradient-to-br from-green-100 to-green-200/30 dark:from-green-900/40 dark:to-green-800/20 p-4 rounded-full backdrop-blur-md border border-green-200/50 dark:border-green-700/30">
+            <Check className="h-10 w-10 text-green-600 dark:text-green-400" />
           </div>
         </div>
-        <div className="text-green-600 dark:text-green-400 font-medium">All data migrated successfully!</div>
+        <div className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-400 font-medium tracking-wide">
+          All data migrated successfully!
+        </div>
       </div>
     );
   }
