@@ -8,11 +8,12 @@ import MigrationStatusSection from "./visualizer/MigrationStatusSection";
 import MigrationProgressSection from "./visualizer/MigrationProgressSection";
 
 type MigrationVisualizerProps = {
-  migrationStatus: "idle" | "loading" | "success";
+  migrationStatus: "idle" | "loading" | "success" | "error";
   steps: MigrationStep[];
   overallProgress: number;
   activeStep?: MigrationStep;
   onClick: () => void;
+  errorMessage?: string;
   performanceMetrics?: {
     averageRecordsPerSecond?: number;
     peakRecordsPerSecond?: number;
@@ -28,6 +29,7 @@ const MigrationVisualizer = ({
   overallProgress, 
   activeStep,
   onClick,
+  errorMessage,
   performanceMetrics
 }: MigrationVisualizerProps) => {
   return (
@@ -37,7 +39,9 @@ const MigrationVisualizer = ({
           ? "bg-gradient-to-br from-brand-50/30 to-brand-100/10 dark:from-brand-900/20 dark:to-brand-800/5 border-brand-200/30 dark:border-brand-700/20" 
           : migrationStatus === "success"
             ? "bg-gradient-to-br from-green-50/20 to-green-100/10 dark:from-green-900/10 dark:to-green-800/5 border-green-200/30 dark:border-green-700/20"
-            : ""
+            : migrationStatus === "error"
+              ? "bg-gradient-to-br from-red-50/20 to-red-100/10 dark:from-red-900/10 dark:to-red-800/5 border-red-200/30 dark:border-red-700/20"
+              : ""
       }`}
       onClick={onClick}
       intensity="medium"
@@ -56,6 +60,7 @@ const MigrationVisualizer = ({
           migrationStatus={migrationStatus}
           activeStep={activeStep}
           performanceMetrics={performanceMetrics}
+          errorMessage={errorMessage}
         />
         
         {/* Progress Bar with enhanced metrics */}
@@ -63,6 +68,7 @@ const MigrationVisualizer = ({
           migrationStatus={migrationStatus}
           overallProgress={overallProgress}
           performanceMetrics={performanceMetrics}
+          errorMessage={errorMessage}
         />
       </div>
       

@@ -6,7 +6,7 @@ import { Database, ArrowRightLeft } from "lucide-react";
 type MigrationHeaderSectionProps = {
   sourceTitle: string;
   destinationTitle: string;
-  migrationStatus: "idle" | "loading" | "success";
+  migrationStatus: "idle" | "loading" | "success" | "error";
 }
 
 const MigrationHeaderSection = ({ 
@@ -30,7 +30,9 @@ const MigrationHeaderSection = ({
               ? "text-brand-500 animate-pulse" 
               : migrationStatus === "success" 
                 ? "text-green-500" 
-                : "text-gray-400"
+                : migrationStatus === "error"
+                  ? "text-red-500"
+                  : "text-gray-400"
           }`} 
         />
       </div>

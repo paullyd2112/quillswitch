@@ -4,7 +4,7 @@ import MigrationStatus from "../MigrationStatus";
 import type { MigrationStep } from "@/hooks/use-migration-demo";
 
 type MigrationStatusSectionProps = {
-  migrationStatus: "idle" | "loading" | "success";
+  migrationStatus: "idle" | "loading" | "success" | "error";
   activeStep?: MigrationStep;
   performanceMetrics?: {
     averageRecordsPerSecond?: number;
@@ -13,12 +13,14 @@ type MigrationStatusSectionProps = {
     totalRecordsProcessed?: number;
     dataVolume?: number;
   };
+  errorMessage?: string;
 }
 
 const MigrationStatusSection = ({ 
   migrationStatus, 
   activeStep, 
-  performanceMetrics 
+  performanceMetrics,
+  errorMessage
 }: MigrationStatusSectionProps) => {
   return (
     <>
@@ -34,6 +36,12 @@ const MigrationStatusSection = ({
         <MigrationStatus 
           status="success" 
           performanceMetrics={performanceMetrics}
+        />
+      )}
+      {migrationStatus === "error" && (
+        <MigrationStatus 
+          status="error" 
+          errorMessage={errorMessage}
         />
       )}
     </>

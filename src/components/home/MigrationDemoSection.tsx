@@ -13,6 +13,7 @@ const MigrationDemoSection = () => {
     overallProgress, 
     activeStep, 
     performanceMetrics,
+    errorMessage,
     handleMigrationDemo 
   } = useMigrationDemo();
 
@@ -30,6 +31,7 @@ const MigrationDemoSection = () => {
               overallProgress={overallProgress}
               activeStep={activeStep}
               performanceMetrics={performanceMetrics}
+              errorMessage={errorMessage}
               onClick={handleMigrationDemo}
             />
           </SlideUp>
