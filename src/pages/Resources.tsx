@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import ResourceCard from "@/components/resources/ResourceCard";
 import FaqSection from "@/components/resources/FaqSection";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import ScreenshotGuide from "@/components/resources/ScreenshotGuide";
 import SlideShowGuide from "@/components/resources/SlideShowGuide";
 
@@ -74,6 +74,25 @@ const quickStartSlides = [
 ];
 
 const Resources = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const tabParam = searchParams.get('tab');
+  
+  // Default to 'overview' if no tab is specified
+  const defaultTab = tabParam || 'overview';
+  
+  useEffect(() => {
+    // Update the URL if needed when tab changes directly in the component
+    if (!tabParam && defaultTab !== 'overview') {
+      navigate(`/resources?tab=${defaultTab}`, { replace: true });
+    }
+  }, [tabParam, defaultTab, navigate]);
+  
+  const handleTabChange = (value: string) => {
+    navigate(`/resources?tab=${value}`, { replace: true });
+  };
+  
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -83,7 +102,11 @@ const Resources = () => {
           description="Get help and learn more about QuillSwitch migration platform."
           centered
         >
-          <Tabs defaultValue="overview" className="w-full mt-6">
+          <Tabs 
+            defaultValue={defaultTab} 
+            className="w-full mt-6"
+            onValueChange={handleTabChange}
+          >
             <TabsList className="grid w-full grid-cols-4 mb-8">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="guides">Screenshot Guides</TabsTrigger>
@@ -112,7 +135,7 @@ const Resources = () => {
                 icon={Image}
                 title="Screenshot Guides"
                 description="Visual step-by-step instructions with annotated screenshots to help you navigate through common migration tasks."
-                linkHref="#guides"
+                linkHref="/resources?tab=guides"
                 linkText="View Guides"
               />
 
@@ -120,7 +143,7 @@ const Resources = () => {
                 icon={Presentation}
                 title="Quick Start Tutorials"
                 description="Interactive slide-based tutorials that walk you through the essential steps to get started with QuillSwitch."
-                linkHref="#tutorials"
+                linkHref="/resources?tab=tutorials"
                 linkText="Start Learning"
               />
 

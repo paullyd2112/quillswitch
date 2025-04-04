@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Carousel,
@@ -27,6 +27,23 @@ const SlideShowGuide: React.FC<SlideShowGuideProps> = ({
   description,
   slides
 }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [api, setApi] = useState<any>(null);
+
+  useEffect(() => {
+    if (!api) return;
+    
+    const onSelect = () => {
+      setCurrentSlide(api.selectedScrollSnap());
+    };
+    
+    api.on("select", onSelect);
+    
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+
   return (
     <Card className="border border-border shadow-sm">
       <CardHeader>
@@ -35,7 +52,7 @@ const SlideShowGuide: React.FC<SlideShowGuideProps> = ({
       </CardHeader>
       <CardContent>
         <div className="relative px-12">
-          <Carousel className="w-full">
+          <Carousel className="w-full" setApi={setApi}>
             <CarouselContent>
               {slides.map((slide, index) => (
                 <CarouselItem key={index}>
@@ -60,7 +77,7 @@ const SlideShowGuide: React.FC<SlideShowGuideProps> = ({
           </Carousel>
         </div>
         <div className="text-center mt-4 text-muted-foreground">
-          <p>Slide {1} of {slides.length}</p>
+          <p>Slide {currentSlide + 1} of {slides.length}</p>
         </div>
       </CardContent>
     </Card>
