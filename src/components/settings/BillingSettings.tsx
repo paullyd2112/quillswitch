@@ -1,207 +1,274 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Check, CreditCard, Download, PlusCircle, Calculator } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { CreditCard, Download, Plus, Clock, DollarSign, BarChart4 } from "lucide-react";
 
 const BillingSettings = () => {
-  const invoices = [
-    {
-      id: "INV-001",
-      date: "May 15, 2023",
-      amount: "$518.00",
-      status: "paid",
-    },
-    {
-      id: "INV-002",
-      date: "June 15, 2023",
-      amount: "$876.00",
-      status: "paid",
-    },
-    {
-      id: "INV-003",
-      date: "July 15, 2023",
-      amount: "$1,243.00",
-      status: "paid",
-    },
-    {
-      id: "INV-004",
-      date: "August 15, 2023",
-      amount: "$692.00",
-      status: "pending",
-    },
-  ];
+  const [paymentMethods, setPaymentMethods] = useState([
+    { id: 1, type: "Visa", last4: "4242", expiry: "04/25", isDefault: true },
+    { id: 2, type: "Mastercard", last4: "5555", expiry: "09/24", isDefault: false }
+  ]);
 
-  const paymentMethods = [
-    {
-      id: "pm_1",
-      type: "visa",
-      last4: "4242",
-      expiry: "04/24",
-      isDefault: true,
-    },
-    {
-      id: "pm_2",
-      type: "mastercard",
-      last4: "5555",
-      expiry: "08/25",
-      isDefault: false,
-    },
-  ];
+  const [invoices, setInvoices] = useState([
+    { id: "INV-001", date: "Apr 1, 2023", amount: "$49.00", status: "Paid", project: "Salesforce Migration" },
+    { id: "INV-002", date: "Mar 1, 2023", amount: "$49.00", status: "Paid", project: "Salesforce Migration" },
+    { id: "INV-003", date: "Feb 1, 2023", amount: "$99.00", status: "Paid", project: "HubSpot Migration" },
+    { id: "INV-004", date: "Jan 1, 2023", amount: "$49.00", status: "Paid", project: "Zoho Migration" }
+  ]);
 
-  const usageSummary = {
-    currentMonth: {
-      recordsProcessed: 3450,
-      transformationsUsed: 12,
-      integrationsUsed: 3,
-      estimatedCost: "$692.00"
-    },
-    previousMonth: {
-      recordsProcessed: 6215,
-      transformationsUsed: 15,
-      integrationsUsed: 4,
-      totalCost: "$1,243.00"
+  const [usageData, setUsageData] = useState([
+    { project: "Salesforce Migration", recordsMigrated: 10500, dataVolume: "1.2 GB", apiCalls: 8240, cost: "$45.00" },
+    { project: "HubSpot Migration", recordsMigrated: 22300, dataVolume: "3.5 GB", apiCalls: 15320, cost: "$89.00" },
+    { project: "Zoho Migration", recordsMigrated: 5100, dataVolume: "0.8 GB", apiCalls: 4120, cost: "$25.00" }
+  ]);
+
+  const [isAddingPaymentMethod, setIsAddingPaymentMethod] = useState(false);
+  const [newPaymentMethod, setNewPaymentMethod] = useState({
+    cardNumber: "",
+    cardHolder: "",
+    expiry: "",
+    cvc: ""
+  });
+
+  const handleAddPaymentMethod = () => {
+    // In a real app, this would interact with a payment processor like Stripe
+    toast.success("Payment method added successfully");
+    setIsAddingPaymentMethod(false);
+    
+    // Mock adding a new payment method
+    const newMethod = {
+      id: paymentMethods.length + 1,
+      type: "Visa",
+      last4: newPaymentMethod.cardNumber.slice(-4),
+      expiry: newPaymentMethod.expiry,
+      isDefault: false
+    };
+    
+    setPaymentMethods([...paymentMethods, newMethod]);
+    setNewPaymentMethod({
+      cardNumber: "",
+      cardHolder: "",
+      expiry: "",
+      cvc: ""
+    });
+  };
+
+  const handleSetDefaultPaymentMethod = (id: number) => {
+    const updatedMethods = paymentMethods.map(method => ({
+      ...method,
+      isDefault: method.id === id
+    }));
+    
+    setPaymentMethods(updatedMethods);
+    toast.success("Default payment method updated");
+  };
+
+  const handleRemovePaymentMethod = (id: number) => {
+    // Don't allow removing the default payment method
+    if (paymentMethods.find(m => m.id === id)?.isDefault) {
+      toast.error("Cannot remove default payment method");
+      return;
     }
+    
+    setPaymentMethods(paymentMethods.filter(method => method.id !== id));
+    toast.success("Payment method removed");
+  };
+
+  const handleDownloadInvoice = (invoiceId: string) => {
+    toast.success(`Downloading invoice ${invoiceId}`);
+    // In a real app, this would download the invoice PDF
   };
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Pay-As-You-Go Billing</CardTitle>
-          <CardDescription>
-            View your current usage and billing information. You are billed based on your actual usage.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 border rounded-lg">
-              <div className="text-sm text-muted-foreground">Current Month Usage</div>
-              <div className="text-lg font-medium mt-1">
-                {usageSummary.currentMonth.recordsProcessed.toLocaleString()} Records
-              </div>
-              <div className="text-xs text-muted-foreground mt-1">
-                Est. Cost: {usageSummary.currentMonth.estimatedCost}
-              </div>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Current Usage & Estimates</CardTitle>
+              <CardDescription>
+                Track your current usage and estimated costs for active projects.
+              </CardDescription>
             </div>
-            <div className="p-4 border rounded-lg">
-              <div className="text-sm text-muted-foreground">Usage Model</div>
-              <div className="text-lg font-medium mt-1">Pay-Per-Use</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                Only pay for what you use
-              </div>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <div className="text-sm text-muted-foreground">Next Invoice Date</div>
-              <div className="text-lg font-medium mt-1">September 1, 2023</div>
-              <div className="text-xs text-muted-foreground mt-1">
-                For August usage
-              </div>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Link to="/pricing">
-            <Button className="flex items-center gap-2">
-              <Calculator className="h-4 w-4" />
-              View Pricing Calculator
+            <Button variant="outline" size="sm">
+              <BarChart4 className="h-4 w-4 mr-1" />
+              Detailed Analytics
             </Button>
-          </Link>
-        </CardFooter>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Month's Usage Details</CardTitle>
-          <CardDescription>
-            Breakdown of your usage for the current billing period.
-          </CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <div className="text-sm font-medium">Records Processed</div>
-                <div className="text-2xl font-bold mt-1">{usageSummary.currentMonth.recordsProcessed.toLocaleString()}</div>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <div className="text-sm font-medium">Transformations</div>
-                <div className="text-2xl font-bold mt-1">{usageSummary.currentMonth.transformationsUsed}</div>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg">
-                <div className="text-sm font-medium">Integrations</div>
-                <div className="text-2xl font-bold mt-1">{usageSummary.currentMonth.integrationsUsed}</div>
-              </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Project</TableHead>
+                <TableHead className="text-right">Records Migrated</TableHead>
+                <TableHead className="text-right">Data Volume</TableHead>
+                <TableHead className="text-right">API Calls</TableHead>
+                <TableHead className="text-right">Estimated Cost</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {usageData.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{item.project}</TableCell>
+                  <TableCell className="text-right">{item.recordsMigrated.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{item.dataVolume}</TableCell>
+                  <TableCell className="text-right">{item.apiCalls.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-medium">{item.cost}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableRow className="bg-muted/50">
+              <TableCell className="font-medium">Total</TableCell>
+              <TableCell className="text-right font-medium">
+                {usageData.reduce((sum, item) => sum + item.recordsMigrated, 0).toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right font-medium">
+                5.5 GB
+              </TableCell>
+              <TableCell className="text-right font-medium">
+                {usageData.reduce((sum, item) => sum + item.apiCalls, 0).toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right font-medium">
+                $159.00
+              </TableCell>
+            </TableRow>
+          </Table>
+          
+          <div className="mt-6 border rounded-lg p-4 bg-muted/20">
+            <div className="flex items-center">
+              <Clock className="h-5 w-5 text-muted-foreground mr-2" />
+              <p className="text-sm font-medium">Current Billing Cycle: April 1 - April 30, 2023</p>
             </div>
-            
-            <div className="p-4 border border-green-100 bg-green-50/30 rounded-lg mt-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-sm font-medium text-muted-foreground">Estimated Cost So Far</div>
-                  <div className="text-2xl font-bold text-green-700">{usageSummary.currentMonth.estimatedCost}</div>
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Final invoice generated at end of month
-                </div>
-              </div>
-            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Usage is calculated based on records migrated, data volume, and API calls. Costs are estimated and will be finalized at the end of the billing cycle.
+            </p>
           </div>
         </CardContent>
       </Card>
-
+      
       <Card>
         <CardHeader>
-          <CardTitle>Payment Methods</CardTitle>
-          <CardDescription>
-            Manage your payment methods and preferences.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {paymentMethods.map((method) => (
-            <div key={method.id} className="flex items-center justify-between border rounded-lg p-4">
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-muted rounded-md">
-                  <CreditCard className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="font-medium capitalize">
-                    {method.type} •••• {method.last4}
-                    {method.isDefault && (
-                      <Badge variant="outline" className="ml-2">
-                        Default
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="text-sm text-muted-foreground">Expires {method.expiry}</div>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Edit
-                </Button>
-                {!method.isDefault && (
-                  <Button variant="outline" size="sm">
-                    Set as Default
-                  </Button>
-                )}
-              </div>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Payment Methods</CardTitle>
+              <CardDescription>
+                Manage your payment methods and billing preferences.
+              </CardDescription>
             </div>
-          ))}
-          <div className="mt-4">
-            <Button variant="outline" className="gap-1">
-              <PlusCircle className="h-4 w-4" />
+            <Button size="sm" onClick={() => setIsAddingPaymentMethod(true)}>
+              <Plus className="h-4 w-4 mr-1" />
               Add Payment Method
             </Button>
           </div>
+        </CardHeader>
+        <CardContent>
+          {isAddingPaymentMethod ? (
+            <div className="space-y-4 border rounded-lg p-4">
+              <h3 className="font-medium">Add New Payment Method</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cardNumber">Card Number</Label>
+                  <Input
+                    id="cardNumber"
+                    placeholder="1234 5678 9012 3456"
+                    value={newPaymentMethod.cardNumber}
+                    onChange={(e) => setNewPaymentMethod({...newPaymentMethod, cardNumber: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cardHolder">Card Holder Name</Label>
+                  <Input
+                    id="cardHolder"
+                    placeholder="John Doe"
+                    value={newPaymentMethod.cardHolder}
+                    onChange={(e) => setNewPaymentMethod({...newPaymentMethod, cardHolder: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="expiry">Expiry Date</Label>
+                  <Input
+                    id="expiry"
+                    placeholder="MM/YY"
+                    value={newPaymentMethod.expiry}
+                    onChange={(e) => setNewPaymentMethod({...newPaymentMethod, expiry: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cvc">CVC</Label>
+                  <Input
+                    id="cvc"
+                    placeholder="123"
+                    value={newPaymentMethod.cvc}
+                    onChange={(e) => setNewPaymentMethod({...newPaymentMethod, cvc: e.target.value})}
+                    type="password"
+                    maxLength={4}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => setIsAddingPaymentMethod(false)}>Cancel</Button>
+                <Button onClick={handleAddPaymentMethod}>Save Payment Method</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {paymentMethods.map((method) => (
+                <div key={method.id} className="flex justify-between items-center border rounded-lg p-4">
+                  <div className="flex items-center">
+                    <CreditCard className="h-5 w-5 mr-3 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">
+                        {method.type} •••• {method.last4}
+                        {method.isDefault && <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full dark:bg-green-900 dark:text-green-100">Default</span>}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Expires {method.expiry}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {!method.isDefault && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleSetDefaultPaymentMethod(method.id)}
+                      >
+                        Set as Default
+                      </Button>
+                    )}
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="text-red-500 hover:text-red-600"
+                      onClick={() => handleRemovePaymentMethod(method.id)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
-
+      
       <Card>
         <CardHeader>
-          <CardTitle>Payment History</CardTitle>
+          <CardTitle>Billing History</CardTitle>
           <CardDescription>
             View and download your past invoices.
           </CardDescription>
@@ -210,11 +277,12 @@ const BillingSettings = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Invoice ID</TableHead>
+                <TableHead>Invoice</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>Amount</TableHead>
+                <TableHead>Project</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Download</TableHead>
+                <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -222,15 +290,21 @@ const BillingSettings = () => {
                 <TableRow key={invoice.id}>
                   <TableCell className="font-medium">{invoice.id}</TableCell>
                   <TableCell>{invoice.date}</TableCell>
-                  <TableCell>{invoice.amount}</TableCell>
+                  <TableCell>{invoice.project}</TableCell>
+                  <TableCell className="text-right">{invoice.amount}</TableCell>
                   <TableCell>
-                    <Badge variant={invoice.status === "paid" ? "success" : "outline"}>
-                      {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                    </Badge>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                      {invoice.status}
+                    </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">
-                      <Download className="h-4 w-4" />
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleDownloadInvoice(invoice.id)}
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      Download
                     </Button>
                   </TableCell>
                 </TableRow>
