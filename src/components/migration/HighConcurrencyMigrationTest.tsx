@@ -40,7 +40,7 @@ const HighConcurrencyMigrationTest = () => {
           toast({
             title: "Concurrency Test Complete",
             description: "All integrations processed successfully",
-            variant: "success",
+            variant: "default", // Changed from "success" to "default" to fix the type error
           });
           
           return 100;
