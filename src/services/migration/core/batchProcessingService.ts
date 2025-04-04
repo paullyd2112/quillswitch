@@ -228,7 +228,7 @@ export const executeStreamingDataTransfer = async <T>(
   projectId?: string,
 ): Promise<TransferProgress> => {
   // Initialize progress with total records count
-  const initialProgress = {
+  const initialProgress: TransferProgress = {
     totalRecords,
     processedRecords: 0,
     failedRecords: 0,
@@ -237,7 +237,7 @@ export const executeStreamingDataTransfer = async <T>(
     totalBatches: Math.ceil(totalRecords / batchConfig.batchSize),
     startTime: new Date(),
     estimatedTimeRemaining: null,
-    status: 'initializing' as 'initializing' | 'in_progress' | 'paused' | 'completed' | 'failed',
+    status: 'initializing',
     processingRate: 0
   };
   

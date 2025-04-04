@@ -15,6 +15,7 @@ export const createInitialProgress = (totalRecords: number): TransferProgress =>
     startTime: new Date(),
     estimatedTimeRemaining: null,
     status: "initializing",
+    processingRate: 0,
   };
 };
 
@@ -43,7 +44,7 @@ export const updateProgress = (
   const percentage = Math.round((totalProcessed / progress.totalRecords) * 100);
   
   // Calculate processing rate and estimated time remaining
-  let processingRate = undefined;
+  let processingRate = progress.processingRate || 0;
   let estimatedTimeRemaining = null;
   
   if (elapsedMs > 0 && totalProcessed > 0) {
@@ -84,6 +85,7 @@ export const createResumeProgress = (
     startTime: new Date(),
     estimatedTimeRemaining: null,
     status: "in_progress",
+    processingRate: 0,
     checkpoint: savedProgress.checkpoint,
   };
 };
