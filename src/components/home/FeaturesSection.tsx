@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Zap, Database, Shield, GitMerge, ListChecks, BellRing } from "lucide-react";
+import { Wand2, Database, Shield, GitMerge, ListChecks, BellRing, Calendar, UploadCloud } from "lucide-react";
 import ContentSection from "@/components/layout/ContentSection";
 import SlideUp from "@/components/animations/SlideUp";
 import FeatureCard from "@/components/ui-elements/FeatureCard";
@@ -21,9 +21,9 @@ const FeaturesSection = () => {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         <SlideUp delay="none">
           <FeatureCard
-            icon={<Zap className="h-10 w-10 text-brand-500" />}
+            icon={<Wand2 className="h-10 w-10 text-brand-500" />}
             title="Automated Mapping"
-            description="Smart field mapping between different CRM systems with AI assistance"
+            description="AI-powered field mapping between different CRM systems with smart suggestions"
           />
         </SlideUp>
         <SlideUp delay="100">
@@ -49,16 +49,16 @@ const FeaturesSection = () => {
         </SlideUp>
         <SlideUp delay="400">
           <FeatureCard
-            icon={<Database className="h-10 w-10 text-brand-500" />}
-            title="Full Data Transfer"
-            description="Move contacts, deals, tickets, and custom objects between systems"
+            icon={<Shield className="h-10 w-10 text-brand-500" />}
+            title="Data Security"
+            description="Enterprise-grade security with encrypted data transfer and zero storage"
           />
         </SlideUp>
         <SlideUp delay="500">
           <FeatureCard
-            icon={<Shield className="h-10 w-10 text-brand-500" />}
-            title="Data Security"
-            description="Enterprise-grade security with encrypted data transfer and zero storage"
+            icon={<Calendar className="h-10 w-10 text-brand-500" />}
+            title="Scheduled Migrations"
+            description="Plan and execute migrations during off-hours with flexible scheduling"
           />
         </SlideUp>
       </div>

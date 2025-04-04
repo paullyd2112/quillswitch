@@ -43,18 +43,18 @@ const HeroSection = () => {
         <div className="max-w-4xl mx-auto text-center">
           <FadeIn>
             <Badge className="mb-4 bg-brand-100 text-brand-700 hover:bg-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/40">
-              CRM Migration Made Simple
+              Intelligent CRM Migration
             </Badge>
           </FadeIn>
           <FadeIn delay="100">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-              Seamless CRM Migration, Simplified
+              Seamless CRM Migration with AI-Powered Mapping
             </h1>
           </FadeIn>
           <FadeIn delay="200">
             <p className="text-xl text-muted-foreground mb-8">
               Painlessly migrate from Salesforce to HubSpot, or between any other CRMs, 
-              with automated mapping, data validation, and real-time notifications.
+              with automated field mapping, data validation, and real-time monitoring.
             </p>
           </FadeIn>
           <FadeIn delay="300">
