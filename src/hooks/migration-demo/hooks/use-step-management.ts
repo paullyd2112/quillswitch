@@ -10,13 +10,13 @@ type UseStepManagementReturnType = {
   activeStep: MigrationStep | undefined;
   setActiveStep: React.Dispatch<React.SetStateAction<MigrationStep | undefined>>;
   resetSteps: () => void;
-  updateStepProgress: (status: MigrationStatus, currentStepIndex: number, setCurrentStepIndex: (index: number) => void) => void;
+  updateStepProgress: (status: MigrationStatus, currentStepIndex: number, setCurrentStepIndex: (index: number) => void) => () => void;
 };
 
 /**
  * Hook to manage step statuses and progression
  */
-export const useStepManagement = (migrationStatus: MigrationStatus): UseStepManagementReturnType => {
+export const useStepManagement = (initialStatus: MigrationStatus): UseStepManagementReturnType => {
   const [steps, setSteps] = useState<MigrationStep[]>(initialMigrationSteps);
   const [activeStep, setActiveStep] = useState<MigrationStep | undefined>(undefined);
   
@@ -32,7 +32,7 @@ export const useStepManagement = (migrationStatus: MigrationStatus): UseStepMana
     currentStepIndex: number,
     setCurrentStepIndex: (index: number) => void
   ) => {
-    if (status !== "loading") return;
+    if (status !== "loading") return () => {};
     
     const interval = setInterval(() => {
       setSteps(prevSteps => {

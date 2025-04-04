@@ -14,11 +14,17 @@ type UsePerformanceMetricsReturnType = {
 /**
  * Hook to manage and update performance metrics during migration
  */
-export const usePerformanceMetrics = (migrationStatus: MigrationStatus, steps: MigrationStep[]): UsePerformanceMetricsReturnType => {
+export const usePerformanceMetrics = (initialStatus: MigrationStatus, steps: MigrationStep[]): UsePerformanceMetricsReturnType => {
   const [performanceMetrics, setPerformanceMetrics] = useState<Partial<PerformanceMetrics>>({});
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [recordsProcessedHistory, setRecordsProcessedHistory] = useState<MigrationHistoryPoint[]>([]);
   const [peakRps, setPeakRps] = useState(0);
+  const [migrationStatus, setMigrationStatus] = useState<MigrationStatus>(initialStatus);
+  
+  // Update migration status when parameter changes
+  useEffect(() => {
+    setMigrationStatus(initialStatus);
+  }, [initialStatus]);
   
   // Reset all performance metrics
   const resetMetrics = () => {

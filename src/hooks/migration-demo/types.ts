@@ -4,7 +4,7 @@ export interface MigrationStep {
   name: string;
   status: 'idle' | 'in_progress' | 'complete';
   progress: number;
-  recordSize?: number; // Add this for data volume calculations
+  recordSize?: number; // For data volume calculations
 }
 
 export interface MigrationHistoryPoint {

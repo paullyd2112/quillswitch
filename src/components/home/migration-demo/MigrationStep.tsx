@@ -7,13 +7,14 @@ type MigrationStepProps = {
   name: string;
   status: 'idle' | 'in_progress' | 'complete';
   progress: number;
+  isActive?: boolean;
 };
 
-const MigrationStep = ({ name, status, progress }: MigrationStepProps) => {
+const MigrationStep = ({ name, status, progress, isActive }: MigrationStepProps) => {
   return (
     <div 
       className={`space-y-1.5 transition-all duration-500 ease-out ${
-        status === 'in_progress' 
+        status === 'in_progress' || isActive
           ? 'scale-105 transform' 
           : status === 'complete' 
             ? 'opacity-90' 

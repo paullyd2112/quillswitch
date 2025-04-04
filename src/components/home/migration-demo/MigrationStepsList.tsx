@@ -1,26 +1,23 @@
 
 import React from "react";
 import MigrationStep from "./MigrationStep";
-
-type MigrationStep = {
-  name: string;
-  status: 'pending' | 'in_progress' | 'complete';
-  progress: number;
-};
+import type { MigrationStep as MigrationStepType } from "@/hooks/use-migration-demo";
 
 type MigrationStepsListProps = {
-  steps: MigrationStep[];
+  steps: MigrationStepType[];
+  activeStep?: MigrationStepType;
 };
 
-const MigrationStepsList = ({ steps }: MigrationStepsListProps) => {
+const MigrationStepsList = ({ steps, activeStep }: MigrationStepsListProps) => {
   return (
-    <div className="space-y-4 max-h-48 overflow-y-auto py-2 pr-1 scrollbar-thin">
-      {steps.map((step) => (
-        <MigrationStep 
-          key={step.name} 
-          name={step.name} 
-          status={step.status} 
-          progress={step.progress} 
+    <div className="space-y-4 my-6">
+      {steps.map(step => (
+        <MigrationStep
+          key={step.id}
+          name={step.name}
+          status={step.status}
+          progress={step.progress}
+          isActive={activeStep?.id === step.id}
         />
       ))}
     </div>
