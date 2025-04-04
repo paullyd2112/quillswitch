@@ -48,7 +48,12 @@ export const useMigrationLifecycle = (
       });
       
       // Create the migration in the API
-      await createMigration();
+      try {
+        await createMigration();
+      } catch (error) {
+        console.warn("Failed to create migration through API, but continuing demo anyway:", error);
+        // For the demo, we'll continue even if the API call fails
+      }
       
       // Start the first step
       setSteps(prevSteps => {
