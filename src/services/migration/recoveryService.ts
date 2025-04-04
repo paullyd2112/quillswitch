@@ -54,7 +54,11 @@ export const resumeTransfer = async (projectId: string) => {
       totalBatches: checkpoint.progress.totalBatches,
       startTime: new Date(),
       estimatedTimeRemaining: null,
-      status: "in_progress"
+      status: "in_progress",
+      processingRate: 0,
+      peakProcessingRate: 0,
+      dataVolume: checkpoint.progress.dataVolume || 0,
+      processingHistory: []
     };
     
     return {

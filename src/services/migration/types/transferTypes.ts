@@ -1,8 +1,10 @@
+
 export interface BatchConfig {
   batchSize: number;
   concurrentBatches: number;
   retryAttempts: number;
   retryDelay: number;
+  validationLevel?: 'none' | 'basic' | 'strict';
 }
 
 export const DEFAULT_BATCH_CONFIG: BatchConfig = {

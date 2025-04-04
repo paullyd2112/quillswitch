@@ -164,8 +164,7 @@ export const createProgressSummary = (progress: TransferProgress): string => {
     totalRecords, 
     failedRecords, 
     processingRate,
-    peakProcessingRate,
-    elapsedSeconds
+    peakProcessingRate
   } = progress;
   
   // Calculate elapsed time
