@@ -21,7 +21,7 @@ export const getNavLinks = (user?: any) => [
     icon: <Puzzle size={16} />,
     children: [
       { text: "API Docs", href: "/api-docs", icon: <FileText size={16} /> },
-      { text: "Setup Wizard", href: "/migrations/setup", icon: <Wand2 size={16} /> },
+      { text: "Setup Wizard", href: user ? "/migrations/setup" : "/auth/register", icon: <Wand2 size={16} /> },
       { text: "Analytics", href: "/analytics", icon: <BarChart3 size={16} /> },
     ] 
   },
