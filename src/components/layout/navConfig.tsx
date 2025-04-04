@@ -19,7 +19,7 @@ export const getNavLinks = (user?: any) => [
   { text: "Dashboard", href: "/", icon: <LayoutDashboard size={16} /> },
   { 
     text: "Features & Tools", 
-    href: "#", 
+    href: user ? "/migrations/setup" : "/auth/register", 
     icon: <Puzzle size={16} />,
     children: [
       ...(user ? [{ text: "API Docs", href: "/api-docs", icon: <FileText size={16} /> }] : []),
