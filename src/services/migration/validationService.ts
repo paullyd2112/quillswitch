@@ -188,7 +188,7 @@ export const getValidationReports = async (objectTypeId: string) => {
 /**
  * Common validation rule sets for different data types
  */
-export const commonValidationRules = {
+export const commonValidationRules: Record<string, ValidationRule[]> = {
   contacts: [
     { field: 'email', rule: 'format', params: { pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$' }, message: 'Invalid email format' },
     { field: 'firstName', rule: 'required', message: 'First name is required' },

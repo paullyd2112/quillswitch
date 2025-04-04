@@ -56,9 +56,9 @@ export const createNotification = async (
     if (error) throw error;
     
     // Trigger notification to all registered webhooks
-    await triggerWebhookNotification(data);
+    await triggerWebhookNotification(data as MigrationNotification);
     
-    return data;
+    return data as MigrationNotification;
   } catch (error: any) {
     console.error("Failed to create notification:", error);
     return null;
@@ -89,7 +89,7 @@ export const getProjectNotifications = async (
     
     if (error) throw error;
     
-    return data || [];
+    return (data || []) as MigrationNotification[];
   } catch (error: any) {
     console.error("Failed to fetch notifications:", error);
     return [];
