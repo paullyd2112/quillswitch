@@ -9,28 +9,28 @@ export interface BatchConfig {
 
 export const DEFAULT_BATCH_CONFIG: BatchConfig = {
   batchSize: 50,
-  concurrentBatches: 3,
+  concurrentBatches: 8, // Increased from 3 to 8
   retryAttempts: 3,
   retryDelay: 2000,
 };
 
 export const ENTERPRISE_BATCH_CONFIG: BatchConfig = {
   batchSize: 100,
-  concurrentBatches: 10, // Updated from 5 to 10
+  concurrentBatches: 10, // Already updated from 5 to 10
   retryAttempts: 5,
   retryDelay: 3000,
 };
 
 export const ENTERPRISE_SIMPLE_BATCH_CONFIG: BatchConfig = {
   batchSize: 200,
-  concurrentBatches: 10,
+  concurrentBatches: 15, // Increased from 10 to 15
   retryAttempts: 3,
   retryDelay: 1000,
 };
 
 export const ENTERPRISE_COMPLEX_BATCH_CONFIG: BatchConfig = {
   batchSize: 50,
-  concurrentBatches: 2,
+  concurrentBatches: 6, // Increased from 2 to 6
   retryAttempts: 5,
   retryDelay: 5000,
 };
