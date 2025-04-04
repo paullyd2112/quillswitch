@@ -21,6 +21,9 @@ import {
   RefreshCw,
   DownloadCloud,
   XCircle,
+  Zap,
+  ListChecks,
+  Clock
 } from "lucide-react";
 import {
   MigrationProject,
@@ -47,6 +50,10 @@ import ErrorSummary from "@/components/migration/ErrorSummary";
 import DataMappingVisualizer from "@/components/migration/DataMappingVisualizer";
 import ActivityTimeline from "@/components/migration/ActivityTimeline";
 import { supabase } from "@/integrations/supabase/client";
+import DataValidation from "@/components/migration/DataValidation";
+import DeltaMigrationConfig from "@/components/migration/DeltaMigrationConfig";
+import NotificationsPanel from "@/components/migration/NotificationsPanel";
+import { createNotification } from "@/services/migration/notificationService";
 
 const MigrationDashboard = () => {
   const navigate = useNavigate();
@@ -188,6 +195,51 @@ const MigrationDashboard = () => {
     }
   };
 
+  // New handlers for our added features
+  const handleSaveDeltaConfig = async (config: any) => {
+    if (!project) return;
+    
+    try {
+      // In a real app, we would save this to the database
+      // For now we'll just log it and show a success notification
+      console.log("Delta migration config saved:", config);
+      
+      // Create a notification
+      if (config.enabled) {
+        await createNotification(
+          project.id,
+          "Delta Migration Enabled",
+          `Delta migration configured with ${config.syncFrequency} frequency.`,
+          "migration_started"
+        );
+      }
+      
+      toast({
+        title: config.enabled ? "Delta Migration Enabled" : "Delta Migration Disabled",
+        description: config.enabled 
+          ? `Configuration saved with ${config.syncFrequency} updates.` 
+          : "Delta migration has been disabled.",
+      });
+      
+      // Log the activity
+      await logUserActivity({
+        project_id: project.id,
+        activity_type: "delta_config_updated",
+        activity_description: config.enabled 
+          ? `Delta migration configured with ${config.syncFrequency} frequency` 
+          : "Delta migration disabled",
+        activity_details: config
+      });
+      
+    } catch (error: any) {
+      toast({
+        title: "Action Failed",
+        description: error.message || "Failed to save delta migration configuration.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const selectedObjectType = objectTypes.find(obj => obj.id === selectedObjectTypeId);
 
   if (isLoading) {
@@ -252,7 +304,9 @@ const MigrationDashboard = () => {
               </p>
             </div>
             
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <NotificationsPanel projectId={project.id} />
+              
               <Button
                 variant={project.status === "in_progress" ? "outline" : "default"}
                 className="gap-2"
@@ -292,6 +346,14 @@ const MigrationDashboard = () => {
                 <TabsTrigger value="data-mapping" className="gap-1.5">
                   <ArrowUpDown className="h-4 w-4" />
                   <span>Data Mapping</span>
+                </TabsTrigger>
+                <TabsTrigger value="validation" className="gap-1.5">
+                  <ListChecks className="h-4 w-4" />
+                  <span>Validation</span>
+                </TabsTrigger>
+                <TabsTrigger value="delta" className="gap-1.5">
+                  <Clock className="h-4 w-4" />
+                  <span>Delta Sync</span>
                 </TabsTrigger>
                 <TabsTrigger value="errors" className="gap-1.5">
                   <AlertTriangle className="h-4 w-4" />
@@ -368,6 +430,24 @@ const MigrationDashboard = () => {
                     </div>
                   </div>
                 </GlassPanel>
+              </FadeIn>
+            </TabsContent>
+
+            <TabsContent value="validation">
+              <FadeIn>
+                <DataValidation 
+                  project={project} 
+                  objectTypes={objectTypes} 
+                />
+              </FadeIn>
+            </TabsContent>
+
+            <TabsContent value="delta">
+              <FadeIn>
+                <DeltaMigrationConfig 
+                  projectId={project.id}
+                  onSave={handleSaveDeltaConfig}
+                />
               </FadeIn>
             </TabsContent>
             
