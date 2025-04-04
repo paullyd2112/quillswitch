@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,13 +8,13 @@ import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
 import { BarChart, FileText, Settings, GitBranch, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
-import { testEnterpriseCapabilities, TransferProgress } from "@/services/migration/transferService";
+import { testEnterpriseCapabilities } from "@/services/migration/transferService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const EnterpriseMigrationCapabilityTest = () => {
   const [testInProgress, setTestInProgress] = useState(false);
   const [testResults, setTestResults] = useState<any>(null);
-  const [progress, setProgress] = useState<TransferProgress | null>(null);
+  const [progress, setProgress] = useState<any>(null);
   const [recordCounts, setRecordCounts] = useState({
     contacts: 5000,
     accounts: 1000,
@@ -62,6 +63,14 @@ const EnterpriseMigrationCapabilityTest = () => {
     } finally {
       setTestInProgress(false);
     }
+  };
+  
+  // Helper function to safely format numbers with toFixed
+  const safeToFixed = (value: any, decimals: number = 2): string => {
+    if (value === undefined || value === null || isNaN(Number(value))) {
+      return '0';
+    }
+    return Number(value).toFixed(decimals);
   };
   
   return (
@@ -155,8 +164,8 @@ const EnterpriseMigrationCapabilityTest = () => {
                     </div>
                     <Progress value={progress.percentage} className="h-2" />
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span>Processed: {progress.processedRecords.toLocaleString()} of {progress.totalRecords.toLocaleString()}</span>
-                      <span>Batch: {progress.currentBatch} of {progress.totalBatches}</span>
+                      <span>Processed: {progress.processedRecords?.toLocaleString() || 0} of {progress.totalRecords?.toLocaleString() || 0}</span>
+                      <span>Batch: {progress.currentBatch || 0} of {progress.totalBatches || 0}</span>
                     </div>
                   </div>
                   
@@ -166,20 +175,20 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Start Time</span>
-                          <span>{progress.startTime.toLocaleString()}</span>
+                          <span>{progress.startTime?.toLocaleString() || 'N/A'}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Status</span>
-                          <span className="capitalize">{progress.status}</span>
+                          <span className="capitalize">{progress.status || 'N/A'}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Failed Records</span>
-                          <span>{progress.failedRecords.toLocaleString()}</span>
+                          <span>{progress.failedRecords?.toLocaleString() || 0}</span>
                         </div>
                         {progress.processingRate && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Processing Rate</span>
-                            <span>{progress.processingRate.toFixed(2)} records/sec</span>
+                            <span>{safeToFixed(progress.processingRate, 2)} records/sec</span>
                           </div>
                         )}
                       </div>
@@ -188,7 +197,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                     <div className="border rounded-lg p-4">
                       <h4 className="font-medium mb-2">Estimated Time</h4>
                       <div className="space-y-2">
-                        {progress.estimatedTimeRemaining !== null ? (
+                        {progress.estimatedTimeRemaining !== null && progress.estimatedTimeRemaining !== undefined ? (
                           <>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Time Remaining</span>
@@ -197,7 +206,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Estimated Completion</span>
                               <span>
-                                {new Date(Date.now() + progress.estimatedTimeRemaining * 1000).toLocaleTimeString()}
+                                {new Date(Date.now() + (progress.estimatedTimeRemaining || 0) * 1000).toLocaleTimeString()}
                               </span>
                             </div>
                           </>
@@ -246,7 +255,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                 <div>
                   <h3 className="text-lg font-medium mb-4">Maximum Capacity</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {Object.entries(testResults.maxCapacity).map(([dataType, count]) => (
+                    {Object.entries(testResults.maxCapacity || {}).map(([dataType, count]) => (
                       <div key={dataType} className="border rounded-lg p-4">
                         <h4 className="font-medium capitalize">{dataType}</h4>
                         <p className="text-2xl font-bold">{Number(count).toLocaleString()}</p>
@@ -263,7 +272,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Peak Throughput</span>
-                          <span className="text-lg">{testResults.metrics.peakThroughput.toFixed(2)}</span>
+                          <span className="text-lg">{safeToFixed(testResults.metrics?.peakThroughput)}</span>
                         </div>
                         <p className="text-muted-foreground text-sm">records per second</p>
                       </div>
@@ -271,7 +280,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Average Throughput</span>
-                          <span className="text-lg">{testResults.metrics.averageThroughput.toFixed(2)}</span>
+                          <span className="text-lg">{safeToFixed(testResults.metrics?.averageThroughput)}</span>
                         </div>
                         <p className="text-muted-foreground text-sm">records per second</p>
                       </div>
@@ -279,7 +288,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Success Rate</span>
-                          <span className="text-lg">{testResults.metrics.successRate.toFixed(2)}%</span>
+                          <span className="text-lg">{safeToFixed(testResults.metrics?.successRate)}</span>
                         </div>
                         <p className="text-muted-foreground text-sm">of processed records</p>
                       </div>
@@ -287,7 +296,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Total Duration</span>
-                          <span className="text-lg">{formatTime(testResults.metrics.totalDuration)}</span>
+                          <span className="text-lg">{formatTime(testResults.metrics?.totalDuration || 0)}</span>
                         </div>
                         <p className="text-muted-foreground text-sm">test execution time</p>
                       </div>
@@ -295,7 +304,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Memory Usage</span>
-                          <span className="text-lg">{testResults.metrics.memoryUsageMB} MB</span>
+                          <span className="text-lg">{testResults.metrics?.memoryUsage !== undefined ? `${safeToFixed(testResults.metrics.memoryUsage)} MB` : 'N/A'}</span>
                         </div>
                         <p className="text-muted-foreground text-sm">peak memory consumption</p>
                       </div>
@@ -309,13 +318,17 @@ const EnterpriseMigrationCapabilityTest = () => {
                     </h3>
                     <div className="bg-muted/30 rounded-lg p-4 h-[calc(100%-2rem)]">
                       <div className="overflow-auto max-h-[400px] space-y-2">
-                        {testResults.recommendation.split('\n').map((line, index) => (
-                          line.trim() ? (
-                            <p key={index} className={line.startsWith('-') ? 'pl-4 text-muted-foreground' : 'font-medium'}>
-                              {line}
-                            </p>
-                          ) : <div key={index} className="h-2" />
-                        ))}
+                        {testResults.recommendation ? 
+                          testResults.recommendation.split('\n').map((line: string, index: number) => (
+                            line.trim() ? (
+                              <p key={index} className={line.startsWith('-') ? 'pl-4 text-muted-foreground' : 'font-medium'}>
+                                {line}
+                              </p>
+                            ) : <div key={index} className="h-2" />
+                          )) : (
+                            <p className="text-muted-foreground">No recommendations available</p>
+                          )
+                        }
                       </div>
                     </div>
                   </div>
@@ -364,6 +377,8 @@ const EnterpriseMigrationCapabilityTest = () => {
  * Format seconds into human-readable time
  */
 const formatTime = (seconds: number): string => {
+  if (!seconds && seconds !== 0) return "N/A";
+  
   if (seconds < 60) {
     return `${Math.round(seconds)} seconds`;
   } else if (seconds < 3600) {
