@@ -15,7 +15,7 @@ const MigrationStepsList = ({ steps, activeStep }: MigrationStepsListProps) => {
         <MigrationStep
           key={step.id}
           name={step.name}
-          status={step.status}
+          status={step.status} // Now this will be properly typed as 'idle' | 'in_progress' | 'complete'
           progress={step.progress}
           isActive={activeStep?.id === step.id}
         />

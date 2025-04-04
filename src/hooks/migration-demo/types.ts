@@ -1,4 +1,3 @@
-
 export interface MigrationStep {
   id: string;
   name: string;
