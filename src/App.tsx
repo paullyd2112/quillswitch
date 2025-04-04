@@ -91,7 +91,11 @@ function App() {
           <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
           <Route path="/about" element={<About />} />
           <Route path="/pricing" element={<PricingEstimator />} />
-          <Route path="/api-docs" element={<ApiDocs />} />
+          <Route path="/api-docs" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ApiDocs />
+            </ProtectedRoute>
+          } />
           <Route path="/profile" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Profile />
