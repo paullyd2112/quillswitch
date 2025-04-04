@@ -55,7 +55,7 @@ const EnterpriseMigrationTest = () => {
               </div>
             </FadeIn>
             
-            <FadeIn delay="150">
+            <FadeIn delay="200">
               <div className="bg-card/60 p-6 rounded-lg border shadow-sm">
                 <Database className="h-10 w-10 text-primary mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Data Volume Limits</h3>
@@ -65,7 +65,7 @@ const EnterpriseMigrationTest = () => {
               </div>
             </FadeIn>
             
-            <FadeIn delay="200">
+            <FadeIn delay="300">
               <div className="bg-card/60 p-6 rounded-lg border shadow-sm">
                 <Server className="h-10 w-10 text-primary mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Resource Utilization</h3>
@@ -76,7 +76,7 @@ const EnterpriseMigrationTest = () => {
             </FadeIn>
           </div>
           
-          <FadeIn delay="250">
+          <FadeIn delay="400">
             <EnterpriseMigrationCapabilityTest />
           </FadeIn>
         </div>
