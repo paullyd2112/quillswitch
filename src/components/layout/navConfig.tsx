@@ -12,9 +12,7 @@ import {
   Settings,
   DollarSign,
   BookOpen,
-  HelpCircle,
-  Image,
-  Presentation
+  HelpCircle
 } from "lucide-react";
 
 export const getNavLinks = (user?: any) => [
@@ -47,8 +45,6 @@ export const getNavLinks = (user?: any) => [
     icon: <LifeBuoy size={16} />,
     children: [
       { text: "Knowledge Base", href: "/knowledge-base", icon: <BookOpen size={16} /> },
-      { text: "Screenshot Guides", href: "/resources?tab=guides", icon: <Image size={16} /> },
-      { text: "Quick Start", href: "/resources?tab=tutorials", icon: <Presentation size={16} /> },
       { text: "FAQ", href: "/resources?tab=faq", icon: <HelpCircle size={16} /> },
     ]
   },
