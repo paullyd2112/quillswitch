@@ -3,8 +3,6 @@ import React from "react";
 import { Database } from "lucide-react";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import MigrationHeader from "./MigrationHeader";
-import MigrationProgressBar from "./MigrationProgressBar";
-import MigrationStepsList from "./MigrationStepsList";
 import MigrationStatus from "./MigrationStatus";
 import MigrationFooter from "./MigrationFooter";
 
@@ -43,14 +41,7 @@ const MigrationVisualizer = ({
         />
         
         {migrationStatus === "idle" && <MigrationStatus status="idle" />}
-        
-        {migrationStatus === "loading" && (
-          <>
-            <MigrationProgressBar progress={overallProgress} />
-            <MigrationStepsList steps={steps} />
-          </>
-        )}
-        
+        {migrationStatus === "loading" && <MigrationStatus status="loading" />}
         {migrationStatus === "success" && <MigrationStatus status="success" />}
         
         <MigrationHeader 

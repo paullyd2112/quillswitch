@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Database, Check } from "lucide-react";
+import { Database, Check, Loader } from "lucide-react";
 
 type MigrationStatusProps = {
   status: "idle" | "loading" | "success";
@@ -11,6 +11,17 @@ const MigrationStatus = ({ status }: MigrationStatusProps) => {
     return (
       <div className="flex items-center justify-center py-12 opacity-80">
         <Database className="h-8 w-8 text-brand-500 animate-pulse" />
+      </div>
+    );
+  }
+
+  if (status === "loading") {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 space-y-3">
+        <div className="relative">
+          <Loader className="h-12 w-12 text-brand-500 animate-spin" />
+        </div>
+        <div className="text-brand-500 font-medium">Migration in progress...</div>
       </div>
     );
   }
