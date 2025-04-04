@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MigrationHistoryPoint, MigrationStep, PerformanceMetrics, MigrationStatus } from '../types';
 import { updatePerformanceMetrics, calculateProcessedRecords } from '../performance-utils';
@@ -48,10 +47,13 @@ export const usePerformanceMetrics = (initialStatus: MigrationStatus, steps: Mig
       const processedRecords = calculateProcessedRecords(steps);
       
       // Store history for rolling averages
-      const newHistory = [...recordsProcessedHistory, {timestamp: Date.now(), records: processedRecords}];
+      const newHistory = [...recordsProcessedHistory, {
+        timestamp: Date.now(),
+        records: processedRecords
+      }];
       
-      // Only keep last 10 history points for efficiency
-      if (newHistory.length > 10) {
+      // Only keep last 50 history points for efficiency
+      if (newHistory.length > 50) {
         newHistory.shift();
       }
       
@@ -63,7 +65,8 @@ export const usePerformanceMetrics = (initialStatus: MigrationStatus, steps: Mig
         newHistory,
         startTime,
         peakRps,
-        performanceMetrics.estimatedTimeRemaining
+        performanceMetrics.estimatedTimeRemaining,
+        performanceMetrics
       );
       
       setPeakRps(newPeakRps);
@@ -78,7 +81,7 @@ export const usePerformanceMetrics = (initialStatus: MigrationStatus, steps: Mig
     startTime, 
     recordsProcessedHistory, 
     peakRps, 
-    performanceMetrics.estimatedTimeRemaining
+    performanceMetrics
   ]);
 
   return {

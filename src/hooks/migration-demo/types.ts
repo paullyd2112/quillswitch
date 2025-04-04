@@ -10,6 +10,8 @@ export interface MigrationStep {
 export interface MigrationHistoryPoint {
   timestamp: number;
   records: number;
+  memoryUsage?: number;
+  networkSpeed?: number;
 }
 
 export interface PerformanceMetrics {
@@ -18,6 +20,10 @@ export interface PerformanceMetrics {
   estimatedTimeRemaining?: number;
   totalRecordsProcessed?: number;
   dataVolume?: number;
+  memoryUsage?: number;
+  networkSpeed?: number;
+  cpuUtilization?: number;
+  progressHistory?: MigrationHistoryPoint[];
 }
 
 export type MigrationStatus = "idle" | "loading" | "success" | "error";

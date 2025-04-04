@@ -69,3 +69,25 @@ export const formatBytes = (bytes?: number): string => {
   const gb = mb / 1024;
   return `${gb.toFixed(1)} GB`;
 };
+
+// Format memory in MB with appropriate unit
+export const formatMemory = (memoryMB?: number): string => {
+  if (memoryMB === undefined) return "N/A";
+  
+  if (memoryMB < 1000) {
+    return `${memoryMB.toFixed(1)} MB`;
+  }
+  
+  return `${(memoryMB / 1024).toFixed(2)} GB`;
+};
+
+// Format network speed with appropriate unit
+export const formatNetworkSpeed = (kbps?: number): string => {
+  if (kbps === undefined) return "N/A";
+  
+  if (kbps < 1000) {
+    return `${kbps.toFixed(1)} KB/s`;
+  }
+  
+  return `${(kbps / 1024).toFixed(2)} MB/s`;
+};
