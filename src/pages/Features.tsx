@@ -193,7 +193,7 @@ const Features = () => {
           {/* Feature 1 */}
           <div className="mb-16">
             <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="md:w-1/2">
+              <div className="w-full">
                 <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-xl">
                   <Zap size={32} className="text-brand-500 mb-4" />
                   <h3 className="text-2xl font-semibold mb-3">Automated Field Mapping</h3>
@@ -216,14 +216,13 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2"></div>
             </div>
           </div>
           
           {/* Feature 2 */}
           <div className="mb-16">
             <div className="flex flex-col md:flex-row-reverse gap-8 items-center">
-              <div className="md:w-1/2">
+              <div className="w-full">
                 <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-xl">
                   <GitMerge size={32} className="text-brand-500 mb-4" />
                   <h3 className="text-2xl font-semibold mb-3">Delta Synchronization</h3>
@@ -246,14 +245,13 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2"></div>
             </div>
           </div>
           
           {/* Feature 3 */}
           <div className="mb-16">
             <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="md:w-1/2">
+              <div className="w-full">
                 <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-xl">
                   <ListChecks size={32} className="text-brand-500 mb-4" />
                   <h3 className="text-2xl font-semibold mb-3">Data Validation & Quality</h3>
@@ -276,14 +274,13 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2"></div>
             </div>
           </div>
           
           {/* Feature 4 */}
           <div className="mb-16">
             <div className="flex flex-col md:flex-row-reverse gap-8 items-center">
-              <div className="md:w-1/2">
+              <div className="w-full">
                 <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-xl">
                   <BellRing size={32} className="text-brand-500 mb-4" />
                   <h3 className="text-2xl font-semibold mb-3">Real-time Notifications</h3>
@@ -306,14 +303,13 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2"></div>
             </div>
           </div>
           
           {/* Feature 5 */}
           <div>
             <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="md:w-1/2">
+              <div className="w-full">
                 <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-xl">
                   <FileBarChart2 size={32} className="text-brand-500 mb-4" />
                   <h3 className="text-2xl font-semibold mb-3">Advanced Analytics</h3>
@@ -336,7 +332,6 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2"></div>
             </div>
           </div>
         </div>
