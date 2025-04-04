@@ -1,119 +1,106 @@
+
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { User, LogIn, LogOut, Settings, CreditCard, UserCircle } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogOut, User, Settings, CreditCard } from "lucide-react";
 
-interface AuthButtonsProps {
-  user: any;
-}
-
-const AuthButtons: React.FC<AuthButtonsProps> = ({ user }) => {
+const AuthButtons = ({ user }: { user: any }) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast.success("Logged out successfully");
-      navigate("/");
-    } catch (error) {
-      console.error("Error logging out:", error);
-      toast.error("Failed to log out");
-    }
+    await supabase.auth.signOut();
+    localStorage.removeItem("isAuthenticated");
+    navigate("/");
   };
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
+  const handleLogin = () => {
+    navigate("/auth/login");
   };
+
+  const handleRegister = () => {
+    navigate("/auth/register");
+  };
+
+  const getUserInitials = (user: any) => {
+    if (!user || !user.user_metadata) return '?';
+    
+    const fullName = user.user_metadata.full_name || '';
+    if (fullName) {
+      return fullName.split(' ').map((n: string) => n[0]).join('').toUpperCase();
+    }
+    
+    const email = user.email || '';
+    return email ? email[0].toUpperCase() : '?';
+  };
+
+  if (user) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full" aria-label="User menu">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.user_metadata?.avatar_url} alt={user.user_metadata?.full_name || 'User'} />
+              <AvatarFallback>{getUserInitials(user)}</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">{user.user_metadata?.full_name || 'User'}</p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {user.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link to="/profile" className="flex items-center cursor-pointer">
+              <User className="h-4 w-4 mr-2" />
+              <span>Profile</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/settings" className="flex items-center cursor-pointer">
+              <Settings className="h-4 w-4 mr-2" />
+              <span>Settings</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/settings?tab=billing" className="flex items-center cursor-pointer">
+              <CreditCard className="h-4 w-4 mr-2" />
+              <span>Billing</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
+            <LogOut className="h-4 w-4 mr-2" />
+            <span>Log out</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
 
   return (
-    <>
-      {user ? (
-        <div className="flex items-center gap-2">
-          {/* User Dropdown Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email?.split('@')[0] || 'User'} />
-                  <AvatarFallback className="bg-primary/10">
-                    {user.email?.charAt(0).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user.email?.split('@')[0] || 'User'}</p>
-                  <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleNavigate('/profile')}>
-                <UserCircle className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleNavigate('/settings')}>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleNavigate('/settings?tab=billing')}>
-                <CreditCard className="mr-2 h-4 w-4" />
-                <span>Billing</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Keep the desktop buttons for larger screens */}
-          <Link to="/profile" className="hidden md:block">
-            <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1.5">
-              <User size={16} />
-              <span>{user.email?.split('@')[0] || 'Profile'}</span>
-            </Button>
-          </Link>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="hidden md:flex items-center gap-1.5"
-            onClick={handleLogout}
-          >
-            <LogOut size={16} />
-            <span>Logout</span>
-          </Button>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2">
-          <Link to="/auth/login">
-            <Button variant="outline" size="sm" className="hidden md:flex items-center gap-1.5">
-              <LogIn size={16} />
-              <span>Login</span>
-            </Button>
-          </Link>
-          <Link to="/auth/register">
-            <Button size="sm" className="hidden md:flex items-center gap-1.5">
-              <User size={16} />
-              <span>Sign Up</span>
-            </Button>
-          </Link>
-        </div>
-      )}
-    </>
+    <div className="flex items-center gap-2">
+      <Button variant="ghost" onClick={handleLogin}>
+        Log in
+      </Button>
+      <Button onClick={handleRegister}>
+        Sign up
+      </Button>
+    </div>
   );
 };
 

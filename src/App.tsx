@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 // Import pages
 import Index from "./pages/Index";
@@ -46,12 +47,27 @@ function App() {
   useEffect(() => {
     // Check for auth status
     const checkAuth = async () => {
-      // In a real app, we'd check if the user is authenticated here
-      const auth = localStorage.getItem("isAuthenticated") === "true";
-      setIsAuthenticated(auth);
+      // Check with Supabase
+      const { data } = await supabase.auth.getSession();
+      const isLoggedIn = !!data.session;
+      
+      // Store in localStorage for quick access
+      localStorage.setItem("isAuthenticated", isLoggedIn.toString());
+      setIsAuthenticated(isLoggedIn);
     };
 
     checkAuth();
+    
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      const isLoggedIn = !!session;
+      localStorage.setItem("isAuthenticated", isLoggedIn.toString());
+      setIsAuthenticated(isLoggedIn);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   if (isAuthenticated === null) {
