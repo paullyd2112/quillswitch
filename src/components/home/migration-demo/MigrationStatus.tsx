@@ -1,11 +1,15 @@
 
 import React from "react";
-import { Database, Check, Loader } from "lucide-react";
+import { Database, Check, Loader, Clock } from "lucide-react";
 import type { MigrationStep } from "@/hooks/use-migration-demo";
 
 type MigrationStatusProps = {
   status: "idle" | "loading" | "success";
   activeStep?: MigrationStep;
+  performanceMetrics?: {
+    averageRecordsPerSecond?: number;
+    estimatedTimeRemaining?: number;
+  };
 };
 
 // Helper function to get random action verb based on step name
@@ -27,7 +31,37 @@ const getActionVerb = (stepName: string): string => {
   return verbs[randomIndex];
 };
 
-const MigrationStatus = ({ status, activeStep }: MigrationStatusProps) => {
+// Helper function to format time remaining
+const formatTimeRemaining = (seconds?: number): string => {
+  if (!seconds) return "Calculating...";
+  
+  if (seconds < 60) {
+    return `${seconds} seconds`;
+  }
+  
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) {
+    return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+  }
+  
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  
+  return `${hours} hour${hours !== 1 ? 's' : ''} ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}`;
+};
+
+// Helper function to format records per second
+const formatRecordsPerSecond = (rps?: number): string => {
+  if (!rps) return "Calculating...";
+  
+  if (rps < 1) {
+    return `${(rps * 60).toFixed(1)} records/minute`;
+  }
+  
+  return `${rps.toFixed(1)} records/second`;
+};
+
+const MigrationStatus = ({ status, activeStep, performanceMetrics }: MigrationStatusProps) => {
   if (status === "idle") {
     return (
       <div className="flex items-center justify-center py-12 opacity-80">
@@ -72,6 +106,26 @@ const MigrationStatus = ({ status, activeStep }: MigrationStatusProps) => {
                 <span className="animate-bounce delay-300" style={{ animationDuration: '1.5s' }}>.</span>
               </span>
             </span>
+          </div>
+        )}
+        
+        {/* Performance metrics display (new) */}
+        {performanceMetrics && (
+          <div className="mt-2 text-xs text-muted-foreground space-y-1 text-center max-w-[250px]">
+            {performanceMetrics.averageRecordsPerSecond !== undefined && (
+              <div className="flex items-center justify-center space-x-1">
+                <span>Speed:</span>
+                <span className="font-mono">{formatRecordsPerSecond(performanceMetrics.averageRecordsPerSecond)}</span>
+              </div>
+            )}
+            
+            {performanceMetrics.estimatedTimeRemaining !== undefined && (
+              <div className="flex items-center justify-center space-x-1">
+                <Clock className="h-3 w-3" />
+                <span>Estimated time remaining:</span>
+                <span className="font-mono">{formatTimeRemaining(performanceMetrics.estimatedTimeRemaining)}</span>
+              </div>
+            )}
           </div>
         )}
       </div>

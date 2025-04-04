@@ -10,11 +10,28 @@ const corsHeaders = {
 // Mock migration data storage
 const migrations = new Map();
 
+// Storage for large transfer state to allow for resumption
+const transferStateMap = new Map();
+
 const baseResponse = (success: boolean, data: any, meta?: any, error?: any) => {
   if (success) {
     return { success, data, meta: meta || {} };
   }
   return { success, error };
+};
+
+// Helper function to process data in chunks
+const processChunked = async (data: any[], chunkSize: number, processFn: (chunk: any[]) => Promise<any>) => {
+  const results = [];
+  for (let i = 0; i < data.length; i += chunkSize) {
+    const chunk = data.slice(i, i + chunkSize);
+    const result = await processFn(chunk);
+    results.push(result);
+    
+    // Add small delay to prevent overwhelming the system
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  return results;
 };
 
 serve(async (req) => {
@@ -78,8 +95,24 @@ serve(async (req) => {
             failed: 0,
             percentage: 0
           }
+        },
+        // New transfer configuration
+        transferConfig: body.transferConfig || {
+          batchSize: 100,
+          concurrentBatches: 3,
+          retryAttempts: 3,
+          retryDelay: 2000
         }
       };
+      
+      // Initialize transfer state for possible resumption
+      transferStateMap.set(migrationId, {
+        startTime: new Date().toISOString(),
+        lastUpdate: new Date().toISOString(),
+        processedIds: new Set(),
+        failedIds: new Set(),
+        currentBatchIndices: {}
+      });
       
       // Store migration info
       migrations.set(migrationId, migrationData);
@@ -98,12 +131,20 @@ serve(async (req) => {
             if (dataType.type === 'contacts') typeTotal = 1250;
             if (dataType.type === 'accounts') typeTotal = 87;
             if (dataType.type === 'opportunities') typeTotal = 138;
+            if (dataType.type === 'activities') typeTotal = 625;
+            if (dataType.type === 'cases') typeTotal = 93;
+            if (dataType.type === 'custom_objects') typeTotal = 45;
             
             migration.progress[dataType.type] = {
               total: typeTotal,
               migrated: 0,
               failed: 0,
-              percentage: 0
+              percentage: 0,
+              // Add batch tracking information
+              currentBatch: 0,
+              totalBatches: Math.ceil(typeTotal / (migration.transferConfig?.batchSize || 100)),
+              lastProcessedId: null,
+              pausedAt: null
             };
             
             totalRecords += typeTotal;
@@ -121,6 +162,122 @@ serve(async (req) => {
           status: "scheduled",
           createdAt: migrationData.createdAt,
           estimatedCompletionTime: migrationData.estimatedCompletionTime
+        })),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Resume migration
+    if (path === 'resume' && req.method === 'POST') {
+      const body = await req.json();
+      
+      if (!body.migrationId) {
+        return new Response(
+          JSON.stringify(baseResponse(false, null, null, {
+            code: 'invalid_request',
+            message: 'Missing migrationId',
+          })),
+          { 
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+      
+      const migrationId = body.migrationId;
+      const migration = migrations.get(migrationId);
+      
+      if (!migration) {
+        return new Response(
+          JSON.stringify(baseResponse(false, null, null, {
+            code: 'not_found',
+            message: 'Migration not found',
+          })),
+          { 
+            status: 404,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+      
+      // Update migration status
+      if (migration.status === 'paused') {
+        migration.status = 'in_progress';
+        migration.resumedAt = new Date().toISOString();
+        
+        // Reset pause flags on data types
+        for (const type in migration.progress) {
+          if (type !== 'overall' && migration.progress[type]) {
+            migration.progress[type].pausedAt = null;
+          }
+        }
+        
+        migrations.set(migrationId, migration);
+      }
+      
+      return new Response(
+        JSON.stringify(baseResponse(true, {
+          migrationId,
+          status: migration.status,
+          message: 'Migration resumed successfully'
+        })),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Pause migration
+    if (path === 'pause' && req.method === 'POST') {
+      const body = await req.json();
+      
+      if (!body.migrationId) {
+        return new Response(
+          JSON.stringify(baseResponse(false, null, null, {
+            code: 'invalid_request',
+            message: 'Missing migrationId',
+          })),
+          { 
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+      
+      const migrationId = body.migrationId;
+      const migration = migrations.get(migrationId);
+      
+      if (!migration) {
+        return new Response(
+          JSON.stringify(baseResponse(false, null, null, {
+            code: 'not_found',
+            message: 'Migration not found',
+          })),
+          { 
+            status: 404,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+      
+      // Update migration status
+      if (migration.status === 'in_progress') {
+        migration.status = 'paused';
+        migration.pausedAt = new Date().toISOString();
+        
+        // Mark all data types as paused
+        for (const type in migration.progress) {
+          if (type !== 'overall' && migration.progress[type]) {
+            migration.progress[type].pausedAt = new Date().toISOString();
+          }
+        }
+        
+        migrations.set(migrationId, migration);
+      }
+      
+      return new Response(
+        JSON.stringify(baseResponse(true, {
+          migrationId,
+          status: migration.status,
+          message: 'Migration paused successfully'
         })),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -144,23 +301,38 @@ serve(async (req) => {
         );
       }
       
-      // Simulate progress
+      // Simulate progress if in progress and not paused
       if (migration.status === 'in_progress') {
         const elapsedMinutes = (Date.now() - new Date(migration.startTime).getTime()) / 60000;
         
-        // Update progress based on elapsed time
+        // Update progress based on elapsed time but at a more realistic pace
         const progressPct = Math.min(100, elapsedMinutes * 5); // 5% per minute
         
         // Update each data type's progress
         for (const type in migration.progress) {
           if (type !== 'overall' && migration.progress[type]) {
             const total = migration.progress[type].total;
-            const migrated = Math.floor(total * (progressPct / 100));
-            const failed = Math.floor(total * 0.02); // 2% failure rate
+            
+            // Calculate migrated with slight randomness for realism
+            const rawMigrated = Math.floor(total * (progressPct / 100));
+            const variance = Math.floor(rawMigrated * 0.05 * Math.random()); // up to 5% variance
+            const migrated = Math.min(total, rawMigrated + (Math.random() > 0.5 ? variance : -variance));
+            
+            // Calculate failures - more realistic failure rate
+            const failureRate = 0.01 + Math.random() * 0.02; // 1-3% failure rate  
+            const failed = Math.floor(total * failureRate);
             
             migration.progress[type].migrated = migrated;
             migration.progress[type].failed = failed;
-            migration.progress[type].percentage = (migrated / total) * 100;
+            migration.progress[type].percentage = Math.min(100, Math.floor((migrated / total) * 100));
+            
+            // Update batch information
+            const batchSize = migration.transferConfig?.batchSize || 100;
+            migration.progress[type].currentBatch = Math.ceil(migrated / batchSize);
+            migration.progress[type].totalBatches = Math.ceil(total / batchSize);
+            
+            // Add timestamp for last update
+            migration.progress[type].lastUpdated = new Date().toISOString();
           }
         }
         
@@ -178,19 +350,76 @@ serve(async (req) => {
         
         migration.progress.overall.migrated = overallMigrated;
         migration.progress.overall.failed = overallFailed;
-        migration.progress.overall.percentage = (overallMigrated / overallTotal) * 100;
+        migration.progress.overall.percentage = Math.min(100, Math.floor((overallMigrated / overallTotal) * 100));
         
-        // Mark as complete if fully processed
-        if (progressPct >= 100) {
+        // Add estimated completion time based on current rate
+        if (overallMigrated > 0) {
+          const elapsedMs = Date.now() - new Date(migration.startTime).getTime();
+          const recordsPerMs = overallMigrated / elapsedMs;
+          const remainingRecords = overallTotal - overallMigrated;
+          
+          if (recordsPerMs > 0) {
+            const remainingMs = remainingRecords / recordsPerMs;
+            const estimatedCompletionTime = new Date(Date.now() + remainingMs);
+            migration.estimatedCompletionTime = estimatedCompletionTime.toISOString();
+          }
+        }
+        
+        // Mark as complete if fully processed or close to it
+        if (progressPct >= 99.5) {
           migration.status = 'completed';
+          migration.completedAt = new Date().toISOString();
+          
+          // Ensure all data types show as 100% complete
+          for (const type in migration.progress) {
+            if (type !== 'overall' && migration.progress[type]) {
+              migration.progress[type].migrated = migration.progress[type].total - migration.progress[type].failed;
+              migration.progress[type].percentage = 100;
+            }
+          }
+          
+          migration.progress.overall.migrated = overallTotal - overallFailed;
+          migration.progress.overall.percentage = 100;
         }
         
         // Save updated migration data
         migrations.set(migrationId, migration);
       }
 
+      // Add detailed performance metrics
+      const performanceMetrics = {
+        averageRecordsPerSecond: 0,
+        peakRecordsPerSecond: 0,
+        totalElapsedSeconds: 0,
+        estimatedRemainingSeconds: 0
+      };
+      
+      if (migration.startTime) {
+        const elapsedMs = Date.now() - new Date(migration.startTime).getTime();
+        performanceMetrics.totalElapsedSeconds = Math.floor(elapsedMs / 1000);
+        
+        const migrated = migration.progress.overall.migrated;
+        if (migrated > 0 && elapsedMs > 0) {
+          performanceMetrics.averageRecordsPerSecond = (migrated / elapsedMs) * 1000;
+          
+          // Calculate estimated remaining time
+          const remaining = migration.progress.overall.total - migrated;
+          if (performanceMetrics.averageRecordsPerSecond > 0) {
+            performanceMetrics.estimatedRemainingSeconds = 
+              Math.floor(remaining / performanceMetrics.averageRecordsPerSecond);
+          }
+          
+          // Simulate peak performance (slightly higher than average)
+          performanceMetrics.peakRecordsPerSecond = 
+            performanceMetrics.averageRecordsPerSecond * (1 + (Math.random() * 0.3));
+        }
+      }
+      
       return new Response(
-        JSON.stringify(baseResponse(true, migration)),
+        JSON.stringify(baseResponse(true, {
+          ...migration,
+          performanceMetrics
+        })),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

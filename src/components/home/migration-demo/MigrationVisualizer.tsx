@@ -13,6 +13,10 @@ type MigrationVisualizerProps = {
   overallProgress: number;
   activeStep?: MigrationStep;
   onClick: () => void;
+  performanceMetrics?: {
+    averageRecordsPerSecond?: number;
+    estimatedTimeRemaining?: number;
+  };
 }
 
 const MigrationVisualizer = ({ 
@@ -20,7 +24,8 @@ const MigrationVisualizer = ({
   steps, 
   overallProgress, 
   activeStep,
-  onClick 
+  onClick,
+  performanceMetrics
 }: MigrationVisualizerProps) => {
   return (
     <GlassPanel 
@@ -43,7 +48,13 @@ const MigrationVisualizer = ({
         />
         
         {migrationStatus === "idle" && <MigrationStatus status="idle" />}
-        {migrationStatus === "loading" && <MigrationStatus status="loading" activeStep={activeStep} />}
+        {migrationStatus === "loading" && (
+          <MigrationStatus 
+            status="loading" 
+            activeStep={activeStep} 
+            performanceMetrics={performanceMetrics} 
+          />
+        )}
         {migrationStatus === "success" && <MigrationStatus status="success" />}
         
         <MigrationHeader 
