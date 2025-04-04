@@ -28,4 +28,24 @@ export const fieldPatterns = {
   }
 };
 
+// Define common mappings with metadata for better suggestions
+export const commonMappings: Record<string, { variations: string[], required: boolean }> = {
+  // Contact fields
+  "email": { variations: ['email', 'email_address', 'emailaddress', 'primary_email'], required: true },
+  "phone": { variations: ['phone', 'telephone', 'phone_number', 'phonenumber', 'mobile'], required: false },
+  "firstName": { variations: ['first_name', 'firstname', 'given_name'], required: true },
+  "lastName": { variations: ['last_name', 'lastname', 'surname', 'family_name'], required: true },
+  "address": { variations: ['address', 'street_address', 'mailing_address'], required: false },
+  
+  // Account fields
+  "accountName": { variations: ['name', 'account_name', 'company_name', 'business_name'], required: true },
+  "industry": { variations: ['industry', 'sector', 'business_type'], required: false },
+  "website": { variations: ['website', 'web_address', 'url', 'site'], required: false },
+  
+  // Opportunity fields
+  "opportunityName": { variations: ['name', 'opportunity_name', 'deal_name'], required: true },
+  "amount": { variations: ['amount', 'deal_amount', 'value', 'opportunity_value'], required: false },
+  "stage": { variations: ['stage', 'sales_stage', 'opportunity_stage', 'deal_stage'], required: true }
+};
+
 export { calculateStringSimilarity, areFieldsConceptuallySimilar };

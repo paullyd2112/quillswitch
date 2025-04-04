@@ -1,54 +1,42 @@
+
 import { MappingSuggestion } from "../types";
 import { fieldPatterns } from "../commonMappings";
 import { calculateStringSimilarity } from "../utils/stringSimilarity";
 
 /**
- * Generates mapping suggestions based on predefined field patterns.
- * This algorithm checks if source and destination fields match any common patterns
- * defined in the `fieldPatterns` object.
+ * Find matches based on predefined field patterns
  */
-export const generatePatternBasedSuggestions = (
-  sourceFields: string[],
-  destinationFields: string[],
-  objectType: string
-): MappingSuggestion[] => {
-  const suggestions: MappingSuggestion[] = [];
-
-  // Ensure the objectType is a valid key in fieldPatterns
-  if (!(objectType in fieldPatterns)) {
-    console.warn(`No field patterns defined for object type: ${objectType}`);
-    return suggestions;
-  }
-
-  const patterns = fieldPatterns[objectType as keyof typeof fieldPatterns];
-
-  sourceFields.forEach((sourceField) => {
-    for (const [patternKey, patternValues] of Object.entries(patterns)) {
-      // Check if the source field matches any of the pattern values
+export const findPatternMatches = (
+  sourceField: string,
+  destinationFields: string[]
+): MappingSuggestion | null => {
+  // For each object type (contact, account, opportunity)
+  for (const [objectType, patterns] of Object.entries(fieldPatterns)) {
+    // For each pattern category (email, phone, etc)
+    for (const [patternName, patternValues] of Object.entries(patterns)) {
+      // If sourceField matches any pattern value
       if (patternValues.includes(sourceField.toLowerCase())) {
-        // Find the best matching destination field for this pattern
-        let bestMatch: string | null = null;
-        let bestScore = 0;
-
-        destinationFields.forEach((destinationField) => {
-          const similarityScore = calculateStringSimilarity(patternKey, destinationField);
-          if (similarityScore > bestScore) {
-            bestScore = similarityScore;
-            bestMatch = destinationField;
+        // Find best matching destination field
+        let bestMatch: { field: string; score: number } = { field: "", score: 0 };
+        
+        for (const destField of destinationFields) {
+          const score = calculateStringSimilarity(patternName, destField);
+          if (score > bestMatch.score) {
+            bestMatch = { field: destField, score };
           }
-        });
-
-        if (bestMatch) {
-          suggestions.push({
+        }
+        
+        if (bestMatch.score > 0.6) {
+          return {
             source_field: sourceField,
-            destination_field: bestMatch,
-            confidence: 0.8, // Confidence level for pattern-based matches
-            reason: `Matched pattern for ${patternKey}`,
-          });
+            destination_field: bestMatch.field,
+            confidence: 0.8, // Pattern matches are considered fairly confident
+            reason: `Matched pattern for ${patternName} in ${objectType} fields`
+          };
         }
       }
     }
-  });
-
-  return suggestions;
+  }
+  
+  return null;
 };
