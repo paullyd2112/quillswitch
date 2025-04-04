@@ -54,7 +54,7 @@ const HeroSection = () => {
           <FadeIn delay="200">
             <p className="text-xl text-muted-foreground mb-8">
               Painlessly migrate from Salesforce to HubSpot, or between any other CRMs, 
-              without expensive consultants or complicated processes.
+              with automated mapping, data validation, and real-time notifications.
             </p>
           </FadeIn>
           <FadeIn delay="300">
@@ -63,8 +63,8 @@ const HeroSection = () => {
                 Start Migration <ArrowRight size={16} />
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link to="/api-docs">
-                  API Documentation
+                <Link to="/features">
+                  Explore Features
                 </Link>
               </Button>
             </div>

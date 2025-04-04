@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 // Import pages
 import Index from "./pages/Index";
+import Features from "./pages/Features";
 import MigrationsList from "./pages/MigrationsList";
 import MigrationDashboard from "./pages/MigrationDashboard";
 import SetupWizard from "./pages/SetupWizard";
@@ -63,6 +64,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/features" element={<Features />} />
           <Route path="/migrations" element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <MigrationsList />

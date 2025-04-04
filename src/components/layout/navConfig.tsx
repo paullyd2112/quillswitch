@@ -12,16 +12,27 @@ import {
   Settings,
   DollarSign,
   BookOpen,
-  HelpCircle
+  HelpCircle,
+  Zap,
+  GitMerge,
+  ListChecks,
+  BellRing,
+  Terminal
 } from "lucide-react";
 
 export const getNavLinks = (user?: any) => [
   { text: "Dashboard", href: "/", icon: <LayoutDashboard size={16} /> },
   { 
     text: "Features & Tools", 
-    href: "/migrations/setup", 
+    href: "/features", 
     icon: <Puzzle size={16} />,
     children: [
+      { text: "All Features", href: "/features", icon: <Puzzle size={16} /> },
+      { text: "Automated Mapping", href: "/features#automated-mapping", icon: <Zap size={16} /> },
+      { text: "Delta Synchronization", href: "/features#delta-sync", icon: <GitMerge size={16} /> },
+      { text: "Data Validation", href: "/features#data-validation", icon: <ListChecks size={16} /> },
+      { text: "Real-time Notifications", href: "/features#notifications", icon: <BellRing size={16} /> },
+      { text: "API Integration", href: "/features#api", icon: <Terminal size={16} /> },
       ...(user ? [{ text: "API Docs", href: "/api-docs", icon: <FileText size={16} /> }] : []),
       { text: "Setup Wizard", href: "/migrations/setup", icon: <Wand2 size={16} /> },
       ...(user ? [{ text: "Analytics", href: "/analytics", icon: <BarChart3 size={16} /> }] : []),
