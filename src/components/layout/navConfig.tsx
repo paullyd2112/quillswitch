@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   FileText,
@@ -71,7 +70,7 @@ export const getNavLinks = (user?: any) => [
       { text: "FAQ", href: "/resources?tab=faq", icon: <HelpCircle size={16} /> },
     ]
   },
-  { text: "Settings", href: "/settings", icon: <Settings size={16} /> },
+  ...(user ? [{ text: "Settings", href: "/settings", icon: <Settings size={16} /> }] : []),
 ];
 
 export default getNavLinks;

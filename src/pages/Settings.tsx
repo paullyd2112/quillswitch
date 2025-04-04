@@ -1,5 +1,6 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,8 +11,18 @@ import BillingSettings from "@/components/settings/BillingSettings";
 import SecuritySettings from "@/components/settings/SecuritySettings";
 
 const Settings = () => {
+  const [searchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState<string>("profile");
   
+  useEffect(() => {
+    // Map URL parameters to tab values
+    const validTabs = ["profile", "user-management", "notifications", "billing", "security"];
+    if (tabFromUrl && validTabs.includes(tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
