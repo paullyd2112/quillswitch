@@ -44,10 +44,11 @@ const MigrationVisualizer = ({
       hover={true}
     >
       <div className="space-y-4">
-        {/* Headers */}
+        {/* Headers with improved visualization */}
         <MigrationHeaderSection 
           sourceTitle="Salesforce" 
-          destinationTitle="HubSpot" 
+          destinationTitle="HubSpot"
+          migrationStatus={migrationStatus}
         />
         
         {/* Status Section */}
@@ -57,10 +58,11 @@ const MigrationVisualizer = ({
           performanceMetrics={performanceMetrics}
         />
         
-        {/* Progress Bar */}
+        {/* Progress Bar with enhanced metrics */}
         <MigrationProgressSection
           migrationStatus={migrationStatus}
           overallProgress={overallProgress}
+          performanceMetrics={performanceMetrics}
         />
       </div>
       
