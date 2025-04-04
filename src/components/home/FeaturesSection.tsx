@@ -22,8 +22,8 @@ const FeaturesSection = () => {
         <SlideUp delay="none">
           <FeatureCard
             icon={<Wand2 className="h-10 w-10 text-brand-500" />}
-            title="Automated Mapping"
-            description="AI-powered field mapping between different CRM systems with smart suggestions"
+            title="Intelligent Field Mapping"
+            description="Advanced pattern-based field mapping with smart suggestions and similarity detection"
           />
         </SlideUp>
         <SlideUp delay="100">

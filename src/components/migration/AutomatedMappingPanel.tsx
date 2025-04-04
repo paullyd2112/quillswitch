@@ -5,16 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Wand2, ArrowRight, AlertCircle, ThumbsUp, Check, X } from "lucide-react";
+import { Wand2, ArrowRight, AlertCircle, ThumbsUp, Check, X, Info } from "lucide-react";
 import { toast } from "sonner";
 import { generateMappingSuggestions, applyMappingSuggestions } from "@/services/migration/automatedMappingService";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface MappingSuggestion {
   source_field: string;
   destination_field: string;
   confidence: number;
   is_required?: boolean;
+  reason?: string;
 }
 
 interface AutomatedMappingPanelProps {
@@ -127,7 +129,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
           Automated Field Mapping
         </CardTitle>
         <CardDescription>
-          AI-powered suggestions for mapping fields between CRM systems
+          Smart field mapping suggestions based on field names, patterns and data formatting
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -136,7 +138,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
             <Wand2 className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
             <h3 className="text-lg font-medium mb-2">Generate Mapping Suggestions</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Our AI can analyze your source and destination fields to suggest the most likely mappings based on field names and common patterns.
+              Our system can analyze your source and destination fields to suggest the most likely mappings based on field names and common patterns.
             </p>
             <Button 
               onClick={generateMappings} 
@@ -181,6 +183,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
                         <TableHead>Destination Field</TableHead>
                         <TableHead>Confidence</TableHead>
                         <TableHead className="text-center">Required</TableHead>
+                        <TableHead className="text-center">Reason</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -202,6 +205,18 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
                             ) : (
                               <X className="h-4 w-4 mx-auto text-muted-foreground" />
                             )}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Info className="h-4 w-4 mx-auto text-muted-foreground hover:text-brand-500" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="max-w-sm text-sm">{suggestion.reason || "Based on field name similarity"}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </TableCell>
                         </TableRow>
                       ))}
