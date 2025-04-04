@@ -16,7 +16,7 @@ export const DEFAULT_BATCH_CONFIG: BatchConfig = {
 
 export const ENTERPRISE_BATCH_CONFIG: BatchConfig = {
   batchSize: 100,
-  concurrentBatches: 5,
+  concurrentBatches: 10, // Updated from 5 to 10
   retryAttempts: 5,
   retryDelay: 3000,
 };
