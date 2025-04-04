@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
@@ -156,11 +155,11 @@ const MigrationDashboard = () => {
         setProject(updatedProject);
         
         // Log the activity
-        await logUserActivity(
-          project.id,
-          newStatus === "in_progress" ? "project_resumed" : "project_paused",
-          `Migration ${newStatus === "in_progress" ? "resumed" : "paused"}`
-        );
+        await logUserActivity({
+          project_id: project.id,
+          activity_type: newStatus === "in_progress" ? "project_resumed" : "project_paused",
+          activity_description: `Migration ${newStatus === "in_progress" ? "resumed" : "paused"}`
+        });
         
         toast({
           title: newStatus === "in_progress" ? "Migration Resumed" : "Migration Paused",

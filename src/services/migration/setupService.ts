@@ -1,4 +1,3 @@
-
 import { MigrationProject } from "@/integrations/supabase/migrationTypes";
 import { handleServiceError } from "../utils/serviceUtils";
 import { createMigrationProject } from "./projectService";
@@ -80,12 +79,12 @@ export const createDefaultMigrationProject = async (formData: any): Promise<Migr
     }
     
     // Log user activity
-    await logUserActivity(
-      project.id,
-      'project_creation',
-      'Created new migration project',
-      { formData }
-    );
+    await logUserActivity({
+      project_id: project.id,
+      activity_type: 'project_creation',
+      activity_description: 'Created new migration project',
+      activity_details: { formData }
+    });
     
     // Create welcome notification
     await supabase
