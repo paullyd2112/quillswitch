@@ -1,12 +1,11 @@
 
 import React from "react";
-import { Database } from "lucide-react";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
-import MigrationHeader from "./MigrationHeader";
-import MigrationStatus from "./MigrationStatus";
 import MigrationFooter from "./MigrationFooter";
-import MigrationProgressBar from "./MigrationProgressBar";
 import type { MigrationStep } from "@/hooks/use-migration-demo";
+import MigrationHeaderSection from "./visualizer/MigrationHeaderSection";
+import MigrationStatusSection from "./visualizer/MigrationStatusSection";
+import MigrationProgressSection from "./visualizer/MigrationProgressSection";
 
 type MigrationVisualizerProps = {
   migrationStatus: "idle" | "loading" | "success";
@@ -45,37 +44,24 @@ const MigrationVisualizer = ({
       hover={true}
     >
       <div className="space-y-4">
-        <MigrationHeader 
-          title="Salesforce" 
-          type="source" 
-          icon={<Database size={20} />} 
+        {/* Headers */}
+        <MigrationHeaderSection 
+          sourceTitle="Salesforce" 
+          destinationTitle="HubSpot" 
         />
         
-        {migrationStatus === "idle" && <MigrationStatus status="idle" />}
-        {migrationStatus === "loading" && (
-          <MigrationStatus 
-            status="loading" 
-            activeStep={activeStep} 
-            performanceMetrics={performanceMetrics} 
-          />
-        )}
-        {migrationStatus === "success" && (
-          <MigrationStatus 
-            status="success" 
-            performanceMetrics={performanceMetrics}
-          />
-        )}
-        
-        <MigrationHeader 
-          title="HubSpot" 
-          type="destination" 
-          icon={<Database size={20} />} 
+        {/* Status Section */}
+        <MigrationStatusSection
+          migrationStatus={migrationStatus}
+          activeStep={activeStep}
+          performanceMetrics={performanceMetrics}
         />
         
-        {/* Add Progress Bar */}
-        {migrationStatus !== "idle" && (
-          <MigrationProgressBar progress={overallProgress} />
-        )}
+        {/* Progress Bar */}
+        <MigrationProgressSection
+          migrationStatus={migrationStatus}
+          overallProgress={overallProgress}
+        />
       </div>
       
       <MigrationFooter status={migrationStatus} />

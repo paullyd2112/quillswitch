@@ -31,13 +31,14 @@ export const useMigrationDemo = (): UseMigrationDemoReturn => {
     performanceMetrics,
     startTime,
     setStartTime,
+    setPerformanceMetrics,
     resetMetrics
   } = usePerformanceMetrics(migrationStatus, steps);
   
   // Effect to update progress when steps change
   useEffect(() => {
     handleProgressUpdate(migrationStatus, steps, currentStepIndex);
-  }, [steps, currentStepIndex, migrationStatus]);
+  }, [steps, currentStepIndex, migrationStatus, handleProgressUpdate]);
   
   // Effect to handle step updates
   useEffect(() => {
@@ -50,7 +51,7 @@ export const useMigrationDemo = (): UseMigrationDemoReturn => {
     );
     
     return cleanupFn;
-  }, [currentStepIndex, migrationStatus]);
+  }, [currentStepIndex, migrationStatus, updateStepProgress, setCurrentStepIndex]);
   
   // Effect to check for migration completion
   useEffect(() => {
@@ -115,7 +116,7 @@ export const useMigrationDemo = (): UseMigrationDemoReturn => {
       
       return newSteps;
     });
-  }, [migrationStatus]);
+  }, [migrationStatus, setCurrentStepIndex, setOverallProgress, resetSteps, resetMetrics, setStartTime, setPerformanceMetrics, setSteps, setActiveStep]);
 
   return {
     migrationStatus,

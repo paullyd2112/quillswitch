@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { MigrationHistoryPoint, MigrationStep, PerformanceMetrics } from '../types';
 import { updatePerformanceMetrics, calculateProcessedRecords } from '../performance-utils';
@@ -6,6 +7,7 @@ type UsePerformanceMetricsReturnType = {
   performanceMetrics: Partial<PerformanceMetrics>;
   startTime: Date | null;
   setStartTime: React.Dispatch<React.SetStateAction<Date | null>>;
+  setPerformanceMetrics: React.Dispatch<React.SetStateAction<Partial<PerformanceMetrics>>>;
   resetMetrics: () => void;
 };
 
@@ -77,6 +79,7 @@ export const usePerformanceMetrics = (migrationStatus: "idle" | "loading" | "suc
     performanceMetrics,
     startTime,
     setStartTime,
+    setPerformanceMetrics,
     resetMetrics
   };
 };
