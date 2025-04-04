@@ -1,4 +1,3 @@
-
 import { TransferProgress } from "../types/transferTypes";
 
 /**
@@ -52,9 +51,10 @@ export const updateProgress = (
   // Update status
   if (newProgress.processedRecords + newProgress.failedRecords >= newProgress.totalRecords) {
     newProgress.status = 'completed';
-  } else {
+  } else if (newProgress.status === 'initializing') {
     newProgress.status = 'in_progress';
   }
+  // Keep other statuses like 'paused' or 'failed' as they are
   
   return newProgress;
 };
