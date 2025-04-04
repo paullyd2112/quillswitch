@@ -8,24 +8,23 @@ type MigrationStatusProps = {
   activeStep?: MigrationStep;
 };
 
-// Helper function to get action verb based on step name
+// Helper function to get random action verb based on step name
 const getActionVerb = (stepName: string): string => {
-  switch (stepName) {
-    case "Contacts":
-      return "importing";
-    case "Opportunities & Deals":
-      return "syncing";
-    case "Activities & Tasks":
-      return "transferring";
-    case "Cases & Tickets":
-      return "processing";
-    case "Accounts & Companies":
-      return "connecting";
-    case "Custom Objects":
-      return "configuring";
-    default:
-      return "migrating";
-  }
+  const verbsByType: Record<string, string[]> = {
+    "Contacts": ["importing", "loading", "fetching", "retrieving", "processing"],
+    "Opportunities & Deals": ["syncing", "analyzing", "processing", "transferring", "mapping"],
+    "Activities & Tasks": ["transferring", "moving", "syncing", "processing", "organizing"],
+    "Cases & Tickets": ["processing", "handling", "migrating", "transferring", "analyzing"],
+    "Accounts & Companies": ["connecting", "linking", "integrating", "mapping", "processing"],
+    "Custom Objects": ["configuring", "setting up", "integrating", "customizing", "processing"],
+  };
+  
+  // Get the array of verbs for the given step name or use default
+  const verbs = verbsByType[stepName] || ["migrating", "processing", "transferring"];
+  
+  // Pick a random verb from the array
+  const randomIndex = Math.floor(Math.random() * verbs.length);
+  return verbs[randomIndex];
 };
 
 const MigrationStatus = ({ status, activeStep }: MigrationStatusProps) => {
@@ -66,7 +65,7 @@ const MigrationStatus = ({ status, activeStep }: MigrationStatusProps) => {
           <div className="text-sm text-brand-400 animate-pulse">
             <span>{activeStep.name} </span>
             <span className="opacity-80">
-              {activeStep.status === 'in_progress' ? getActionVerb(activeStep.name) : activeStep.status}
+              {activeStep.status === 'in_progress' ? getActionVerb(activeStep.name) : ''}
               <span className="inline-flex">
                 <span className="animate-bounce delay-100">.</span>
                 <span className="animate-bounce delay-200">.</span>
