@@ -97,7 +97,7 @@ const updateProgress = (
   
   // Check if transfer is complete
   if (updatedProgress.processedRecords + updatedProgress.failedRecords >= updatedProgress.totalRecords) {
-    updatedProgress.status = 'completed';
+    updatedProgress.status = 'completed' as const;
   }
   
   return updatedProgress;
@@ -285,12 +285,7 @@ export const migrateContacts = async (
       await logUserActivity({
         project_id: params.projectId,
         activity_type: 'migration_started',
-        activity_description: `Started migrating ${allContacts.length} contacts from ${params.source} to ${params.destination}`,
-        activity_details: {
-          contactCount: allContacts.length,
-          source: params.source,
-          destination: params.destination
-        }
+        activity_description: `Started migrating ${allContacts.length} contacts from ${params.source} to ${params.destination}`
       });
     }
     
@@ -403,12 +398,7 @@ export const migrateAccounts = async (
       await logUserActivity({
         project_id: params.projectId,
         activity_type: 'migration_started',
-        activity_description: `Started migrating ${allAccounts.length} accounts from ${params.source} to ${params.destination}`,
-        activity_details: {
-          accountCount: allAccounts.length,
-          source: params.source,
-          destination: params.destination
-        }
+        activity_description: `Started migrating ${allAccounts.length} accounts from ${params.source} to ${params.destination}`
       });
     }
     
