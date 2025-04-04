@@ -1,3 +1,2 @@
 
-export { default as AutomatedMappingPanel } from "./AutomatedMappingPanel";
-export * from "./types";
+export { default as AutomatedMappingPanel } from "@/components/migration/AutomatedMappingPanel";
