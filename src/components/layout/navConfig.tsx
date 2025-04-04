@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Home, Bolt, Layers, FileBarChart2, FileText, HelpCircle, Settings, Users, BarChart3, Download } from "lucide-react";
+import { Home, Bolt, Layers, FileBarChart2, FileText, HelpCircle, Settings, Users, BarChart3 } from "lucide-react";
 
 const getNavLinks = (user: any) => {
   // Links that are always shown
@@ -27,13 +27,6 @@ const getNavLinks = (user: any) => {
       text: "About",
       href: "/about",
       icon: <Users className="h-4 w-4" />,
-      items: []
-    },
-    {
-      text: "Download PDF",
-      href: "#",
-      icon: <Download className="h-4 w-4" />,
-      onClick: () => window.downloadAsPdf?.(),
       items: []
     }
   ];
