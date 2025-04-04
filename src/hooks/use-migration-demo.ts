@@ -19,6 +19,7 @@ export const useMigrationDemo = () => {
     { name: "Accounts & Companies", status: 'pending', progress: 0 },
     { name: "Custom Objects", status: 'pending', progress: 0 }
   ]);
+  const [activeStep, setActiveStep] = useState<MigrationStep | undefined>(undefined);
   const [overallProgress, setOverallProgress] = useState(0);
   
   // Update the progress of the current step with smoother animation
@@ -32,6 +33,9 @@ export const useMigrationDemo = () => {
         
         // Update progress of current step with smaller increments for smoother animation
         if (currentStep && currentStep.status === 'in_progress') {
+          // Set active step for display purposes
+          setActiveStep(currentStep);
+          
           // Smaller increments (5 instead of 10) for smoother transitions
           currentStep.progress = Math.min(100, currentStep.progress + 5);
           
@@ -48,6 +52,7 @@ export const useMigrationDemo = () => {
               // All steps complete
               clearInterval(interval);
               setMigrationStatus("success");
+              setActiveStep(undefined);
               toast({
                 title: "Migration Complete",
                 description: "Your migration has completed successfully!",
@@ -76,6 +81,7 @@ export const useMigrationDemo = () => {
       setMigrationStatus("idle");
       setCurrentStepIndex(0);
       setOverallProgress(0);
+      setActiveStep(undefined);
       setSteps(steps.map(step => ({ ...step, status: 'pending', progress: 0 })));
       return;
     }
@@ -87,6 +93,7 @@ export const useMigrationDemo = () => {
     setSteps(prevSteps => {
       const newSteps = [...prevSteps];
       newSteps[0].status = 'in_progress';
+      setActiveStep(newSteps[0]);
       return newSteps;
     });
   };
@@ -95,6 +102,7 @@ export const useMigrationDemo = () => {
     migrationStatus,
     steps,
     overallProgress,
+    activeStep,
     handleMigrationDemo
   };
 };

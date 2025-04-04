@@ -1,12 +1,14 @@
 
 import React from "react";
 import { Database, Check, Loader } from "lucide-react";
+import type { MigrationStep } from "@/hooks/use-migration-demo";
 
 type MigrationStatusProps = {
   status: "idle" | "loading" | "success";
+  activeStep?: MigrationStep;
 };
 
-const MigrationStatus = ({ status }: MigrationStatusProps) => {
+const MigrationStatus = ({ status, activeStep }: MigrationStatusProps) => {
   if (status === "idle") {
     return (
       <div className="flex items-center justify-center py-12 opacity-80">
@@ -39,6 +41,20 @@ const MigrationStatus = ({ status }: MigrationStatusProps) => {
             <span className="animate-bounce delay-300">.</span>
           </span>
         </div>
+        
+        {activeStep && (
+          <div className="text-sm text-brand-400 animate-pulse">
+            <span>{activeStep.name} </span>
+            <span className="opacity-80">
+              {activeStep.status === 'in_progress' ? 'migrating' : activeStep.status}
+              <span className="inline-flex">
+                <span className="animate-bounce delay-100">.</span>
+                <span className="animate-bounce delay-200">.</span>
+                <span className="animate-bounce delay-300">.</span>
+              </span>
+            </span>
+          </div>
+        )}
       </div>
     );
   }
@@ -58,6 +74,14 @@ const MigrationStatus = ({ status }: MigrationStatusProps) => {
         </div>
         <div className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-400 font-medium tracking-wide">
           All data migrated successfully!
+        </div>
+        <div className="text-xs text-center text-muted-foreground space-y-1">
+          <div className="text-green-500 dark:text-green-400">✓ Contacts</div>
+          <div className="text-green-500 dark:text-green-400">✓ Opportunities & Deals</div>
+          <div className="text-green-500 dark:text-green-400">✓ Activities & Tasks</div>
+          <div className="text-green-500 dark:text-green-400">✓ Cases & Tickets</div>
+          <div className="text-green-500 dark:text-green-400">✓ Accounts & Companies</div>
+          <div className="text-green-500 dark:text-green-400">✓ Custom Objects</div>
         </div>
       </div>
     );

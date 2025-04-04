@@ -5,17 +5,13 @@ import GlassPanel from "@/components/ui-elements/GlassPanel";
 import MigrationHeader from "./MigrationHeader";
 import MigrationStatus from "./MigrationStatus";
 import MigrationFooter from "./MigrationFooter";
-
-type MigrationStep = {
-  name: string;
-  status: 'pending' | 'in_progress' | 'complete';
-  progress: number;
-};
+import type { MigrationStep } from "@/hooks/use-migration-demo";
 
 type MigrationVisualizerProps = {
   migrationStatus: "idle" | "loading" | "success";
   steps: MigrationStep[];
   overallProgress: number;
+  activeStep?: MigrationStep;
   onClick: () => void;
 }
 
@@ -23,6 +19,7 @@ const MigrationVisualizer = ({
   migrationStatus, 
   steps, 
   overallProgress, 
+  activeStep,
   onClick 
 }: MigrationVisualizerProps) => {
   return (
@@ -46,7 +43,7 @@ const MigrationVisualizer = ({
         />
         
         {migrationStatus === "idle" && <MigrationStatus status="idle" />}
-        {migrationStatus === "loading" && <MigrationStatus status="loading" />}
+        {migrationStatus === "loading" && <MigrationStatus status="loading" activeStep={activeStep} />}
         {migrationStatus === "success" && <MigrationStatus status="success" />}
         
         <MigrationHeader 

@@ -7,7 +7,7 @@ import MigrationVisualizer from "./migration-demo/MigrationVisualizer";
 import { useMigrationDemo } from "@/hooks/use-migration-demo";
 
 const MigrationDemoSection = () => {
-  const { migrationStatus, steps, overallProgress, handleMigrationDemo } = useMigrationDemo();
+  const { migrationStatus, steps, overallProgress, activeStep, handleMigrationDemo } = useMigrationDemo();
 
   return (
     <ContentSection>
@@ -21,6 +21,7 @@ const MigrationDemoSection = () => {
               migrationStatus={migrationStatus}
               steps={steps}
               overallProgress={overallProgress}
+              activeStep={activeStep}
               onClick={handleMigrationDemo}
             />
           </SlideUp>
