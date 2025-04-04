@@ -55,21 +55,21 @@ const MigrationStatus = ({ status, activeStep }: MigrationStatusProps) => {
         <div className="text-brand-500 font-medium tracking-wide">
           <span className="inline-block mr-2 shimmer">Migration in progress</span>
           <span className="inline-flex">
-            <span className="animate-bounce delay-100">.</span>
-            <span className="animate-bounce delay-200">.</span>
-            <span className="animate-bounce delay-300">.</span>
+            <span className="animate-bounce delay-100" style={{ animationDuration: '1.5s' }}>.</span>
+            <span className="animate-bounce delay-200" style={{ animationDuration: '1.5s' }}>.</span>
+            <span className="animate-bounce delay-300" style={{ animationDuration: '1.5s' }}>.</span>
           </span>
         </div>
         
         {activeStep && (
-          <div className="text-sm text-brand-400 animate-pulse">
+          <div className="text-sm text-brand-400 animate-pulse" style={{ animationDuration: '2.5s' }}>
             <span>{activeStep.name} </span>
             <span className="opacity-80">
               {activeStep.status === 'in_progress' ? getActionVerb(activeStep.name) : ''}
               <span className="inline-flex">
-                <span className="animate-bounce delay-100">.</span>
-                <span className="animate-bounce delay-200">.</span>
-                <span className="animate-bounce delay-300">.</span>
+                <span className="animate-bounce delay-100" style={{ animationDuration: '1.5s' }}>.</span>
+                <span className="animate-bounce delay-200" style={{ animationDuration: '1.5s' }}>.</span>
+                <span className="animate-bounce delay-300" style={{ animationDuration: '1.5s' }}>.</span>
               </span>
             </span>
           </div>
