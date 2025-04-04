@@ -216,11 +216,7 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden h-[300px] flex items-center justify-center">
-                <div className="p-6 text-center">
-                  <p className="text-sm text-muted-foreground">Field Mapping Visualization</p>
-                </div>
-              </div>
+              <div className="md:w-1/2"></div>
             </div>
           </div>
           
@@ -250,11 +246,7 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden h-[300px] flex items-center justify-center">
-                <div className="p-6 text-center">
-                  <p className="text-sm text-muted-foreground">Delta Sync Visualization</p>
-                </div>
-              </div>
+              <div className="md:w-1/2"></div>
             </div>
           </div>
           
@@ -284,11 +276,7 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden h-[300px] flex items-center justify-center">
-                <div className="p-6 text-center">
-                  <p className="text-sm text-muted-foreground">Data Validation Dashboard</p>
-                </div>
-              </div>
+              <div className="md:w-1/2"></div>
             </div>
           </div>
           
@@ -318,11 +306,7 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden h-[300px] flex items-center justify-center">
-                <div className="p-6 text-center">
-                  <p className="text-sm text-muted-foreground">Notification Center Preview</p>
-                </div>
-              </div>
+              <div className="md:w-1/2"></div>
             </div>
           </div>
           
@@ -352,11 +336,7 @@ const Features = () => {
                   </ul>
                 </div>
               </div>
-              <div className="md:w-1/2 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden h-[300px] flex items-center justify-center">
-                <div className="p-6 text-center">
-                  <p className="text-sm text-muted-foreground">Analytics Dashboard Preview</p>
-                </div>
-              </div>
+              <div className="md:w-1/2"></div>
             </div>
           </div>
         </div>
