@@ -1,9 +1,9 @@
 
 import React from "react";
-import { PlayCircle, RefreshCw } from "lucide-react";
+import { PlayCircle, RefreshCw, AlertCircle } from "lucide-react";
 
 type MigrationFooterProps = {
-  status: "idle" | "loading" | "success";
+  status: "idle" | "loading" | "success" | "error";
 };
 
 const MigrationFooter = ({ status }: MigrationFooterProps) => {
@@ -21,6 +21,15 @@ const MigrationFooter = ({ status }: MigrationFooterProps) => {
       <div className="flex items-center justify-center mt-6 space-x-2 text-sm font-medium text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-400">
         <RefreshCw size={16} className="text-green-500" />
         <span>Migration complete! Click to run again</span>
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div className="flex items-center justify-center mt-6 space-x-2 text-sm font-medium text-red-500">
+        <AlertCircle size={16} className="text-red-500" />
+        <span>Migration failed. Click to try again</span>
       </div>
     );
   }

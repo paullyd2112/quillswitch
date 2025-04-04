@@ -2,12 +2,12 @@
 import { MigrationStep } from './types';
 
 export const initialMigrationSteps: MigrationStep[] = [
-  { name: "Contacts", status: 'pending', progress: 0, recordSize: 5 }, // 5KB per record
-  { name: "Opportunities & Deals", status: 'pending', progress: 0, recordSize: 8 }, // 8KB per record
-  { name: "Activities & Tasks", status: 'pending', progress: 0, recordSize: 3 }, // 3KB per record
-  { name: "Cases & Tickets", status: 'pending', progress: 0, recordSize: 10 }, // 10KB per record
-  { name: "Accounts & Companies", status: 'pending', progress: 0, recordSize: 15 }, // 15KB per record
-  { name: "Custom Objects", status: 'pending', progress: 0, recordSize: 20 }, // 20KB per record
+  { id: 'step-1', name: "Contacts", status: 'idle', progress: 0, recordSize: 5 }, // 5KB per record
+  { id: 'step-2', name: "Opportunities & Deals", status: 'idle', progress: 0, recordSize: 8 }, // 8KB per record
+  { id: 'step-3', name: "Activities & Tasks", status: 'idle', progress: 0, recordSize: 3 }, // 3KB per record
+  { id: 'step-4', name: "Cases & Tickets", status: 'idle', progress: 0, recordSize: 10 }, // 10KB per record
+  { id: 'step-5', name: "Accounts & Companies", status: 'idle', progress: 0, recordSize: 15 }, // 15KB per record
+  { id: 'step-6', name: "Custom Objects", status: 'idle', progress: 0, recordSize: 20 }, // 20KB per record
 ];
 
 // Get total records count for a specific step

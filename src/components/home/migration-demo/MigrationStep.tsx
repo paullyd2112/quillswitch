@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 
 type MigrationStepProps = {
   name: string;
-  status: 'pending' | 'in_progress' | 'complete';
+  status: 'idle' | 'in_progress' | 'complete';
   progress: number;
 };
 
@@ -22,7 +22,7 @@ const MigrationStep = ({ name, status, progress }: MigrationStepProps) => {
     >
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-2">
-          {status === 'pending' && 
+          {status === 'idle' && 
             <div className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-700" />
           }
           {status === 'in_progress' && 
@@ -45,13 +45,13 @@ const MigrationStep = ({ name, status, progress }: MigrationStepProps) => {
         </div>
         <span 
           className={`transition-opacity duration-300 ${
-            status === 'pending' ? 'opacity-50' : 'opacity-100'
+            status === 'idle' ? 'opacity-50' : 'opacity-100'
           }`}
         >
           {progress}%
         </span>
       </div>
-      {status !== 'pending' && (
+      {status !== 'idle' && (
         <Progress 
           value={progress} 
           className={`h-1 transition-all duration-300 ease-out ${

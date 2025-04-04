@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { MigrationHistoryPoint, MigrationStep, PerformanceMetrics } from '../types';
+import { MigrationHistoryPoint, MigrationStep, PerformanceMetrics, MigrationStatus } from '../types';
 import { updatePerformanceMetrics, calculateProcessedRecords } from '../performance-utils';
 
 type UsePerformanceMetricsReturnType = {
@@ -14,7 +14,7 @@ type UsePerformanceMetricsReturnType = {
 /**
  * Hook to manage and update performance metrics during migration
  */
-export const usePerformanceMetrics = (migrationStatus: "idle" | "loading" | "success", steps: MigrationStep[]): UsePerformanceMetricsReturnType => {
+export const usePerformanceMetrics = (migrationStatus: MigrationStatus, steps: MigrationStep[]): UsePerformanceMetricsReturnType => {
   const [performanceMetrics, setPerformanceMetrics] = useState<Partial<PerformanceMetrics>>({});
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [recordsProcessedHistory, setRecordsProcessedHistory] = useState<MigrationHistoryPoint[]>([]);
