@@ -38,7 +38,12 @@ export const getNavLinks = (user?: any) => [
       ]
     }
   ] : []),
-  { text: "Pricing", href: "/pricing", icon: <DollarSign size={16} /> },
+  { 
+    text: "Pricing", 
+    href: "/pricing", 
+    icon: <DollarSign size={16} />,
+    highlight: true 
+  },
   { 
     text: "Resources", 
     href: "/resources", 
