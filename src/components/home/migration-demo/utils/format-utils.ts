@@ -51,3 +51,21 @@ export const formatRecordsPerSecond = (rps?: number): string => {
   
   return `${rps.toFixed(1)} records/second`;
 };
+
+// Helper function to format bytes into human-readable format
+export const formatBytes = (bytes?: number): string => {
+  if (bytes === undefined || bytes === 0) return "0 KB";
+  
+  // For this context, we're assuming bytes is actually KB
+  if (bytes < 1024) {
+    return `${bytes.toFixed(1)} KB`;
+  }
+  
+  const mb = bytes / 1024;
+  if (mb < 1024) {
+    return `${mb.toFixed(1)} MB`;
+  }
+  
+  const gb = mb / 1024;
+  return `${gb.toFixed(1)} GB`;
+};
