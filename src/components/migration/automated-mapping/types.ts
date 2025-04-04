@@ -1,8 +1,2 @@
 
-export interface MappingSuggestion {
-  source_field: string;
-  destination_field: string;
-  confidence: number;
-  is_required?: boolean;
-  reason?: string;
-}
+export type { MappingSuggestion } from "@/services/migration/fieldMapping/types";

@@ -7,7 +7,7 @@ import {
   findExactMatches, 
   findPatternMatches, 
   findSimilarityMatches 
-} from "./fieldMapping/mappingAlgorithms";
+} from "./fieldMapping";
 
 /**
  * Generate automated field mapping suggestions based on field names, data types,
