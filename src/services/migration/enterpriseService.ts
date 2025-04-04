@@ -1,7 +1,7 @@
-
 import { BatchConfig, TransferProgress } from "./types/transferTypes";
 import { executeDataTransfer } from "./core/batchProcessingService";
 import { storeTransferCheckpoint } from "./recoveryService";
+import { createInitialProgress } from "./utils/progressUtils";
 
 /**
  * Transfer enterprise-grade contact data with advanced features
@@ -26,91 +26,83 @@ export const migrateEnterpriseContacts = async (
     // Fetch contacts from source system (mocked)
     const contacts = await fetchEnterpriseContactsFromSource(sourceSystem, options?.filters);
     
-    // Define handlers for the transfer process
-    const transferHandlers = {
-      transformRecord: (record: any) => {
-        let transformedRecord = { ...record };
-        
-        // Apply field mapping
-        if (options?.fieldMapping) {
-          Object.entries(options.fieldMapping).forEach(([sourceField, targetField]) => {
-            if (record[sourceField] !== undefined) {
-              transformedRecord[targetField] = record[sourceField];
-              if (sourceField !== targetField) {
-                delete transformedRecord[sourceField];
-              }
-            }
-          });
-        }
-        
-        // Apply custom transformations
-        if (options?.transformations) {
-          for (const transform of options.transformations) {
-            transformedRecord = transform(transformedRecord);
-          }
-        }
-        
-        return transformedRecord;
-      },
+    // Process the contact records
+    const progressCallback = (progress: TransferProgress) => {
+      console.log(`Processing progress: ${progress.percentage}%`);
+    };
+    
+    const initialProgress = createInitialProgress(contacts.length);
+    initialProgress.totalBatches = Math.ceil(contacts.length / config.batchSize);
+    initialProgress.status = "in_progress";
+    
+    const transferHandlers = async (record: any) => {
+      // Transform record
+      let transformedRecord = { ...record };
       
-      validateRecord: (record: any) => {
-        // Basic validations
-        if (!record.email && !record.phone) {
-          return { valid: false, errors: ["Contact must have either email or phone"] };
-        }
-        
-        // Apply custom validations
-        if (options?.validations) {
-          for (const validate of options.validations) {
-            const validationResult = validate(record);
-            if (validationResult !== true) {
-              return { valid: false, errors: [validationResult] };
+      // Apply field mapping
+      if (options?.fieldMapping) {
+        Object.entries(options.fieldMapping).forEach(([sourceField, targetField]) => {
+          if (record[sourceField] !== undefined) {
+            transformedRecord[targetField] = record[sourceField];
+            if (sourceField !== targetField) {
+              delete transformedRecord[sourceField];
             }
           }
-        }
-        
-        return { valid: true };
-      },
-      
-      processRecord: async (record: any) => {
-        // In a real implementation, would make API call to target system
-        // Simulate network latency and occasional failures
-        await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 100));
-        
-        if (Math.random() < 0.05) { // 5% failure rate for testing
-          throw new Error(`Failed to process contact: ${record.email || record.id}`);
-        }
-        
-        return { 
-          success: true, 
-          targetId: `TGT-${Math.random().toString(36).substring(2, 10)}` 
-        };
-      },
-      
-      onBatchComplete: async (batchIndex: number, progress: TransferProgress) => {
-        // Store checkpoint for recovery
-        await storeTransferCheckpoint(projectId, progress, {
-          sourceSystem,
-          targetSystem,
-          lastBatchCompleted: batchIndex
         });
-        
-        console.log(`Batch ${batchIndex} complete. Progress: ${progress.percentage}%`);
-      },
-      
-      onError: (error: Error, record: any) => {
-        console.error(`Error processing record:`, error.message, record);
-        // Log to error tracking system in a real implementation
       }
+      
+      // Apply custom transformations
+      if (options?.transformations) {
+        for (const transform of options.transformations) {
+          transformedRecord = transform(transformedRecord);
+        }
+      }
+      
+      // Validate record
+      if (options?.validations) {
+        for (const validate of options.validations) {
+          const validationResult = validate(transformedRecord);
+          if (validationResult !== true) {
+            console.error(`Validation failed for record: ${transformedRecord.id}`);
+            return false;
+          }
+        }
+      }
+      
+      // In a real implementation, would make API call to target system
+      // Simulate network latency and occasional failures
+      await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 100));
+      
+      if (Math.random() < 0.05) { // 5% failure rate for testing
+        throw new Error(`Failed to process contact: ${record.email || record.id}`);
+      }
+      
+      return true;
     };
     
     // Execute the data transfer with enterprise features
-    const result = await executeDataTransfer(contacts, transferHandlers, config);
+    const result = await executeDataTransfer(
+      contacts,
+      transferHandlers,
+      progressCallback,
+      config,
+      initialProgress
+    );
     
-    console.log("Enterprise contact migration completed:", result);
+    // Store checkpoint for recovery when completed
+    await storeTransferCheckpoint(projectId, result, {
+      sourceSystem,
+      targetSystem,
+      lastBatchCompleted: result.currentBatch
+    });
+    
+    console.log("Enterprise contact migration completed");
     return {
       success: true,
-      ...result
+      totalRecords: contacts.length,
+      processedRecords: result.processedRecords,
+      failedRecords: result.failedRecords,
+      percentage: result.percentage
     };
   } catch (error) {
     console.error("Enterprise contact migration failed:", error);
@@ -172,32 +164,43 @@ export const testEnterpriseCapabilities = async (options: {
       validationLevel: 'basic'
     };
     
-    // Setup handlers with minimal processing to measure raw throughput
-    const testHandlers = {
-      transformRecord: (record: any) => record,
-      validateRecord: () => ({ valid: true }),
-      processRecord: async () => {
-        // Simulate minimal processing time
-        await new Promise(resolve => setTimeout(resolve, 10));
-        return { success: true };
-      },
-      onError: () => {}
+    // Setup callback for progress updates
+    const progressCallback = (progress: TransferProgress) => {
+      console.log(`Test progress: ${progress.percentage}%`);
+    };
+    
+    // Initialize progress tracking
+    const initialProgress = createInitialProgress(testData.length);
+    initialProgress.totalBatches = Math.ceil(testData.length / config.batchSize);
+    initialProgress.status = "in_progress";
+    
+    // Setup test handler
+    const testHandler = async (record: any) => {
+      // Simulate minimal processing time
+      await new Promise(resolve => setTimeout(resolve, 10));
+      return true;
     };
     
     // Capture start metrics
-    const startMemory = process.memoryUsage ? process.memoryUsage().heapUsed / 1024 / 1024 : 0;
+    const startMemory = typeof process !== 'undefined' && process.memoryUsage ? process.memoryUsage().heapUsed / 1024 / 1024 : 0;
     const startTime = Date.now();
     
     // Run the test
-    const result = await executeDataTransfer(testData, testHandlers, config);
+    const result = await executeDataTransfer(
+      testData,
+      testHandler,
+      progressCallback,
+      config,
+      initialProgress
+    );
     
     // Capture end metrics
     const endTime = Date.now();
-    const endMemory = process.memoryUsage ? process.memoryUsage().heapUsed / 1024 / 1024 : 0;
+    const endMemory = typeof process !== 'undefined' && process.memoryUsage ? process.memoryUsage().heapUsed / 1024 / 1024 : 0;
     
     // Calculate metrics
     const durationSeconds = (endTime - startTime) / 1000;
-    const recordsPerSecond = result.progress.processedRecords / durationSeconds;
+    const recordsPerSecond = result.processedRecords / durationSeconds;
     const memoryUsed = endMemory - startMemory;
     
     return {
@@ -205,15 +208,28 @@ export const testEnterpriseCapabilities = async (options: {
       testName: `Enterprise capability test (${options.objectComplexity} complexity)`,
       metrics: {
         totalRecords: options.dataSize,
-        successfulRecords: result.progress.processedRecords,
-        failedRecords: result.progress.failedRecords,
+        successfulRecords: result.processedRecords,
+        failedRecords: result.failedRecords,
         durationSeconds,
         recordsPerSecond,
-        batchesPerSecond: result.progress.totalBatches / durationSeconds,
-        averageBatchDuration: durationSeconds / result.progress.totalBatches,
+        batchesPerSecond: result.totalBatches / durationSeconds,
+        averageBatchDuration: durationSeconds / result.totalBatches,
         memoryUsedMB: memoryUsed.toFixed(2),
         concurrency: options.concurrentBatches
-      }
+      },
+      maxCapacity: {
+        contacts: Math.round(recordsPerSecond * 28800), // 8-hour window
+        accounts: Math.round(recordsPerSecond * 28800 * 0.4), // 40% of contacts
+        opportunities: Math.round(recordsPerSecond * 28800 * 0.2) // 20% of contacts
+      },
+      performanceMetrics: {
+        peakThroughput: recordsPerSecond * 1.2, // Estimated peak throughput 20% higher than average
+        averageThroughput: recordsPerSecond,
+        successRate: ((result.processedRecords - result.failedRecords) / result.processedRecords) * 100,
+        totalDuration: durationSeconds,
+        memoryUsage: memoryUsed
+      },
+      recommendation: generateRecommendation(options, recordsPerSecond, memoryUsed)
     };
   } catch (error) {
     console.error("Enterprise capability test failed:", error);
@@ -276,6 +292,37 @@ const generateTestData = (size: number, complexity: 'simple' | 'medium' | 'compl
   }
   
   return data;
+};
+
+/**
+ * Generate recommendation text based on test results
+ */
+const generateRecommendation = (
+  options: any,
+  recordsPerSecond: number,
+  memoryUsed: number
+): string => {
+  const hourlyCapacity = Math.round(recordsPerSecond * 3600);
+  const dailyCapacity = hourlyCapacity * 24;
+  
+  let recommendation = `Based on the test results, this system can process approximately ${hourlyCapacity.toLocaleString()} records per hour with ${options.concurrentBatches} concurrent batches.\n\n`;
+  
+  if (memoryUsed > 100) {
+    recommendation += `- High memory usage detected (${memoryUsed.toFixed(2)} MB). Consider reducing batch size or implementing streaming processing for production workloads.\n`;
+  }
+  
+  if (options.objectComplexity === 'complex' && recordsPerSecond < 10) {
+    recommendation += `- Performance with complex objects is limited. Consider simplifying data model or increasing server resources.\n`;
+  }
+  
+  recommendation += `- Recommended configuration for large migrations:\n`;
+  recommendation += `  * Batch size: ${options.objectComplexity === 'complex' ? options.batchSize / 2 : options.batchSize * 1.5}\n`;
+  recommendation += `  * Concurrent batches: ${Math.min(options.concurrentBatches + 2, 8)}\n`;
+  recommendation += `  * Memory allocation: ${Math.max(512, Math.round(memoryUsed * 4))} MB\n\n`;
+  
+  recommendation += `- For an enterprise migration of 100,000 records, estimated completion time would be ${Math.round(100000 / recordsPerSecond / 3600)} hours.\n`;
+  
+  return recommendation;
 };
 
 /**

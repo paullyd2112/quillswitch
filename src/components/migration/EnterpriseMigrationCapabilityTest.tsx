@@ -1,11 +1,9 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
 import { BarChart, FileText, Settings, GitBranch, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
@@ -41,12 +39,12 @@ const EnterpriseMigrationCapabilityTest = () => {
     setActiveTab("progress");
     
     try {
-      const results = await testEnterpriseCapabilities(
-        { recordCounts },
-        (progress) => {
-          setProgress(progress);
-        }
-      );
+      const results = await testEnterpriseCapabilities({
+        dataSize: totalRecords,
+        objectComplexity: 'medium',
+        concurrentBatches: 5,
+        batchSize: 100
+      });
       
       setTestResults(results);
       toast({
@@ -265,7 +263,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Peak Throughput</span>
-                          <span className="text-lg">{testResults.performanceMetrics.peakThroughput.toFixed(2)}</span>
+                          <span className="text-lg">{testResults.metrics.peakThroughput.toFixed(2)}</span>
                         </div>
                         <p className="text-muted-foreground text-sm">records per second</p>
                       </div>
@@ -273,7 +271,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Average Throughput</span>
-                          <span className="text-lg">{testResults.performanceMetrics.averageThroughput.toFixed(2)}</span>
+                          <span className="text-lg">{testResults.metrics.averageThroughput.toFixed(2)}</span>
                         </div>
                         <p className="text-muted-foreground text-sm">records per second</p>
                       </div>
@@ -281,7 +279,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Success Rate</span>
-                          <span className="text-lg">{testResults.performanceMetrics.successRate.toFixed(2)}%</span>
+                          <span className="text-lg">{testResults.metrics.successRate.toFixed(2)}%</span>
                         </div>
                         <p className="text-muted-foreground text-sm">of processed records</p>
                       </div>
@@ -289,7 +287,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Total Duration</span>
-                          <span className="text-lg">{formatTime(testResults.performanceMetrics.totalDuration)}</span>
+                          <span className="text-lg">{formatTime(testResults.metrics.totalDuration)}</span>
                         </div>
                         <p className="text-muted-foreground text-sm">test execution time</p>
                       </div>
@@ -297,7 +295,7 @@ const EnterpriseMigrationCapabilityTest = () => {
                       <div className="bg-muted/30 rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium">Memory Usage</span>
-                          <span className="text-lg">{testResults.performanceMetrics.memoryUsage.toFixed(0)} MB</span>
+                          <span className="text-lg">{testResults.metrics.memoryUsageMB} MB</span>
                         </div>
                         <p className="text-muted-foreground text-sm">peak memory consumption</p>
                       </div>

@@ -3,7 +3,7 @@ import { toast } from "@/hooks/use-toast";
 import { apiClient } from "./apiClient";
 import { logUserActivity } from "./activityService";
 import { BatchConfig, TransferProgress, DEFAULT_BATCH_CONFIG } from "./types/transferTypes";
-import { initializeProgress } from "./utils/progressUtils";
+import { createInitialProgress } from "./utils/progressUtils";
 import { executeDataTransfer } from "./core/batchProcessingService";
 
 /**
@@ -84,7 +84,8 @@ export const migrateContacts = async (
       retryDelay: 3000
     };
     
-    const progress = initializeProgress(allContacts.length, batchConfig.batchSize);
+    const progress = createInitialProgress(allContacts.length);
+    progress.totalBatches = Math.ceil(allContacts.length / batchConfig.batchSize);
     
     // Process the contacts in batches
     return executeDataTransfer(

@@ -19,6 +19,15 @@ export const createInitialProgress = (totalRecords: number): TransferProgress =>
 };
 
 /**
+ * Alias for createInitialProgress for backward compatibility
+ */
+export const initializeProgress = (totalRecords: number, batchSize: number): TransferProgress => {
+  const progress = createInitialProgress(totalRecords);
+  progress.totalBatches = Math.ceil(totalRecords / batchSize);
+  return progress;
+};
+
+/**
  * Updates progress information based on recently processed records
  */
 export const updateProgress = (
