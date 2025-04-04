@@ -114,8 +114,7 @@ export const migrateContacts = async (
       progressCallback,
       batchConfig,
       progress,
-      params.projectId,
-      logUserActivity
+      params.projectId
     );
   } catch (error) {
     console.error('Error in contact migration process:', error);

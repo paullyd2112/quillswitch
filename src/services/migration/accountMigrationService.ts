@@ -112,8 +112,7 @@ export const migrateAccounts = async (
       progressCallback,
       batchConfig,
       progress,
-      params.projectId,
-      logUserActivity
+      params.projectId
     );
   } catch (error) {
     console.error('Error in account migration process:', error);

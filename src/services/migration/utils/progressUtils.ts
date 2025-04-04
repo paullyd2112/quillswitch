@@ -2,66 +2,59 @@
 import { TransferProgress } from "../types/transferTypes";
 
 /**
- * Initialize a new transfer progress object
+ * Initialize a transfer progress object
  */
-export const initializeProgress = (totalRecords: number, batchSize: number): TransferProgress => {
-  const totalBatches = Math.ceil(totalRecords / batchSize);
-  
+export const initializeProgress = (
+  totalRecords: number,
+  batchSize: number
+): TransferProgress => {
   return {
     totalRecords,
     processedRecords: 0,
     failedRecords: 0,
     percentage: 0,
     currentBatch: 0,
-    totalBatches,
+    totalBatches: Math.ceil(totalRecords / batchSize),
     startTime: new Date(),
-    status: 'initializing'
+    status: 'initializing' // This is the correct initial status
   };
 };
 
 /**
- * Calculate estimated time remaining based on current progress
- */
-export const calculateTimeRemaining = (progress: TransferProgress): number | undefined => {
-  if (progress.processedRecords === 0) return undefined;
-  
-  const elapsedMs = new Date().getTime() - progress.startTime.getTime();
-  const recordsPerMs = progress.processedRecords / elapsedMs;
-  const remainingRecords = progress.totalRecords - progress.processedRecords;
-  
-  if (recordsPerMs <= 0) return undefined;
-  
-  const remainingMs = remainingRecords / recordsPerMs;
-  return Math.round(remainingMs / 1000); // Convert to seconds
-};
-
-/**
- * Update progress with latest information
+ * Update progress tracking
  */
 export const updateProgress = (
-  progress: TransferProgress, 
-  processed: number, 
-  failed: number,
-  currentBatch: number
+  currentProgress: TransferProgress,
+  successCount: number,
+  failureCount: number
 ): TransferProgress => {
-  const updatedProgress = {
-    ...progress,
-    processedRecords: progress.processedRecords + processed,
-    failedRecords: progress.failedRecords + failed,
-    currentBatch,
-    status: 'in_progress' as const
-  };
+  const newProgress = { ...currentProgress };
   
-  updatedProgress.percentage = Math.floor(
-    (updatedProgress.processedRecords / updatedProgress.totalRecords) * 100
+  // Update counts
+  newProgress.processedRecords += successCount;
+  newProgress.failedRecords += failureCount;
+  
+  // Calculate percentage
+  newProgress.percentage = Math.round(
+    (newProgress.processedRecords / newProgress.totalRecords) * 100
   );
   
-  updatedProgress.estimatedTimeRemaining = calculateTimeRemaining(updatedProgress);
+  // Calculate estimated time remaining
+  const elapsedMs = Date.now() - newProgress.startTime.getTime();
+  const recordsPerMs = newProgress.processedRecords / elapsedMs;
+  const remainingRecords = newProgress.totalRecords - newProgress.processedRecords;
   
-  // Check if transfer is complete
-  if (updatedProgress.processedRecords + updatedProgress.failedRecords >= updatedProgress.totalRecords) {
-    updatedProgress.status = 'completed' as TransferProgress['status'];
+  if (recordsPerMs > 0) {
+    const remainingMs = remainingRecords / recordsPerMs;
+    newProgress.estimatedTimeRemaining = Math.round(remainingMs / 1000); // Convert to seconds
   }
   
-  return updatedProgress;
+  // Update status
+  if (newProgress.processedRecords + newProgress.failedRecords >= newProgress.totalRecords) {
+    newProgress.status = 'completed';
+  } else {
+    newProgress.status = 'in_progress';
+  }
+  
+  return newProgress;
 };
