@@ -5,6 +5,7 @@ import GlassPanel from "@/components/ui-elements/GlassPanel";
 import MigrationHeader from "./MigrationHeader";
 import MigrationStatus from "./MigrationStatus";
 import MigrationFooter from "./MigrationFooter";
+import MigrationProgressBar from "./MigrationProgressBar";
 import type { MigrationStep } from "@/hooks/use-migration-demo";
 
 type MigrationVisualizerProps = {
@@ -15,7 +16,10 @@ type MigrationVisualizerProps = {
   onClick: () => void;
   performanceMetrics?: {
     averageRecordsPerSecond?: number;
+    peakRecordsPerSecond?: number;
     estimatedTimeRemaining?: number;
+    totalRecordsProcessed?: number;
+    dataVolume?: number;
   };
 }
 
@@ -55,13 +59,23 @@ const MigrationVisualizer = ({
             performanceMetrics={performanceMetrics} 
           />
         )}
-        {migrationStatus === "success" && <MigrationStatus status="success" />}
+        {migrationStatus === "success" && (
+          <MigrationStatus 
+            status="success" 
+            performanceMetrics={performanceMetrics}
+          />
+        )}
         
         <MigrationHeader 
           title="HubSpot" 
           type="destination" 
           icon={<Database size={20} />} 
         />
+        
+        {/* Add Progress Bar */}
+        {migrationStatus !== "idle" && (
+          <MigrationProgressBar progress={overallProgress} />
+        )}
       </div>
       
       <MigrationFooter status={migrationStatus} />
