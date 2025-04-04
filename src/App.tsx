@@ -58,7 +58,7 @@ function App() {
           <Route path="/auth/:mode" element={<Auth />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/knowledge-base" element={<KnowledgeBase />} />
-          <Route path="/knowledge-base/:articleId" element={<KnowledgeArticle />} />
+          <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
           <Route path="/about" element={<About />} />
           <Route path="/pricing" element={<PricingEstimator />} />
           <Route path="/api-docs" element={<ApiDocs />} />

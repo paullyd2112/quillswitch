@@ -10,7 +10,11 @@ import {
   FileBarChart,
   LifeBuoy,
   Settings,
-  DollarSign
+  DollarSign,
+  BookOpen,
+  HelpCircle,
+  Image,
+  Presentation
 } from "lucide-react";
 
 export const getNavLinks = (user?: any) => [
@@ -37,7 +41,17 @@ export const getNavLinks = (user?: any) => [
     }
   ] : []),
   { text: "Pricing", href: "/pricing", icon: <DollarSign size={16} /> },
-  { text: "Resources", href: "/resources", icon: <LifeBuoy size={16} /> },
+  { 
+    text: "Resources", 
+    href: "/resources", 
+    icon: <LifeBuoy size={16} />,
+    children: [
+      { text: "Knowledge Base", href: "/knowledge-base", icon: <BookOpen size={16} /> },
+      { text: "Screenshot Guides", href: "/resources?tab=guides", icon: <Image size={16} /> },
+      { text: "Quick Start", href: "/resources?tab=tutorials", icon: <Presentation size={16} /> },
+      { text: "FAQ", href: "/resources?tab=faq", icon: <HelpCircle size={16} /> },
+    ]
+  },
   { text: "Settings", href: "/settings", icon: <Settings size={16} /> },
 ];
 
