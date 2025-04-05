@@ -4,18 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
 
 // Import our new components
 import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
 import getNavLinks from "./navConfig";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const { user } = useAuth();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -29,29 +29,6 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-  
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
-    };
-
-    fetchUser();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === 'SIGNED_OUT') {
-          setUser(null);
-        } else if (session?.user && event === 'SIGNED_IN') {
-          setUser(session.user);
-        }
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
     };
   }, []);
   
@@ -84,8 +61,8 @@ const Navbar = () => {
           <DesktopNav navLinks={navLinks} />
           
           <div className="flex items-center gap-2">
-            {/* Auth Buttons Component */}
-            <AuthButtons user={user} />
+            {/* Auth Buttons Component - No longer passing user prop */}
+            <AuthButtons />
             
             <div className="md:hidden">
               <Button

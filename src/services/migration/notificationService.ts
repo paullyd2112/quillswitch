@@ -1,7 +1,8 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { apiClient } from "./apiClient";
+import { UserNotificationPreferences } from "@/integrations/supabase/userTypes";
 
 /**
  * Notification types
@@ -199,6 +200,7 @@ export const deleteNotification = async (notificationId: string): Promise<boolea
  */
 export const getNotificationPreferences = async (userId: string): Promise<NotificationPreferences> => {
   try {
+    // Explicitly cast the response type to handle the user_notification_preferences table
     const { data, error } = await supabase
       .from('user_notification_preferences')
       .select('*')
@@ -218,19 +220,20 @@ export const getNotificationPreferences = async (userId: string): Promise<Notifi
     }
     
     // Map from database format to application format
+    const dbPrefs = data as unknown as UserNotificationPreferences;
     return {
-      statusChanges: data.status_changes,
-      errors: data.errors,
-      completions: data.completions,
-      dataValidation: data.data_validation,
-      mappingChanges: data.mapping_changes,
+      statusChanges: dbPrefs.status_changes,
+      errors: dbPrefs.errors,
+      completions: dbPrefs.completions,
+      dataValidation: dbPrefs.data_validation,
+      mappingChanges: dbPrefs.mapping_changes,
       deliveryMethods: {
-        email: data.email_delivery,
-        inApp: data.in_app_delivery,
-        sms: data.sms_delivery
+        email: dbPrefs.email_delivery,
+        inApp: dbPrefs.in_app_delivery,
+        sms: dbPrefs.sms_delivery
       },
-      emailAddress: data.email_address,
-      phoneNumber: data.phone_number
+      emailAddress: dbPrefs.email_address || undefined,
+      phoneNumber: dbPrefs.phone_number || undefined
     };
   } catch (error) {
     console.error("Error in getNotificationPreferences:", error);
