@@ -14,6 +14,7 @@ interface PerCrmDataSelectionStepProps {
   handleRadioChange: (value: string, field: string) => void;
   selectedSourceCrms: string[];
   sourceCrmOptions: CrmSystem[];
+  customCrmNames: Record<string, string>;
 }
 
 const PerCrmDataSelectionStep: React.FC<PerCrmDataSelectionStepProps> = ({
@@ -22,7 +23,8 @@ const PerCrmDataSelectionStep: React.FC<PerCrmDataSelectionStepProps> = ({
   handleChange,
   handleRadioChange,
   selectedSourceCrms,
-  sourceCrmOptions
+  sourceCrmOptions,
+  customCrmNames
 }) => {
   const dataTypeOptions = [
     { id: "contacts", name: "Contacts & Leads", description: "All contact and lead information" },
@@ -66,7 +68,7 @@ const PerCrmDataSelectionStep: React.FC<PerCrmDataSelectionStepProps> = ({
               <div className="p-4 bg-muted/20 border-b flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <h4 className="font-medium">{crmSystem.name}</h4>
-                  <Badge variant="outline">{crmId === 'custom' ? customCrmNames?.[crmId] || 'Custom' : crmId}</Badge>
+                  <Badge variant="outline">{crmId === 'custom' ? customCrmNames[crmId] || 'Custom' : crmId}</Badge>
                 </div>
               </div>
               <CardContent className="p-4">
