@@ -1,8 +1,8 @@
 
 import React from "react";
-import { ConfirmationSectionProps } from "./types";
+import { MigrationConfigSectionProps } from "./types";
 
-const MigrationConfigSection: React.FC<ConfirmationSectionProps> = ({
+const MigrationConfigSection: React.FC<MigrationConfigSectionProps> = ({
   formData,
   multiCrmEnabled
 }) => {

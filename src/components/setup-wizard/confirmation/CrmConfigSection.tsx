@@ -1,9 +1,9 @@
 
 import React from "react";
 import { Check, X } from "lucide-react";
-import { ConfirmationSectionProps } from "./types";
+import { CrmConfigSectionProps } from "./types";
 
-const CrmConfigSection: React.FC<ConfirmationSectionProps> = ({
+const CrmConfigSection: React.FC<CrmConfigSectionProps> = ({
   formData,
   multiCrmEnabled,
   selectedSourceCrms,

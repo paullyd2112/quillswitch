@@ -16,9 +16,9 @@ export interface ConfirmationStepProps {
 
 export interface CompanyInfoSectionProps {
   formData: SetupFormData;
-  customCrmNames: Record<string, string>;
-  sourceCrmOptions: CrmSystem[];
-  destinationCrmOptions: CrmSystem[];
+  customCrmNames?: Record<string, string>;
+  sourceCrmOptions?: CrmSystem[];
+  destinationCrmOptions?: CrmSystem[];
 }
 
 export interface CrmConfigSectionProps {
@@ -35,9 +35,9 @@ export interface CrmConfigSectionProps {
 export interface MigrationConfigSectionProps {
   formData: SetupFormData;
   multiCrmEnabled: boolean;
-  customCrmNames: Record<string, string>;
-  sourceCrmOptions: CrmSystem[];
-  destinationCrmOptions: CrmSystem[];
+  customCrmNames?: Record<string, string>;
+  sourceCrmOptions?: CrmSystem[];
+  destinationCrmOptions?: CrmSystem[];
 }
 
 export interface SubmitButtonProps {

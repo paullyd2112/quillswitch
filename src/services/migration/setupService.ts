@@ -12,7 +12,7 @@ import { SetupFormData } from "@/contexts/setup-wizard/types";
 /**
  * Create a default migration project from setup wizard data
  */
-export const createDefaultMigrationProject = async (formData: any): Promise<MigrationProject | null> => {
+export const createDefaultMigrationProject = async (formData: SetupFormData): Promise<MigrationProject | null> => {
   try {
     const projectData: Omit<MigrationProject, 'id' | 'created_at' | 'updated_at' | 'user_id'> = {
       company_name: formData.companyName,

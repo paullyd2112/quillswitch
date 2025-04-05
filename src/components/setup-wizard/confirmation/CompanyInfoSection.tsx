@@ -1,8 +1,8 @@
 
 import React from "react";
-import { ConfirmationSectionProps } from "./types";
+import { CompanyInfoSectionProps } from "./types";
 
-const CompanyInfoSection: React.FC<ConfirmationSectionProps> = ({ formData }) => {
+const CompanyInfoSection: React.FC<CompanyInfoSectionProps> = ({ formData }) => {
   return (
     <div className="border rounded-md overflow-hidden">
       <div className="p-4 bg-muted font-medium">Company Information</div>
