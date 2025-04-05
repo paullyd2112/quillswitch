@@ -6,5 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
  * properly typed in the Supabase client yet
  */
 export const safeTable = <T = any>(table: string) => {
-  return supabase.from(table) as any;
+  // Use type assertion to tell TypeScript to trust us about the table name
+  return supabase.from(table as any) as any;
 };

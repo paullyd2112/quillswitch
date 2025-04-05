@@ -1,10 +1,11 @@
 
 import React from "react";
 import { Home, Bolt, Layers, FileBarChart2, FileText, HelpCircle, Settings, Users, BarChart3 } from "lucide-react";
+import { NavLink } from "./MobileMenu";
 
-const getNavLinks = (user: any) => {
+const getNavLinks = (user: any): NavLink[] => {
   // Links that are always shown
-  const publicLinks = [
+  const publicLinks: NavLink[] = [
     {
       label: "Home",
       href: "/",
@@ -28,7 +29,7 @@ const getNavLinks = (user: any) => {
   ];
   
   // Links shown only to authenticated users
-  const authenticatedLinks = user ? [
+  const authenticatedLinks: NavLink[] = user ? [
     {
       label: "Migrations",
       href: "/migrations",
