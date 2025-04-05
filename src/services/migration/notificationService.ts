@@ -16,6 +16,11 @@ export type NotificationType =
   | 'stage_completed';
 
 /**
+ * Delivery methods for notifications
+ */
+export type NotificationDeliveryMethod = 'in_app' | 'email' | 'sms' | 'webhook';
+
+/**
  * Interface for notifications
  */
 export interface MigrationNotification {
@@ -27,6 +32,24 @@ export interface MigrationNotification {
   user_id?: string;
   is_read: boolean;
   created_at: string;
+}
+
+/**
+ * Interface for notification preferences
+ */
+export interface NotificationPreferences {
+  statusChanges: boolean;
+  errors: boolean;
+  completions: boolean;
+  dataValidation: boolean;
+  mappingChanges: boolean;
+  deliveryMethods: {
+    email: boolean;
+    inApp: boolean;
+    sms: boolean;
+  };
+  emailAddress?: string;
+  phoneNumber?: string;
 }
 
 /**
@@ -57,6 +80,9 @@ export const createNotification = async (
     
     // Trigger notification to all registered webhooks
     await triggerWebhookNotification(data as MigrationNotification);
+    
+    // Send email notification if enabled
+    await sendEmailNotificationIfEnabled(data as MigrationNotification);
     
     return data as MigrationNotification;
   } catch (error: any) {
@@ -155,6 +181,76 @@ export const deleteNotification = async (notificationId: string): Promise<boolea
 };
 
 /**
+ * Get notification preferences for a user
+ */
+export const getNotificationPreferences = async (userId: string): Promise<NotificationPreferences | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_notification_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No data found, return default preferences
+        return {
+          statusChanges: true,
+          errors: true,
+          completions: true,
+          dataValidation: true,
+          mappingChanges: false,
+          deliveryMethods: {
+            email: false,
+            inApp: true,
+            sms: false
+          }
+        };
+      }
+      throw error;
+    }
+    
+    return data as NotificationPreferences;
+  } catch (error: any) {
+    console.error("Failed to get notification preferences:", error);
+    return null;
+  }
+};
+
+/**
+ * Save notification preferences for a user
+ */
+export const saveNotificationPreferences = async (
+  userId: string, 
+  preferences: NotificationPreferences
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('user_notification_preferences')
+      .upsert({
+        user_id: userId,
+        preferences: {
+          statusChanges: preferences.statusChanges,
+          errors: preferences.errors,
+          completions: preferences.completions,
+          dataValidation: preferences.dataValidation,
+          mappingChanges: preferences.mappingChanges,
+          deliveryMethods: preferences.deliveryMethods,
+          emailAddress: preferences.emailAddress,
+          phoneNumber: preferences.phoneNumber
+        }
+      });
+    
+    if (error) throw error;
+    
+    return true;
+  } catch (error: any) {
+    console.error("Failed to save notification preferences:", error);
+    return false;
+  }
+};
+
+/**
  * Helper function to trigger webhooks for notifications
  */
 const triggerWebhookNotification = async (notification: MigrationNotification): Promise<void> => {
@@ -196,5 +292,87 @@ const triggerWebhookNotification = async (notification: MigrationNotification): 
     }
   } catch (error) {
     console.error("Failed to trigger webhooks:", error);
+  }
+};
+
+/**
+ * Helper function to send email notifications if enabled
+ */
+const sendEmailNotificationIfEnabled = async (notification: MigrationNotification): Promise<void> => {
+  try {
+    // Get user information to know where to send email
+    const userSession = await supabase.auth.getSession();
+    if (!userSession.data.session?.user.id) {
+      console.log('No authenticated user found for email notification');
+      return;
+    }
+    
+    const userId = userSession.data.session.user.id;
+    
+    // Get user notification preferences
+    const preferences = await getNotificationPreferences(userId);
+    if (!preferences || !preferences.deliveryMethods.email || !preferences.emailAddress) {
+      console.log('Email notifications not enabled for this user');
+      return;
+    }
+    
+    // Check if this notification type is enabled
+    switch (notification.notification_type) {
+      case 'migration_started':
+      case 'migration_paused':
+      case 'migration_resumed':
+        if (!preferences.statusChanges) return;
+        break;
+      case 'migration_completed':
+        if (!preferences.completions) return;
+        break;
+      case 'error_occurred':
+        if (!preferences.errors) return;
+        break;
+      case 'validation_completed':
+        if (!preferences.dataValidation) return;
+        break;
+      case 'stage_completed':
+        if (!preferences.statusChanges) return;
+        break;
+    }
+    
+    // Get project info for more context in the email
+    const { data: projectData } = await supabase
+      .from('migration_projects')
+      .select('company_name')
+      .eq('id', notification.project_id)
+      .single();
+    
+    const projectName = projectData?.company_name || 'CRM Migration Project';
+    
+    try {
+      // Call the email notification edge function
+      const response = await fetch(`https://kxjidapjtcxwzpwdomnm.supabase.co/functions/v1/send-notification-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+        },
+        body: JSON.stringify({
+          email: preferences.emailAddress,
+          title: notification.title,
+          message: notification.message,
+          notificationType: notification.notification_type,
+          projectName
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Email notification failed: ${errorData.error || response.statusText}`);
+      }
+      
+      console.log('Email notification sent successfully');
+    } catch (emailError: any) {
+      console.error('Failed to send email notification:', emailError);
+    }
+  } catch (error: any) {
+    console.error("Error in sendEmailNotificationIfEnabled:", error);
   }
 };

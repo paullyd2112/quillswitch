@@ -6,8 +6,9 @@ import { createMigrationStage } from "./stageService";
 import { createMigrationObjectType } from "./objectTypeService";
 import { logUserActivity } from "./activityService";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { SetupFormData } from "@/contexts/setup-wizard/types";
+import { createNotification } from "./notificationService";
 
 /**
  * Create a default migration project from setup wizard data
@@ -128,14 +129,24 @@ export const createDefaultMigrationProject = async (formData: SetupFormData & {
     });
     
     // Create welcome notification
+    const userId = (await supabase.auth.getUser()).data.user?.id;
+    await createNotification(
+      project.id,
+      'Migration Project Created',
+      `Your ${formData.sourceCrm} to ${formData.destinationCrm} migration project has been created successfully.`,
+      'migration_started',
+      userId
+    );
+    
+    // Create welcome notification in database
     await supabase
       .from('migration_notifications')
       .insert({
         project_id: project.id,
-        user_id: (await supabase.auth.getUser()).data.user?.id,
+        user_id: userId,
         title: 'Migration Project Created',
         message: `Your ${formData.sourceCrm} to ${formData.destinationCrm} migration project has been created successfully.`,
-        notification_type: 'info',
+        notification_type: 'migration_started',
         is_read: false
       });
     
