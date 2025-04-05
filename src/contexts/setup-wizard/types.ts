@@ -6,7 +6,12 @@ export interface WizardStep {
   id: string;
   title: string;
   description: string;
-  icon: ReactNode;
+  icon: {
+    component: any;
+    props: {
+      size: number;
+    };
+  };
 }
 
 export interface CrmSystem {
