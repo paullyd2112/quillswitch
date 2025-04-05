@@ -1,3 +1,4 @@
+
 import { MigrationProject } from "@/integrations/supabase/migrationTypes";
 import { handleServiceError } from "../utils/serviceUtils";
 import { createMigrationProject } from "./projectService";
@@ -6,6 +7,7 @@ import { createMigrationObjectType } from "./objectTypeService";
 import { logUserActivity } from "./activityService";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import { SetupFormData } from "@/contexts/setup-wizard/types";
 
 /**
  * Create a default migration project from setup wizard data

@@ -3,7 +3,7 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { SetupFormData } from "@/types/setupWizard";
+import { SetupFormData } from "@/contexts/setup-wizard/types";
 
 interface DataSelectionStepProps {
   formData: SetupFormData;

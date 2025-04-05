@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CrmSystem, SetupFormData, CrmDataSelection } from "@/types/setupWizard";
+import { CrmSystem, SetupFormData, CrmDataSelection } from "@/contexts/setup-wizard/types";
 
 interface PerCrmDataSelectionStepProps {
   formData: SetupFormData;

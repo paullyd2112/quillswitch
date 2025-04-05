@@ -1,12 +1,12 @@
 
 import React from "react";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { CrmSystem, SetupFormData } from "@/types/setupWizard";
+import { CrmSystem, SetupFormData } from "@/contexts/setup-wizard/types";
 
 interface DestinationCrmStepProps {
   formData: SetupFormData;

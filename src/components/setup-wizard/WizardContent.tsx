@@ -9,6 +9,7 @@ import DataSelectionStep from "./DataSelectionStep";
 import PerCrmDataSelectionStep from "./PerCrmDataSelectionStep";
 import ConfirmationStep from "./ConfirmationStep";
 import { sourceCrmOptions, destinationCrmOptions } from "@/config/crmOptions";
+import { CrmSystem } from "@/contexts/setup-wizard/types";
 
 const WizardContent: React.FC = () => {
   const { 
@@ -54,7 +55,7 @@ const WizardContent: React.FC = () => {
             handleApiKeyChange={handleApiKeyChange}
             handleCustomCrmNameChange={handleCustomCrmNameChange}
             customCrmNames={customCrmNames}
-            sourceCrmOptions={sourceCrmOptions}
+            sourceCrmOptions={sourceCrmOptions as CrmSystem[]}
           />
         )}
         
@@ -65,7 +66,7 @@ const WizardContent: React.FC = () => {
             handleApiKeyChange={handleApiKeyChange}
             handleCustomCrmNameChange={handleCustomCrmNameChange}
             customCrmNames={customCrmNames}
-            destinationCrmOptions={destinationCrmOptions}
+            destinationCrmOptions={destinationCrmOptions as CrmSystem[]}
             multiDestinationEnabled={multiDestinationEnabled}
             setMultiDestinationEnabled={setMultiDestinationEnabled}
             selectedDestinationCrms={selectedDestinationCrms}
@@ -80,7 +81,7 @@ const WizardContent: React.FC = () => {
             handleChange={handleChange}
             handleRadioChange={handleRadioChange}
             selectedSourceCrms={selectedSourceCrms}
-            sourceCrmOptions={sourceCrmOptions}
+            sourceCrmOptions={sourceCrmOptions as CrmSystem[]}
             customCrmNames={customCrmNames}
           />
         )}
@@ -102,8 +103,8 @@ const WizardContent: React.FC = () => {
             multiCrmEnabled={multiCrmEnabled}
             selectedSourceCrms={selectedSourceCrms}
             customCrmNames={customCrmNames}
-            sourceCrmOptions={sourceCrmOptions}
-            destinationCrmOptions={destinationCrmOptions}
+            sourceCrmOptions={sourceCrmOptions as CrmSystem[]}
+            destinationCrmOptions={destinationCrmOptions as CrmSystem[]}
             multiDestinationEnabled={multiDestinationEnabled}
             selectedDestinationCrms={selectedDestinationCrms}
           />

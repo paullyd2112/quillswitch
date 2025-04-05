@@ -1,18 +1,46 @@
 
-import { CrmSystem, SetupFormData } from "@/types/setupWizard";
+import { SetupFormData, CrmSystem } from "@/contexts/setup-wizard/types";
 
-export interface ConfirmationSectionProps {
+export interface ConfirmationStepProps {
   formData: SetupFormData;
-  multiCrmEnabled?: boolean;
-  selectedSourceCrms?: string[];
+  isSubmitting: boolean;
+  handleSubmit: () => void;
+  multiCrmEnabled: boolean;
+  selectedSourceCrms: string[];
   customCrmNames: Record<string, string>;
   sourceCrmOptions: CrmSystem[];
   destinationCrmOptions: CrmSystem[];
-  multiDestinationEnabled?: boolean;
-  selectedDestinationCrms?: string[];
+  multiDestinationEnabled: boolean;
+  selectedDestinationCrms: string[];
 }
 
-export interface ConfirmationStepProps extends ConfirmationSectionProps {
+export interface CompanyInfoSectionProps {
+  formData: SetupFormData;
+  customCrmNames: Record<string, string>;
+  sourceCrmOptions: CrmSystem[];
+  destinationCrmOptions: CrmSystem[];
+}
+
+export interface CrmConfigSectionProps {
+  formData: SetupFormData;
+  multiCrmEnabled: boolean;
+  selectedSourceCrms: string[];
+  customCrmNames: Record<string, string>;
+  sourceCrmOptions: CrmSystem[];
+  destinationCrmOptions: CrmSystem[];
+  multiDestinationEnabled: boolean;
+  selectedDestinationCrms: string[];
+}
+
+export interface MigrationConfigSectionProps {
+  formData: SetupFormData;
+  multiCrmEnabled: boolean;
+  customCrmNames: Record<string, string>;
+  sourceCrmOptions: CrmSystem[];
+  destinationCrmOptions: CrmSystem[];
+}
+
+export interface SubmitButtonProps {
   isSubmitting: boolean;
   handleSubmit: () => void;
 }
