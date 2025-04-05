@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,8 @@ import {
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,20 +36,21 @@ const RegisterForm = () => {
 
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      const { error } = await signUp(email, password);
 
       if (error) {
         toast.error(error.message);
         return;
       }
 
-      if (data) {
-        toast.success("Check your email for the confirmation link!");
-        navigate("/");
-      }
+      toast.success("Check your email for the confirmation link!");
+      
+      // Update user metadata with full name
+      await supabase.auth.updateUser({
+        data: { full_name: fullName }
+      });
+      
+      navigate("/");
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
     } finally {
@@ -83,6 +87,17 @@ const RegisterForm = () => {
       <CardContent>
         <form onSubmit={handleSignUp} className="space-y-4">
           <div className="space-y-2">
+            <Label htmlFor="full-name">Full Name</Label>
+            <Input 
+              id="full-name" 
+              type="text" 
+              placeholder="John Doe" 
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="signup-email">Email</Label>
             <Input 
               id="signup-email" 
@@ -104,7 +119,7 @@ const RegisterForm = () => {
               required
             />
             <p className="text-xs text-muted-foreground">
-              Password must be at least 8 characters long
+              Password must be at least 6 characters long
             </p>
           </div>
           

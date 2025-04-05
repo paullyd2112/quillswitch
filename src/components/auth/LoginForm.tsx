@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -21,6 +22,7 @@ interface LoginFormProps {
 
 const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,20 +32,15 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
     
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
-        password: loginPassword,
-      });
+      const { error } = await signIn(loginEmail, loginPassword);
 
       if (error) {
         toast.error(error.message);
         return;
       }
 
-      if (data) {
-        toast.success("Signed in successfully!");
-        navigate("/");
-      }
+      toast.success("Signed in successfully!");
+      navigate("/");
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
     } finally {
@@ -54,7 +51,8 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.signInWithOAuth({
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/`,

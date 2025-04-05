@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ interface ForgotPasswordFormProps {
 }
 
 const ForgotPasswordForm = ({ isOpen, onOpenChange }: ForgotPasswordFormProps) => {
+  const { resetPassword } = useAuth();
   const [forgotEmail, setForgotEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,9 +28,7 @@ const ForgotPasswordForm = ({ isOpen, onOpenChange }: ForgotPasswordFormProps) =
     
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
+      const { error } = await resetPassword(forgotEmail);
 
       if (error) {
         toast.error(error.message);

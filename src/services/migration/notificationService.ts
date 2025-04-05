@@ -195,24 +195,46 @@ export const deleteNotification = async (notificationId: string): Promise<boolea
 };
 
 /**
- * Get notification preferences for a user
- * 
- * Since we don't have a dedicated table for user preferences yet,
- * this returns default preferences. In a real application, these would
- * be stored in a dedicated user_notification_preferences table.
+ * Get notification preferences for a user from database
  */
 export const getNotificationPreferences = async (userId: string): Promise<NotificationPreferences> => {
   try {
-    // For now, we'll return default preferences since we don't have a table for them
-    // In a future update, we'll add a dedicated table for user preferences
+    const { data, error } = await supabase
+      .from('user_notification_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
     
+    if (error) {
+      console.error("Failed to get notification preferences:", error);
+      throw error;
+    }
+    
+    if (!data) {
+      // Create default preferences if none exist
+      const preferences = DEFAULT_NOTIFICATION_PREFERENCES;
+      await saveNotificationPreferences(userId, preferences);
+      return preferences;
+    }
+    
+    // Map from database format to application format
     return {
-      ...DEFAULT_NOTIFICATION_PREFERENCES,
-      // Add personalized email from user profile if available
-      emailAddress: await getUserEmail()
+      statusChanges: data.status_changes,
+      errors: data.errors,
+      completions: data.completions,
+      dataValidation: data.data_validation,
+      mappingChanges: data.mapping_changes,
+      deliveryMethods: {
+        email: data.email_delivery,
+        inApp: data.in_app_delivery,
+        sms: data.sms_delivery
+      },
+      emailAddress: data.email_address,
+      phoneNumber: data.phone_number
     };
-  } catch (error: any) {
-    console.error("Failed to get notification preferences:", error);
+  } catch (error) {
+    console.error("Error in getNotificationPreferences:", error);
+    // Fall back to default preferences
     return DEFAULT_NOTIFICATION_PREFERENCES;
   }
 };
@@ -227,20 +249,52 @@ const getUserEmail = async (): Promise<string | undefined> => {
 
 /**
  * Save notification preferences for a user
- * 
- * This is a mock implementation until we create a proper table.
- * In a real application, this would save to a dedicated table.
  */
 export const saveNotificationPreferences = async (
   userId: string, 
   preferences: NotificationPreferences
 ): Promise<boolean> => {
   try {
-    // In the future, this will be implemented with a proper table
-    // For now, just log that we would save these preferences
-    console.log("Would save notification preferences for user", userId, preferences);
+    // Check if user has preferences already
+    const { data: existingData, error: checkError } = await supabase
+      .from('user_notification_preferences')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
     
-    // Simulate successful save
+    if (checkError) throw checkError;
+    
+    const dbPreferences = {
+      user_id: userId,
+      status_changes: preferences.statusChanges,
+      errors: preferences.errors,
+      completions: preferences.completions,
+      data_validation: preferences.dataValidation,
+      mapping_changes: preferences.mappingChanges,
+      email_delivery: preferences.deliveryMethods.email,
+      in_app_delivery: preferences.deliveryMethods.inApp,
+      sms_delivery: preferences.deliveryMethods.sms,
+      email_address: preferences.emailAddress,
+      phone_number: preferences.phoneNumber
+    };
+    
+    let result;
+    
+    if (existingData) {
+      // Update existing preferences
+      result = await supabase
+        .from('user_notification_preferences')
+        .update(dbPreferences)
+        .eq('user_id', userId);
+    } else {
+      // Insert new preferences
+      result = await supabase
+        .from('user_notification_preferences')
+        .insert(dbPreferences);
+    }
+    
+    if (result.error) throw result.error;
+    
     toast({
       title: "Notification preferences saved",
       description: "Your notification settings have been updated.",
@@ -249,6 +303,13 @@ export const saveNotificationPreferences = async (
     return true;
   } catch (error: any) {
     console.error("Failed to save notification preferences:", error);
+    
+    toast({
+      title: "Error saving preferences",
+      description: error.message || "There was an error saving your notification preferences",
+      variant: "destructive",
+    });
+    
     return false;
   }
 };

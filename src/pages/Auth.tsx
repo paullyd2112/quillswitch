@@ -5,26 +5,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
 import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const { mode } = useParams<{ mode?: string }>();
   const navigate = useNavigate();
+  const { user, isLoading } = useAuth();
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("login");
   
   // Check if user is already logged in
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        // User is already logged in, redirect to home
-        navigate("/");
-      }
-    };
-    
-    checkAuth();
-  }, [navigate]);
+    if (user && !isLoading) {
+      // User is already logged in, redirect to home
+      navigate("/");
+    }
+  }, [user, isLoading, navigate]);
   
   // Set active tab based on route param
   useEffect(() => {
@@ -34,6 +30,14 @@ const Auth = () => {
       setActiveTab("login");
     }
   }, [mode]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="container flex items-center justify-center min-h-screen py-10">

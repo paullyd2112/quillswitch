@@ -282,6 +282,33 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_activities: {
         Row: {
           activity_description: string
@@ -319,6 +346,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_notification_preferences: {
+        Row: {
+          completions: boolean
+          created_at: string
+          data_validation: boolean
+          email_address: string | null
+          email_delivery: boolean
+          errors: boolean
+          id: string
+          in_app_delivery: boolean
+          mapping_changes: boolean
+          phone_number: string | null
+          sms_delivery: boolean
+          status_changes: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completions?: boolean
+          created_at?: string
+          data_validation?: boolean
+          email_address?: string | null
+          email_delivery?: boolean
+          errors?: boolean
+          id?: string
+          in_app_delivery?: boolean
+          mapping_changes?: boolean
+          phone_number?: string | null
+          sms_delivery?: boolean
+          status_changes?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completions?: boolean
+          created_at?: string
+          data_validation?: boolean
+          email_address?: string | null
+          email_delivery?: boolean
+          errors?: boolean
+          id?: string
+          in_app_delivery?: boolean
+          mapping_changes?: boolean
+          phone_number?: string | null
+          sms_delivery?: boolean
+          status_changes?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       validation_reports: {
         Row: {
