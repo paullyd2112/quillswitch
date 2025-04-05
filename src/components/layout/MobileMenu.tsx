@@ -6,7 +6,7 @@ import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface NavLink {
+export interface NavLink {
   label: string;
   href: string;
   icon?: React.ReactNode;
@@ -19,7 +19,7 @@ interface MobileMenuProps {
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   
   return (
     <div 
@@ -77,7 +77,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
               size="sm" 
               className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
               onClick={() => {
-                logout();
+                signOut();
                 onClose();
               }}
             >

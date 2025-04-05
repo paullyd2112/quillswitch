@@ -6,62 +6,53 @@ const getNavLinks = (user: any) => {
   // Links that are always shown
   const publicLinks = [
     {
-      text: "Home",
+      label: "Home",
       href: "/",
       icon: <Home className="h-4 w-4" />,
-      items: []
     },
     {
-      text: "Features",
+      label: "Features",
       href: "/features",
       icon: <Bolt className="h-4 w-4" />,
-      items: []
     },
     {
-      text: "Resources",
+      label: "Resources",
       href: "/resources",
       icon: <HelpCircle className="h-4 w-4" />,
-      items: []
     },
     {
-      text: "About",
+      label: "About",
       href: "/about",
       icon: <Users className="h-4 w-4" />,
-      items: []
     }
   ];
   
   // Links shown only to authenticated users
   const authenticatedLinks = user ? [
     {
-      text: "Migrations",
+      label: "Migrations",
       href: "/migrations",
       icon: <Layers className="h-4 w-4" />,
-      items: []
     },
     {
-      text: "Reports",
+      label: "Reports",
       href: "/reports",
       icon: <FileBarChart2 className="h-4 w-4" />,
-      items: []
     },
     {
-      text: "Analytics",
+      label: "Analytics",
       href: "/analytics",
       icon: <BarChart3 className="h-4 w-4" />,
-      items: []
     },
     {
-      text: "API Docs",
+      label: "API Docs",
       href: "/api-docs",
       icon: <FileText className="h-4 w-4" />,
-      items: []
     },
     {
-      text: "Settings",
+      label: "Settings",
       href: "/settings",
       icon: <Settings className="h-4 w-4" />,
-      items: []
     }
   ] : [];
   
