@@ -1,132 +1,97 @@
 
-import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Import pages
-import Index from "./pages/Index";
-import Features from "./pages/Features";
-import MigrationsList from "./pages/MigrationsList";
-import MigrationDashboard from "./pages/MigrationDashboard";
-import SetupWizard from "./pages/SetupWizard";
-import EnterpriseMigrationTest from "./pages/EnterpriseMigrationTest";
-import Auth from "./pages/Auth";
-import Resources from "./pages/Resources";
-import KnowledgeBase from "./pages/KnowledgeBase";
-import KnowledgeArticle from "./pages/KnowledgeArticle";
-import About from "./pages/About";
-import PricingEstimator from "./pages/PricingEstimator";
-import ApiDocs from "./pages/ApiDocs";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import Reports from "./pages/Reports";
-import Analytics from "./pages/Analytics";
-import NotFound from "./pages/NotFound";
-import ResetPassword from "./pages/ResetPassword";
+import Index from '@/pages/Index';
+import Features from '@/pages/Features';
+import Resources from '@/pages/Resources';
+import About from '@/pages/About';
+import NotFound from '@/pages/NotFound';
+import Migrations from '@/pages/MigrationsList';
+import MigrationDashboard from '@/pages/MigrationDashboard';
+import Reports from '@/pages/Reports';
+import Settings from '@/pages/Settings';
+import Auth from '@/pages/Auth';
+import ApiDocs from '@/pages/ApiDocs';
+import Analytics from '@/pages/Analytics';
+import Profile from '@/pages/Profile';
+import ResetPassword from '@/pages/ResetPassword';
+import SetupWizard from '@/pages/SetupWizard';
+import KnowledgeBase from '@/pages/KnowledgeBase';
+import KnowledgeArticle from '@/pages/KnowledgeArticle';
+import PricingEstimator from '@/pages/PricingEstimator';
+import EnterpriseMigrationTest from '@/pages/EnterpriseMigrationTest';
 
-// Theme
-import { ThemeProvider } from "@/components/ui/theme-provider";
+// Import utilities for cross-browser compatibility
+import { applyCompatibilityClass } from '@/utils/browserCompatibility';
 
-// Protected Route Component
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
-      setIsAuthenticated(!!data.session);
-    };
-    
-    // First check localStorage for a quick answer
-    const storedAuth = localStorage.getItem("isAuthenticated");
-    setIsAuthenticated(storedAuth === "true");
-    
-    // Then verify with actual session check
-    checkAuth();
-  }, []);
-  
-  if (isAuthenticated === null) {
-    // Still checking auth status
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/auth/login" replace />;
-  }
-  
-  return children;
-};
+// Create QueryClient for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 function App() {
+  // Apply compatibility classes on mount
+  useEffect(() => {
+    applyCompatibilityClass();
+    
+    // Add global error handling for uncaught exceptions
+    const handleGlobalError = (event: ErrorEvent) => {
+      console.error('Unhandled error:', event.error);
+      event.preventDefault();
+      // You could send to an error tracking service here
+    };
+    
+    window.addEventListener('error', handleGlobalError);
+    
+    return () => {
+      window.removeEventListener('error', handleGlobalError);
+    };
+  }, []);
+  
   return (
-    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="light" storageKey="quillswitch-theme">
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/features" element={<Features />} />
-            <Route path="/migrations" element={
-              <ProtectedRoute>
-                <MigrationsList />
-              </ProtectedRoute>
-            } />
-            <Route path="/migrations/:projectId" element={
-              <ProtectedRoute>
-                <MigrationDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/migrations/setup" element={
-              <ProtectedRoute>
-                <SetupWizard />
-              </ProtectedRoute>
-            } />
-            <Route path="/migrations/enterprise-test" element={
-              <ProtectedRoute>
-                <EnterpriseMigrationTest />
-              </ProtectedRoute>
-            } />
-            {/* Add redirect from /setup to /migrations/setup */}
-            <Route path="/setup" element={<Navigate to="/migrations/setup" replace />} />
-            <Route path="/auth/:mode" element={<Auth />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/knowledge-base" element={<KnowledgeBase />} />
-            <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
+            <Route path="/knowledge-base/:articleId" element={<KnowledgeArticle />} />
             <Route path="/about" element={<About />} />
+            <Route path="/migrations" element={<Migrations />} />
+            <Route path="/migrations/:id" element={<MigrationDashboard />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/api-docs" element={<ApiDocs />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/setup" element={<SetupWizard />} />
             <Route path="/pricing" element={<PricingEstimator />} />
-            <Route path="/api-docs" element={
-              <ProtectedRoute>
-                <ApiDocs />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            } />
-            <Route path="/reports" element={
-              <ProtectedRoute>
-                <Reports />
-              </ProtectedRoute>
-            } />
-            <Route path="/analytics" element={
-              <ProtectedRoute>
-                <Analytics />
-              </ProtectedRoute>
-            } />
+            <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          
+          {/* Both toast systems for compatibility */}
           <Toaster />
+          <SonnerToaster richColors position="top-right" />
         </BrowserRouter>
-      </AuthProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

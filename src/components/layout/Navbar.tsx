@@ -1,43 +1,55 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
-// Import our new components
+// Import our components
 import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
 import getNavLinks from "./navConfig";
 import { useAuth } from "@/contexts/AuthContext";
 
+// Import performance utilities
+import { throttle } from "@/utils/performance";
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user } = useAuth();
+  const location = useLocation();
   
-  useEffect(() => {
-    const handleScroll = () => {
+  // Create memoized navLinks to prevent unnecessary re-renders
+  const navLinks = useMemo(() => getNavLinks(user), [user]);
+  
+  // Create throttled scroll handler for better performance
+  const handleScroll = useMemo(() => 
+    throttle(() => {
       if (window.scrollY > 10) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
-    };
-    
+    }, 100), // Throttle to every 100ms
+  []);
+  
+  useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [handleScroll]);
+  
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
-  // Get navigation data from our config and pass the user
-  const navLinks = getNavLinks(user);
   
   return (
     <header
@@ -70,6 +82,7 @@ const Navbar = () => {
                 size="icon"
                 onClick={toggleMenu}
                 aria-label="Toggle Menu"
+                className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
@@ -78,7 +91,7 @@ const Navbar = () => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
+      {/* Mobile Menu with improved accessibility */}
       <MobileMenu 
         isOpen={isMenuOpen}
         navLinks={navLinks}
