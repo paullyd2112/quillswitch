@@ -3,3 +3,4 @@
 export { AutomatedMappingPanel } from "./automated-mapping";
 export { default as EnterpriseMigrationCapabilityTest } from "./EnterpriseMigrationCapabilityTest";
 export { default as HighConcurrencyMigrationTest } from "./HighConcurrencyMigrationTest";
+export { default as MultiSourceSelection } from "./MultiSourceSelection";
