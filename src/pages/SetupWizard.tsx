@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -24,9 +25,10 @@ import CompanyInfoStep from "@/components/setup-wizard/CompanyInfoStep";
 import SourceCrmStep from "@/components/setup-wizard/SourceCrmStep";
 import DestinationCrmStep from "@/components/setup-wizard/DestinationCrmStep";
 import DataSelectionStep from "@/components/setup-wizard/DataSelectionStep";
+import PerCrmDataSelectionStep from "@/components/setup-wizard/PerCrmDataSelectionStep";
 import ConfirmationStep from "@/components/setup-wizard/ConfirmationStep";
 import ProgressSteps from "@/components/setup-wizard/ProgressSteps";
-import { WizardStep, SetupFormData } from "@/types/setupWizard";
+import { WizardStep, SetupFormData, CrmDataSelection } from "@/types/setupWizard";
 import { sourceCrmOptions, destinationCrmOptions } from "@/config/crmOptions";
 
 const SetupWizard = () => {
@@ -35,7 +37,9 @@ const SetupWizard = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [multiCrmEnabled, setMultiCrmEnabled] = useState(false);
+  const [multiDestinationEnabled, setMultiDestinationEnabled] = useState(false);
   const [selectedSourceCrms, setSelectedSourceCrms] = useState<string[]>(['salesforce']);
+  const [selectedDestinationCrms, setSelectedDestinationCrms] = useState<string[]>(['hubspot']);
   const [customCrmNames, setCustomCrmNames] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState<SetupFormData>({
     companyName: "",
@@ -48,8 +52,14 @@ const SetupWizard = () => {
     migrationStrategy: "full",
     apiKeys: {} as Record<string, string>,
     customSourceCrm: "",
-    customDestinationCrm: ""
+    customDestinationCrm: "",
+    crmDataSelections: [] as CrmDataSelection[],
+    selectedDestinationCrms: ['hubspot'],
+    multiDestinationEnabled: false
   });
+  
+  // Determine if we should show per-CRM data selection
+  const showPerCrmDataSelection = multiCrmEnabled && selectedSourceCrms.length > 1;
   
   const steps: WizardStep[] = [
     {
@@ -127,19 +137,57 @@ const SetupWizard = () => {
     });
   };
   
+  const handleCrmDataSelectionChange = (crmId: string, dataTypes: string[]) => {
+    const updatedSelections = formData.crmDataSelections.filter(
+      selection => selection.crmId !== crmId
+    );
+    
+    updatedSelections.push({
+      crmId,
+      dataTypes
+    });
+    
+    setFormData({
+      ...formData,
+      crmDataSelections: updatedSelections
+    });
+  };
+  
   const handleSourceCrmToggle = (crmId: string) => {
     if (multiCrmEnabled) {
-      // For multi-CRM mode
-      setSelectedSourceCrms(prev => 
-        prev.includes(crmId) 
-          ? prev.filter(id => id !== crmId) 
-          : [...prev, crmId]
-      );
+      const updatedCrms = selectedSourceCrms.includes(crmId) 
+        ? selectedSourceCrms.filter(id => id !== crmId) 
+        : [...selectedSourceCrms, crmId];
+      
+      setSelectedSourceCrms(updatedCrms);
+      
+      // Initialize data selections for this CRM if it's newly added
+      if (!selectedSourceCrms.includes(crmId) && !formData.crmDataSelections.some(s => s.crmId === crmId)) {
+        handleCrmDataSelectionChange(crmId, []);
+      }
     } else {
-      // For single CRM mode
       setFormData({
         ...formData,
         sourceCrm: crmId
+      });
+    }
+  };
+  
+  const handleDestinationCrmToggle = (crmId: string) => {
+    if (multiDestinationEnabled) {
+      const updatedCrms = selectedDestinationCrms.includes(crmId) 
+        ? selectedDestinationCrms.filter(id => id !== crmId) 
+        : [...selectedDestinationCrms, crmId];
+      
+      setSelectedDestinationCrms(updatedCrms);
+      setFormData({
+        ...formData,
+        selectedDestinationCrms: updatedCrms
+      });
+    } else {
+      setFormData({
+        ...formData,
+        destinationCrm: crmId
       });
     }
   };
@@ -167,8 +215,13 @@ const SetupWizard = () => {
         ...formData,
         // If multi-CRM is enabled, use the array of selected CRMs
         sourceCrm: multiCrmEnabled ? selectedSourceCrms : formData.sourceCrm,
+        // If multi-destination is enabled, use the array of selected destination CRMs
+        destinationCrm: multiDestinationEnabled ? selectedDestinationCrms : formData.destinationCrm,
         // Include custom CRM names if applicable
-        customCrmNames: customCrmNames
+        customCrmNames: customCrmNames,
+        // Include multi-CRM and multi-destination flags
+        multiCrmEnabled,
+        multiDestinationEnabled
       };
       
       // Create a migration project in Supabase and initialize tracking
@@ -205,16 +258,23 @@ const SetupWizard = () => {
         if (multiCrmEnabled) {
           return selectedSourceCrms.length > 0;
         }
-        
         // For single CRM, check if the selected CRM has an API key if needed
         return true;
       case 2: // Destination CRM
+        if (multiDestinationEnabled) {
+          return selectedDestinationCrms.length > 0;
+        }
         if (formData.destinationCrm === "custom") {
           return customCrmNames["destination"] && formData.apiKeys["destination"];
         }
         // Other validation for destination CRM
         return true;
       case 3: // Data Selection
+        // For per-CRM data selection in multi-CRM mode
+        if (showPerCrmDataSelection) {
+          return formData.crmDataSelections.some(selection => selection.dataTypes.length > 0);
+        }
+        // For regular data selection
         return formData.dataTypes.length > 0;
       default:
         return true;
@@ -295,10 +355,25 @@ const SetupWizard = () => {
                   handleCustomCrmNameChange={handleCustomCrmNameChange}
                   customCrmNames={customCrmNames}
                   destinationCrmOptions={destinationCrmOptions}
+                  multiDestinationEnabled={multiDestinationEnabled}
+                  setMultiDestinationEnabled={setMultiDestinationEnabled}
+                  selectedDestinationCrms={selectedDestinationCrms}
+                  handleDestinationCrmToggle={handleDestinationCrmToggle}
                 />
               )}
               
-              {currentStep === 3 && (
+              {currentStep === 3 && showPerCrmDataSelection && (
+                <PerCrmDataSelectionStep 
+                  formData={formData}
+                  handleCrmDataSelectionChange={handleCrmDataSelectionChange}
+                  handleChange={handleChange}
+                  handleRadioChange={handleRadioChange}
+                  selectedSourceCrms={selectedSourceCrms}
+                  sourceCrmOptions={sourceCrmOptions}
+                />
+              )}
+              
+              {currentStep === 3 && !showPerCrmDataSelection && (
                 <DataSelectionStep 
                   formData={formData}
                   handleChange={handleChange}
@@ -317,6 +392,8 @@ const SetupWizard = () => {
                   customCrmNames={customCrmNames}
                   sourceCrmOptions={sourceCrmOptions}
                   destinationCrmOptions={destinationCrmOptions}
+                  multiDestinationEnabled={multiDestinationEnabled}
+                  selectedDestinationCrms={selectedDestinationCrms}
                 />
               )}
             </FadeIn>

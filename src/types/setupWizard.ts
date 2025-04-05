@@ -15,6 +15,11 @@ export interface WizardStep {
   icon: React.ReactNode;
 }
 
+export interface CrmDataSelection {
+  crmId: string;
+  dataTypes: string[];
+}
+
 export interface SetupFormData {
   companyName: string;
   industry?: string;
@@ -30,4 +35,8 @@ export interface SetupFormData {
   apiKeys: Record<string, string>;
   customSourceCrm: string;
   customDestinationCrm: string;
+  // New fields for multi-CRM support
+  crmDataSelections: CrmDataSelection[];
+  selectedDestinationCrms: string[];
+  multiDestinationEnabled: boolean;
 }
