@@ -1,6 +1,5 @@
 
 import { MigrationProject } from "@/integrations/supabase/migrationTypes";
-import { handleServiceError } from "../utils/serviceUtils";
 import { createMigrationProject } from "./projectService";
 import { createMigrationStage } from "./stageService";
 import { createMigrationObjectType } from "./objectTypeService";
@@ -128,8 +127,10 @@ export const createDefaultMigrationProject = async (formData: SetupFormData & {
       }
     });
     
-    // Create welcome notification
+    // Get current user ID
     const userId = (await supabase.auth.getUser()).data.user?.id;
+    
+    // Create welcome notification
     await createNotification(
       project.id,
       'Migration Project Created',
@@ -137,18 +138,6 @@ export const createDefaultMigrationProject = async (formData: SetupFormData & {
       'migration_started',
       userId
     );
-    
-    // Create welcome notification in database
-    await supabase
-      .from('migration_notifications')
-      .insert({
-        project_id: project.id,
-        user_id: userId,
-        title: 'Migration Project Created',
-        message: `Your ${formData.sourceCrm} to ${formData.destinationCrm} migration project has been created successfully.`,
-        notification_type: 'migration_started',
-        is_read: false
-      });
     
     return project;
   } catch (error: any) {
