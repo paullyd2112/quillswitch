@@ -257,7 +257,7 @@ export const SetupWizardProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
   
-  const isStepValid = () => {
+  const isStepValid = (): boolean => {
     switch (currentStep) {
       case 0: // Company Info
         return formData.companyName.trim() !== "";
@@ -273,7 +273,7 @@ export const SetupWizardProvider: React.FC<{ children: React.ReactNode }> = ({ c
           return selectedDestinationCrms.length > 0;
         }
         if (formData.destinationCrm === "custom") {
-          return customCrmNames["destination"] && formData.apiKeys["destination"];
+          return Boolean(customCrmNames["destination"] && formData.apiKeys["destination"]);
         }
         // Other validation for destination CRM
         return true;
