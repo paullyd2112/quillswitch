@@ -61,7 +61,7 @@ const Navbar = () => {
           <DesktopNav navLinks={navLinks} />
           
           <div className="flex items-center gap-2">
-            {/* Auth Buttons Component - No longer passing user prop */}
+            {/* Auth Buttons Component */}
             <AuthButtons />
             
             <div className="md:hidden">
@@ -82,7 +82,6 @@ const Navbar = () => {
       <MobileMenu 
         isOpen={isMenuOpen}
         navLinks={navLinks}
-        user={user}
         onClose={() => setIsMenuOpen(false)}
       />
     </header>

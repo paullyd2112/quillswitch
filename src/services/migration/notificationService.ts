@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { apiClient } from "./apiClient";
 import { UserNotificationPreferences } from "@/integrations/supabase/userTypes";
+import { safeTable } from "@/services/utils/supabaseUtils";
 
 /**
  * Notification types
@@ -201,8 +202,7 @@ export const deleteNotification = async (notificationId: string): Promise<boolea
 export const getNotificationPreferences = async (userId: string): Promise<NotificationPreferences> => {
   try {
     // Explicitly cast the response type to handle the user_notification_preferences table
-    const { data, error } = await supabase
-      .from('user_notification_preferences')
+    const { data, error } = await safeTable<UserNotificationPreferences>('user_notification_preferences')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -259,8 +259,7 @@ export const saveNotificationPreferences = async (
 ): Promise<boolean> => {
   try {
     // Check if user has preferences already
-    const { data: existingData, error: checkError } = await supabase
-      .from('user_notification_preferences')
+    const { data: existingData, error: checkError } = await safeTable<UserNotificationPreferences>('user_notification_preferences')
       .select('id')
       .eq('user_id', userId)
       .maybeSingle();
@@ -285,32 +284,27 @@ export const saveNotificationPreferences = async (
     
     if (existingData) {
       // Update existing preferences
-      result = await supabase
-        .from('user_notification_preferences')
+      result = await safeTable<UserNotificationPreferences>('user_notification_preferences')
         .update(dbPreferences)
         .eq('user_id', userId);
     } else {
       // Insert new preferences
-      result = await supabase
-        .from('user_notification_preferences')
+      result = await safeTable<UserNotificationPreferences>('user_notification_preferences')
         .insert(dbPreferences);
     }
     
     if (result.error) throw result.error;
     
-    toast({
-      title: "Notification preferences saved",
-      description: "Your notification settings have been updated.",
+    toast.success("Notification preferences saved", {
+      description: "Your notification settings have been updated."
     });
     
     return true;
   } catch (error: any) {
     console.error("Failed to save notification preferences:", error);
     
-    toast({
-      title: "Error saving preferences",
-      description: error.message || "There was an error saving your notification preferences",
-      variant: "destructive",
+    toast.error("Error saving preferences", {
+      description: error.message || "There was an error saving your notification preferences"
     });
     
     return false;
