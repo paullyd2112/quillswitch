@@ -24,10 +24,9 @@ export const useSubmission = (
       // Prepare the form data for submission
       const submissionData = {
         ...formData,
-        // If multi-CRM is enabled, use the array of selected CRMs
-        sourceCrm: multiCrmEnabled ? selectedSourceCrms : formData.sourceCrm,
-        // If multi-destination is enabled, use the array of selected destination CRMs
-        destinationCrm: multiDestinationEnabled ? selectedDestinationCrms : formData.destinationCrm,
+        // Store selected CRMs in metadata rather than overriding the string fields
+        multiCrmSourceList: multiCrmEnabled ? selectedSourceCrms : undefined,
+        multiDestinationList: multiDestinationEnabled ? selectedDestinationCrms : undefined,
         // Include custom CRM names if applicable
         customCrmNames: customCrmNames,
         // Include multi-CRM and multi-destination flags

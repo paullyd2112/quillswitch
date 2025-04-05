@@ -27,14 +27,14 @@ export interface SetupFormData {
   migrationGoals?: string;
   sourceCrm: string;
   destinationCrm: string;
-  salesforceApiKey: string;
-  hubspotApiKey: string;
+  salesforceApiKey?: string;
+  hubspotApiKey?: string;
   dataTypes: string[];
   customMapping: string;
   migrationStrategy: string;
   apiKeys: Record<string, string>;
-  customSourceCrm: string;
-  customDestinationCrm: string;
+  customSourceCrm?: string;
+  customDestinationCrm?: string;
   // New fields for multi-CRM support
   crmDataSelections: CrmDataSelection[];
   selectedDestinationCrms: string[];

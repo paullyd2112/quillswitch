@@ -12,12 +12,27 @@ import { SetupFormData } from "@/contexts/setup-wizard/types";
 /**
  * Create a default migration project from setup wizard data
  */
-export const createDefaultMigrationProject = async (formData: SetupFormData): Promise<MigrationProject | null> => {
+export const createDefaultMigrationProject = async (formData: SetupFormData & {
+  multiCrmSourceList?: string[];
+  multiDestinationList?: string[];
+  multiCrmEnabled?: boolean;
+  multiDestinationEnabled?: boolean;
+  customCrmNames?: Record<string, string>;
+}): Promise<MigrationProject | null> => {
   try {
+    // Determine source and destination CRM values based on multi-CRM mode
+    const sourceCrm = formData.multiCrmEnabled && formData.multiCrmSourceList 
+      ? formData.multiCrmSourceList.join(',')
+      : formData.sourceCrm;
+      
+    const destinationCrm = formData.multiDestinationEnabled && formData.multiDestinationList
+      ? formData.multiDestinationList.join(',')
+      : formData.destinationCrm;
+      
     const projectData: Omit<MigrationProject, 'id' | 'created_at' | 'updated_at' | 'user_id'> = {
       company_name: formData.companyName,
-      source_crm: formData.sourceCrm,
-      destination_crm: formData.destinationCrm,
+      source_crm: sourceCrm,
+      destination_crm: destinationCrm,
       migration_strategy: formData.migrationStrategy,
       status: 'pending' as const,
       total_objects: 0,
@@ -53,23 +68,29 @@ export const createDefaultMigrationProject = async (formData: SetupFormData): Pr
       });
     }
     
-    // Create object types from dataTypes
-    if (formData.dataTypes && formData.dataTypes.length > 0) {
-      const objectTypeMappings = {
-        contacts: { name: 'Contacts & Leads', description: 'All contact and lead information' },
-        accounts: { name: 'Accounts & Companies', description: 'Organization information' },
-        opportunities: { name: 'Opportunities & Deals', description: 'Sales pipeline and deals' },
-        cases: { name: 'Cases & Tickets', description: 'Support cases and tickets' },
-        activities: { name: 'Activities & Tasks', description: 'Call logs, emails, and tasks' },
-        custom: { name: 'Custom Objects', description: 'Your custom data objects' }
-      };
+    // Create object types based on data selection mode
+    if (formData.multiCrmEnabled && formData.crmDataSelections.length > 0) {
+      // Multi-CRM mode: Create object types from per-CRM data selections
+      const objectTypesCreated = new Set<string>();
       
-      for (const dataType of formData.dataTypes) {
-        if (objectTypeMappings[dataType as keyof typeof objectTypeMappings]) {
-          const typeInfo = objectTypeMappings[dataType as keyof typeof objectTypeMappings];
+      for (const selection of formData.crmDataSelections) {
+        if (selection.dataTypes.length === 0) continue;
+        
+        // Get CRM name for display
+        const crmName = formData.customCrmNames?.[selection.crmId] || selection.crmId;
+        
+        for (const dataType of selection.dataTypes) {
+          // Create a unique name for this object type that includes the CRM
+          const typeInfo = getObjectTypeInfo(dataType);
+          const objectName = `${crmName} - ${typeInfo.name}`;
+          
+          // Avoid duplicates
+          if (objectTypesCreated.has(objectName)) continue;
+          objectTypesCreated.add(objectName);
+          
           await createMigrationObjectType({
             project_id: project.id,
-            name: typeInfo.name,
+            name: objectName,
             description: typeInfo.description,
             total_records: 0,
             processed_records: 0,
@@ -78,6 +99,20 @@ export const createDefaultMigrationProject = async (formData: SetupFormData): Pr
           });
         }
       }
+    } else if (formData.dataTypes && formData.dataTypes.length > 0) {
+      // Single CRM mode: Use the dataTypes array directly
+      for (const dataType of formData.dataTypes) {
+        const typeInfo = getObjectTypeInfo(dataType);
+        await createMigrationObjectType({
+          project_id: project.id,
+          name: typeInfo.name,
+          description: typeInfo.description,
+          total_records: 0,
+          processed_records: 0,
+          failed_records: 0,
+          status: 'pending' as const
+        });
+      }
     }
     
     // Log user activity
@@ -85,7 +120,11 @@ export const createDefaultMigrationProject = async (formData: SetupFormData): Pr
       project_id: project.id,
       activity_type: 'project_creation',
       activity_description: 'Created new migration project',
-      activity_details: { formData }
+      activity_details: { 
+        formData,
+        multiCrmEnabled: formData.multiCrmEnabled,
+        multiDestinationEnabled: formData.multiDestinationEnabled 
+      }
     });
     
     // Create welcome notification
@@ -111,3 +150,17 @@ export const createDefaultMigrationProject = async (formData: SetupFormData): Pr
     return null;
   }
 };
+
+// Helper function to get display name and description for object types
+function getObjectTypeInfo(dataType: string): { name: string; description: string } {
+  const objectTypeMappings: Record<string, { name: string; description: string }> = {
+    contacts: { name: 'Contacts & Leads', description: 'All contact and lead information' },
+    accounts: { name: 'Accounts & Companies', description: 'Organization information' },
+    opportunities: { name: 'Opportunities & Deals', description: 'Sales pipeline and deals' },
+    cases: { name: 'Cases & Tickets', description: 'Support cases and tickets' },
+    activities: { name: 'Activities & Tasks', description: 'Call logs, emails, and tasks' },
+    custom: { name: 'Custom Objects', description: 'Your custom data objects' }
+  };
+  
+  return objectTypeMappings[dataType] || { name: dataType, description: `${dataType} records` };
+}
