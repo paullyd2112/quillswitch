@@ -19,6 +19,7 @@ export interface CrmSource {
     customObjects: number;
   };
   complexity: 'simple' | 'medium' | 'complex';
+  selected?: boolean; // Added the selected property
 }
 
 interface MultiSourceSelectionProps {
