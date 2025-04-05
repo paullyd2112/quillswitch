@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,8 @@ import {
   FileCheck,
   Key,
   RefreshCw,
-  Settings
+  Settings,
+  PlusCircle
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
@@ -27,8 +27,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { createDefaultMigrationProject } from "@/services/migrationService";
+import { Card, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface WizardStep {
   id: string;
@@ -37,11 +40,23 @@ interface WizardStep {
   icon: React.ReactNode;
 }
 
+interface CrmSystem {
+  id: string;
+  name: string;
+  description?: string;
+  apiKeyLabel?: string;
+  apiKeyHelp?: string;
+  popular?: boolean;
+}
+
 const SetupWizard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [multiCrmEnabled, setMultiCrmEnabled] = useState(false);
+  const [selectedSourceCrms, setSelectedSourceCrms] = useState<string[]>(['salesforce']);
+  const [customCrmNames, setCustomCrmNames] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     companyName: "",
     sourceCrm: "salesforce",
@@ -51,7 +66,42 @@ const SetupWizard = () => {
     dataTypes: [] as string[],
     customMapping: "",
     migrationStrategy: "full",
+    apiKeys: {} as Record<string, string>,
+    customSourceCrm: "",
+    customDestinationCrm: ""
   });
+  
+  const sourceCrmOptions: CrmSystem[] = [
+    { id: 'salesforce', name: 'Salesforce', description: 'Dominant market leader', popular: true },
+    { id: 'dynamics', name: 'Microsoft Dynamics 365', description: 'Strong in the enterprise space', popular: true },
+    { id: 'hubspot', name: 'HubSpot CRM', description: 'Popular with SMBs, known for inbound marketing', popular: true },
+    { id: 'zoho', name: 'Zoho CRM', description: 'Cost-effective, feature-rich option', popular: true },
+    { id: 'oracle', name: 'Oracle CX', description: 'Enterprise-level CRM integrated with Oracle products' },
+    { id: 'sap', name: 'SAP CRM', description: 'Enterprise solutions integrated with SAP ERP' },
+    { id: 'pipedrive', name: 'Pipedrive', description: 'Sales-focused with pipeline management', popular: true },
+    { id: 'monday', name: 'Monday.com', description: 'Work OS platform with CRM capabilities' },
+    { id: 'freshsales', name: 'Freshsales', description: 'AI-powered CRM with user-friendly interface' },
+    { id: 'zendesk', name: 'Zendesk Sell', description: 'Sales CRM focused on productivity' },
+    { id: 'sugar', name: 'SugarCRM', description: 'Flexible and customizable CRM' },
+    { id: 'close', name: 'Close.io', description: 'Built for inside sales teams' },
+    { id: 'insightly', name: 'Insightly', description: 'CRM for project management and sales' },
+    { id: 'copper', name: 'Copper CRM', description: 'Integrates with Google Workspace' },
+    { id: 'keap', name: 'Keap', description: 'CRM and marketing automation for small businesses' },
+    { id: 'nutshell', name: 'Nutshell', description: 'Simple CRM for small to mid sized business' },
+    { id: 'apptivo', name: 'Apptivo CRM', description: 'Suite of business apps with adaptable CRM' },
+    { id: 'salesflare', name: 'Salesflare', description: 'CRM that automates data entry' },
+    { id: 'custom', name: 'Custom/Other CRM', description: 'Specify your own CRM system' }
+  ];
+  
+  const destinationCrmOptions: CrmSystem[] = [
+    { id: 'hubspot', name: 'HubSpot', apiKeyLabel: 'HubSpot API Key', apiKeyHelp: 'Your API key can be found in HubSpot > Settings > Integrations > API Keys', popular: true },
+    { id: 'salesforce', name: 'Salesforce', apiKeyLabel: 'Salesforce API Key', apiKeyHelp: 'Your API key can be found in Salesforce Setup > Apps > App Manager > Your Connected App > Manage Consumer Details', popular: true },
+    { id: 'pipedrive', name: 'Pipedrive', apiKeyLabel: 'Pipedrive API Key', apiKeyHelp: 'Your API key can be found in Settings > Personal > API', popular: true },
+    { id: 'monday', name: 'Monday Sales CRM', apiKeyLabel: 'Monday API Key', apiKeyHelp: 'Your API key can be found in Admin > API', popular: true },
+    { id: 'zoho', name: 'Zoho CRM', apiKeyLabel: 'Zoho API Key', apiKeyHelp: 'Your API key can be generated in Setup > Developer Space > API > Generate New Token', popular: true },
+    { id: 'dynamics', name: 'Microsoft Dynamics 365', apiKeyLabel: 'Dynamics API Key', apiKeyHelp: 'Your API key can be found in Settings > Customizations > Developer Resources', popular: true },
+    { id: 'custom', name: 'Custom/Other CRM', apiKeyLabel: 'API Key', apiKeyHelp: 'Enter the API key for your CRM system' }
+  ];
   
   const steps: WizardStep[] = [
     {
@@ -94,6 +144,23 @@ const SetupWizard = () => {
     });
   };
   
+  const handleApiKeyChange = (crmId: string, value: string) => {
+    setFormData({
+      ...formData,
+      apiKeys: {
+        ...formData.apiKeys,
+        [crmId]: value
+      }
+    });
+  };
+  
+  const handleCustomCrmNameChange = (crmId: string, value: string) => {
+    setCustomCrmNames({
+      ...customCrmNames,
+      [crmId]: value
+    });
+  };
+  
   const handleRadioChange = (value: string, field: string) => {
     setFormData({
       ...formData,
@@ -110,6 +177,23 @@ const SetupWizard = () => {
       ...formData,
       dataTypes: updatedDataTypes
     });
+  };
+  
+  const handleSourceCrmToggle = (crmId: string) => {
+    if (multiCrmEnabled) {
+      // For multi-CRM mode
+      setSelectedSourceCrms(prev => 
+        prev.includes(crmId) 
+          ? prev.filter(id => id !== crmId) 
+          : [...prev, crmId]
+      );
+    } else {
+      // For single CRM mode
+      setFormData({
+        ...formData,
+        sourceCrm: crmId
+      });
+    }
   };
   
   const handleNext = () => {
@@ -130,8 +214,17 @@ const SetupWizard = () => {
     setIsSubmitting(true);
     
     try {
+      // Prepare the form data for submission
+      const submissionData = {
+        ...formData,
+        // If multi-CRM is enabled, use the array of selected CRMs
+        sourceCrm: multiCrmEnabled ? selectedSourceCrms : formData.sourceCrm,
+        // Include custom CRM names if applicable
+        customCrmNames: customCrmNames
+      };
+      
       // Create a migration project in Supabase and initialize tracking
-      const project = await createDefaultMigrationProject(formData);
+      const project = await createDefaultMigrationProject(submissionData);
       
       if (project) {
         toast({
@@ -160,20 +253,184 @@ const SetupWizard = () => {
       case 0: // Company Info
         return formData.companyName.trim() !== "";
       case 1: // Source CRM
-        if (formData.sourceCrm === "salesforce") {
-          return formData.salesforceApiKey.trim() !== "";
+        // For multi-CRM, ensure at least one CRM is selected
+        if (multiCrmEnabled) {
+          return selectedSourceCrms.length > 0;
         }
+        
+        // For single CRM, check if the selected CRM has an API key if needed
         return true;
       case 2: // Destination CRM
-        if (formData.destinationCrm === "hubspot") {
-          return formData.hubspotApiKey.trim() !== "";
+        if (formData.destinationCrm === "custom") {
+          return customCrmNames["destination"] && formData.apiKeys["destination"];
         }
+        // Other validation for destination CRM
         return true;
       case 3: // Data Selection
         return formData.dataTypes.length > 0;
       default:
         return true;
     }
+  };
+
+  const renderSourceCrmOptions = () => {
+    const popularOptions = sourceCrmOptions.filter(crm => crm.popular);
+    const otherOptions = sourceCrmOptions.filter(crm => !crm.popular);
+    
+    return (
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+          {popularOptions.map(crm => (
+            <div 
+              key={crm.id}
+              className={`border rounded-md p-3 cursor-pointer transition-colors ${
+                multiCrmEnabled 
+                  ? selectedSourceCrms.includes(crm.id) ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
+                  : formData.sourceCrm === crm.id ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
+              }`}
+              onClick={() => handleSourceCrmToggle(crm.id)}
+            >
+              <div className="flex items-start gap-2">
+                {multiCrmEnabled ? (
+                  <Checkbox 
+                    checked={selectedSourceCrms.includes(crm.id)} 
+                    onCheckedChange={() => handleSourceCrmToggle(crm.id)}
+                    className="mt-1"
+                  />
+                ) : (
+                  <RadioGroupItem 
+                    value={crm.id} 
+                    id={`source-${crm.id}`} 
+                    checked={formData.sourceCrm === crm.id}
+                    className="mt-1"
+                  />
+                )}
+                <div>
+                  <Label htmlFor={`source-${crm.id}`} className="font-medium cursor-pointer">
+                    {crm.name}
+                  </Label>
+                  {crm.description && (
+                    <p className="text-xs text-muted-foreground">{crm.description}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <Accordion type="single" collapsible className="mb-6">
+          <AccordionItem value="more-crms">
+            <AccordionTrigger className="text-sm">Show more CRM options</AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
+                {otherOptions.map(crm => (
+                  <div 
+                    key={crm.id}
+                    className={`border rounded-md p-3 cursor-pointer transition-colors ${
+                      multiCrmEnabled 
+                        ? selectedSourceCrms.includes(crm.id) ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
+                        : formData.sourceCrm === crm.id ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
+                    }`}
+                    onClick={() => handleSourceCrmToggle(crm.id)}
+                  >
+                    <div className="flex items-start gap-2">
+                      {multiCrmEnabled ? (
+                        <Checkbox 
+                          checked={selectedSourceCrms.includes(crm.id)} 
+                          onCheckedChange={() => handleSourceCrmToggle(crm.id)}
+                          className="mt-1"
+                        />
+                      ) : (
+                        <RadioGroupItem 
+                          value={crm.id} 
+                          id={`source-${crm.id}`} 
+                          checked={formData.sourceCrm === crm.id}
+                          className="mt-1"
+                        />
+                      )}
+                      <div>
+                        <Label htmlFor={`source-${crm.id}`} className="font-medium cursor-pointer">
+                          {crm.name}
+                        </Label>
+                        {crm.description && (
+                          <p className="text-xs text-muted-foreground">{crm.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </>
+    );
+  };
+  
+  const renderApiKeyInputs = () => {
+    const selectedCrms = multiCrmEnabled 
+      ? selectedSourceCrms 
+      : [formData.sourceCrm];
+    
+    return (
+      <div className="space-y-4 mt-6">
+        {selectedCrms.map(crmId => {
+          const crmOption = sourceCrmOptions.find(c => c.id === crmId);
+          
+          if (!crmOption) return null;
+          
+          return (
+            <div key={crmId} className="space-y-2 border p-4 rounded-md">
+              <div className="flex justify-between items-center">
+                <Label className="font-medium">{crmOption.name} Configuration</Label>
+                {multiCrmEnabled && (
+                  <Badge variant="outline">{crmOption.name}</Badge>
+                )}
+              </div>
+              
+              {crmId === 'custom' ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="custom-crm-name">Custom CRM Name</Label>
+                    <Input 
+                      id="custom-crm-name"
+                      placeholder="Enter your CRM system name"
+                      value={customCrmNames[crmId] || ''}
+                      onChange={(e) => handleCustomCrmNameChange(crmId, e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`api-key-${crmId}`}>API Key</Label>
+                    <Input 
+                      id={`api-key-${crmId}`}
+                      placeholder="Enter your API key"
+                      value={formData.apiKeys[crmId] || ''}
+                      onChange={(e) => handleApiKeyChange(crmId, e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Please enter the API key for your custom CRM system
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label htmlFor={`api-key-${crmId}`}>{crmOption.name} API Key</Label>
+                  <Input 
+                    id={`api-key-${crmId}`}
+                    placeholder={`Enter your ${crmOption.name} API key`}
+                    value={formData.apiKeys[crmId] || ''}
+                    onChange={(e) => handleApiKeyChange(crmId, e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Your API key can be found in your {crmOption.name} account settings
+                  </p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
   };
   
   return (
@@ -293,55 +550,24 @@ const SetupWizard = () => {
                   </p>
                   
                   <div className="space-y-6">
+                    <div className="flex items-start space-x-2 p-3 bg-muted/40 rounded-md">
+                      <Checkbox 
+                        id="multi-crm" 
+                        checked={multiCrmEnabled}
+                        onCheckedChange={(checked) => setMultiCrmEnabled(checked === true)}
+                      />
+                      <div>
+                        <Label htmlFor="multi-crm" className="font-medium">Do you have data in multiple CRMs?</Label>
+                        <p className="text-xs text-muted-foreground">Enable this to select and configure multiple source CRMs</p>
+                      </div>
+                    </div>
+
                     <div className="space-y-2">
-                      <Label>Source CRM Platform</Label>
-                      <RadioGroup 
-                        value={formData.sourceCrm} 
-                        onValueChange={(value) => handleRadioChange(value, "sourceCrm")}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="salesforce" id="salesforce" />
-                          <Label htmlFor="salesforce">Salesforce</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="dynamics" id="dynamics" />
-                          <Label htmlFor="dynamics">Microsoft Dynamics</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="zoho" id="zoho" />
-                          <Label htmlFor="zoho">Zoho CRM</Label>
-                        </div>
-                      </RadioGroup>
+                      <Label>{multiCrmEnabled ? "Select Source CRMs" : "Source CRM Platform"}</Label>
+                      {renderSourceCrmOptions()}
                     </div>
                     
-                    {formData.sourceCrm === "salesforce" && (
-                      <div className="space-y-2">
-                        <Label htmlFor="salesforceApiKey">Salesforce API Key</Label>
-                        <Input 
-                          id="salesforceApiKey"
-                          name="salesforceApiKey"
-                          placeholder="Enter your Salesforce API key"
-                          value={formData.salesforceApiKey}
-                          onChange={handleChange}
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Your API key can be found in Salesforce Setup &gt; Apps &gt; App Manager &gt; Your Connected App &gt; Manage Consumer Details
-                        </p>
-                      </div>
-                    )}
-                    
-                    {formData.sourceCrm === "dynamics" && (
-                      <div className="p-4 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 rounded-md">
-                        Microsoft Dynamics integration guides will be provided after setup.
-                      </div>
-                    )}
-                    
-                    {formData.sourceCrm === "zoho" && (
-                      <div className="p-4 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400 rounded-md">
-                        Zoho CRM integration guides will be provided after setup.
-                      </div>
-                    )}
+                    {renderApiKeyInputs()}
                   </div>
                 </div>
               )}
@@ -356,51 +582,72 @@ const SetupWizard = () => {
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <Label>Destination CRM Platform</Label>
-                      <RadioGroup 
-                        value={formData.destinationCrm} 
-                        onValueChange={(value) => handleRadioChange(value, "destinationCrm")}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="hubspot" id="hubspot" />
-                          <Label htmlFor="hubspot">HubSpot</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="pipedrive" id="pipedrive" />
-                          <Label htmlFor="pipedrive">Pipedrive</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="monday" id="monday" />
-                          <Label htmlFor="monday">Monday Sales CRM</Label>
-                        </div>
-                      </RadioGroup>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {destinationCrmOptions.map(crm => (
+                          <div 
+                            key={crm.id}
+                            className={`border rounded-md p-3 cursor-pointer transition-colors ${
+                              formData.destinationCrm === crm.id ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
+                            }`}
+                            onClick={() => handleRadioChange(crm.id, "destinationCrm")}
+                          >
+                            <div className="flex items-start gap-2">
+                              <RadioGroupItem 
+                                value={crm.id} 
+                                id={`dest-${crm.id}`} 
+                                checked={formData.destinationCrm === crm.id}
+                                className="mt-1"
+                              />
+                              <div>
+                                <Label htmlFor={`dest-${crm.id}`} className="font-medium cursor-pointer">
+                                  {crm.name}
+                                </Label>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     
-                    {formData.destinationCrm === "hubspot" && (
-                      <div className="space-y-2">
-                        <Label htmlFor="hubspotApiKey">HubSpot API Key</Label>
+                    {formData.destinationCrm === "custom" ? (
+                      <div className="space-y-4 border p-4 rounded-md">
+                        <div className="space-y-2">
+                          <Label htmlFor="custom-dest-name">Custom Destination CRM Name</Label>
+                          <Input 
+                            id="custom-dest-name"
+                            placeholder="Enter your destination CRM name"
+                            value={customCrmNames["destination"] || ''}
+                            onChange={(e) => handleCustomCrmNameChange("destination", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="api-key-destination">API Key</Label>
+                          <Input 
+                            id="api-key-destination"
+                            placeholder="Enter your API key"
+                            value={formData.apiKeys["destination"] || ''}
+                            onChange={(e) => handleApiKeyChange("destination", e.target.value)}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            Please enter the API key for your custom destination CRM
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 border p-4 rounded-md">
+                        <Label htmlFor={`api-key-${formData.destinationCrm}`}>
+                          {destinationCrmOptions.find(c => c.id === formData.destinationCrm)?.apiKeyLabel || 'API Key'}
+                        </Label>
                         <Input 
-                          id="hubspotApiKey"
-                          name="hubspotApiKey"
-                          placeholder="Enter your HubSpot API key"
-                          value={formData.hubspotApiKey}
-                          onChange={handleChange}
+                          id={`api-key-${formData.destinationCrm}`}
+                          placeholder={`Enter your ${formData.destinationCrm} API key`}
+                          value={formData.apiKeys[formData.destinationCrm] || ''}
+                          onChange={(e) => handleApiKeyChange(formData.destinationCrm, e.target.value)}
                         />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Your API key can be found in HubSpot &gt; Settings &gt; Integrations &gt; API Keys
+                        <p className="text-xs text-muted-foreground">
+                          {destinationCrmOptions.find(c => c.id === formData.destinationCrm)?.apiKeyHelp || 
+                            `Your API key can be found in your ${formData.destinationCrm} account settings`}
                         </p>
-                      </div>
-                    )}
-                    
-                    {formData.destinationCrm === "pipedrive" && (
-                      <div className="p-4 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 rounded-md">
-                        Pipedrive integration guides will be provided after setup.
-                      </div>
-                    )}
-                    
-                    {formData.destinationCrm === "monday" && (
-                      <div className="p-4 bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400 rounded-md">
-                        Monday Sales CRM integration guides will be provided after setup.
                       </div>
                     )}
                   </div>
@@ -580,11 +827,19 @@ const SetupWizard = () => {
                         </li>
                         <li className="flex justify-between">
                           <span className="text-muted-foreground">Source CRM:</span>
-                          <span className="font-medium">{formData.sourceCrm === "salesforce" ? "Salesforce" : formData.sourceCrm === "dynamics" ? "Microsoft Dynamics" : "Zoho CRM"}</span>
+                          <span className="font-medium">
+                            {multiCrmEnabled 
+                              ? `${selectedSourceCrms.length} CRMs selected` 
+                              : sourceCrmOptions.find(c => c.id === formData.sourceCrm)?.name || formData.sourceCrm}
+                          </span>
                         </li>
                         <li className="flex justify-between">
                           <span className="text-muted-foreground">Destination CRM:</span>
-                          <span className="font-medium">{formData.destinationCrm === "hubspot" ? "HubSpot" : formData.destinationCrm === "pipedrive" ? "Pipedrive" : "Monday Sales CRM"}</span>
+                          <span className="font-medium">
+                            {formData.destinationCrm === "custom" 
+                              ? customCrmNames["destination"] || "Custom CRM"
+                              : destinationCrmOptions.find(c => c.id === formData.destinationCrm)?.name || formData.destinationCrm}
+                          </span>
                         </li>
                         <li className="flex justify-between">
                           <span className="text-muted-foreground">Data Types:</span>
