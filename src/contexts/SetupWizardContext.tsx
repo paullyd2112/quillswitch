@@ -16,6 +16,7 @@ export const SetupWizardProvider: React.FC<{ children: React.ReactNode }> = ({ c
   // Use our custom hooks to manage different aspects of the wizard
   const {
     formData,
+    setFormData,
     handleChange,
     handleApiKeyChange,
     handleRadioChange,
@@ -39,6 +40,13 @@ export const SetupWizardProvider: React.FC<{ children: React.ReactNode }> = ({ c
   // Determine if we should show per-CRM data selection
   const showPerCrmDataSelection = multiCrmEnabled && selectedSourceCrms.length > 1;
 
+  const {
+    currentStep,
+    setCurrentStep,
+    handleNext,
+    handlePrevious
+  } = useWizardNavigation(wizardSteps, () => isStepValid());
+
   const { isStepValid } = useStepValidation(
     currentStep,
     formData,
@@ -49,13 +57,6 @@ export const SetupWizardProvider: React.FC<{ children: React.ReactNode }> = ({ c
     customCrmNames,
     showPerCrmDataSelection
   );
-
-  const {
-    currentStep,
-    setCurrentStep,
-    handleNext,
-    handlePrevious
-  } = useWizardNavigation(wizardSteps, isStepValid);
 
   const { isSubmitting, handleSubmit } = useSubmission(
     formData,

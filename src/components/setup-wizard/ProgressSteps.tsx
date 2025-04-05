@@ -1,7 +1,7 @@
 
 import React from "react";
 import { CheckCircle } from "lucide-react";
-import { WizardStep } from "@/types/setupWizard";
+import { WizardStep } from "@/contexts/setup-wizard/types";
 
 interface ProgressStepsProps {
   steps: WizardStep[];

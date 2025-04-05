@@ -6,7 +6,7 @@ export const useWizardNavigation = (steps: WizardStep[], isStepValid: () => bool
   const [currentStep, setCurrentStep] = useState(0);
   
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
+    if (currentStep < steps.length - 1 && isStepValid()) {
       setCurrentStep(currentStep + 1);
     }
   };

@@ -1,7 +1,7 @@
 
 import { ReactNode } from "react";
 
-// Original types from setupWizard.ts
+// WizardStep type with the icon as a component + props structure
 export interface WizardStep {
   id: string;
   title: string;

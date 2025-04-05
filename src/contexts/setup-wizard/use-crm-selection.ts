@@ -26,8 +26,16 @@ export const useCrmSelection = (formData: SetupFormData, setFormData: React.Disp
       
       // Initialize data selections for this CRM if it's newly added
       if (!selectedSourceCrms.includes(crmId) && !formData.crmDataSelections.some(s => s.crmId === crmId)) {
-        const { handleCrmDataSelectionChange } = useCrmSelectionHelpers(formData, setFormData);
-        handleCrmDataSelectionChange(crmId, []);
+        const updatedSelections = [...formData.crmDataSelections];
+        updatedSelections.push({
+          crmId,
+          dataTypes: []
+        });
+        
+        setFormData({
+          ...formData,
+          crmDataSelections: updatedSelections
+        });
       }
     } else {
       setFormData({
@@ -68,25 +76,4 @@ export const useCrmSelection = (formData: SetupFormData, setFormData: React.Disp
     handleSourceCrmToggle,
     handleDestinationCrmToggle
   };
-};
-
-// Helper functions to avoid circular dependencies
-const useCrmSelectionHelpers = (formData: SetupFormData, setFormData: React.Dispatch<React.SetStateAction<SetupFormData>>) => {
-  const handleCrmDataSelectionChange = (crmId: string, dataTypes: string[]) => {
-    const updatedSelections = formData.crmDataSelections.filter(
-      selection => selection.crmId !== crmId
-    );
-    
-    updatedSelections.push({
-      crmId,
-      dataTypes
-    });
-    
-    setFormData({
-      ...formData,
-      crmDataSelections: updatedSelections
-    });
-  };
-
-  return { handleCrmDataSelectionChange };
 };
