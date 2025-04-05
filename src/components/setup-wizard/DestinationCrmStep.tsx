@@ -2,7 +2,7 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CrmSystem, SetupFormData } from "@/types/setupWizard";
 
 interface DestinationCrmStepProps {
@@ -32,31 +32,35 @@ const DestinationCrmStep: React.FC<DestinationCrmStepProps> = ({
       <div className="space-y-6">
         <div className="space-y-2">
           <Label>Destination CRM Platform</Label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {destinationCrmOptions.map(crm => (
-              <div 
-                key={crm.id}
-                className={`border rounded-md p-3 cursor-pointer transition-colors ${
-                  formData.destinationCrm === crm.id ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
-                }`}
-                onClick={() => handleRadioChange(crm.id, "destinationCrm")}
-              >
-                <div className="flex items-start gap-2">
-                  <RadioGroupItem 
-                    value={crm.id} 
-                    id={`dest-${crm.id}`} 
-                    checked={formData.destinationCrm === crm.id}
-                    className="mt-1"
-                  />
-                  <div>
-                    <Label htmlFor={`dest-${crm.id}`} className="font-medium cursor-pointer">
-                      {crm.name}
-                    </Label>
+          <RadioGroup 
+            value={formData.destinationCrm} 
+            onValueChange={(value) => handleRadioChange(value, "destinationCrm")}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {destinationCrmOptions.map(crm => (
+                <div 
+                  key={crm.id}
+                  className={`border rounded-md p-3 cursor-pointer transition-colors ${
+                    formData.destinationCrm === crm.id ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
+                  }`}
+                  onClick={() => handleRadioChange(crm.id, "destinationCrm")}
+                >
+                  <div className="flex items-start gap-2">
+                    <RadioGroupItem 
+                      value={crm.id} 
+                      id={`dest-${crm.id}`} 
+                      className="mt-1"
+                    />
+                    <div>
+                      <Label htmlFor={`dest-${crm.id}`} className="font-medium cursor-pointer">
+                        {crm.name}
+                      </Label>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </RadioGroup>
         </div>
         
         {formData.destinationCrm === "custom" ? (

@@ -3,7 +3,7 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { CrmSystem, SetupFormData } from "@/types/setupWizard";
@@ -57,12 +57,13 @@ const SourceCrmStep: React.FC<SourceCrmStepProps> = ({
                     className="mt-1"
                   />
                 ) : (
-                  <RadioGroupItem 
-                    value={crm.id} 
-                    id={`source-${crm.id}`} 
-                    checked={formData.sourceCrm === crm.id}
-                    className="mt-1"
-                  />
+                  <RadioGroup value={formData.sourceCrm} onValueChange={(value) => handleSourceCrmToggle(value)}>
+                    <RadioGroupItem 
+                      value={crm.id} 
+                      id={`source-${crm.id}`} 
+                      className="mt-1"
+                    />
+                  </RadioGroup>
                 )}
                 <div>
                   <Label htmlFor={`source-${crm.id}`} className="font-medium cursor-pointer">
@@ -100,12 +101,13 @@ const SourceCrmStep: React.FC<SourceCrmStepProps> = ({
                           className="mt-1"
                         />
                       ) : (
-                        <RadioGroupItem 
-                          value={crm.id} 
-                          id={`source-${crm.id}`} 
-                          checked={formData.sourceCrm === crm.id}
-                          className="mt-1"
-                        />
+                        <RadioGroup value={formData.sourceCrm} onValueChange={(value) => handleSourceCrmToggle(value)}>
+                          <RadioGroupItem 
+                            value={crm.id} 
+                            id={`source-${crm.id}`} 
+                            className="mt-1"
+                          />
+                        </RadioGroup>
                       )}
                       <div>
                         <Label htmlFor={`source-${crm.id}`} className="font-medium cursor-pointer">

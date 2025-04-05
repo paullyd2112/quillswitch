@@ -17,6 +17,9 @@ export interface WizardStep {
 
 export interface SetupFormData {
   companyName: string;
+  industry?: string;
+  companySize?: string;
+  migrationGoals?: string;
   sourceCrm: string;
   destinationCrm: string;
   salesforceApiKey: string;
