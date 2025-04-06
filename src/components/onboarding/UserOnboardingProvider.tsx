@@ -72,17 +72,21 @@ export const UserOnboardingProvider: React.FC<{ children: React.ReactNode }> = (
     >
       {children}
       
-      <WelcomeModal 
-        isOpen={showWelcomeModal} 
-        onClose={handleCloseWelcome} 
-        onStartOnboarding={handleStartOnboarding} 
-      />
-      
-      <OnboardingTour 
-        isOpen={showTourModal}
-        onClose={handleCloseTour}
-        onComplete={handleCompleteTour}
-      />
+      {user && (
+        <>
+          <WelcomeModal 
+            isOpen={showWelcomeModal} 
+            onClose={handleCloseWelcome} 
+            onStartOnboarding={handleStartOnboarding} 
+          />
+          
+          <OnboardingTour 
+            isOpen={showTourModal}
+            onClose={handleCloseTour}
+            onComplete={handleCompleteTour}
+          />
+        </>
+      )}
     </UserOnboardingContext.Provider>
   );
 };
