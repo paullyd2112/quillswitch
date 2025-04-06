@@ -50,7 +50,8 @@ const RegisterForm = () => {
         data: { full_name: fullName }
       });
       
-      navigate("/");
+      // Redirect to welcome page instead of home
+      navigate("/welcome");
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
     } finally {
@@ -64,7 +65,7 @@ const RegisterForm = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}/welcome`, // Redirect to welcome page
         }
       });
 

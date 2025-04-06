@@ -1,77 +1,69 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
 import FadeIn from "@/components/animations/FadeIn";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, Info } from "lucide-react";
+import { useUserOnboarding } from "@/components/onboarding/UserOnboardingProvider";
+import { useAuth } from "@/contexts/AuthContext";
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check if user is logged in
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user || null);
-      setLoading(false);
-    };
-
-    checkUser();
-  }, []);
-
-  const handleStartMigration = () => {
-    if (user) {
-      // User is logged in, redirect to setup wizard
-      navigate("/migrations/setup");
-    } else {
-      // User is not logged in, redirect to auth page
-      toast.info("Please create an account to start your migration", {
-        duration: 4000,
-      });
-      navigate("/auth/register");
-    }
-  };
-
+  const { user } = useAuth();
+  const { showOnboardingTour } = useUserOnboarding();
+  
   return (
-    <section className="pt-32 pb-16 md:pt-40 md:pb-20 relative">
-      <div className="container px-4 md:px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <FadeIn>
-            <Badge className="mb-4 bg-brand-100 text-brand-700 hover:bg-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/40">
-              Intelligent CRM Migration
-            </Badge>
-          </FadeIn>
-          <FadeIn delay="100">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-              Seamless CRM Migration with AI-Powered Mapping
+    <div className="relative px-4 py-20 md:py-28 lg:py-32 -mt-16 overflow-hidden">
+      {/* Background styling */}
+      <div
+        className="absolute inset-0 w-full h-full bg-gradient-to-b from-indigo-50/40 to-white dark:from-gray-900/40 dark:to-gray-950"
+        aria-hidden="true"
+      />
+      
+      {/* Hero content */}
+      <div className="container relative">
+        <div className="mx-auto max-w-3xl text-center">
+          <FadeIn delay="none">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+              <span className="block text-gray-900 dark:text-white">
+                Simplified CRM Migration
+              </span>
+              <span className="block text-brand-600 dark:text-brand-400 mt-1">
+                Zero Complexity
+              </span>
             </h1>
           </FadeIn>
-          <FadeIn delay="200">
-            <p className="text-xl text-muted-foreground mb-8">
-              Painlessly migrate from Salesforce to HubSpot, or between any other CRMs, 
-              with automated field mapping, data validation, and real-time monitoring.
+          
+          <FadeIn delay="100">
+            <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
+              QuillSwitch helps you effortlessly migrate between CRM systems with
+              intelligent data mapping, validation, and transformation tools.
             </p>
           </FadeIn>
-          <FadeIn delay="300">
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button onClick={handleStartMigration} size="lg" className="gap-2">
-                Start Migration <ArrowRight size={16} />
+          
+          <FadeIn delay="200">
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button 
+                size="lg"
+                onClick={() => navigate(user ? "/welcome" : "/auth")}
+                className="gap-2 px-8"
+              >
+                {user ? "Go to Dashboard" : "Get Started"} <ArrowRight size={16} />
               </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to="/features">
-                  Explore Features
-                </Link>
+              
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={user ? showOnboardingTour : () => navigate("/features")}
+                className="gap-2 px-8"
+              >
+                {user ? "Take a Tour" : "Learn More"} <Info size={16} />
               </Button>
             </div>
           </FadeIn>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

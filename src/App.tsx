@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { UserOnboardingProvider } from '@/components/onboarding/UserOnboardingProvider';
 
 // Import pages
 import Index from '@/pages/Index';
@@ -26,6 +27,7 @@ import KnowledgeBase from '@/pages/KnowledgeBase';
 import KnowledgeArticle from '@/pages/KnowledgeArticle';
 import PricingEstimator from '@/pages/PricingEstimator';
 import EnterpriseMigrationTest from '@/pages/EnterpriseMigrationTest';
+import Welcome from '@/pages/Welcome';
 
 // Import utilities for cross-browser compatibility
 import { applyCompatibilityClass } from '@/utils/browserCompatibility';
@@ -64,31 +66,34 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="quillswitch-theme">
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/knowledge-base" element={<KnowledgeBase />} />
-            <Route path="/knowledge-base/:articleId" element={<KnowledgeArticle />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/migrations" element={<Migrations />} />
-            <Route path="/migrations/:id" element={<MigrationDashboard />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/api-docs" element={<ApiDocs />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/setup" element={<SetupWizard />} />
-            <Route path="/pricing" element={<PricingEstimator />} />
-            <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          
-          {/* Both toast systems for compatibility */}
-          <Toaster />
-          <SonnerToaster richColors position="top-right" />
+          <UserOnboardingProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/welcome" element={<Welcome />} />
+              <Route path="/features" element={<Features />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/knowledge-base" element={<KnowledgeBase />} />
+              <Route path="/knowledge-base/:articleId" element={<KnowledgeArticle />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/migrations" element={<Migrations />} />
+              <Route path="/migrations/:id" element={<MigrationDashboard />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/api-docs" element={<ApiDocs />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/setup" element={<SetupWizard />} />
+              <Route path="/pricing" element={<PricingEstimator />} />
+              <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            
+            {/* Both toast systems for compatibility */}
+            <Toaster />
+            <SonnerToaster richColors position="top-right" />
+          </UserOnboardingProvider>
         </BrowserRouter>
       </ThemeProvider>
     </QueryClientProvider>
