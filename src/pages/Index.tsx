@@ -4,6 +4,13 @@ import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import CtaSection from "@/components/home/CtaSection";
+import PreMigrationToolSection from "@/components/home/PreMigrationToolSection";
+import RoiCalculatorSection from "@/components/home/RoiCalculatorSection";
+import ApiPlaygroundPreview from "@/components/home/ApiPlaygroundPreview";
+import PersonalizedPlansSection from "@/components/home/PersonalizedPlansSection";
+import FeatureComparisonSection from "@/components/home/FeatureComparisonSection";
+import MigrationHistorySection from "@/components/home/MigrationHistorySection";
+import MappingVisualizerPreview from "@/components/home/MappingVisualizerPreview";
 
 const Index = () => {
   return (
@@ -11,6 +18,13 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <FeaturesSection />
+      <PreMigrationToolSection />
+      <RoiCalculatorSection />
+      <ApiPlaygroundPreview />
+      <PersonalizedPlansSection />
+      <FeatureComparisonSection />
+      <MigrationHistorySection />
+      <MappingVisualizerPreview />
       <CtaSection />
     </div>
   );
