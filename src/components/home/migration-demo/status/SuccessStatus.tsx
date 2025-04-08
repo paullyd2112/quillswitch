@@ -24,10 +24,18 @@ const SuccessStatus = ({ performanceMetrics }: SuccessStatusProps) => {
 
   // Use provided metrics or fallback to defaults
   const displayMetrics = {
-    totalRecordsProcessed: performanceMetrics?.totalRecordsProcessed ?? defaultMetrics.totalRecordsProcessed,
-    averageRecordsPerSecond: performanceMetrics?.averageRecordsPerSecond ?? defaultMetrics.averageRecordsPerSecond,
-    dataVolume: performanceMetrics?.dataVolume ?? defaultMetrics.dataVolume,
-    peakRecordsPerSecond: performanceMetrics?.peakRecordsPerSecond ?? defaultMetrics.peakRecordsPerSecond
+    totalRecordsProcessed: performanceMetrics?.totalRecordsProcessed && performanceMetrics.totalRecordsProcessed > 0 
+      ? performanceMetrics.totalRecordsProcessed 
+      : defaultMetrics.totalRecordsProcessed,
+    averageRecordsPerSecond: performanceMetrics?.averageRecordsPerSecond && performanceMetrics.averageRecordsPerSecond > 0 
+      ? performanceMetrics.averageRecordsPerSecond 
+      : defaultMetrics.averageRecordsPerSecond,
+    dataVolume: performanceMetrics?.dataVolume && performanceMetrics.dataVolume > 0 
+      ? performanceMetrics.dataVolume 
+      : defaultMetrics.dataVolume,
+    peakRecordsPerSecond: performanceMetrics?.peakRecordsPerSecond && performanceMetrics.peakRecordsPerSecond > 0 
+      ? performanceMetrics.peakRecordsPerSecond 
+      : defaultMetrics.peakRecordsPerSecond
   };
 
   return (

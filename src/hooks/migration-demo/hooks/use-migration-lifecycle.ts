@@ -84,12 +84,13 @@ export const useMigrationLifecycle = (
     resetSteps();
     resetMetrics();
     resetError();
+    setActiveStep(undefined);
     
     toast({
       title: "Migration Reset",
       description: "The migration demo has been reset. Click to start again.",
     });
-  }, [resetError, resetMetrics, resetSteps, setCurrentStepIndex, setOverallProgress]);
+  }, [resetError, resetMetrics, resetSteps, setCurrentStepIndex, setOverallProgress, setActiveStep]);
   
   return {
     migrationStatus,
