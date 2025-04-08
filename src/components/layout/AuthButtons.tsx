@@ -25,16 +25,16 @@ const AuthButtons = () => {
   };
 
   const handleLogin = () => {
-    navigate("/auth");
+    navigate("/auth"); // Changed from "/auth/login" to "/auth"
   };
 
   const handleRegister = () => {
-    navigate("/auth", { state: { tab: "register" } });
+    navigate("/auth", { state: { tab: "register" } }); // Pass state to indicate which tab should be active
   };
 
   if (user) {
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -82,7 +82,7 @@ const AuthButtons = () => {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <ThemeToggle />
       <Button variant="ghost" onClick={handleLogin}>
         Log in
