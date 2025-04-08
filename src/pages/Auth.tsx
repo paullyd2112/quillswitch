@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
@@ -8,14 +8,11 @@ import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
-  const location = useLocation();
+  const { mode } = useParams<{ mode?: string }>();
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
-  
-  // Get tab from location state if available
-  const initialTab = location.state?.tab === "register" ? "register" : "login";
-  const [activeTab, setActiveTab] = useState<string>(initialTab);
+  const [activeTab, setActiveTab] = useState<string>("login");
   
   // Check if user is already logged in
   useEffect(() => {
@@ -24,6 +21,15 @@ const Auth = () => {
       navigate("/");
     }
   }, [user, isLoading, navigate]);
+  
+  // Set active tab based on route param
+  useEffect(() => {
+    if (mode === "register") {
+      setActiveTab("register");
+    } else {
+      setActiveTab("login");
+    }
+  }, [mode]);
 
   if (isLoading) {
     return (
