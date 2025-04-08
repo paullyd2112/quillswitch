@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -65,7 +64,7 @@ function App() {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="quillswitch-theme">
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <BrowserRouter>
           <AuthProvider>
             <UserOnboardingProvider>
