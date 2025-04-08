@@ -22,7 +22,6 @@ const ResourceTabs = () => {
     
     // Force close any open dropdowns by triggering a click outside event
     const closeDropdowns = () => {
-      // Click outside event to close any open dropdowns
       document.dispatchEvent(new MouseEvent('click', {
         bubbles: true,
         cancelable: true,
@@ -35,6 +34,14 @@ const ResourceTabs = () => {
   }, [tabParam, defaultTab, navigate]);
   
   const handleTabChange = (value: string) => {
+    // First close any open dropdowns
+    document.dispatchEvent(new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window
+    }));
+    
+    // Then navigate to the new tab
     navigate(`/resources?tab=${value}`, { replace: true });
   };
   

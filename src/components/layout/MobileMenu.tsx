@@ -31,9 +31,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
   return (
     <div 
       className={cn(
-        "fixed inset-x-0 top-16 bottom-0 z-[99] flex flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out",
+        "fixed inset-x-0 top-16 z-[99] flex flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out",
         isOpen ? "translate-y-0" : "-translate-y-full"
       )}
+      style={{ height: "auto", maxHeight: "calc(100vh - 4rem)" }}
     >
       <div className="flex-1 overflow-y-auto p-4">
         <nav className="space-y-1.5">

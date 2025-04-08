@@ -45,21 +45,37 @@ const Navbar = () => {
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
+    
+    // Also close any open dropdowns when route changes
+    document.dispatchEvent(new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window
+    }));
   }, [location.pathname]);
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+    
+    // If we're closing the menu, also close any open dropdowns
+    if (isMenuOpen) {
+      document.dispatchEvent(new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      }));
+    }
   };
   
   return (
     <header
       className={cn(
-        "fixed top-0 w-full z-[100] transition-all duration-200", // Increased z-index to 100
+        "fixed top-0 w-full z-[100] transition-all duration-200", 
         isScrolled 
-          ? "bg-white/95 backdrop-blur-md shadow-sm" // Increased opacity slightly
+          ? "bg-white/95 backdrop-blur-md shadow-sm" 
           : "bg-white"
       )}
-      style={{ position: 'sticky' }} // Add sticky as additional fallback
+      style={{ position: 'sticky' }}
     >
       <div className="container px-4 md:px-6">
         <div className="flex h-16 items-center justify-between">
