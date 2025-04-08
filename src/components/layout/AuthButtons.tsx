@@ -50,7 +50,14 @@ const AuthButtons = () => {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border border-white/20 dark:border-slate-700/20" align="end" forceMount>
+          <DropdownMenuContent 
+            className="w-56 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border border-white/20 dark:border-slate-700/20" 
+            align="end" 
+            forceMount
+            sideOffset={5}
+            collisionPadding={20}
+            style={{ zIndex: 100 }}
+          >
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
