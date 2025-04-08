@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export interface NavLink {
   label: string;
@@ -54,22 +54,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
           {user && (
             <>
               <div className="my-2 border-t border-gray-200"></div>
-              <Link
-                to="/profile"
-                onClick={onClose}
-                className="flex items-center py-3 px-4 rounded-md hover:bg-gray-100"
-              >
-                <User className="mr-3 text-gray-500" size={18} />
-                <span>Profile</span>
-              </Link>
-              <Link
-                to="/settings"
-                onClick={onClose}
-                className="flex items-center py-3 px-4 rounded-md hover:bg-gray-100"
-              >
-                <Settings className="mr-3 text-gray-500" size={18} />
-                <span>Settings</span>
-              </Link>
               <Button
                 variant="ghost"
                 className="flex w-full items-center justify-start py-3 px-4 rounded-md hover:bg-gray-100 text-red-600"
