@@ -1,7 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +20,7 @@ interface MobileMenuProps {
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   
   return (
     <div 
@@ -50,12 +51,20 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
         <div className="p-4 border-t border-gray-200 dark:border-gray-800">
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-              <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              {user.user_metadata?.avatar_url ? (
+                <img 
+                  src={user.user_metadata.avatar_url} 
+                  alt={user.user_metadata?.full_name || user.email}
+                  className="w-10 h-10 rounded-full"
+                />
+              ) : (
+                <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              )}
             </div>
             <div className="ml-3">
-              <p className="font-medium">{user.email}</p>
+              <p className="font-medium">{user.user_metadata?.full_name || user.email}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {user.user_metadata?.full_name || 'Account'}
+                {user.user_metadata?.full_name ? user.email : 'Account'}
               </p>
             </div>
           </div>
@@ -65,12 +74,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
               variant="outline" 
               size="sm" 
               className="w-full justify-start"
-              asChild
+              onClick={() => {
+                navigate("/profile");
+                onClose();
+              }}
             >
-              <Link to="/settings">
-                <User className="mr-2 h-4 w-4" />
-                Account Settings
-              </Link>
+              <User className="mr-2 h-4 w-4" />
+              Profile
             </Button>
             <Button 
               variant="ghost" 

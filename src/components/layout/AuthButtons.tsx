@@ -53,7 +53,6 @@ const AuthButtons = () => {
           <DropdownMenuContent 
             className="w-56 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border border-white/20 dark:border-slate-700/20" 
             align="end" 
-            forceMount
             sideOffset={5}
             collisionPadding={20}
             style={{ zIndex: 100 }}
