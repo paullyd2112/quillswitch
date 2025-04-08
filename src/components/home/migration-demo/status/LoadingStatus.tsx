@@ -15,7 +15,9 @@ type LoadingStatusProps = {
 const LoadingStatus = ({ activeStep, performanceMetrics }: LoadingStatusProps) => {
   // Add more realistic estimates for real-world scenarios
   const realWorldEstimates = React.useMemo(() => {
-    if (!performanceMetrics?.averageRecordsPerSecond) return null;
+    if (!performanceMetrics?.averageRecordsPerSecond || performanceMetrics.averageRecordsPerSecond <= 0) {
+      return null;
+    }
     
     const averageRate = performanceMetrics.averageRecordsPerSecond;
     
@@ -23,15 +25,15 @@ const LoadingStatus = ({ activeStep, performanceMetrics }: LoadingStatusProps) =
     return {
       smallMigration: {
         records: 10000,
-        time: Math.round(10000 / averageRate / 60), // minutes
+        time: Math.max(1, Math.round(10000 / averageRate / 60)), // minutes, minimum 1 minute
       },
       mediumMigration: {
         records: 100000,
-        time: Math.round(100000 / averageRate / 60), // minutes
+        time: Math.max(1, Math.round(100000 / averageRate / 60)), // minutes, minimum 1 minute
       },
       largeMigration: {
         records: 1000000,
-        time: Math.round(1000000 / averageRate / 3600), // hours
+        time: Math.max(1, Math.round(1000000 / averageRate / 3600)), // hours, minimum 1 hour
       }
     };
   }, [performanceMetrics?.averageRecordsPerSecond]);
@@ -141,8 +143,8 @@ const LoadingStatus = ({ activeStep, performanceMetrics }: LoadingStatusProps) =
             )}
           </div>
           
-          {/* Real-world migration estimates section */}
-          {realWorldEstimates && (
+          {/* Real-world migration estimates section - fixed visibility and styling */}
+          {performanceMetrics.averageRecordsPerSecond && performanceMetrics.averageRecordsPerSecond > 0 && (
             <div className="mt-4 bg-brand-50/30 dark:bg-brand-950/20 border border-brand-200/30 dark:border-brand-800/30 p-3 rounded-md text-left">
               <h4 className="text-[11px] font-semibold mb-2 text-center uppercase text-brand-600 dark:text-brand-400">
                 Real-World Estimates
@@ -150,15 +152,21 @@ const LoadingStatus = ({ activeStep, performanceMetrics }: LoadingStatusProps) =
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px]">
                   <span>Small migration (10K records):</span>
-                  <span className="font-mono font-medium">{realWorldEstimates.smallMigration.time} min</span>
+                  <span className="font-mono font-medium">
+                    {Math.max(1, Math.round(10000 / performanceMetrics.averageRecordsPerSecond / 60))} min
+                  </span>
                 </div>
                 <div className="flex justify-between text-[10px]">
                   <span>Medium migration (100K records):</span>
-                  <span className="font-mono font-medium">{realWorldEstimates.mediumMigration.time} min</span>
+                  <span className="font-mono font-medium">
+                    {Math.max(1, Math.round(100000 / performanceMetrics.averageRecordsPerSecond / 60))} min
+                  </span>
                 </div>
                 <div className="flex justify-between text-[10px]">
                   <span>Large migration (1M records):</span>
-                  <span className="font-mono font-medium">{realWorldEstimates.largeMigration.time} hrs</span>
+                  <span className="font-mono font-medium">
+                    {Math.max(1, Math.round(1000000 / performanceMetrics.averageRecordsPerSecond / 3600))} hrs
+                  </span>
                 </div>
               </div>
             </div>

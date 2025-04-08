@@ -1,6 +1,6 @@
 
 import React from "react";
-import type { MigrationStep } from "@/hooks/use-migration-demo";
+import type { MigrationStep, PerformanceMetrics } from "@/hooks/migration-demo/types";
 import IdleStatus from "./status/IdleStatus";
 import LoadingStatus from "./status/LoadingStatus";
 import SuccessStatus from "./status/SuccessStatus";
@@ -9,13 +9,7 @@ import ErrorStatus from "./status/ErrorStatus";
 type MigrationStatusProps = {
   status: "idle" | "loading" | "success" | "error";
   activeStep?: MigrationStep;
-  performanceMetrics?: {
-    averageRecordsPerSecond?: number;
-    peakRecordsPerSecond?: number;
-    estimatedTimeRemaining?: number;
-    totalRecordsProcessed?: number;
-    dataVolume?: number;
-  };
+  performanceMetrics?: PerformanceMetrics;
   errorMessage?: string;
 };
 
