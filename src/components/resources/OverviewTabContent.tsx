@@ -2,6 +2,7 @@
 import React from "react";
 import ResourceCard from "@/components/resources/ResourceCard";
 import { Info, BookOpen, MessageCircle, FileQuestion, HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const OverviewTabContent = () => {
   return (
