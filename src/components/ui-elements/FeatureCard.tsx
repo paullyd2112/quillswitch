@@ -24,7 +24,6 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       className={cn(
         "glass-panel p-6 rounded-xl transition-all duration-300",
         onClick && "cursor-pointer hover:shadow-lg hover:scale-[1.02]",
-        "hover:shadow-[0_0_25px_rgba(12,140,227,0.15)] dark:hover:shadow-[0_0_25px_rgba(12,140,227,0.25)] border border-white/10 dark:border-slate-700/30",
         className
       )}
       onClick={onClick}
@@ -32,8 +31,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       <div className="flex items-start">
         <div
           className={cn(
-            "rounded-full p-3 bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400 transition-all duration-300",
-            "hover:shadow-[0_0_15px_rgba(12,140,227,0.4)] dark:hover:shadow-[0_0_15px_rgba(12,140,227,0.4)]",
+            "rounded-full p-3 bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400",
             iconClassName
           )}
         >
