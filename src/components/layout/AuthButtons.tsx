@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   DropdownMenu,
@@ -15,11 +15,19 @@ import { User, LogOut, Settings } from "lucide-react";
 
 const AuthButtons = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, signOut } = useAuth();
+  const [open, setOpen] = React.useState(false);
+
+  // Close dropdown when location changes
+  React.useEffect(() => {
+    setOpen(false);
+  }, [location]);
 
   const handleLogout = async () => {
     await signOut();
     navigate("/");
+    setOpen(false);
   };
 
   const handleLogin = () => {
@@ -33,7 +41,7 @@ const AuthButtons = () => {
   if (user) {
     // Show user avatar with dropdown when signed in
     return (
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full" aria-label="User menu">
             <Avatar className="h-8 w-8">
@@ -44,11 +52,11 @@ const AuthButtons = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer">
+          <DropdownMenuItem onClick={() => { navigate("/profile"); setOpen(false); }} className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
+          <DropdownMenuItem onClick={() => { navigate("/settings"); setOpen(false); }} className="cursor-pointer">
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
           </DropdownMenuItem>

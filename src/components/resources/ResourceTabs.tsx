@@ -19,6 +19,19 @@ const ResourceTabs = () => {
     if (!tabParam && defaultTab !== 'overview') {
       navigate(`/resources?tab=${defaultTab}`, { replace: true });
     }
+    
+    // Force close any open dropdowns by triggering a click outside event
+    const closeDropdowns = () => {
+      // Click outside event to close any open dropdowns
+      document.dispatchEvent(new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      }));
+    };
+    
+    // Small timeout to make sure the click event happens after tab change renders
+    setTimeout(closeDropdowns, 50);
   }, [tabParam, defaultTab, navigate]);
   
   const handleTabChange = (value: string) => {
