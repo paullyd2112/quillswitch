@@ -4,7 +4,7 @@ import ContentSection from "@/components/layout/ContentSection";
 import SlideUp from "@/components/animations/SlideUp";
 import MigrationInfo from "./migration-demo/MigrationInfo";
 import MigrationVisualizer from "./migration-demo/MigrationVisualizer";
-import { useMigrationDemo } from "@/hooks/use-migration-demo";
+import { useMigrationDemo } from "@/hooks/migration-demo/use-migration-demo";
 
 const MigrationDemoSection = () => {
   const { 

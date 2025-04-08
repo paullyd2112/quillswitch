@@ -2,7 +2,7 @@
 import React from "react";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import MigrationFooter from "./MigrationFooter";
-import type { MigrationStep } from "@/hooks/use-migration-demo";
+import type { MigrationStep } from "@/hooks/migration-demo/types";
 import MigrationHeaderSection from "./visualizer/MigrationHeaderSection";
 import MigrationStatusSection from "./visualizer/MigrationStatusSection";
 import MigrationProgressSection from "./visualizer/MigrationProgressSection";
