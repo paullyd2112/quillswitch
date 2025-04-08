@@ -50,7 +50,7 @@ const AuthButtons = () => {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuContent className="w-56 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border border-white/20 dark:border-slate-700/20" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
@@ -87,7 +87,10 @@ const AuthButtons = () => {
       <Button variant="ghost" onClick={handleLogin}>
         Log in
       </Button>
-      <Button onClick={handleRegister}>
+      <Button 
+        onClick={handleRegister}
+        className="relative overflow-hidden transition-all duration-300 bg-primary hover:bg-primary/90 hover:shadow-[0_0_15px_rgba(12,140,227,0.6)] dark:hover:shadow-[0_0_20px_rgba(12,140,227,0.6)]"
+      >
         Sign up
       </Button>
     </div>
