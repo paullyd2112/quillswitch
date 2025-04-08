@@ -24,11 +24,11 @@ const AuthButtons = () => {
   };
 
   const handleLogin = () => {
-    navigate("/auth/login");
+    navigate("/auth"); // Changed from "/auth/login" to "/auth"
   };
 
   const handleRegister = () => {
-    navigate("/auth/register");
+    navigate("/auth", { state: { tab: "register" } }); // Pass state to indicate which tab should be active
   };
 
   if (user) {
