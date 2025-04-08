@@ -22,7 +22,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
   return (
     <div 
       className={cn(
-        "fixed inset-x-0 top-16 bottom-0 z-50 flex flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out",
+        "fixed inset-x-0 top-16 bottom-0 z-[99] flex flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out",
         isOpen ? "translate-y-0" : "-translate-y-full"
       )}
     >
