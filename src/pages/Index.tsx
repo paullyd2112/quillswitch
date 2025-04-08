@@ -3,7 +3,6 @@ import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
-import MigrationDemoSection from "@/components/home/MigrationDemoSection";
 import CtaSection from "@/components/home/CtaSection";
 
 const Index = () => {
@@ -12,7 +11,6 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <FeaturesSection />
-      <MigrationDemoSection />
       <CtaSection />
     </div>
   );
