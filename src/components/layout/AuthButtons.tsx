@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Settings, LogOut } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const AuthButtons = () => {
   const navigate = useNavigate();
@@ -35,7 +34,6 @@ const AuthButtons = () => {
   if (user) {
     return (
       <div className="flex items-center gap-2">
-        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -83,7 +81,6 @@ const AuthButtons = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <ThemeToggle />
       <Button variant="ghost" onClick={handleLogin}>
         Log in
       </Button>

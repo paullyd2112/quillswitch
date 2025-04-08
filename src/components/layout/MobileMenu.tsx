@@ -24,7 +24,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
   return (
     <div 
       className={cn(
-        "fixed inset-x-0 top-16 bottom-0 z-50 flex flex-col bg-white dark:bg-gray-900 shadow-lg transition-transform duration-300 ease-in-out",
+        "fixed inset-x-0 top-16 bottom-0 z-50 flex flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out",
         isOpen ? "translate-y-0" : "-translate-y-full"
       )}
     >
@@ -35,10 +35,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
               key={link.href}
               to={link.href}
               onClick={onClose}
-              className="flex items-center py-3 px-4 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="flex items-center py-3 px-4 rounded-md hover:bg-gray-100"
             >
               {link.icon && (
-                <span className="mr-3 text-gray-500 dark:text-gray-400">{link.icon}</span>
+                <span className="mr-3 text-gray-500">{link.icon}</span>
               )}
               <span>{link.label}</span>
             </Link>
@@ -47,14 +47,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
       </div>
       
       {user && (
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+        <div className="p-4 border-t border-gray-200">
           <div className="flex items-center mb-4">
-            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-              <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+              <User className="h-5 w-5 text-gray-500" />
             </div>
             <div className="ml-3">
               <p className="font-medium">{user.email}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500">
                 {user.user_metadata?.full_name || 'Account'}
               </p>
             </div>
@@ -75,7 +75,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+              className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
               onClick={() => {
                 signOut();
                 onClose();
