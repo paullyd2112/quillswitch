@@ -3,11 +3,11 @@ import React from "react";
 
 const FeaturesHero = () => {
   return (
-    <section className="pt-32 pb-10 px-4 md:px-6">
+    <section className="pt-32 pb-10 px-4 md:px-6 bg-white dark:bg-slate-950">
       <div className="container max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">Features & Tools</h1>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white">Features & Tools</h1>
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
             Comprehensive solutions for your CRM migration needs with powerful features designed for enterprise-grade migrations.
           </p>
         </div>

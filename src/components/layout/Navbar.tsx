@@ -10,6 +10,7 @@ import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
 import getNavLinks from "./navConfig";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 
 // Import performance utilities
@@ -72,8 +73,8 @@ const Navbar = () => {
       className={cn(
         "fixed top-0 w-full z-[100] transition-all duration-200", 
         isScrolled 
-          ? "bg-white/95 backdrop-blur-md shadow-sm" 
-          : "bg-white"
+          ? "bg-white/95 backdrop-blur-md shadow-sm dark:bg-slate-900/95 dark:border-b dark:border-slate-800" 
+          : "bg-white dark:bg-slate-900"
       )}
       style={{ position: 'sticky' }}
     >
@@ -82,7 +83,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-semibold">Q</div>
-              <span className="font-medium text-lg">QuillSwitch</span>
+              <span className="font-medium text-lg dark:text-white">QuillSwitch</span>
             </Link>
           </div>
           
@@ -90,6 +91,9 @@ const Navbar = () => {
           <DesktopNav navLinks={navLinks} />
           
           <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             {/* Auth Buttons Component */}
             <AuthButtons />
             
@@ -99,7 +103,7 @@ const Navbar = () => {
                 size="icon"
                 onClick={toggleMenu}
                 aria-label="Toggle Menu"
-                className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
+                className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 dark:text-white"
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
