@@ -11,7 +11,7 @@ import {
   ListChecks,
   Clock
 } from "lucide-react";
-import { useDashboard } from "./DashboardContext";
+import { useDashboard } from "./context";
 import OverviewTab from "./tabs/OverviewTab";
 import DataMappingTab from "./tabs/DataMappingTab";
 import ValidationTab from "./tabs/ValidationTab";

@@ -2,7 +2,7 @@
 import React from "react";
 import FadeIn from "@/components/animations/FadeIn";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
-import { useDashboard } from "../DashboardContext";
+import { useDashboard } from "../context";
 import ErrorSummary from "../../ErrorSummary";
 
 const ErrorsTab: React.FC = () => {

@@ -10,7 +10,7 @@ import {
   RefreshCw, 
   DownloadCloud
 } from "lucide-react";
-import { useDashboard } from "./DashboardContext";
+import { useDashboard } from "./context";
 import NotificationsPanel from "../NotificationsPanel";
 
 const DashboardHeader: React.FC = () => {

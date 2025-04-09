@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DashboardProvider } from "@/components/migration/dashboard/DashboardContext";
+import { DashboardProvider } from "@/components/migration/dashboard/context";
 import DashboardHeader from "@/components/migration/dashboard/DashboardHeader";
 import DashboardTabs from "@/components/migration/dashboard/DashboardTabs";
 

@@ -1,7 +1,7 @@
 
 import React from "react";
 import FadeIn from "@/components/animations/FadeIn";
-import { useDashboard } from "../DashboardContext";
+import { useDashboard } from "../context";
 import MigrationStatusCard from "../../MigrationStatusCard";
 import MigrationStagesProgress from "../../MigrationStagesProgress";
 import ObjectMigrationStatus from "../../ObjectMigrationStatus";

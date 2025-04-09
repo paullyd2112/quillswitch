@@ -4,7 +4,7 @@ import FadeIn from "@/components/animations/FadeIn";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import { Button } from "@/components/ui/button";
 import { Database, Filter, Settings, Plus } from "lucide-react";
-import { useDashboard } from "../DashboardContext";
+import { useDashboard } from "../context";
 import DataMappingVisualizer from "../../DataMappingVisualizer";
 import { AutomatedMappingPanel } from "../../automated-mapping";
 import { FieldMapping } from "@/integrations/supabase/migrationTypes";
