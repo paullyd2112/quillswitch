@@ -3,6 +3,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from "./components/ui/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { BasicAuthProvider } from './contexts/BasicAuthContext'
 
 import Index from "@/pages/Index"
 import Auth from "@/pages/Auth"
@@ -30,30 +31,32 @@ export default function App() {
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="system" storageKey="app-theme">
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/auth/reset-password" element={<ResetPassword />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/pricing" element={<PricingEstimator />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/api-docs" element={<ApiDocs />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/knowledge-base" element={<KnowledgeBase />} />
-          <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
-          <Route path="/assessment-tool" element={<AssessmentTool />} />
-          <Route path="/migrations/setup" element={<SetupWizard />} />
-          <Route path="/migrations" element={<MigrationsList />} />
-          <Route path="/migrations/:projectId" element={<MigrationDashboard />} />
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Toaster />
+        <BasicAuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/reset-password" element={<ResetPassword />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/pricing" element={<PricingEstimator />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/api-docs" element={<ApiDocs />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/knowledge-base" element={<KnowledgeBase />} />
+            <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
+            <Route path="/assessment-tool" element={<AssessmentTool />} />
+            <Route path="/migrations/setup" element={<SetupWizard />} />
+            <Route path="/migrations" element={<MigrationsList />} />
+            <Route path="/migrations/:projectId" element={<MigrationDashboard />} />
+            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Toaster />
+        </BasicAuthProvider>
       </ThemeProvider>
     </BrowserRouter>
   );
