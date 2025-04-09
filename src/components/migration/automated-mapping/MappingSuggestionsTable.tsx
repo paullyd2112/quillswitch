@@ -9,14 +9,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import MappingSuggestionRow from "./MappingSuggestionRow";
-
-interface MappingSuggestion {
-  source_field: string;
-  destination_field: string;
-  confidence: number;
-  is_required?: boolean;
-  reason?: string;
-}
+import { MappingSuggestion } from "./types";
 
 interface MappingSuggestionsTableProps {
   suggestions: MappingSuggestion[];

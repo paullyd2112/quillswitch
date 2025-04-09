@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Database, Filter, Settings, Plus } from "lucide-react";
 import { useDashboard } from "../DashboardContext";
 import DataMappingVisualizer from "../../DataMappingVisualizer";
-import AutomatedMappingPanel from "../../automated-mapping/AutomatedMappingPanel";
+import { AutomatedMappingPanel } from "../../automated-mapping";
 import { FieldMapping } from "@/integrations/supabase/migrationTypes";
 import { toast } from "sonner";
 import { updateFieldMapping } from "@/services/migration/fieldMappingService";

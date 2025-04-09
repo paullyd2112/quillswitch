@@ -9,6 +9,7 @@ import { generateMappingSuggestions, applyMappingSuggestions } from "@/services/
 import MappingSuggestionsTable from "./MappingSuggestionsTable";
 import MappingGenerator from "./MappingGenerator";
 import { MappingSuggestion } from "./types";
+import { filterSuggestionsByTab } from "./utils";
 
 interface AutomatedMappingPanelProps {
   objectTypeId: string;
@@ -56,13 +57,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
   const applyMappings = async () => {
     setIsApplying(true);
     try {
-      // Filter by confidence based on the selected tab
-      let suggestionsToApply = suggestions;
-      if (activeTab === "high") {
-        suggestionsToApply = suggestions.filter(s => s.confidence >= 0.9);
-      } else if (activeTab === "medium") {
-        suggestionsToApply = suggestions.filter(s => s.confidence >= 0.7);
-      }
+      const suggestionsToApply = filterSuggestionsByTab(suggestions, activeTab);
       
       const result = await applyMappingSuggestions(
         objectTypeId,
@@ -85,18 +80,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
     }
   };
   
-  const filteredSuggestions = () => {
-    switch (activeTab) {
-      case "high":
-        return suggestions.filter(s => s.confidence >= 0.9);
-      case "medium":
-        return suggestions.filter(s => s.confidence >= 0.7 && s.confidence < 0.9);
-      case "low":
-        return suggestions.filter(s => s.confidence < 0.7);
-      default:
-        return suggestions;
-    }
-  };
+  const filteredSuggestions = filterSuggestionsByTab(suggestions, activeTab);
   
   return (
     <Card>
@@ -134,7 +118,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
               </div>
               
               <TabsContent value={activeTab} className="mt-0">
-                <MappingSuggestionsTable suggestions={filteredSuggestions()} />
+                <MappingSuggestionsTable suggestions={filteredSuggestions} />
               </TabsContent>
             </Tabs>
           </div>
@@ -147,7 +131,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
           </Button>
           <Button 
             onClick={applyMappings} 
-            disabled={isApplying || filteredSuggestions().length === 0}
+            disabled={isApplying || filteredSuggestions.length === 0}
             className="gap-2"
           >
             {isApplying ? "Applying..." : "Apply Suggestions"} 
