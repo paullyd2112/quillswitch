@@ -40,7 +40,7 @@ const PreMigrationToolSection = () => {
           </SlideUp>
         </div>
         <div>
-          <SlideUp delay={0.2}>
+          <SlideUp delay="200">
             <div className="rounded-lg bg-card p-6 border shadow-md overflow-hidden">
               <h3 className="text-lg font-semibold mb-4">Sample Assessment Report</h3>
               <div className="space-y-4">

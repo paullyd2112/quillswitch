@@ -83,7 +83,7 @@ const FeatureComparisonSection = () => {
       </div>
       
       <div className="space-y-8">
-        <SlideUp delay={0.1}>
+        <SlideUp delay="100">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium mb-2">Source CRM</label>
@@ -115,7 +115,7 @@ const FeatureComparisonSection = () => {
           </div>
         </SlideUp>
         
-        <SlideUp delay={0.2}>
+        <SlideUp delay="200">
           <div className="rounded-lg border shadow-sm overflow-hidden">
             <div className="bg-slate-50 dark:bg-slate-900/50 p-4 border-b grid grid-cols-7">
               <div className="col-span-3 font-medium">Feature</div>

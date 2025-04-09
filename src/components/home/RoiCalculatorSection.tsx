@@ -35,7 +35,7 @@ const RoiCalculatorSection = () => {
       </div>
       
       <div className="grid md:grid-cols-2 gap-8">
-        <SlideUp delay={0.1}>
+        <SlideUp delay="100">
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-6">
@@ -88,7 +88,7 @@ const RoiCalculatorSection = () => {
           </Card>
         </SlideUp>
         
-        <SlideUp delay={0.2}>
+        <SlideUp delay="200">
           <Card className="bg-brand-50 dark:bg-brand-950/20 border-brand-100 dark:border-brand-800/30">
             <CardContent className="pt-6">
               <h3 className="text-xl font-semibold mb-4">Your 3-Year ROI</h3>

@@ -24,7 +24,7 @@ const ApiPlaygroundPreview = () => {
       
       <div className="grid md:grid-cols-5 gap-8 items-start">
         <div className="md:col-span-2">
-          <FadeIn delay={0.1}>
+          <FadeIn delay="100">
             <div className="space-y-6">
               <div className="space-y-2">
                 <h3 className="text-xl font-semibold">Powerful Migration API</h3>
@@ -68,7 +68,7 @@ const ApiPlaygroundPreview = () => {
         </div>
         
         <div className="md:col-span-3">
-          <FadeIn delay={0.2}>
+          <FadeIn delay="200">
             <div className="rounded-lg overflow-hidden border shadow-md">
               <div className="bg-slate-800 p-3 flex items-center justify-between">
                 <div className="flex items-center">

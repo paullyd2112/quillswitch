@@ -90,7 +90,7 @@ const MigrationHistorySection = () => {
         </div>
         
         <div>
-          <FadeIn delay={0.2}>
+          <FadeIn delay="200">
             <div className="rounded-lg border shadow-md overflow-hidden">
               <div className="bg-brand-50 dark:bg-brand-900/20 p-4 border-b border-brand-100 dark:border-brand-800/30">
                 <h3 className="font-semibold">Recent Migrations</h3>

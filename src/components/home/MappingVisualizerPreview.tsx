@@ -69,7 +69,7 @@ const MappingVisualizerPreview = () => {
         </div>
         
         <div>
-          <SlideUp delay={0.2}>
+          <SlideUp delay="200">
             <div className="rounded-lg border shadow-md overflow-hidden">
               <div className="bg-slate-50 dark:bg-slate-900/50 p-4 border-b">
                 <div className="flex justify-between">
