@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle, Database, Shield, Zap, GitMerge, Terminal, BarChart2, ListChecks, FileBarChart2, BellRing } from "lucide-react";
+import { ArrowRight, CheckCircle, Database, Shield, Zap, GitMerge, Terminal, BarChart2, ListChecks, FileBarChart2, BellRing, Calendar, Wand2, UserCheck, Lock, UploadCloud } from "lucide-react";
 
 const Features = () => {
   return (
@@ -133,7 +133,7 @@ const Features = () => {
             {/* Category 5: Reporting & Analytics */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-200 dark:border-slate-700">
               <div className="mb-4 text-brand-500">
-                <BarChart2 size={42} />
+                <FileBarChart2 size={42} />
               </div>
               <h3 className="text-xl font-semibold mb-2">Reporting & Analytics</h3>
               <p className="text-muted-foreground mb-4">Insightful reports and analytics on your migration process.</p>
@@ -181,6 +181,84 @@ const Features = () => {
                 <Link to="/settings">Configure Notifications <ArrowRight size={16} className="ml-2" /></Link>
               </Button>
             </div>
+            
+            {/* NEW: Category 7: Scheduling & Automation */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-200 dark:border-slate-700">
+              <div className="mb-4 text-brand-500">
+                <Calendar size={42} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Scheduling & Automation</h3>
+              <p className="text-muted-foreground mb-4">Automate your migration processes with advanced scheduling.</p>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Off-hours migration scheduling</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Recurring synchronization tasks</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Event-triggered migrations</span>
+                </li>
+              </ul>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link to="/migrations/setup">Schedule Migration <ArrowRight size={16} className="ml-2" /></Link>
+              </Button>
+            </div>
+            
+            {/* NEW: Category 8: User Management */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-200 dark:border-slate-700">
+              <div className="mb-4 text-brand-500">
+                <UserCheck size={42} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">User Management</h3>
+              <p className="text-muted-foreground mb-4">Comprehensive user controls and permission management.</p>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Role-based access control</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Team collaboration features</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Audit logs for user actions</span>
+                </li>
+              </ul>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link to="/settings">Manage Users <ArrowRight size={16} className="ml-2" /></Link>
+              </Button>
+            </div>
+            
+            {/* NEW: Category 9: Cloud Integration */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-200 dark:border-slate-700">
+              <div className="mb-4 text-brand-500">
+                <UploadCloud size={42} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Cloud Integration</h3>
+              <p className="text-muted-foreground mb-4">Seamless integration with all major cloud providers and services.</p>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Direct cloud storage connection</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Secure data transfer protocols</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                  <span>Multi-cloud environment support</span>
+                </li>
+              </ul>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link to="/migrations/setup">Configure Cloud <ArrowRight size={16} className="ml-2" /></Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -195,8 +273,8 @@ const Features = () => {
             <div className="flex flex-col md:flex-row gap-8 items-center">
               <div className="w-full">
                 <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-xl">
-                  <Zap size={32} className="text-brand-500 mb-4" />
-                  <h3 className="text-2xl font-semibold mb-3">Automated Field Mapping</h3>
+                  <Wand2 size={32} className="text-brand-500 mb-4" />
+                  <h3 className="text-2xl font-semibold mb-3">Intelligent Field Mapping</h3>
                   <p className="text-muted-foreground mb-4">
                     Our AI-powered field mapping technology intelligently maps fields between different CRM systems, saving hours of manual configuration.
                   </p>
@@ -359,3 +437,4 @@ const Features = () => {
 };
 
 export default Features;
+
