@@ -54,7 +54,7 @@ export const getValidationFixRecommendations = (objectType: string, errorType: s
   const specificRecommendations: Record<string, Record<string, string[]>> = {
     'contacts': {
       'email': [
-        'Check for mistyped email domains (e.g., gmail.con instead of gmail.com)',
+        'Check for mistyped email domains (e.g., gmail.com instead of gmail.con)',
         'Remove spaces or special characters from email addresses',
         'Consider marking contacts with invalid emails for follow-up'
       ],
