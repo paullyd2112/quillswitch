@@ -61,42 +61,42 @@ const FeaturesSection = () => {
             description="Plan and execute migrations during off-hours with flexible scheduling"
           />
         </SlideUp>
-        <SlideUp delay="600">
+        <SlideUp delay="500">
           <FeatureCard
             icon={<FileBarChart2 className="h-10 w-10 text-brand-500" />}
             title="Advanced Analytics"
             description="Gain insights with detailed migration analytics and customizable dashboards"
           />
         </SlideUp>
-        <SlideUp delay="700">
+        <SlideUp delay="500">
           <FeatureCard
             icon={<Zap className="h-10 w-10 text-brand-500" />}
             title="High Concurrency"
             description="Optimize performance with parallel processing and enhanced throughput"
           />
         </SlideUp>
-        <SlideUp delay="800">
+        <SlideUp delay="500">
           <FeatureCard
             icon={<UserCheck className="h-10 w-10 text-brand-500" />}
             title="User Management"
             description="Comprehensive user role management and permission controls"
           />
         </SlideUp>
-        <SlideUp delay="900">
+        <SlideUp delay="500">
           <FeatureCard
             icon={<Database className="h-10 w-10 text-brand-500" />}
             title="Custom Object Support"
             description="Migrate custom objects and fields with full mapping capabilities"
           />
         </SlideUp>
-        <SlideUp delay="1000">
+        <SlideUp delay="500">
           <FeatureCard
             icon={<Lock className="h-10 w-10 text-brand-500" />}
             title="Compliance Controls"
             description="GDPR and CCPA compliance features for secure data handling"
           />
         </SlideUp>
-        <SlideUp delay="1100">
+        <SlideUp delay="500">
           <FeatureCard
             icon={<UploadCloud className="h-10 w-10 text-brand-500" />}
             title="Cloud Integration"
