@@ -1,41 +1,62 @@
 
 import React from "react";
-import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import FadeIn from "@/components/animations/FadeIn";
 
 const MigrationInfo = () => {
   return (
-    <FadeIn>
-      <h2 className="text-3xl font-bold tracking-tight mb-4">
-        Stop Overpaying for Your CRM
-      </h2>
-      <p className="text-muted-foreground mb-6">
-        Salesforce and other enterprise CRMs are designed to be sticky, making it difficult 
-        and expensive to switch. Our platform breaks those chains, letting you move to more 
-        cost-effective solutions without the typical migration pain.
-      </p>
-      <ul className="space-y-2 mb-6">
-        <li className="flex items-start gap-2">
-          <span className="text-green-500 mt-1">✓</span>
-          <span>Save up to 70% on consultant fees</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-green-500 mt-1">✓</span>
-          <span>Migrate in days instead of months</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-green-500 mt-1">✓</span>
-          <span>Preserve all your valuable customer data</span>
-        </li>
-      </ul>
-      <Button asChild className="gap-2">
+    <div className="space-y-6 md:space-y-8">
+      <div>
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+          Affordable, Quality CRM Migrations
+        </h2>
+        <p className="mt-4 text-lg text-muted-foreground">
+          Our platform simplifies CRM migrations with automated data mapping, 
+          field transformations, and validation - all at a fraction of the cost of custom solutions.
+        </p>
+      </div>
+      
+      <div className="space-y-4">
+        <div className="flex items-start gap-3">
+          <div className="mt-1 bg-brand-100 dark:bg-brand-900/30 p-1.5 rounded-full">
+            <ArrowRight className="h-4 w-4 text-brand-600 dark:text-brand-400" />
+          </div>
+          <div>
+            <h3 className="font-medium">Seamless Data Transfer</h3>
+            <p className="text-muted-foreground">Transfer contacts, opportunities, accounts, and custom objects without data loss</p>
+          </div>
+        </div>
+        
+        <div className="flex items-start gap-3">
+          <div className="mt-1 bg-brand-100 dark:bg-brand-900/30 p-1.5 rounded-full">
+            <ArrowRight className="h-4 w-4 text-brand-600 dark:text-brand-400" />
+          </div>
+          <div>
+            <h3 className="font-medium">Intelligent Field Mapping</h3>
+            <p className="text-muted-foreground">Our AI automatically matches fields between systems with 95%+ accuracy</p>
+          </div>
+        </div>
+        
+        <div className="flex items-start gap-3">
+          <div className="mt-1 bg-brand-100 dark:bg-brand-900/30 p-1.5 rounded-full">
+            <ArrowRight className="h-4 w-4 text-brand-600 dark:text-brand-400" />
+          </div>
+          <div>
+            <h3 className="font-medium">Cost-Effective Solution</h3>
+            <p className="text-muted-foreground">Save up to 80% compared to manual migration or custom development costs</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="pt-2">
         <Link to="/setup">
-          Start Your Migration <ArrowRight size={16} />
+          <Button size="lg" className="font-medium">
+            Start Your Migration <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </Link>
-      </Button>
-    </FadeIn>
+      </div>
+    </div>
   );
 };
 
