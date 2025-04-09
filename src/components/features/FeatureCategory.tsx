@@ -23,21 +23,21 @@ const FeatureCategory = ({
   linkText
 }: FeatureCategoryProps) => {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-200 dark:border-slate-700">
-      <div className="mb-4 text-brand-500">
+    <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-slate-700/50 hover:border-brand-600/50 transition-all duration-300">
+      <div className="mb-4 text-brand-400">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground mb-4">{description}</p>
+      <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
+      <p className="text-slate-300 mb-4">{description}</p>
       <ul className="space-y-2 mb-6">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
             <CheckCircle size={18} className="text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-            <span>{feature}</span>
+            <span className="text-slate-300">{feature}</span>
           </li>
         ))}
       </ul>
-      <Button asChild variant="outline" size="sm" className="w-full">
+      <Button asChild variant="outline" size="sm" className="w-full border-slate-600 hover:bg-slate-700 text-brand-300 hover:text-brand-200">
         <Link to={linkTo}>
           {linkText} <ArrowRight size={16} className="ml-2" />
         </Link>
