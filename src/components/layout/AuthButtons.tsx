@@ -31,11 +31,13 @@ const AuthButtons = () => {
   };
 
   const handleLogin = () => {
-    navigate("/auth/login");
+    // Updated to match the route in App.tsx
+    navigate("/auth");
   };
 
   const handleRegister = () => {
-    navigate("/auth/register");
+    // Updated to match the route in App.tsx
+    navigate("/auth");
   };
 
   if (user) {
