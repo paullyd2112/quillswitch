@@ -8,86 +8,51 @@ export const getActionVerb = (stepName: string): string => {
   const verbsByType: Record<string, string[]> = {
     "Contacts": ["importing", "loading", "fetching", "retrieving", "processing"],
     "Opportunities & Deals": ["syncing", "analyzing", "processing", "transferring", "mapping"],
-    "Activities & Tasks": ["transferring", "moving", "syncing", "processing", "organizing"],
-    "Cases & Tickets": ["processing", "handling", "migrating", "transferring", "analyzing"],
-    "Accounts & Companies": ["connecting", "linking", "integrating", "mapping", "processing"],
-    "Custom Objects": ["configuring", "setting up", "integrating", "customizing", "processing"],
+    "Activities & Tasks": ["transferring", "moving", "syncing", "importing"],
+    "Cases & Tickets": ["migrating", "transferring", "importing", "processing"],
+    "Accounts & Companies": ["importing", "transferring", "processing", "syncing"],
+    "Custom Objects": ["importing", "migrating", "transferring", "processing"]
   };
   
-  // Get the array of verbs for the given step name or use default
-  const verbs = verbsByType[stepName] || ["migrating", "processing", "transferring"];
+  // Get verbs for this step type or use default verbs
+  const verbs = verbsByType[stepName] || ["processing", "migrating", "transferring"];
   
-  // Pick a random verb from the array
-  const randomIndex = Math.floor(Math.random() * verbs.length);
-  return verbs[randomIndex];
+  // Return a random verb from the list
+  return verbs[Math.floor(Math.random() * verbs.length)];
 };
 
-// Helper function to format time remaining
-export const formatTimeRemaining = (seconds?: number): string => {
-  if (!seconds) return "Calculating...";
-  
+// Format records per second with appropriate units
+export const formatRecordsPerSecond = (rps: number): string => {
+  if (rps >= 1000) {
+    return `${(rps / 1000).toFixed(1)}k/s`;
+  }
+  return `${Math.round(rps)}/s`;
+};
+
+// Format time remaining in human-readable format
+export const formatTimeRemaining = (seconds: number): string => {
   if (seconds < 60) {
-    return `${seconds} seconds`;
+    return `${Math.round(seconds)}s`;
   }
   
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) {
-    return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+  if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.round(seconds % 60);
+    return `${minutes}m ${remainingSeconds}s`;
   }
   
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  
-  return `${hours} hour${hours !== 1 ? 's' : ''} ${remainingMinutes > 0 ? `${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}` : ''}`;
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return `${hours}h ${minutes}m`;
 };
 
-// Helper function to format records per second
-export const formatRecordsPerSecond = (rps?: number): string => {
-  if (!rps) return "Calculating...";
+// Format bytes to human-readable values (KB, MB, etc)
+export const formatBytes = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes';
   
-  if (rps < 1) {
-    return `${(rps * 60).toFixed(1)} records/minute`;
-  }
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
   
-  return `${rps.toFixed(1)} records/second`;
-};
-
-// Helper function to format bytes into human-readable format
-export const formatBytes = (bytes?: number): string => {
-  if (bytes === undefined || bytes === 0) return "0 KB";
-  
-  // For this context, we're assuming bytes is actually KB
-  if (bytes < 1024) {
-    return `${bytes.toFixed(1)} KB`;
-  }
-  
-  const mb = bytes / 1024;
-  if (mb < 1024) {
-    return `${mb.toFixed(1)} MB`;
-  }
-  
-  const gb = mb / 1024;
-  return `${gb.toFixed(1)} GB`;
-};
-
-// Format memory in MB with appropriate unit
-export const formatMemory = (memoryMB?: number): string => {
-  if (memoryMB === undefined) return "N/A";
-  
-  if (memoryMB < 1000) {
-    return `${memoryMB.toFixed(1)} MB`;
-  }
-  
-  return `${(memoryMB / 1024).toFixed(2)} GB`;
-};
-
-// Format network speed with appropriate unit
-export const formatNetworkSpeed = (kbps?: number): string => {
-  if (kbps === undefined) return "N/A";
-  
-  if (kbps < 1000) {
-    return `${kbps.toFixed(1)} KB/s`;
-  }
-  
-  return `${(kbps / 1024).toFixed(2)} MB/s`;
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 };
