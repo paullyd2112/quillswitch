@@ -89,7 +89,7 @@ export const getValidationFixRecommendations = (objectType: string, errorType: s
       ],
       'closeDate': [
         'Make sure all dates are in a standard format',
-        'Check for invalid or future dates that don't make sense',
+        'Check for invalid or future dates that don\'t make sense',
         'Ensure required date fields have values'
       ]
     }
