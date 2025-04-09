@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Wand2, Database, Shield, GitMerge, ListChecks, BellRing, Calendar, UploadCloud } from "lucide-react";
+import { Wand2, Database, Shield, GitMerge, ListChecks, BellRing, Calendar, UploadCloud, FileBarChart2, Zap, UserCheck, Lock } from "lucide-react";
 import ContentSection from "@/components/layout/ContentSection";
 import SlideUp from "@/components/animations/SlideUp";
 import FeatureCard from "@/components/ui-elements/FeatureCard";
@@ -59,6 +59,48 @@ const FeaturesSection = () => {
             icon={<Calendar className="h-10 w-10 text-brand-500" />}
             title="Scheduled Migrations"
             description="Plan and execute migrations during off-hours with flexible scheduling"
+          />
+        </SlideUp>
+        <SlideUp delay="600">
+          <FeatureCard
+            icon={<FileBarChart2 className="h-10 w-10 text-brand-500" />}
+            title="Advanced Analytics"
+            description="Gain insights with detailed migration analytics and customizable dashboards"
+          />
+        </SlideUp>
+        <SlideUp delay="700">
+          <FeatureCard
+            icon={<Zap className="h-10 w-10 text-brand-500" />}
+            title="High Concurrency"
+            description="Optimize performance with parallel processing and enhanced throughput"
+          />
+        </SlideUp>
+        <SlideUp delay="800">
+          <FeatureCard
+            icon={<UserCheck className="h-10 w-10 text-brand-500" />}
+            title="User Management"
+            description="Comprehensive user role management and permission controls"
+          />
+        </SlideUp>
+        <SlideUp delay="900">
+          <FeatureCard
+            icon={<Database className="h-10 w-10 text-brand-500" />}
+            title="Custom Object Support"
+            description="Migrate custom objects and fields with full mapping capabilities"
+          />
+        </SlideUp>
+        <SlideUp delay="1000">
+          <FeatureCard
+            icon={<Lock className="h-10 w-10 text-brand-500" />}
+            title="Compliance Controls"
+            description="GDPR and CCPA compliance features for secure data handling"
+          />
+        </SlideUp>
+        <SlideUp delay="1100">
+          <FeatureCard
+            icon={<UploadCloud className="h-10 w-10 text-brand-500" />}
+            title="Cloud Integration"
+            description="Seamless connection with major cloud storage providers and services"
           />
         </SlideUp>
       </div>
