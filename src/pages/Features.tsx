@@ -16,7 +16,7 @@ const Features = () => {
   }, [setTheme]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-slate-950 dark:from-background dark:to-slate-950/90">
+    <div className="min-h-screen bg-slate-950 text-slate-300">
       <Navbar />
       <FeaturesHero />
       <FeaturesCategories />

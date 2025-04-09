@@ -7,7 +7,7 @@ const FeaturesHero = () => {
       <div className="container max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">Features & Tools</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
             Comprehensive solutions for your CRM migration needs with powerful features designed for enterprise-grade migrations.
           </p>
         </div>

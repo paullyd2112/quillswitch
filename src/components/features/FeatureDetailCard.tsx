@@ -21,10 +21,10 @@ const FeatureDetailCard = ({
     <div className="mb-16">
       <div className={`flex flex-col ${isReversed ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center`}>
         <div className="w-full">
-          <div className="p-4 bg-slate-800/80 dark:bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50">
+          <div className="p-6 bg-slate-900/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-800">
             {icon}
             <h3 className="text-2xl font-semibold mb-3 text-white">{title}</h3>
-            <p className="text-slate-300 mb-4">
+            <p className="text-slate-400 mb-4">
               {description}
             </p>
             <ul className="space-y-2">

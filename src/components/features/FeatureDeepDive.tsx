@@ -63,9 +63,9 @@ const FeatureDeepDive = () => {
   ];
 
   return (
-    <section className="py-16 px-4 md:px-6">
+    <section className="py-16 px-4 md:px-6 bg-slate-950">
       <div className="container max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8 text-center">Feature Deep Dive</h2>
+        <h2 className="text-3xl font-bold mb-12 text-center text-white">Feature Deep Dive</h2>
         
         {featureDetails.map((feature, index) => (
           <FeatureDetailCard
