@@ -17,30 +17,34 @@ import {
 } from "./transformations";
 
 export interface TransformationRuleEditorProps {
+  initialValue?: string;
+  fieldName?: string;
   sourceField?: string;
   destinationField?: string;
   currentRule?: string | null;
   onSave: (rule: string | null) => void;
-  onCancel?: () => void;
+  onClose?: () => void;
   sourceExample?: string;
   mapping?: FieldMapping;
   autoGenerate?: boolean;
 }
 
 const TransformationRuleEditor: React.FC<TransformationRuleEditorProps> = ({
+  initialValue = '',
+  fieldName = '',
   sourceField,
   destinationField,
   currentRule,
   onSave,
-  onCancel,
+  onClose,
   sourceExample = "Sample value",
   mapping,
   autoGenerate = false
 }) => {
   // Use values from mapping if provided
-  const actualSourceField = sourceField || (mapping ? mapping.source_field : "");
+  const actualSourceField = sourceField || fieldName || (mapping ? mapping.source_field : "");
   const actualDestinationField = destinationField || (mapping ? mapping.destination_field : "");
-  const actualCurrentRule = currentRule || (mapping ? mapping.transformation_rule : null);
+  const actualCurrentRule = initialValue || currentRule || (mapping ? mapping.transformation_rule : null);
 
   const [activeTab, setActiveTab] = useState<string>(autoGenerate ? "quick" : "code");
   const [code, setCode] = useState<string>(actualCurrentRule || "");
@@ -99,8 +103,8 @@ const TransformationRuleEditor: React.FC<TransformationRuleEditorProps> = ({
   };
 
   const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
+    if (onClose) {
+      onClose();
     }
   };
 
