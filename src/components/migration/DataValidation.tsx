@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle, AlertTriangle, Info, AlertCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
   validateData, 
@@ -14,8 +13,15 @@ import {
   commonValidationRules 
 } from "@/services/migration/validationService";
 import { MigrationObjectType } from "@/integrations/supabase/migrationTypes";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import ValidationSummary from "./ValidationSummary";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
 
 interface DataValidationProps {
   project: {
@@ -64,72 +70,30 @@ const DataValidation: React.FC<DataValidationProps> = ({ project, objectTypes })
     }
   };
 
-  const getValidationSummary = (result: ValidationResult | null) => {
-    if (!result) return null;
-    
-    const totalRecords = result.validRecords + result.invalidRecords;
-    const validPercentage = totalRecords > 0 ? Math.round((result.validRecords / totalRecords) * 100) : 0;
-    
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">Data Quality Score</p>
-            <div className="flex items-center mt-1">
-              <Badge 
-                className={`mr-2 ${
-                  validPercentage >= 90 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 
-                  validPercentage >= 70 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' : 
-                  'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                }`}
-              >
-                {validPercentage}%
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                {validPercentage >= 90 ? 'Excellent' : 
-                 validPercentage >= 70 ? 'Good' : 
-                 validPercentage >= 50 ? 'Fair' : 'Poor'}
-              </span>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-medium">Records</p>
-            <div className="flex items-center mt-1 justify-end">
-              <Badge variant="outline" className="mr-2">
-                {result.validRecords} valid
-              </Badge>
-              {result.invalidRecords > 0 && (
-                <Badge variant="outline" className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
-                  {result.invalidRecords} invalid
-                </Badge>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        <Progress value={validPercentage} className="h-2" />
-        
-        {result.invalidRecords > 0 && (
-          <Alert className="mt-4 bg-amber-50 dark:bg-amber-950/30">
-            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-            <AlertTitle>Validation Issues Found</AlertTitle>
-            <AlertDescription>
-              There are some data quality issues that may impact your migration. 
-              See details below for specific records that need attention.
-            </AlertDescription>
-          </Alert>
-        )}
-      </div>
-    );
-  };
-
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Data Validation</CardTitle>
-        <CardDescription>
-          Validate your data before migration to identify and fix potential issues
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Data Validation</CardTitle>
+            <CardDescription>
+              Validate your data before migration to identify and fix potential issues
+            </CardDescription>
+          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-sm">
+                <p>Data validation helps you identify and fix issues <strong>before</strong> migration starts. 
+                Run validation for each data type to ensure a smooth migration process.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs 
@@ -154,21 +118,54 @@ const DataValidation: React.FC<DataValidationProps> = ({ project, objectTypes })
                     Validates {obj.total_records || 'all'} records from {project.source_crm}
                   </p>
                 </div>
-                <Button 
-                  onClick={() => handleValidateData(obj.name)} 
-                  disabled={isValidating[obj.name]}
-                >
-                  {isValidating[obj.name] ? 'Validating...' : 'Validate Data'}
-                </Button>
+                <div className="flex gap-2 items-center">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <HelpCircle className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Click "Validate Data" to check for common issues like missing required fields, 
+                        invalid email formats, and data inconsistencies.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <Button 
+                    onClick={() => handleValidateData(obj.name)} 
+                    disabled={isValidating[obj.name]}
+                  >
+                    {isValidating[obj.name] ? 'Validating...' : 'Validate Data'}
+                  </Button>
+                </div>
               </div>
               
               {validationResults[obj.name] ? (
                 <>
-                  {getValidationSummary(validationResults[obj.name])}
+                  <ValidationSummary 
+                    result={validationResults[obj.name]} 
+                    objectTypeName={obj.name} 
+                  />
                   
                   {validationResults[obj.name]?.errors.length ? (
                     <div className="mt-6">
-                      <h4 className="text-sm font-medium mb-2">Error Details</h4>
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="text-sm font-medium">Error Details</h4>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>These specific errors need to be fixed in your source CRM before migration. 
+                              Fixing these issues will improve your data quality and ensure a successful migration.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                       <div className="border rounded-md overflow-x-auto">
                         <Table>
                           <TableHeader>
@@ -195,21 +192,17 @@ const DataValidation: React.FC<DataValidationProps> = ({ project, objectTypes })
                         )}
                       </div>
                     </div>
-                  ) : validationResults[obj.name]?.valid ? (
-                    <Alert className="mt-4 bg-green-50 dark:bg-green-950/30">
-                      <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
-                      <AlertTitle>All Data Valid</AlertTitle>
-                      <AlertDescription>
-                        Your {obj.name} data passed all validation checks and is ready for migration.
-                      </AlertDescription>
-                    </Alert>
                   ) : null}
                 </>
               ) : (
                 <div className="p-8 text-center border rounded-md bg-muted/30">
                   <Info className="h-12 w-12 mx-auto mb-4 text-muted-foreground/70" />
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground mb-2">
                     Click "Validate Data" to check for potential issues before migration
+                  </p>
+                  <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                    Validating your data now will help identify common issues like missing required fields, 
+                    incorrect formats, and data inconsistencies that could cause problems during migration.
                   </p>
                 </div>
               )}
