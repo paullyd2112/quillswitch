@@ -10,6 +10,7 @@ import {
 
 export interface DashboardContextType {
   project: MigrationProject | null;
+  projectId: string; // Add projectId to the type
   stages: MigrationStage[];
   objectTypes: MigrationObjectType[];
   errors: MigrationError[];
@@ -20,4 +21,5 @@ export interface DashboardContextType {
   handleObjectTypeSelect: (objectTypeId: string) => void;
   handleToggleMigrationStatus: () => Promise<void>;
   handleSaveDeltaConfig: (config: any) => Promise<void>;
+  refreshFieldMappings: () => void; // Add refreshFieldMappings function
 }

@@ -120,6 +120,13 @@ export const DashboardProvider: React.FC<{
     setSelectedObjectTypeId(objectTypeId);
   };
 
+  const refreshFieldMappings = async () => {
+    if (selectedObjectTypeId) {
+      const mappingsData = await getFieldMappings(selectedObjectTypeId);
+      setFieldMappings(mappingsData);
+    }
+  };
+
   const handleToggleMigrationStatus = async () => {
     if (!project) return;
 
@@ -211,6 +218,7 @@ export const DashboardProvider: React.FC<{
 
   const value: DashboardContextType = {
     project,
+    projectId, // Add projectId
     stages,
     objectTypes,
     errors,
@@ -221,6 +229,7 @@ export const DashboardProvider: React.FC<{
     handleObjectTypeSelect,
     handleToggleMigrationStatus,
     handleSaveDeltaConfig,
+    refreshFieldMappings, // Add refreshFieldMappings
   };
 
   if (isLoading) {

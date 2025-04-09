@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -82,7 +81,8 @@ const UnmappedFieldsPanel: React.FC<UnmappedFieldsPanelProps> = ({
         destination_field: selectedDestination,
         object_type_id: objectType.id,
         project_id: objectType.project_id,
-        is_required: false
+        is_required: false,
+        transformation_rule: null  // Add the missing transformation_rule property
       });
       
       toast.success("Field mapping created successfully");

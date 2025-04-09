@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Code, Function, Play, Eye, Save, X } from "lucide-react";
+import { Code, FunctionSquare, Play, Eye, Save, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -11,14 +11,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { FieldMapping } from "@/integrations/supabase/migrationTypes";
 
-interface TransformationRuleEditorProps {
-  sourceField: string;
-  destinationField: string;
-  currentRule: string | null;
+export interface TransformationRuleEditorProps {
+  sourceField?: string;
+  destinationField?: string;
+  currentRule?: string | null;
   onSave: (rule: string | null) => void;
-  onCancel: () => void;
+  onCancel?: () => void;
   sourceExample?: string;
+  mapping?: FieldMapping;
+  autoGenerate?: boolean;
 }
 
 // Sample pre-defined transformation templates
@@ -83,21 +86,46 @@ const TransformationRuleEditor: React.FC<TransformationRuleEditorProps> = ({
   currentRule,
   onSave,
   onCancel,
-  sourceExample = "Sample value"
+  sourceExample = "Sample value",
+  mapping,
+  autoGenerate = false
 }) => {
-  const [activeTab, setActiveTab] = useState<string>("quick");
-  const [code, setCode] = useState<string>(currentRule || "");
+  // Use values from mapping if provided
+  const actualSourceField = sourceField || (mapping ? mapping.source_field : "");
+  const actualDestinationField = destinationField || (mapping ? mapping.destination_field : "");
+  const actualCurrentRule = currentRule || (mapping ? mapping.transformation_rule : null);
+
+  const [activeTab, setActiveTab] = useState<string>(autoGenerate ? "quick" : "code");
+  const [code, setCode] = useState<string>(actualCurrentRule || "");
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState<string>(sourceExample);
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   
   useEffect(() => {
-    if (currentRule) {
-      setCode(currentRule);
+    if (actualCurrentRule) {
+      setCode(actualCurrentRule);
       setActiveTab("code");
     }
-  }, [currentRule]);
+    
+    if (autoGenerate) {
+      // Auto-select a template based on field names
+      const fieldName = actualDestinationField.toLowerCase();
+      if (fieldName.includes('phone')) {
+        setSelectedTemplate("Format phone");
+        applyTemplate("Format phone");
+      } else if (fieldName.includes('date')) {
+        setSelectedTemplate("Format date");
+        applyTemplate("Format date");
+      } else if (fieldName.includes('name')) {
+        setSelectedTemplate("Capitalize");
+        applyTemplate("Capitalize");
+      } else if (fieldName.includes('price') || fieldName.includes('amount')) {
+        setSelectedTemplate("Round number");
+        applyTemplate("Round number");
+      }
+    }
+  }, [actualCurrentRule, autoGenerate, actualDestinationField]);
   
   const applyTemplate = (templateName: string) => {
     const template = TRANSFORMATION_TEMPLATES.find(t => t.name === templateName);
@@ -141,20 +169,26 @@ const TransformationRuleEditor: React.FC<TransformationRuleEditorProps> = ({
     }
   };
 
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    }
+  };
+
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Function className="h-5 w-5 text-brand-500" />
+            <FunctionSquare className="h-5 w-5 text-brand-500" />
             Transformation Rule Editor
           </div>
-          <Button variant="ghost" size="icon" onClick={onCancel}>
+          <Button variant="ghost" size="icon" onClick={handleCancel}>
             <X className="h-4 w-4" />
           </Button>
         </CardTitle>
         <CardDescription>
-          Create a transformation rule to convert data from {sourceField} to {destinationField}
+          Create a transformation rule to convert data from {actualSourceField} to {actualDestinationField}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -290,11 +324,11 @@ return value;"
                 <Separator className="my-2" />
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div>
-                    <div className="text-sm font-medium mb-1">Source ({sourceField})</div>
+                    <div className="text-sm font-medium mb-1">Source ({actualSourceField})</div>
                     <div className="border rounded-md p-2">{inputValue}</div>
                   </div>
                   <div>
-                    <div className="text-sm font-medium mb-1">Destination ({destinationField})</div>
+                    <div className="text-sm font-medium mb-1">Destination ({actualDestinationField})</div>
                     <div className="border rounded-md p-2 bg-muted/30">
                       {error ? (
                         <span className="text-destructive text-xs">Error: {error}</span>
@@ -310,7 +344,7 @@ return value;"
         </Tabs>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={onCancel}>Cancel</Button>
+        <Button variant="outline" onClick={handleCancel}>Cancel</Button>
         <Button 
           onClick={handleSave} 
           disabled={error !== null && activeTab === "test"}
