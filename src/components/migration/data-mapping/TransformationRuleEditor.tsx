@@ -129,7 +129,7 @@ const TransformationRuleEditor: React.FC<TransformationRuleEditorProps> = ({
           <TabsList className="mb-4">
             <TabsTrigger value="quick">Quick Templates</TabsTrigger>
             <TabsTrigger value="code">Custom Code</TabsTrigger>
-            <TabsTrigger value="test">Test & Preview</TabsTrigger>
+            <TabsTrigger value="test">Test &amp; Preview</TabsTrigger>
           </TabsList>
           
           <TabsContent value="quick">
