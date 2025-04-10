@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings, Shield } from "lucide-react";
 
 const AuthButtons = () => {
   const navigate = useNavigate();
@@ -25,6 +25,10 @@ const AuthButtons = () => {
   }, [location]);
 
   const handleLogout = async () => {
+    // Clear any sensitive data from localStorage before logout
+    localStorage.removeItem("lastMigrationData");
+    localStorage.removeItem("tempUserSettings");
+    
     await signOut();
     navigate("/");
     setOpen(false);
@@ -38,6 +42,11 @@ const AuthButtons = () => {
   const handleRegister = () => {
     // Updated to match the route in App.tsx
     navigate("/auth");
+  };
+
+  const handleSecuritySettings = () => {
+    navigate("/settings?tab=security");
+    setOpen(false);
   };
 
   if (user) {
@@ -61,6 +70,10 @@ const AuthButtons = () => {
           <DropdownMenuItem onClick={() => { navigate("/settings"); setOpen(false); }} className="cursor-pointer">
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSecuritySettings} className="cursor-pointer">
+            <Shield className="mr-2 h-4 w-4" />
+            <span>Security & Privacy</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
