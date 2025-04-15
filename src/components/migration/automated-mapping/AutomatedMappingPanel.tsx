@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wand2, ThumbsUp } from "lucide-react";
+import { Wand2, ThumbsUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateMappingSuggestions, applyMappingSuggestions } from "@/services/migration/automatedMappingService";
 import MappingSuggestionsTable from "./MappingSuggestionsTable";
@@ -17,6 +17,7 @@ interface AutomatedMappingPanelProps {
   sourceFields: string[];
   destinationFields: string[];
   onMappingsApplied: () => void;
+  isProcessing?: boolean;
 }
 
 const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
@@ -25,6 +26,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
   sourceFields,
   destinationFields,
   onMappingsApplied,
+  isProcessing = false
 }) => {
   const [suggestions, setSuggestions] = useState<MappingSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -96,7 +98,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
       <CardContent>
         {suggestions.length === 0 ? (
           <MappingGenerator 
-            isLoading={isLoading} 
+            isLoading={isLoading || isProcessing} 
             onGenerate={generateMappings} 
           />
         ) : (
@@ -131,7 +133,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
           </Button>
           <Button 
             onClick={applyMappings} 
-            disabled={isApplying || filteredSuggestions.length === 0}
+            disabled={isApplying || isProcessing || filteredSuggestions.length === 0}
             className="gap-2"
           >
             {isApplying ? "Applying..." : "Apply Suggestions"} 
