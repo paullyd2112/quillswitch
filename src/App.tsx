@@ -79,8 +79,9 @@ function App() {
                 <Route path="/knowledge-base/:articleId" element={<KnowledgeArticle />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/migrations" element={<Migrations />} />
-                <Route path="/migrations/:id" element={<MigrationDashboard />} />
+                {/* Put specific routes before dynamic routes */}
                 <Route path="/migrations/setup" element={<SetupWizard />} />
+                <Route path="/migrations/:id" element={<MigrationDashboard />} />
                 <Route path="/migration" element={<MigrationPage />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/analytics" element={<Analytics />} />
