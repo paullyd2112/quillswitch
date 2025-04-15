@@ -28,6 +28,7 @@ import KnowledgeArticle from '@/pages/KnowledgeArticle';
 import PricingEstimator from '@/pages/PricingEstimator';
 import EnterpriseMigrationTest from '@/pages/EnterpriseMigrationTest';
 import Welcome from '@/pages/Welcome';
+import MigrationPage from '@/pages/MigrationPage';
 
 // Import utilities for cross-browser compatibility
 import { applyCompatibilityClass } from '@/utils/browserCompatibility';
@@ -80,6 +81,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/migrations" element={<Migrations />} />
               <Route path="/migrations/:id" element={<MigrationDashboard />} />
+              <Route path="/migration" element={<MigrationPage />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/api-docs" element={<ApiDocs />} />
