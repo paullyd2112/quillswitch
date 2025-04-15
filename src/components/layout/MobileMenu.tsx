@@ -31,32 +31,32 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
   return (
     <div 
       className={cn(
-        "fixed inset-x-0 top-16 bottom-0 z-[99] flex flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out",
+        "fixed inset-x-0 top-16 z-[99] bg-white shadow-lg transition-transform duration-300 ease-in-out dark:bg-slate-900 max-h-[calc(100vh-4rem)] overflow-y-auto",
         isOpen ? "translate-y-0" : "-translate-y-full"
       )}
     >
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="p-4">
         <nav className="space-y-1.5">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
               onClick={onClose}
-              className="flex items-center py-3 px-4 rounded-md hover:bg-gray-100"
+              className="flex items-center py-3 px-4 rounded-md hover:bg-gray-100 dark:hover:bg-slate-800"
             >
               {link.icon && (
-                <span className="mr-3 text-gray-500">{link.icon}</span>
+                <span className="mr-3 text-gray-500 dark:text-gray-400">{link.icon}</span>
               )}
-              <span>{link.label}</span>
+              <span className="dark:text-white">{link.label}</span>
             </Link>
           ))}
           
           {user && (
             <>
-              <div className="my-2 border-t border-gray-200"></div>
+              <div className="my-2 border-t border-gray-200 dark:border-gray-700"></div>
               <Button
                 variant="ghost"
-                className="flex w-full items-center justify-start py-3 px-4 rounded-md hover:bg-gray-100 text-red-600"
+                className="flex w-full items-center justify-start py-3 px-4 rounded-md hover:bg-gray-100 dark:hover:bg-slate-800 text-red-600 dark:text-red-400"
                 onClick={handleLogout}
               >
                 <LogOut className="mr-3" size={18} />

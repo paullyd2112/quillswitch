@@ -71,12 +71,11 @@ const Navbar = () => {
   return (
     <header
       className={cn(
-        "fixed top-0 w-full z-[100] transition-all duration-200", 
+        "sticky top-0 w-full z-[100] transition-all duration-200", 
         isScrolled 
           ? "bg-white/95 backdrop-blur-md shadow-sm dark:bg-slate-900/95 dark:border-b dark:border-slate-800" 
           : "bg-white dark:bg-slate-900"
       )}
-      style={{ position: 'sticky' }}
     >
       <div className="container px-4 md:px-6">
         <div className="flex h-16 items-center justify-between">
