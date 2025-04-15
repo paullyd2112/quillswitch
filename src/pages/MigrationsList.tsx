@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
@@ -10,7 +9,6 @@ import {
   Database, 
   ArrowRightCircle, 
   RefreshCw,
-  Settings,
   Calendar,
   BadgeCheck,
   PauseCircle,
@@ -124,14 +122,6 @@ const MigrationsList = () => {
                 <Button 
                   variant="outline" 
                   className="gap-2"
-                  onClick={() => navigate("/enterprise-test")}
-                >
-                  <Server className="h-4 w-4" />
-                  <span>Enterprise Test</span>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="gap-2"
                   onClick={() => setIsLoading(true)}
                 >
                   <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
@@ -165,33 +155,6 @@ const MigrationsList = () => {
                   <div></div>
                   <Button variant="ghost" className="gap-2 group-hover:text-primary transition-colors duration-200">
                     <span>Get Started</span>
-                    <ArrowRightCircle className="h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>
-              
-              {/* Enterprise capability test card */}
-              <Card className="relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow duration-200"
-                    onClick={() => navigate("/enterprise-test")}>
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/20 opacity-50"></div>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Server className="h-5 w-5 text-primary" />
-                    Enterprise Capability Test
-                  </CardTitle>
-                  <CardDescription>
-                    Test system capacity for large migrations
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-center py-8">
-                    <Settings className="h-16 w-16 text-muted-foreground/50 group-hover:text-primary transition-colors duration-200" />
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <div></div>
-                  <Button variant="ghost" className="gap-2 group-hover:text-primary transition-colors duration-200">
-                    <span>Run Test</span>
                     <ArrowRightCircle className="h-4 w-4" />
                   </Button>
                 </CardFooter>

@@ -27,7 +27,6 @@ import SetupWizard from '@/pages/SetupWizard';
 import KnowledgeBase from '@/pages/KnowledgeBase';
 import KnowledgeArticle from '@/pages/KnowledgeArticle';
 import PricingEstimator from '@/pages/PricingEstimator';
-import EnterpriseMigrationTest from '@/pages/EnterpriseMigrationTest';
 import Welcome from '@/pages/Welcome';
 import MigrationPage from '@/pages/MigrationPage';
 
@@ -92,7 +91,6 @@ function App() {
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/setup" element={<SetupWizard />} />
                 <Route path="/pricing" element={<PricingEstimator />} />
-                <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               
