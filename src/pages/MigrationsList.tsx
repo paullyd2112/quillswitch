@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
@@ -123,7 +124,7 @@ const MigrationsList = () => {
                 <Button 
                   variant="outline" 
                   className="gap-2"
-                  onClick={() => navigate("/migrations/enterprise-test")}
+                  onClick={() => navigate("/enterprise-test")}
                 >
                   <Server className="h-4 w-4" />
                   <span>Enterprise Test</span>
@@ -171,7 +172,7 @@ const MigrationsList = () => {
               
               {/* Enterprise capability test card */}
               <Card className="relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow duration-200"
-                    onClick={() => navigate("/migrations/enterprise-test")}>
+                    onClick={() => navigate("/enterprise-test")}>
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/20 opacity-50"></div>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">

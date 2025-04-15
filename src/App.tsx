@@ -80,6 +80,7 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/migrations" element={<Migrations />} />
                 <Route path="/migrations/:id" element={<MigrationDashboard />} />
+                <Route path="/migrations/setup" element={<SetupWizard />} />
                 <Route path="/migration" element={<MigrationPage />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/analytics" element={<Analytics />} />
