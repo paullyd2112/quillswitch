@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import Navbar from '@/components/layout/Navbar';
 import { Container } from '@/components/ui/container';
 import { PageHeader } from '@/components/ui/page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -50,7 +51,6 @@ const MigrationPage: React.FC = () => {
     name: 'Contact',
     project_id: 'proj-456',
     status: 'in_progress',
-    // Remove created_at as it doesn't exist in the MigrationObjectType
     description: null,
     total_records: 0,
     processed_records: 0,
@@ -108,67 +108,70 @@ const MigrationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
-      <Container>
-        <PageHeader 
-          heading="Migration Tools" 
-          subheading="Configure and test your data migration settings"
-        />
-        
-        <Tabs defaultValue="sources" className="mt-8">
-          <TabsList className="mb-4">
-            <TabsTrigger value="sources">Sources</TabsTrigger>
-            <TabsTrigger value="mapping">Field Mapping</TabsTrigger>
-            <TabsTrigger value="automated">Automated Mapping</TabsTrigger>
-          </TabsList>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <Navbar />
+      <div className="py-6 md:py-8">
+        <Container>
+          <PageHeader 
+            heading="Migration Tools" 
+            subheading="Configure and test your data migration settings"
+          />
           
-          <TabsContent value="sources">
-            <Card>
-              <CardHeader>
-                <CardTitle>CRM Data Sources</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MultiSourceSelection 
-                  sources={sources} 
-                  onSourcesChange={handleSourcesChange} 
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="mapping">
-            <Card>
-              <CardHeader>
-                <CardTitle>Field Mapping Configuration</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <DataMappingVisualizer 
-                  objectType={objectType} 
-                  fieldMappings={fieldMappings}
-                  onUpdateMapping={handleUpdateMapping}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="automated">
-            <Card>
-              <CardHeader>
-                <CardTitle>Automated Mapping Tools</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AutomatedMappingPanel 
-                  objectTypeId={objectType.id}
-                  projectId={objectType.project_id}
-                  sourceFields={['FirstName', 'LastName', 'Email', 'Phone', 'Title']}
-                  destinationFields={['first_name', 'last_name', 'email', 'phone', 'job_title']}
-                  onMappingsApplied={handleMappingsApplied}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </Container>
+          <Tabs defaultValue="sources" className="mt-6">
+            <TabsList className="mb-4">
+              <TabsTrigger value="sources">Sources</TabsTrigger>
+              <TabsTrigger value="mapping">Field Mapping</TabsTrigger>
+              <TabsTrigger value="automated">Automated Mapping</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="sources">
+              <Card>
+                <CardHeader>
+                  <CardTitle>CRM Data Sources</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MultiSourceSelection 
+                    sources={sources} 
+                    onSourcesChange={handleSourcesChange} 
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="mapping">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Field Mapping Configuration</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataMappingVisualizer 
+                    objectType={objectType} 
+                    fieldMappings={fieldMappings}
+                    onUpdateMapping={handleUpdateMapping}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="automated">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Automated Mapping Tools</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <AutomatedMappingPanel 
+                    objectTypeId={objectType.id}
+                    projectId={objectType.project_id}
+                    sourceFields={['FirstName', 'LastName', 'Email', 'Phone', 'Title']}
+                    destinationFields={['first_name', 'last_name', 'email', 'phone', 'job_title']}
+                    onMappingsApplied={handleMappingsApplied}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </Container>
+      </div>
     </div>
   );
 };

@@ -8,7 +8,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-16">
+      <div className="pt-6 md:pt-8">
         <ContentSection 
           title="About QuillSwitch"
           description="Learn more about our mission, values, and the team behind QuillSwitch."
