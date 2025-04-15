@@ -13,8 +13,9 @@ import {
 } from '@/components/migration';
 import { CrmSource } from '@/components/migration/MultiSourceSelection';
 import { FieldMapping, MigrationObjectType } from '@/integrations/supabase/migrationTypes';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Key } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { apiClient } from '@/services/migration/apiClient';
 
 const MigrationPage: React.FC = () => {
   const { toast } = useToast();
@@ -92,6 +93,7 @@ const MigrationPage: React.FC = () => {
   ]);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<'api_key' | 'general' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSourcesChange = (updatedSources: CrmSource[]) => {
@@ -108,20 +110,57 @@ const MigrationPage: React.FC = () => {
     console.log(`Mapping ${mappingId} updated:`, updates);
   };
 
+  // Helper function to check API key validity
+  const validateApiKeys = async () => {
+    try {
+      // Get current API key from apiClient
+      const currentApiKey = apiClient.getApiKey();
+      
+      // Simple validation - in a real app, this would call a validation endpoint
+      if (currentApiKey === 'demo_api_key_123456') {
+        return { valid: false, message: "Invalid API key detected" };
+      }
+      
+      return { valid: true };
+    } catch (error) {
+      console.error("API key validation error:", error);
+      return { valid: false, message: "Error validating API keys" };
+    }
+  };
+
   // Helper function to simulate the mapping application
-  const handleMappingsApplied = () => {
+  const handleMappingsApplied = async () => {
     setErrorMessage(null);
+    setErrorType(null);
     setIsProcessing(true);
+    
+    // First validate API keys
+    const keyValidation = await validateApiKeys();
+    
+    if (!keyValidation.valid) {
+      setIsProcessing(false);
+      setErrorType('api_key');
+      setErrorMessage("Non-functional migration: Invalid API Keys. Please update your credentials in Settings.");
+      
+      toast({
+        title: "Migration Error",
+        description: "Invalid API keys detected. Migration cannot proceed.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     // Simulate API call
     setTimeout(() => {
       setIsProcessing(false);
-      // Simulate an API validation error
-      setErrorMessage("API keys are not validated. Please check your credentials and try again.");
+      
+      // For demo purposes, show an error to simulate API validation failure
+      setErrorType('general');
+      setErrorMessage("Migration validation failed. Please check your configuration and try again.");
       
       toast({
         title: "Migration Error",
-        description: "API keys are not validated. Please check your credentials and try again.",
+        description: "Migration validation failed. Please check your configuration and try again.",
         variant: "destructive"
       });
     }, 2000);
@@ -136,10 +175,24 @@ const MigrationPage: React.FC = () => {
         />
         
         {errorMessage && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
+          <Alert 
+            variant="destructive" 
+            className={`mb-6 ${errorType === 'api_key' ? 'border-amber-500 dark:border-amber-700' : ''}`}
+          >
+            {errorType === 'api_key' ? (
+              <Key className="h-4 w-4" />
+            ) : (
+              <AlertCircle className="h-4 w-4" />
+            )}
+            <AlertTitle>
+              {errorType === 'api_key' ? 'API Key Error' : 'Error'}
+            </AlertTitle>
             <AlertDescription>{errorMessage}</AlertDescription>
+            {errorType === 'api_key' && (
+              <div className="mt-2 text-sm">
+                Please verify your API credentials in the Settings page or contact support for assistance.
+              </div>
+            )}
           </Alert>
         )}
         
