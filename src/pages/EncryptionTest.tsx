@@ -2,23 +2,23 @@
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
-import MigrationsList from "@/pages/MigrationsList";
+import EncryptionTest from "@/components/EncryptionTest";
 
-const MigrationPage = () => {
+const EncryptionTestPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-16">
         <ContentSection 
-          title="CRM Migration"
-          description="Manage and monitor your CRM data migration process"
-          centered={false}
+          title="Encryption Test"
+          description="Test our secure encryption and decryption functionality."
+          centered={true}
         >
-          <MigrationsList />
+          <EncryptionTest />
         </ContentSection>
       </div>
     </div>
   );
 };
 
-export default MigrationPage;
+export default EncryptionTestPage;
