@@ -44,18 +44,19 @@ const MigrationPage: React.FC = () => {
     }
   ]);
 
-  // Sample data for DataMappingVisualizer
+  // Sample data for DataMappingVisualizer - fixed to match MigrationObjectType
   const objectType: MigrationObjectType = {
     id: 'obj-123',
     name: 'Contact',
     project_id: 'proj-456',
-    source_object: 'Contact',
-    destination_object: 'Contact',
+    description: 'Contact object type for migration',
     status: 'in_progress',
-    created_at: new Date().toISOString()
+    total_records: 5000,
+    processed_records: 2500,
+    failed_records: 50
   };
 
-  // Sample data for FieldMappingsTable
+  // Sample data for FieldMappingsTable - fixed to match FieldMapping
   const [fieldMappings, setFieldMappings] = useState<FieldMapping[]>([
     {
       id: 'map-1',
@@ -64,8 +65,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'FirstName',
       destination_field: 'first_name',
       is_required: true,
-      data_type: 'string',
-      created_at: new Date().toISOString()
+      transformation_rule: null
     },
     {
       id: 'map-2',
@@ -74,8 +74,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'LastName',
       destination_field: 'last_name',
       is_required: true,
-      data_type: 'string',
-      created_at: new Date().toISOString()
+      transformation_rule: null
     },
     {
       id: 'map-3',
@@ -84,8 +83,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'Email',
       destination_field: 'email',
       is_required: false,
-      data_type: 'string',
-      created_at: new Date().toISOString()
+      transformation_rule: null
     }
   ]);
 
