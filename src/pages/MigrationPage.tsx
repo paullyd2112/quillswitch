@@ -2,7 +2,6 @@
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
-import { MigrationStatusCard } from "@/components/migration";
 import MigrationsList from "@/pages/MigrationsList";
 
 const MigrationPage = () => {
