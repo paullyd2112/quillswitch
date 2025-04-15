@@ -1,9 +1,10 @@
 
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useProjectData } from "./useProjectData";
 import { useProjectActions } from "./useProjectActions";
 import { DashboardContextType } from "./types";
 import LoadingIndicator from "./LoadingIndicator";
+import { LoadingFallback } from "@/components/pages/migration";
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
@@ -19,6 +20,8 @@ export const DashboardProvider: React.FC<{
   children: React.ReactNode; 
   projectId: string;
 }> = ({ children, projectId }) => {
+  const [loadError, setLoadError] = useState<Error | null>(null);
+
   const {
     project,
     stages,
@@ -32,7 +35,10 @@ export const DashboardProvider: React.FC<{
     setFieldMappings,
     setActivities,
     setProject
-  } = useProjectData({ projectId });
+  } = useProjectData({ 
+    projectId, 
+    onError: (error) => setLoadError(error) 
+  });
 
   const {
     isProcessing,
@@ -56,6 +62,10 @@ export const DashboardProvider: React.FC<{
 
   if (isLoading) {
     return <LoadingIndicator />;
+  }
+
+  if (loadError) {
+    return <LoadingFallback error={loadError} />;
   }
 
   const value: DashboardContextType = {

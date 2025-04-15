@@ -21,6 +21,7 @@ import {
 
 interface UseProjectDataProps {
   projectId: string;
+  onError?: (error: Error) => void;
 }
 
 interface UseProjectDataReturn {
@@ -38,7 +39,7 @@ interface UseProjectDataReturn {
   setProject: (project: MigrationProject | null) => void;
 }
 
-export const useProjectData = ({ projectId }: UseProjectDataProps): UseProjectDataReturn => {
+export const useProjectData = ({ projectId, onError }: UseProjectDataProps): UseProjectDataReturn => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [project, setProject] = useState<MigrationProject | null>(null);
@@ -59,59 +60,69 @@ export const useProjectData = ({ projectId }: UseProjectDataProps): UseProjectDa
     const fetchMigrationData = async () => {
       setIsLoading(true);
       
-      // Fetch project details
-      const projectData = await getMigrationProject(projectId);
-      if (!projectData) {
-        toast({
-          title: "Error",
-          description: "Failed to load migration project.",
-          variant: "destructive",
-        });
-        navigate("/migrations");
-        return;
-      }
-      setProject(projectData);
-
-      // Fetch stages
-      const stagesData = await getMigrationStages(projectId);
-      setStages(stagesData);
-
-      // Fetch object types
-      const objectTypesData = await getMigrationObjectTypes(projectId);
-      setObjectTypes(objectTypesData);
-      if (objectTypesData.length > 0) {
-        setSelectedObjectTypeId(objectTypesData[0].id);
-      }
-
-      // Fetch errors
-      const errorsData = await getMigrationErrors(projectId);
-      setErrors(errorsData);
-
-      // Fetch user activities
       try {
-        const { data, error } = await supabase
-          .from('user_activities')
-          .select('*')
-          .eq('project_id', projectId)
-          .order('created_at', { ascending: false });
+        // Fetch project details
+        const projectData = await getMigrationProject(projectId);
+        if (!projectData) {
+          throw new Error("Migration project not found");
+        }
+        setProject(projectData);
+
+        // Fetch stages
+        const stagesData = await getMigrationStages(projectId);
+        setStages(stagesData);
+
+        // Fetch object types
+        const objectTypesData = await getMigrationObjectTypes(projectId);
+        setObjectTypes(objectTypesData);
+        if (objectTypesData.length > 0) {
+          setSelectedObjectTypeId(objectTypesData[0].id);
+        }
+
+        // Fetch errors
+        const errorsData = await getMigrationErrors(projectId);
+        setErrors(errorsData);
+
+        // Fetch user activities
+        try {
+          const { data, error } = await supabase
+            .from('user_activities')
+            .select('*')
+            .eq('project_id', projectId)
+            .order('created_at', { ascending: false });
+          
+          if (error) throw error;
+          setActivities(data || []);
+        } catch (error: any) {
+          console.error("Error fetching activities:", error);
+        }
+
+        // Fetch field mappings for the first object type if available
+        if (objectTypesData.length > 0) {
+          const mappingsData = await getFieldMappings(objectTypesData[0].id);
+          setFieldMappings(mappingsData);
+        }
+      } catch (error) {
+        console.error("Error fetching migration data:", error);
         
-        if (error) throw error;
-        setActivities(data || []);
-      } catch (error: any) {
-        console.error("Error fetching activities:", error);
+        // Pass error to callback if provided
+        if (onError && error instanceof Error) {
+          onError(error);
+        } else {
+          // Fallback error handling
+          toast({
+            title: "Error",
+            description: error instanceof Error ? error.message : "Failed to load migration data",
+            variant: "destructive",
+          });
+        }
+      } finally {
+        setIsLoading(false);
       }
-
-      // Fetch field mappings for the first object type if available
-      if (objectTypesData.length > 0) {
-        const mappingsData = await getFieldMappings(objectTypesData[0].id);
-        setFieldMappings(mappingsData);
-      }
-
-      setIsLoading(false);
     };
 
     fetchMigrationData();
-  }, [projectId, navigate, toast]);
+  }, [projectId, navigate, toast, onError]);
 
   return {
     project,
