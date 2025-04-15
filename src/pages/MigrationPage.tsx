@@ -49,9 +49,12 @@ const MigrationPage: React.FC = () => {
     id: 'obj-123',
     name: 'Contact',
     project_id: 'proj-456',
-    // Removed source_object and destination_object which don't exist in the type
     status: 'in_progress',
-    created_at: new Date().toISOString()
+    // Remove created_at as it doesn't exist in the MigrationObjectType
+    description: null,
+    total_records: 0,
+    processed_records: 0,
+    failed_records: 0
   };
 
   // Sample data for FieldMappingsTable
@@ -63,8 +66,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'FirstName',
       destination_field: 'first_name',
       is_required: true,
-      // Removed data_type which doesn't exist in the type
-      created_at: new Date().toISOString()
+      transformation_rule: null
     },
     {
       id: 'map-2',
@@ -73,8 +75,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'LastName',
       destination_field: 'last_name',
       is_required: true,
-      // Removed data_type which doesn't exist in the type
-      created_at: new Date().toISOString()
+      transformation_rule: null
     },
     {
       id: 'map-3',
@@ -83,8 +84,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'Email',
       destination_field: 'email',
       is_required: false,
-      // Removed data_type which doesn't exist in the type
-      created_at: new Date().toISOString()
+      transformation_rule: null
     }
   ]);
 
