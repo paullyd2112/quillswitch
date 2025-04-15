@@ -4,7 +4,7 @@ import { Home, Bolt, Layers, FileBarChart2, FileText, HelpCircle, Settings, User
 import { NavLink } from "./MobileMenu";
 
 const getNavLinks = (user: any): NavLink[] => {
-  // Links that are always shown
+  // Public links that are always shown
   const publicLinks: NavLink[] = [
     {
       label: "Home",
@@ -17,9 +17,9 @@ const getNavLinks = (user: any): NavLink[] => {
       icon: <Bolt className="h-4 w-4" />,
     },
     {
-      label: "Resources",
-      href: "/resources",
-      icon: <HelpCircle className="h-4 w-4" />,
+      label: "Migration",
+      href: "/migration",
+      icon: <Layers className="h-4 w-4" />,
     },
     {
       label: "About",
@@ -30,11 +30,6 @@ const getNavLinks = (user: any): NavLink[] => {
   
   // Links shown only to authenticated users
   const authenticatedLinks: NavLink[] = user ? [
-    {
-      label: "Migrations",
-      href: "/migrations",
-      icon: <Layers className="h-4 w-4" />,
-    },
     {
       label: "Reports",
       href: "/reports",
