@@ -2,20 +2,17 @@
 import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { Container } from '@/components/ui/container';
-import { PageHeader } from '@/components/ui/page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  MultiSourceSelection,
-  DataMappingVisualizer, 
-  FieldMappingsTable,
-  AutomatedMappingPanel
-} from '@/components/migration';
-import { CrmSource } from '@/components/migration/MultiSourceSelection';
 import { FieldMapping, MigrationObjectType } from '@/integrations/supabase/migrationTypes';
-import { AlertCircle, Key } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { apiClient } from '@/services/migration/apiClient';
+import { CrmSource } from '@/components/migration/MultiSourceSelection';
+import { 
+  MigrationHeader, 
+  ErrorDisplay, 
+  SourcesTabContent, 
+  MappingTabContent, 
+  AutomatedTabContent,
+  validateApiKeys
+} from '@/components/pages/migration';
 
 const MigrationPage: React.FC = () => {
   const { toast } = useToast();
@@ -110,24 +107,6 @@ const MigrationPage: React.FC = () => {
     console.log(`Mapping ${mappingId} updated:`, updates);
   };
 
-  // Helper function to check API key validity
-  const validateApiKeys = async () => {
-    try {
-      // Get current API key from apiClient
-      const currentApiKey = apiClient.getApiKey();
-      
-      // Simple validation - in a real app, this would call a validation endpoint
-      if (currentApiKey === 'demo_api_key_123456') {
-        return { valid: false, message: "Invalid API key detected" };
-      }
-      
-      return { valid: true };
-    } catch (error) {
-      console.error("API key validation error:", error);
-      return { valid: false, message: "Error validating API keys" };
-    }
-  };
-
   // Helper function to simulate the mapping application
   const handleMappingsApplied = async () => {
     setErrorMessage(null);
@@ -169,32 +148,12 @@ const MigrationPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
       <Container>
-        <PageHeader 
-          heading="Migration Tools" 
-          subheading="Configure and test your data migration settings"
-        />
+        <MigrationHeader />
         
-        {errorMessage && (
-          <Alert 
-            variant="destructive" 
-            className={`mb-6 ${errorType === 'api_key' ? 'border-amber-500 dark:border-amber-700' : ''}`}
-          >
-            {errorType === 'api_key' ? (
-              <Key className="h-4 w-4" />
-            ) : (
-              <AlertCircle className="h-4 w-4" />
-            )}
-            <AlertTitle>
-              {errorType === 'api_key' ? 'API Key Error' : 'Error'}
-            </AlertTitle>
-            <AlertDescription>{errorMessage}</AlertDescription>
-            {errorType === 'api_key' && (
-              <div className="mt-2 text-sm">
-                Please verify your API credentials in the Settings page or contact support for assistance.
-              </div>
-            )}
-          </Alert>
-        )}
+        <ErrorDisplay 
+          errorMessage={errorMessage} 
+          errorType={errorType} 
+        />
         
         <Tabs defaultValue="sources" className="mt-8">
           <TabsList className="mb-4">
@@ -204,50 +163,29 @@ const MigrationPage: React.FC = () => {
           </TabsList>
           
           <TabsContent value="sources">
-            <Card>
-              <CardHeader>
-                <CardTitle>CRM Data Sources</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MultiSourceSelection 
-                  sources={sources} 
-                  onSourcesChange={handleSourcesChange} 
-                />
-              </CardContent>
-            </Card>
+            <SourcesTabContent 
+              sources={sources} 
+              onSourcesChange={handleSourcesChange} 
+            />
           </TabsContent>
           
           <TabsContent value="mapping">
-            <Card>
-              <CardHeader>
-                <CardTitle>Field Mapping Configuration</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <DataMappingVisualizer 
-                  objectType={objectType} 
-                  fieldMappings={fieldMappings}
-                  onUpdateMapping={handleUpdateMapping}
-                />
-              </CardContent>
-            </Card>
+            <MappingTabContent 
+              objectType={objectType} 
+              fieldMappings={fieldMappings}
+              onUpdateMapping={handleUpdateMapping}
+            />
           </TabsContent>
           
           <TabsContent value="automated">
-            <Card>
-              <CardHeader>
-                <CardTitle>Automated Mapping Tools</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AutomatedMappingPanel 
-                  objectTypeId={objectType.id}
-                  projectId={objectType.project_id}
-                  sourceFields={['FirstName', 'LastName', 'Email', 'Phone', 'Title']}
-                  destinationFields={['first_name', 'last_name', 'email', 'phone', 'job_title']}
-                  onMappingsApplied={handleMappingsApplied}
-                  isProcessing={isProcessing}
-                />
-              </CardContent>
-            </Card>
+            <AutomatedTabContent 
+              objectTypeId={objectType.id}
+              projectId={objectType.project_id}
+              sourceFields={['FirstName', 'LastName', 'Email', 'Phone', 'Title']}
+              destinationFields={['first_name', 'last_name', 'email', 'phone', 'job_title']}
+              onMappingsApplied={handleMappingsApplied}
+              isProcessing={isProcessing}
+            />
           </TabsContent>
         </Tabs>
       </Container>
