@@ -20,7 +20,8 @@ const DataMappingTab: React.FC = () => {
     fieldMappings, 
     projectId,
     handleObjectTypeSelect,
-    refreshFieldMappings 
+    refreshFieldMappings,
+    isProcessing
   } = useDashboard();
   
   const [activeTab, setActiveTab] = useState("mapped");
@@ -130,6 +131,7 @@ const DataMappingTab: React.FC = () => {
               sourceFields={[]}  // These would come from your API in a real implementation
               destinationFields={[]}  // These would come from your API in a real implementation
               onMappingsApplied={refreshFieldMappings}
+              isProcessing={isProcessing}
             />
           </div>
         )}
