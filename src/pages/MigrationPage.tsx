@@ -108,7 +108,7 @@ const MigrationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="py-6 md:py-8">
         <Container>

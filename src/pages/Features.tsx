@@ -8,7 +8,7 @@ import FeaturesCta from "@/components/features/FeaturesCta";
 
 const Features = () => {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-300">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-6 md:pt-8">
         <FeaturesHero />
