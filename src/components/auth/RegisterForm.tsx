@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Card,
   CardContent,
@@ -25,6 +26,8 @@ const RegisterForm = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [signupStatus, setSignupStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,23 +39,41 @@ const RegisterForm = () => {
 
     try {
       setIsLoading(true);
+      setSignupStatus("idle");
+      setErrorMessage("");
+      
       const { error } = await signUp(email, password);
 
       if (error) {
+        console.error("Signup error:", error);
+        setSignupStatus("error");
+        setErrorMessage(error.message);
         toast.error(error.message);
         return;
       }
 
-      toast.success("Check your email for the confirmation link!");
-      
       // Update user metadata with full name
-      await supabase.auth.updateUser({
+      const { error: metadataError } = await supabase.auth.updateUser({
         data: { full_name: fullName }
       });
       
-      // Redirect to welcome page instead of home
-      navigate("/welcome");
+      if (metadataError) {
+        console.error("Error updating user metadata:", metadataError);
+        // Non-critical error, continue with signup flow
+      }
+      
+      setSignupStatus("success");
+      toast.success("Account created successfully! Check your email for confirmation.");
+      
+      // After a delay, redirect to welcome page
+      setTimeout(() => {
+        navigate("/welcome");
+      }, 1500);
+      
     } catch (error: any) {
+      console.error("Unexpected error during signup:", error);
+      setSignupStatus("error");
+      setErrorMessage(error.message || "Something went wrong");
       toast.error(error.message || "Something went wrong");
     } finally {
       setIsLoading(false);
@@ -65,14 +86,16 @@ const RegisterForm = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/welcome`, // Redirect to welcome page
+          redirectTo: `${window.location.origin}/welcome`,
         }
       });
 
       if (error) {
+        console.error("Google signin error:", error);
         toast.error(error.message);
       }
     } catch (error: any) {
+      console.error("Unexpected error during Google signin:", error);
       toast.error(error.message || "Something went wrong");
     } finally {
       setIsLoading(false);
@@ -86,6 +109,22 @@ const RegisterForm = () => {
         <CardDescription>Enter your details to create a new account</CardDescription>
       </CardHeader>
       <CardContent>
+        {signupStatus === "success" && (
+          <Alert className="mb-4 bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+            <AlertDescription>
+              Account created successfully! Check your email for confirmation.
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {signupStatus === "error" && (
+          <Alert className="mb-4 bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400">
+            <AlertDescription>
+              {errorMessage || "Error creating account. Please try again."}
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <form onSubmit={handleSignUp} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="full-name">Full Name</Label>
