@@ -49,8 +49,7 @@ const MigrationPage: React.FC = () => {
     id: 'obj-123',
     name: 'Contact',
     project_id: 'proj-456',
-    source_object: 'Contact',
-    destination_object: 'Contact',
+    // Removed source_object and destination_object which don't exist in the type
     status: 'in_progress',
     created_at: new Date().toISOString()
   };
@@ -64,7 +63,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'FirstName',
       destination_field: 'first_name',
       is_required: true,
-      data_type: 'string',
+      // Removed data_type which doesn't exist in the type
       created_at: new Date().toISOString()
     },
     {
@@ -74,7 +73,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'LastName',
       destination_field: 'last_name',
       is_required: true,
-      data_type: 'string',
+      // Removed data_type which doesn't exist in the type
       created_at: new Date().toISOString()
     },
     {
@@ -84,7 +83,7 @@ const MigrationPage: React.FC = () => {
       source_field: 'Email',
       destination_field: 'email',
       is_required: false,
-      data_type: 'string',
+      // Removed data_type which doesn't exist in the type
       created_at: new Date().toISOString()
     }
   ]);
