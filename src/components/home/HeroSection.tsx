@@ -1,11 +1,10 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import FadeIn from "@/components/animations/FadeIn";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Info } from "lucide-react";
 import { useUserOnboarding } from "@/components/onboarding/UserOnboardingProvider";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth";
 
 const HeroSection = () => {
   const navigate = useNavigate();
