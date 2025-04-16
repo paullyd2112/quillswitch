@@ -7,8 +7,8 @@ import {
   Alert, 
   AlertDescription 
 } from "@/components/ui/alert";
-import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Github, Mail } from "lucide-react";
 
 interface FormStatusAlertProps {
   status: "idle" | "success" | "error";
