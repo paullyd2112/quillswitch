@@ -10,11 +10,13 @@ export const MappingTab = () => {
   const { objectType, fieldMappings, setFieldMappings } = useMigration();
 
   const handleUpdateMapping = (mappingId: string, updates: Partial<FieldMapping>) => {
-    setFieldMappings((prevMappings: FieldMapping[]) => 
-      prevMappings.map(mapping => 
-        mapping.id === mappingId ? { ...mapping, ...updates } : mapping
-      )
+    // Create a new array with the updated mapping
+    const updatedMappings = fieldMappings.map(mapping => 
+      mapping.id === mappingId ? { ...mapping, ...updates } : mapping
     );
+    
+    // Set the new array directly
+    setFieldMappings(updatedMappings);
   };
 
   return (
