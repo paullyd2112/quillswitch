@@ -1,16 +1,8 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
-
-export interface NavLink {
-  label: string;
-  href: string;
-  icon?: React.ReactNode;
-}
+import { Link } from "react-router-dom";
+import { NavLink } from "./navConfig";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -19,15 +11,6 @@ interface MobileMenuProps {
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-  
-  const handleLogout = async () => {
-    await signOut();
-    navigate("/");
-    onClose();
-  };
-  
   return (
     <div 
       className={cn(
@@ -50,20 +33,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
               <span>{link.label}</span>
             </Link>
           ))}
-          
-          {user && (
-            <>
-              <div className="my-2 border-t border-slate-800"></div>
-              <Button
-                variant="ghost"
-                className="flex w-full items-center justify-start py-3 px-4 rounded-md text-red-400 hover:bg-slate-800 hover:text-red-300"
-                onClick={handleLogout}
-              >
-                <LogOut className="mr-3" size={18} />
-                <span>Log out</span>
-              </Button>
-            </>
-          )}
         </nav>
       </div>
     </div>

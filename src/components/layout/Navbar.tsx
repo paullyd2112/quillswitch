@@ -73,7 +73,7 @@ const Navbar = () => {
         "fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-200", 
         isScrolled 
           ? "bg-slate-950/95 backdrop-blur-md border-b border-slate-800" 
-          : "bg-transparent" // Changed to ensure initial state is transparent
+          : "bg-transparent" // Explicitly set to transparent for initial state
       )}
     >
       <div className="container px-4 md:px-6">
