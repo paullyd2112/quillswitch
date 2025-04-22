@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Home, Bolt, Layers, FileBarChart2, FileText, HelpCircle, Settings, Users, BarChart3 } from "lucide-react";
-import { NavLink } from "./MobileMenu";
+import { NavLink } from "./types";
 
 const getNavLinks = (user: any): NavLink[] => {
   // Links that are always shown
