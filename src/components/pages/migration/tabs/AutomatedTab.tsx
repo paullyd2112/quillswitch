@@ -27,10 +27,7 @@ export const AutomatedTab = () => {
       setErrorType('api_key');
       setErrorMessage("Non-functional migration: Invalid API Keys. Please update your credentials in Settings.");
       
-      toast({
-        description: "Invalid API keys detected. Migration cannot proceed.",
-        variant: "destructive"
-      });
+      toast.error("Invalid API keys detected. Migration cannot proceed.");
       return;
     }
     
@@ -40,10 +37,7 @@ export const AutomatedTab = () => {
       setErrorType('general');
       setErrorMessage("Migration validation failed. Please check your configuration and try again.");
       
-      toast({
-        description: "Migration validation failed. Please check your configuration and try again.",
-        variant: "destructive"
-      });
+      toast.error("Migration validation failed. Please check your configuration and try again.");
     }, 2000);
   };
 

@@ -10,7 +10,7 @@ export const MappingTab = () => {
   const { objectType, fieldMappings, setFieldMappings } = useMigration();
 
   const handleUpdateMapping = (mappingId: string, updates: Partial<FieldMapping>) => {
-    setFieldMappings(prevMappings => 
+    setFieldMappings((prevMappings: FieldMapping[]) => 
       prevMappings.map(mapping => 
         mapping.id === mappingId ? { ...mapping, ...updates } : mapping
       )
