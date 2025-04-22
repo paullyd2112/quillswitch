@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -72,8 +73,9 @@ const Navbar = () => {
         "fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-200", 
         isScrolled 
           ? "bg-slate-950/95 backdrop-blur-md border-b border-slate-800" 
-          : "bg-transparent"
+          : "bg-slate-950 md:bg-transparent"
       )}
+      style={{WebkitBackfaceVisibility: "hidden"}}
     >
       <div className="container px-4 md:px-6">
         <div className="flex h-16 items-center justify-between">
