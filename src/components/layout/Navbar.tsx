@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -69,10 +70,10 @@ const Navbar = () => {
   return (
     <header
       className={cn(
-        "fixed top-0 w-full z-[100] transition-all duration-200", 
+        "top-0 w-full z-[100] transition-all duration-200", 
         isScrolled 
           ? "bg-white/95 backdrop-blur-md shadow-sm dark:bg-slate-900/95 dark:border-b dark:border-slate-800" 
-          : "bg-white dark:bg-slate-900"
+          : "bg-transparent dark:bg-transparent"
       )}
       style={{ position: 'sticky' }}
     >
