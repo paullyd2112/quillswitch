@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from "@/components/ui/toaster";
@@ -64,7 +63,7 @@ function App() {
   }, []);
   
   return (
-    <ThemeProvider defaultTheme="dark" attribute="class">
+    <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AuthProvider>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -10,7 +9,6 @@ import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
 import getNavLinks from "./navConfig";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 
 // Import performance utilities
@@ -91,9 +89,6 @@ const Navbar = () => {
           <DesktopNav navLinks={navLinks} />
           
           <div className="flex items-center gap-2">
-            {/* Theme Toggle */}
-            <ThemeToggle />
-            
             {/* Auth Buttons Component */}
             <AuthButtons />
             
