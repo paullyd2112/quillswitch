@@ -31,7 +31,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
   return (
     <div 
       className={cn(
-        "fixed inset-x-0 top-16 bottom-0 z-[99] flex flex-col bg-white shadow-lg transition-transform duration-300 ease-in-out",
+        "fixed inset-x-0 top-16 bottom-0 z-[99] flex flex-col bg-slate-950 border-t border-slate-800 shadow-lg transition-transform duration-300 ease-in-out",
         isOpen ? "translate-y-0" : "-translate-y-full"
       )}
     >
@@ -42,10 +42,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
               key={link.href}
               to={link.href}
               onClick={onClose}
-              className="flex items-center py-3 px-4 rounded-md hover:bg-gray-100"
+              className="flex items-center py-3 px-4 rounded-md text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
             >
               {link.icon && (
-                <span className="mr-3 text-gray-500">{link.icon}</span>
+                <span className="mr-3 text-slate-400">{link.icon}</span>
               )}
               <span>{link.label}</span>
             </Link>
@@ -53,10 +53,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
           
           {user && (
             <>
-              <div className="my-2 border-t border-gray-200"></div>
+              <div className="my-2 border-t border-slate-800"></div>
               <Button
                 variant="ghost"
-                className="flex w-full items-center justify-start py-3 px-4 rounded-md hover:bg-gray-100 text-red-600"
+                className="flex w-full items-center justify-start py-3 px-4 rounded-md text-red-400 hover:bg-slate-800 hover:text-red-300"
                 onClick={handleLogout}
               >
                 <LogOut className="mr-3" size={18} />
