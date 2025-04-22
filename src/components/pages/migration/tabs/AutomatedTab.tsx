@@ -2,7 +2,7 @@
 import React from 'react';
 import { useMigration } from '../MigrationContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { AutomatedMappingPanel } from '@/components/migration/AutomatedMappingPanel';
+import AutomatedMappingPanel from '@/components/migration/AutomatedMappingPanel';
 import { validateApiKeys } from '@/components/pages/migration';
 import { toast } from 'sonner';
 
@@ -28,7 +28,6 @@ export const AutomatedTab = () => {
       setErrorMessage("Non-functional migration: Invalid API Keys. Please update your credentials in Settings.");
       
       toast({
-        title: "Migration Error",
         description: "Invalid API keys detected. Migration cannot proceed.",
         variant: "destructive"
       });
@@ -42,7 +41,6 @@ export const AutomatedTab = () => {
       setErrorMessage("Migration validation failed. Please check your configuration and try again.");
       
       toast({
-        title: "Migration Error",
         description: "Migration validation failed. Please check your configuration and try again.",
         variant: "destructive"
       });
