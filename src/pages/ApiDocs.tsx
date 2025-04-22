@@ -1,6 +1,8 @@
+
 import React, { useState } from "react";
 import ContentSection from "@/components/layout/ContentSection";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
+import BaseLayout from "@/components/layout/BaseLayout";
 import ApiDocsHeader from "@/components/api-docs/ApiDocsHeader";
 import ApiDocsSidebar from "@/components/api-docs/ApiDocsSidebar";
 import ApiDocsTabs from "@/components/api-docs/ApiDocsTabs";
@@ -9,7 +11,7 @@ const ApiDocs = () => {
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
+    <BaseLayout className="bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
       <ApiDocsHeader />
       
       <ContentSection className="py-12 pb-32">
@@ -31,7 +33,7 @@ const ApiDocs = () => {
           </div>
         </div>
       </ContentSection>
-    </div>
+    </BaseLayout>
   );
 };
 

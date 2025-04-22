@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import ContentSection from "@/components/layout/ContentSection";
+import BaseLayout from "@/components/layout/BaseLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { BookOpen, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Search, BookOpen } from "lucide-react";
 import KnowledgeBaseCategory from "@/components/resources/KnowledgeBaseCategory";
 import { knowledgeBaseData } from "@/components/resources/knowledgeBaseData";
 
@@ -25,7 +26,7 @@ const KnowledgeBase = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-background">
+    <BaseLayout>
       <div className="pt-8">
         <ContentSection 
           title="Knowledge Base"
@@ -114,7 +115,7 @@ const KnowledgeBase = () => {
           )}
         </ContentSection>
       </div>
-    </div>
+    </BaseLayout>
   );
 };
 

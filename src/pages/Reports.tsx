@@ -1,18 +1,18 @@
 import React from "react";
 import ContentSection from "@/components/layout/ContentSection";
+import BaseLayout from "@/components/layout/BaseLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileBarChart } from "lucide-react";
 
 const Reports = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="pt-8">
-        <ContentSection 
-          title="Reports"
-          description="View and generate detailed reports on your migration processes."
-          centered
-        >
-          <div className="grid gap-8 mt-10">
+    <BaseLayout>
+      <ContentSection 
+        title="Reports"
+        description="View and generate detailed reports on your migration processes."
+        centered
+      >
+        <div className="grid gap-8 mt-10">
             <Card className="border border-border shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -66,9 +66,8 @@ const Reports = () => {
               </CardContent>
             </Card>
           </div>
-        </ContentSection>
-      </div>
-    </div>
+      </ContentSection>
+    </BaseLayout>
   );
 };
 
