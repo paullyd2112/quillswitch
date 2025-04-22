@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import FadeIn from "@/components/animations/FadeIn";
@@ -12,10 +13,10 @@ const HeroSection = () => {
   const { showOnboardingTour } = useUserOnboarding();
   
   return (
-    <div className="relative px-4 py-20 md:py-28 lg:py-32 -mt-16 overflow-hidden">
+    <div className="relative px-4 py-20 md:py-28 lg:py-32 overflow-hidden">
       {/* Background styling */}
       <div
-        className="absolute inset-0 w-full h-full bg-gradient-to-b from-indigo-50/40 to-white dark:from-gray-900/40 dark:to-gray-950"
+        className="absolute inset-0 w-full h-full bg-gradient-to-b from-indigo-50/5 to-slate-950/50"
         aria-hidden="true"
       />
       
@@ -24,7 +25,7 @@ const HeroSection = () => {
         <div className="mx-auto max-w-3xl text-center">
           <FadeIn delay="none">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              <span className="block text-gray-900 dark:text-white">
+              <span className="block text-white">
                 Simplified CRM Migration
               </span>
               <span className="block text-brand-600 dark:text-brand-400 mt-1">
@@ -34,7 +35,7 @@ const HeroSection = () => {
           </FadeIn>
           
           <FadeIn delay="100">
-            <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto">
+            <p className="mt-6 text-lg text-gray-300 leading-relaxed max-w-2xl mx-auto">
               QuillSwitch helps you effortlessly migrate between CRM systems with
               intelligent data mapping, validation, and transformation tools.
             </p>

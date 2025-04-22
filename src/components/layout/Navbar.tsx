@@ -70,10 +70,10 @@ const Navbar = () => {
   return (
     <header
       className={cn(
-        "sticky top-0 w-full z-[100] transition-all duration-200", 
+        "fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-200", 
         isScrolled 
-          ? "bg-white/95 backdrop-blur-md shadow-sm dark:bg-slate-900/95 dark:border-b dark:border-slate-800" 
-          : "bg-transparent dark:bg-transparent"
+          ? "bg-slate-900/95 backdrop-blur-md border-b border-slate-800" 
+          : "bg-transparent"
       )}
     >
       <div className="container px-4 md:px-6">
@@ -81,7 +81,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-semibold">Q</div>
-              <span className="font-medium text-lg dark:text-white">QuillSwitch</span>
+              <span className="font-medium text-lg text-white">QuillSwitch</span>
             </Link>
           </div>
           
@@ -98,7 +98,7 @@ const Navbar = () => {
                 size="icon"
                 onClick={toggleMenu}
                 aria-label="Toggle Menu"
-                className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 dark:text-white"
+                className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 text-white"
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>

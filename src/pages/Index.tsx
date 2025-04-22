@@ -7,11 +7,13 @@ import CtaSection from "@/components/home/CtaSection";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300 hero-gradient">
+    <div className="min-h-screen bg-slate-950 text-slate-300">
       <Navbar />
-      <HeroSection />
-      <FeaturesSection />
-      <CtaSection />
+      <div className="pt-16 hero-gradient">
+        <HeroSection />
+        <FeaturesSection />
+        <CtaSection />
+      </div>
     </div>
   );
 };
