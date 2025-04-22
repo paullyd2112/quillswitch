@@ -10,7 +10,7 @@ import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
 import getNavLinks from "./navConfig";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth";
 
 // Import performance utilities
 import { throttle } from "@/utils/performance";
@@ -73,9 +73,8 @@ const Navbar = () => {
         "fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-200", 
         isScrolled 
           ? "bg-slate-950/95 backdrop-blur-md border-b border-slate-800" 
-          : "bg-slate-950 md:bg-transparent"
+          : "bg-slate-950"
       )}
-      style={{WebkitBackfaceVisibility: "hidden"}}
     >
       <div className="container px-4 md:px-6">
         <div className="flex h-16 items-center justify-between">
