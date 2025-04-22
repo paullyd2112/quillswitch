@@ -6,15 +6,12 @@ import FeaturesSection from "@/components/home/FeaturesSection";
 import CtaSection from "@/components/home/CtaSection";
 
 const Index = () => {
-  // Apply dark background to both html and body to ensure full coverage
   useEffect(() => {
-    document.documentElement.style.backgroundColor = "#020617"; // slate-950
     document.body.style.backgroundColor = "#020617"; // slate-950
     document.body.style.margin = "0";
     document.body.style.padding = "0";
-    
+
     return () => {
-      document.documentElement.style.backgroundColor = "";
       document.body.style.backgroundColor = "";
       document.body.style.margin = "";
       document.body.style.padding = "";
