@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -133,7 +132,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="container py-10">
+    <div className="container py-8">
       <div className="max-w-3xl mx-auto">
         <div className="flex flex-col md:flex-row items-start gap-8 mb-10">
           <div className="flex flex-col items-center space-y-4">

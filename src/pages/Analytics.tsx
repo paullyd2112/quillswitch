@@ -1,6 +1,4 @@
-
 import React from "react";
-import Navbar from "@/components/layout/Navbar";
 import { BarChart2, LineChart, PieChart, TrendingUp, Users, Database, Clock, Zap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
@@ -10,8 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const Analytics = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      
       <main className="pt-8 pb-16">
         <Container>
           <PageHeader 

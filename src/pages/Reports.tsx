@@ -1,6 +1,4 @@
-
 import React from "react";
-import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileBarChart } from "lucide-react";
@@ -8,8 +6,7 @@ import { FileBarChart } from "lucide-react";
 const Reports = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      <div className="pt-16">
+      <div className="pt-8">
         <ContentSection 
           title="Reports"
           description="View and generate detailed reports on your migration processes."

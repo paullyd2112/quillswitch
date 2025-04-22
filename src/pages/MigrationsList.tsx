@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import FadeIn from "@/components/animations/FadeIn";
 import { Button } from "@/components/ui/button";
@@ -96,9 +95,7 @@ const MigrationsList = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
-      <Navbar />
-      
-      <section className="pt-32 pb-20 md:pt-40 relative">
+      <section className="pt-16 pb-20 relative">
         <div className="container px-4 md:px-6">
           <FadeIn>
             <div className="flex flex-wrap justify-between items-center gap-4 mb-8">

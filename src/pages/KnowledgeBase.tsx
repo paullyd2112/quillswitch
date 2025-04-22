@@ -1,6 +1,4 @@
-
 import React, { useState } from "react";
-import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -28,8 +26,7 @@ const KnowledgeBase = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      <div className="pt-16">
+      <div className="pt-8">
         <ContentSection 
           title="Knowledge Base"
           description="Access our comprehensive collection of articles, guides, and documentation to better understand migration concepts and platform features."

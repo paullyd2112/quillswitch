@@ -1,7 +1,5 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronRight, BookOpen, ArrowLeft } from "lucide-react";
@@ -52,8 +50,7 @@ const KnowledgeArticle = () => {
   if (!article) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="pt-16">
+        <div className="pt-8">
           <ContentSection centered>
             <Card>
               <CardContent className="p-6">
@@ -71,8 +68,7 @@ const KnowledgeArticle = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      <div className="pt-16">
+      <div className="pt-8">
         <ContentSection>
           <div className="max-w-4xl mx-auto">
             {/* Breadcrumbs */}

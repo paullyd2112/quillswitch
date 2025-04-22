@@ -1,6 +1,4 @@
-
 import React, { useState } from "react";
-import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import ApiDocsHeader from "@/components/api-docs/ApiDocsHeader";
@@ -12,8 +10,6 @@ const ApiDocs = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
-      <Navbar />
-      
       <ApiDocsHeader />
       
       <ContentSection className="py-12 pb-32">

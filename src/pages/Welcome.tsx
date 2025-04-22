@@ -1,6 +1,4 @@
-
 import React from "react";
-import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import OnboardingTemplatesList from "@/components/onboarding/OnboardingTemplatesList";
 import { useUserOnboarding } from "@/components/onboarding/UserOnboardingProvider";
@@ -13,9 +11,7 @@ const Welcome: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      
-      <ContentSection className="pt-28 pb-20">
+      <ContentSection className="pt-16 pb-20">
         <FadeIn>
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">

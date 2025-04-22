@@ -1,6 +1,4 @@
-
 import React, { useState } from "react";
-import Navbar from "@/components/layout/Navbar";
 import PricingCalculator from "@/components/pricing/PricingCalculator";
 import ContactPricingCalculator from "@/components/pricing/ContactPricingCalculator";
 import { Calculator, DollarSign, Users, Check, Sparkles } from "lucide-react";
@@ -24,9 +22,7 @@ const PricingEstimator: React.FC = () => {
           <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />
         </div>
         
-        <Navbar />
-        
-        <div className="container relative mx-auto px-4 py-16 pt-28 z-10">
+        <div className="container relative mx-auto px-4 py-8 pt-16 z-10">
           <div className="max-w-4xl mx-auto space-y-12">
             {/* Hero section */}
             <FadeIn>

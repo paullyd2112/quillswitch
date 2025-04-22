@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
 import ContentSection from "@/components/layout/ContentSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileSettings from "@/components/settings/ProfileSettings";
@@ -27,8 +25,7 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      <div className="pt-16">
+      <div className="pt-8">
         <ContentSection 
           title="Settings"
           description="Manage your account preferences and configurations."
