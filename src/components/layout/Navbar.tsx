@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -72,7 +71,7 @@ const Navbar = () => {
       className={cn(
         "fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-200", 
         isScrolled 
-          ? "bg-slate-900/95 backdrop-blur-md border-b border-slate-800" 
+          ? "bg-slate-950/95 backdrop-blur-md border-b border-slate-800" 
           : "bg-transparent"
       )}
     >
