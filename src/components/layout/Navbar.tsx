@@ -45,6 +45,13 @@ const Navbar = () => {
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
+    
+    // Also close any open dropdowns when route changes
+    document.dispatchEvent(new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window
+    }));
   }, [location.pathname]);
   
   const toggleMenu = () => {
