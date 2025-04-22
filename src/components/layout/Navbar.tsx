@@ -45,13 +45,6 @@ const Navbar = () => {
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
-    
-    // Also close any open dropdowns when route changes
-    document.dispatchEvent(new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-      view: window
-    }));
   }, [location.pathname]);
   
   const toggleMenu = () => {
@@ -68,10 +61,10 @@ const Navbar = () => {
       )}
     >
       <div className="container px-4 md:px-6">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-24 items-center justify-between"> {/* Increased from h-16 to h-24 */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-semibold">Q</div>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-semibold">Q</div>
               <span className="font-medium text-lg text-white">QuillSwitch</span>
             </Link>
           </div>
