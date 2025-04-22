@@ -56,15 +56,6 @@ const Navbar = () => {
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-    
-    // If we're closing the menu, also close any open dropdowns
-    if (isMenuOpen) {
-      document.dispatchEvent(new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-      }));
-    }
   };
   
   return (
