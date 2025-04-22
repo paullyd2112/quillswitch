@@ -1,25 +1,23 @@
 
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
-import HeroSection from "@/components/home/HeroSection";
-import FeaturesSection from "@/components/home/FeaturesSection";
-import CtaSection from "@/components/home/CtaSection";
+import HeroSection from "@/components/landing/HeroSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import CtaSection from "@/components/landing/CtaSection";
+import Footer from "@/components/layout/Footer";
 
-const Index = () => {
+const LandingPage = () => {
   return (
-    <>
-      <div className="fixed inset-0 bg-slate-950" aria-hidden="true" />
-      <div className="fixed inset-0 hero-gradient" aria-hidden="true" />
-      <div className="relative z-10 min-h-screen">
-        <Navbar />
-        <main>
-          <HeroSection />
-          <FeaturesSection />
-          <CtaSection />
-        </main>
-      </div>
-    </>
+    <div className="bg-slate-950 text-white min-h-screen">
+      <Navbar />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <CtaSection />
+      </main>
+      <Footer />
+    </div>
   );
 };
 
-export default Index;
+export default LandingPage;

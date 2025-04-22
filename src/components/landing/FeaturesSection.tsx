@@ -1,0 +1,74 @@
+
+import React from "react";
+import { Database, Shield, Zap, GitMerge, ListChecks, BellRing } from "lucide-react";
+
+const features = [
+  {
+    icon: Database,
+    title: "Comprehensive Data Transfer",
+    description: "Migrate contacts, opportunities, and custom objects seamlessly across CRM platforms."
+  },
+  {
+    icon: Shield,
+    title: "Enterprise-Grade Security",
+    description: "End-to-end encryption and compliance with GDPR, CCPA, and other data protection standards."
+  },
+  {
+    icon: Zap,
+    title: "High-Performance Migration",
+    description: "Optimize migration speed with parallel processing and intelligent data handling."
+  },
+  {
+    icon: GitMerge,
+    title: "Intelligent Field Mapping",
+    description: "AI-powered field matching with 95%+ accuracy to minimize manual intervention."
+  },
+  {
+    icon: ListChecks,
+    title: "Data Validation",
+    description: "Comprehensive data quality checks and transformation rules to ensure clean migrations."
+  },
+  {
+    icon: BellRing,
+    title: "Real-time Notifications",
+    description: "Stay informed with detailed migration progress and instant alerts."
+  }
+];
+
+const FeaturesSection = () => {
+  return (
+    <section className="py-24 px-4 md:px-8 bg-slate-900/50">
+      <div className="container max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4 text-white">
+            Why Choose QuillSwitch?
+          </h2>
+          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+            We've built a comprehensive migration platform that addresses the most complex CRM transition challenges.
+          </p>
+        </div>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => (
+            <div 
+              key={index} 
+              className="bg-slate-800 p-6 rounded-lg border border-slate-700 hover:border-brand-600 transition-all duration-300"
+            >
+              <div className="mb-4">
+                <feature.icon size={42} className="text-brand-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 text-white">
+                {feature.title}
+              </h3>
+              <p className="text-slate-400">
+                {feature.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default FeaturesSection;
