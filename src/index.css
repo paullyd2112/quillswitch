@@ -88,8 +88,7 @@
     @apply border-border;
   }
 
-  /* Added these critical base styles to eliminate all white space */
-  html, body {
+  html, body, #root {
     @apply bg-slate-950 m-0 p-0 min-h-screen w-full;
     overflow-x: hidden;
   }
