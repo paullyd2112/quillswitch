@@ -14,7 +14,6 @@ export const findExactMatches = (
   );
   
   if (exactMatch) {
-    // Find which category/type this is if possible
     let isRequired = false;
     
     for (const [standard, info] of Object.entries(commonMappings)) {

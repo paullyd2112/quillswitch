@@ -22,27 +22,17 @@ export function calculateStringSimilarity(str1: string, str2: string): number {
 }
 
 /**
- * Calculates the Levenshtein distance between two strings.
- * The Levenshtein distance is a measure of the difference between two strings.
- * It represents the minimum number of single-character edits required to change one string into the other.
+ * Calculates the Levenshtein distance between two strings
  */
 function levenshteinDistance(str1: string, str2: string): number {
   const m = str1.length;
   const n = str2.length;
   
-  // Create a matrix of size (m+1) x (n+1)
   const dp: number[][] = Array(m + 1).fill(0).map(() => Array(n + 1).fill(0));
   
-  // Initialize the first row and column
-  for (let i = 0; i <= m; i++) {
-    dp[i][0] = i;
-  }
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
   
-  for (let j = 0; j <= n; j++) {
-    dp[0][j] = j;
-  }
-  
-  // Fill the rest of the matrix
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
       const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
@@ -59,33 +49,23 @@ function levenshteinDistance(str1: string, str2: string): number {
 
 /**
  * Compares two strings and returns whether they represent the same concept
- * after normalizing the strings by removing common prefixes/suffixes and separators.
  */
 export function areFieldsConceptuallySimilar(source: string, target: string): boolean {
-  // Normalize strings: lowercase, remove common prefixes/suffixes
+  // Normalize strings
   const normalizedSource = normalizeFieldName(source);
   const normalizedTarget = normalizeFieldName(target);
   
-  // Direct comparison after normalization
   if (normalizedSource === normalizedTarget) return true;
   
-  // Check similarity score
   const similarityScore = calculateStringSimilarity(normalizedSource, normalizedTarget);
   return similarityScore >= 0.8;
 }
 
-/**
- * Normalizes a field name by:
- * 1. Converting to lowercase
- * 2. Removing common prefixes like 'the_', 'a_', etc.
- * 3. Removing separators like '_', '-', spaces
- * 4. Removing common field suffixes like '_id', '_date', etc.
- */
 function normalizeFieldName(name: string): string {
   let result = name.toLowerCase();
   
-  // Remove common field types/prefixes
-  const prefixesToRemove = ['the_', 'a_', 'is_', 'has_', 'should_', 'can_', 'will_', 'did_'];
+  // Remove common prefixes
+  const prefixesToRemove = ['the_', 'a_', 'is_', 'has_'];
   for (const prefix of prefixesToRemove) {
     if (result.startsWith(prefix)) {
       result = result.slice(prefix.length);
@@ -93,11 +73,11 @@ function normalizeFieldName(name: string): string {
     }
   }
   
-  // Replace all separators with nothing
+  // Replace separators
   result = result.replace(/[_\-\s.]/g, '');
   
   // Remove common suffixes
-  const suffixesToRemove = ['id', 'date', 'time', 'name', 'type', 'value', 'count', 'number', 'code'];
+  const suffixesToRemove = ['id', 'date', 'name', 'type'];
   for (const suffix of suffixesToRemove) {
     if (result.endsWith(suffix)) {
       result = result.slice(0, -suffix.length);
