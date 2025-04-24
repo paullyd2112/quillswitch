@@ -1,14 +1,10 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const CtaSection = () => {
   const navigate = useNavigate();
-
-  return (
-    <section className="py-24 px-4 md:px-8 bg-brand-600/10">
+  return <section className="py-24 px-4 md:px-8 bg-brand-600/10">
       <div className="container max-w-6xl mx-auto text-center">
         <h2 className="text-4xl font-bold mb-6 text-white">
           Ready to Simplify Your CRM Migration?
@@ -19,25 +15,14 @@ const CtaSection = () => {
         </p>
         
         <div className="flex justify-center gap-4">
-          <Button 
-            size="lg" 
-            onClick={() => navigate("/migrations/setup")}
-            className="gap-2 bg-brand-600 hover:bg-brand-700"
-          >
+          <Button size="lg" onClick={() => navigate("/migrations/setup")} className="gap-2 bg-brand-600 hover:bg-brand-700">
             Start Migration <ArrowRight size={16} />
           </Button>
-          <Button 
-            size="lg" 
-            variant="outline"
-            onClick={() => navigate("/features")}
-            className="gap-2 border-slate-700 text-white hover:bg-slate-800"
-          >
+          <Button size="lg" variant="outline" onClick={() => navigate("/features")} className="gap-2 border-slate-700 hover:bg-slate-800 text-gray-300">
             View Features
           </Button>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CtaSection;
