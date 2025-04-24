@@ -2,11 +2,11 @@
 import { FileText, Star, MessageSquare, LayoutDashboard, CreditCard } from "lucide-react";
 
 export const topNavItems = [
-  { name: "Features", href: "/features" },
-  { name: "Pricing", href: "/pricing" },
-  { name: "Resources", href: "/resources" },
-  { name: "API Docs", href: "/api" },
-  { name: "Data Loading", href: "/data-loading" }
+  { label: "Features", href: "/features" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Resources", href: "/resources" },
+  { label: "API Docs", href: "/api" },
+  { label: "Data Loading", href: "/data-loading" }
 ];
 
 export const sidebarNavItems = [
