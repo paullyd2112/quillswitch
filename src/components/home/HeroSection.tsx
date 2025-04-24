@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import FadeIn from "@/components/animations/FadeIn";
@@ -54,7 +55,7 @@ const HeroSection = () => {
                 variant="outline" 
                 size="lg"
                 onClick={user ? showOnboardingTour : () => navigate("/features")}
-                className="gap-2 px-8 bg-transparent hover:bg-slate-800 text-white border-slate-300/50 hover:border-slate-400/60"
+                className="gap-2 px-8 text-slate-900 border-slate-300 hover:bg-slate-100 hover:border-slate-400"
               >
                 {user ? "Take a Tour" : "Learn More"} <Info size={16} />
               </Button>
@@ -67,3 +68,4 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
+
