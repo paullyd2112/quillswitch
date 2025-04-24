@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -24,11 +23,21 @@ export class DataLoadingService {
   }
 
   async initializeJob() {
+    // Get current user session to get the user ID
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session?.user) {
+      throw new Error("User must be authenticated to load data");
+    }
+    
+    const userId = session.user.id;
+    
     const { data, error } = await supabase
       .from('data_loading_jobs')
       .insert({
         source_type: this.sourceType,
-        status: 'initializing'
+        status: 'initializing',
+        user_id: userId
       })
       .select()
       .single();

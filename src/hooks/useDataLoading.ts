@@ -1,6 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { DataLoadingService } from '@/services/dataLoading/DataLoadingService';
+import { supabase } from '@/integrations/supabase/client';
 
 export function useDataLoading(sourceType: string) {
   const [isLoading, setIsLoading] = useState(false);
