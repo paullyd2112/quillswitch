@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import FadeIn from "@/components/animations/FadeIn";
@@ -20,7 +19,6 @@ const HeroSection = () => {
         aria-hidden="true"
       />
       
-      {/* Hero content */}
       <div className="container relative">
         <div className="mx-auto max-w-3xl text-center">
           <FadeIn delay="none">
@@ -46,7 +44,7 @@ const HeroSection = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate(user ? "/welcome" : "/auth")}
-                className="gap-2 px-8 bg-brand-500 hover:bg-brand-600"
+                className="gap-2 px-8 bg-slate-200/80 text-slate-900 hover:bg-slate-300/80"
               >
                 {user ? "Go to Dashboard" : "Get Started"} <ArrowRight size={16} />
               </Button>
@@ -55,7 +53,7 @@ const HeroSection = () => {
                 variant="outline" 
                 size="lg"
                 onClick={user ? showOnboardingTour : () => navigate("/features")}
-                className="gap-2 px-8 text-slate-900 border-slate-300 hover:bg-slate-100 hover:border-slate-400"
+                className="gap-2 px-8 bg-slate-200/80 text-slate-900 border-slate-300/50 hover:bg-slate-300/80 hover:border-slate-400/60"
               >
                 {user ? "Take a Tour" : "Learn More"} <Info size={16} />
               </Button>
@@ -68,4 +66,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-
