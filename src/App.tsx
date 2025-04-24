@@ -25,38 +25,41 @@ import Settings from './pages/Settings';
 import EnterpriseMigrationTest from './pages/EnterpriseMigrationTest';
 import LandingPage from './pages/Index';
 import { UserOnboardingProvider } from './components/onboarding/UserOnboardingProvider';
+import { AuthProvider } from './contexts/auth';
 
 function App() {
   return (
-    <UserOnboardingProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/setup" element={<SetupWizard />} />
-          <Route path="/migration" element={<MigrationPage />} />
-          <Route path="/migrations" element={<MigrationsList />} />
-          <Route path="/migrations/:id" element={<MigrationDashboard />} />
-          <Route path="/data-extraction" element={<DataExtraction />} />
-          <Route path="/vault" element={<ServiceCredentialVault />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/api-docs" element={<ApiDocs />} />
-          <Route path="/auth/*" element={<Auth />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/knowledge-base" element={<KnowledgeBase />} />
-          <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
-          <Route path="/pricing" element={<PricingEstimator />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </UserOnboardingProvider>
+    <AuthProvider>
+      <UserOnboardingProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/setup" element={<SetupWizard />} />
+            <Route path="/migration" element={<MigrationPage />} />
+            <Route path="/migrations" element={<MigrationsList />} />
+            <Route path="/migrations/:id" element={<MigrationDashboard />} />
+            <Route path="/data-extraction" element={<DataExtraction />} />
+            <Route path="/vault" element={<ServiceCredentialVault />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/api-docs" element={<ApiDocs />} />
+            <Route path="/auth/*" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/knowledge-base" element={<KnowledgeBase />} />
+            <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
+            <Route path="/pricing" element={<PricingEstimator />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      </UserOnboardingProvider>
+    </AuthProvider>
   );
 }
 
