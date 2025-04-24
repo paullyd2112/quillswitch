@@ -8,4 +8,6 @@ export { default as DataMappingVisualizer } from "./DataMappingVisualizer";
 export { default as FieldMappingsTable } from "./data-mapping/FieldMappingsTable";
 export { default as FieldMappingRow } from "./data-mapping/FieldMappingRow";
 export { default as MappingPreviewDialog } from "./data-mapping/MappingPreviewDialog";
+export { default as CrmArchitectureDiagram } from "./CrmArchitectureDiagram";
+export { default as InteractiveArchitectureView } from "./InteractiveArchitectureView";
 
