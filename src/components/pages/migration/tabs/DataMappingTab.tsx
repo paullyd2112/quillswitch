@@ -5,14 +5,14 @@ import FadeIn from "@/components/animations/FadeIn";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import { Button } from "@/components/ui/button";
 import { Database, Filter, Settings, Plus } from "lucide-react";
-import DataMappingVisualizer from "../../DataMappingVisualizer";
-import { AutomatedMappingPanel } from "../../automated-mapping";
+import DataMappingVisualizer from "@/components/migration/DataMappingVisualizer";
+import { AutomatedMappingPanel } from "@/components/migration/automated-mapping";
 import { FieldMapping } from "@/integrations/supabase/migrationTypes";
 import { toast } from "sonner";
 import { updateFieldMapping } from "@/services/migration/fieldMappingService";
 
 export const MappingTab = () => {
-  const { objectType, fieldMappings, setFieldMappings, projectId, isProcessing } = useMigration();
+  const { objectType, fieldMappings, setFieldMappings, isProcessing } = useMigration();
   const [isUpdating, setIsUpdating] = useState(false);
   
   const handleUpdateMapping = async (mappingId: string, updates: Partial<FieldMapping>) => {
@@ -75,7 +75,7 @@ export const MappingTab = () => {
           
           <AutomatedMappingPanel
             objectTypeId={objectType.id}
-            projectId={projectId}
+            projectId={objectType.project_id}
             sourceFields={[]}  // These would come from your API
             destinationFields={[]}  // These would come from your API
             onMappingsApplied={() => {
