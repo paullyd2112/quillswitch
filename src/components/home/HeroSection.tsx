@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import FadeIn from "@/components/animations/FadeIn";
@@ -54,7 +55,7 @@ const HeroSection = () => {
                 variant="outline" 
                 size="lg"
                 onClick={user ? showOnboardingTour : () => navigate("/features")}
-                className="gap-2 px-8 bg-white/10 hover:bg-white/20 text-white border-white/20 hover:border-white/30"
+                className="gap-2 px-8 bg-slate-800/30 hover:bg-slate-800/50 text-white border-slate-700/30 hover:border-slate-700/50"
               >
                 {user ? "Take a Tour" : "Learn More"} <Info size={16} />
               </Button>
