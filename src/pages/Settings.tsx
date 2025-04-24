@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import ContentSection from "@/components/layout/ContentSection";
@@ -9,6 +10,7 @@ import BillingSettings from "@/components/settings/BillingSettings";
 import ProjectSettings from "@/components/settings/ProjectSettings";
 import DataPrivacySettings from "@/components/settings/DataPrivacySettings";
 import ApiKeySettings from "@/components/settings/ApiKeySettings";
+import ServiceCredentialVault from "@/components/vault/ServiceCredentialVault";
 
 const Settings = () => {
   const [searchParams] = useSearchParams();
@@ -17,7 +19,7 @@ const Settings = () => {
   
   useEffect(() => {
     // Map URL parameters to tab values
-    const validTabs = ["profile", "security", "notifications", "billing", "projects", "api-keys", "data-privacy"];
+    const validTabs = ["profile", "security", "notifications", "billing", "projects", "api-keys", "data-privacy", "credentials"];
     if (tabFromUrl && validTabs.includes(tabFromUrl)) {
       setActiveTab(tabFromUrl);
     }
@@ -38,13 +40,14 @@ const Settings = () => {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="mb-8 grid w-full grid-cols-7 lg:grid-cols-7 md:grid-cols-4 sm:grid-cols-2">
+              <TabsList className="mb-8 grid w-full grid-cols-8 lg:grid-cols-8 md:grid-cols-4 sm:grid-cols-2">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
                 <TabsTrigger value="notifications">Notifications</TabsTrigger>
                 <TabsTrigger value="billing">Billing</TabsTrigger>
                 <TabsTrigger value="projects">Projects</TabsTrigger>
                 <TabsTrigger value="api-keys">API Keys</TabsTrigger>
+                <TabsTrigger value="credentials">Credential Vault</TabsTrigger>
                 <TabsTrigger value="data-privacy">Data & Privacy</TabsTrigger>
               </TabsList>
               
@@ -70,6 +73,10 @@ const Settings = () => {
               
               <TabsContent value="api-keys" className="space-y-4">
                 <ApiKeySettings />
+              </TabsContent>
+              
+              <TabsContent value="credentials" className="space-y-4">
+                <ServiceCredentialVault />
               </TabsContent>
               
               <TabsContent value="data-privacy" className="space-y-4">

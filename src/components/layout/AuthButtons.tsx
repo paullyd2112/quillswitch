@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut, Settings, Shield } from "lucide-react";
+import { User, LogOut, Settings, Shield, KeyRound } from "lucide-react";
 
 const AuthButtons = () => {
   const navigate = useNavigate();
@@ -49,6 +49,11 @@ const AuthButtons = () => {
     setOpen(false);
   };
 
+  const handleCredentialsVault = () => {
+    navigate("/settings?tab=credentials");
+    setOpen(false);
+  };
+
   if (user) {
     // Show user avatar with dropdown when signed in
     return (
@@ -74,6 +79,10 @@ const AuthButtons = () => {
           <DropdownMenuItem onClick={handleSecuritySettings} className="cursor-pointer">
             <Shield className="mr-2 h-4 w-4" />
             <span>Security & Privacy</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleCredentialsVault} className="cursor-pointer">
+            <KeyRound className="mr-2 h-4 w-4" />
+            <span>Credentials Vault</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
