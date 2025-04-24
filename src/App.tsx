@@ -1,9 +1,7 @@
-import React, { useEffect } from "react";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useNavigate,
-} from "react-router-dom";
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/auth/AuthProvider';
 import BaseLayout from "@/components/layout/BaseLayout";
 import Index from "@/pages/Index";
 import PricingPage from "@/pages/PricingPage";
@@ -15,75 +13,31 @@ import Welcome from "@/pages/Welcome";
 import SetupWizard from "@/pages/SetupWizard";
 import MigrationPage from "@/pages/MigrationPage";
 import MigrationDashboard from "@/pages/MigrationDashboard";
-import { useAuth } from "@/contexts/auth";
 import { UserOnboarding } from "@/components/onboarding/UserOnboarding";
 import DataLoading from "@/pages/DataLoading";
 
-const router = createBrowserRouter([
-  {
-    element: <BaseLayout />,
-    children: [
-      {
-        path: "/",
-        element: <Index />
-      },
-      {
-        path: "/pricing",
-        element: <PricingPage />,
-      },
-      {
-        path: "/features",
-        element: <FeaturesPage />,
-      },
-      {
-        path: "/resources",
-        element: <ResourcesPage />,
-      },
-      {
-        path: "/api",
-        element: <ApiReference />,
-      },
-      {
-        path: "/auth",
-        element: <Auth />,
-      },
-      {
-        path: "/welcome",
-        element: <Welcome />,
-      },
-      {
-        path: "/migrations/setup",
-        element: <SetupWizard />,
-      },
-      {
-        path: "/migrations/:id",
-        element: <MigrationDashboard />,
-      },
-      {
-        path: "/migration",
-        element: <MigrationPage />,
-      },
-      {
-        path: "/data-loading",
-        element: <DataLoading />
-      },
-    ]
-  }
-]);
-
 function App() {
-  const { isLoading } = useAuth();
-
-  // Show a loading indicator while the auth state is being determined
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <>
-      <RouterProvider router={router} />
-      <UserOnboarding />
-    </>
+    <Router>
+      <AuthProvider>
+        <BaseLayout>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/api" element={<ApiReference />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/migrations/setup" element={<SetupWizard />} />
+            <Route path="/migrations/:id" element={<MigrationDashboard />} />
+            <Route path="/migration" element={<MigrationPage />} />
+            <Route path="/data-loading" element={<DataLoading />} />
+          </Routes>
+        </BaseLayout>
+        <UserOnboarding />
+      </AuthProvider>
+    </Router>
   );
 }
 
