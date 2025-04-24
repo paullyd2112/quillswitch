@@ -9,6 +9,7 @@ import SearchAndFilter from "./SearchAndFilter";
 import CredentialDetail from "./CredentialDetail";
 import CredentialSecurityInfo from "./CredentialSecurityInfo";
 import { Card } from "@/components/ui/card";
+import { ServiceCredential } from "./types";
 
 export const ServiceCredentialVault = () => {
   const {
