@@ -30,8 +30,12 @@ export const useVaultState = () => {
       // For now, we'll mock it with a timeout
       await new Promise(resolve => setTimeout(resolve, 500));
       
+      // Generate a mock encryption key for demo purposes
+      // In a real app, this would come from a secure source
+      const mockEncryptionKey = "demo-encryption-key-123";
+      
       // Encrypt sensitive fields
-      const encryptedValue = await fieldEncrypt(credential.credential_value);
+      const encryptedValue = await fieldEncrypt(credential.credential_value, mockEncryptionKey);
       const newCredential = {
         ...credential,
         credential_value: encryptedValue,
@@ -136,3 +140,5 @@ export const useVaultState = () => {
     handleUpdateCredential
   };
 };
+
+export default useVaultState;
