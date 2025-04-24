@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Home, Bolt, Layers, FileBarChart2, FileText, HelpCircle, Settings, Users, BarChart3 } from "lucide-react";
+import { Home, Bolt, Layers, FileBarChart2, FileText, HelpCircle, Settings, Users, BarChart3, Database } from "lucide-react";
 import { NavLink } from "./types";
 
 const getNavLinks = (user: any): NavLink[] => {
@@ -34,6 +34,11 @@ const getNavLinks = (user: any): NavLink[] => {
       label: "Migrations",
       href: "/migrations",
       icon: <Layers className="h-4 w-4" />,
+    },
+    {
+      label: "Integrations",
+      href: "/integrations",
+      icon: <Database className="h-4 w-4" />,
     },
     {
       label: "Reports",

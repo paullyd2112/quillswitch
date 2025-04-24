@@ -24,6 +24,7 @@ import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
 import EnterpriseMigrationTest from './pages/EnterpriseMigrationTest';
 import LandingPage from './pages/Index';
+import Integrations from './pages/Integrations';
 import { UserOnboardingProvider } from './components/onboarding/UserOnboardingProvider';
 import { AuthProvider } from './contexts/auth';
 
@@ -55,6 +56,7 @@ function App() {
             <Route path="/resources" element={<Resources />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/enterprise-test" element={<EnterpriseMigrationTest />} />
+            <Route path="/integrations" element={<Integrations />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
