@@ -38,7 +38,7 @@ const DataExtractionPage: React.FC = () => {
       <Container>
         <PageHeader 
           heading="Data Extraction Service"
-          description="Extract, standardize, and preview data from various CRM sources"
+          subheading="Extract, standardize, and preview data from various CRM sources"
         />
         
         <div className="mt-8">
@@ -110,3 +110,4 @@ const DataExtractionPage: React.FC = () => {
 };
 
 export default DataExtractionPage;
+
