@@ -55,7 +55,7 @@ const HeroSection = () => {
                 variant="outline" 
                 size="lg"
                 onClick={user ? showOnboardingTour : () => navigate("/features")}
-                className="gap-2 px-8"
+                className="gap-2 px-8 bg-[#221F26] hover:bg-[#1A1F2C] text-white border-slate-700"
               >
                 {user ? "Take a Tour" : "Learn More"} <Info size={16} />
               </Button>
@@ -68,3 +68,4 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
+
