@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      data_loading_jobs: {
+        Row: {
+          created_at: string
+          duplicate_records: number | null
+          error_count: number | null
+          id: string
+          metadata: Json | null
+          processed_records: number | null
+          source_type: string
+          status: string
+          total_records: number | null
+          updated_at: string
+          user_id: string
+          validated_records: number | null
+        }
+        Insert: {
+          created_at?: string
+          duplicate_records?: number | null
+          error_count?: number | null
+          id?: string
+          metadata?: Json | null
+          processed_records?: number | null
+          source_type: string
+          status?: string
+          total_records?: number | null
+          updated_at?: string
+          user_id: string
+          validated_records?: number | null
+        }
+        Update: {
+          created_at?: string
+          duplicate_records?: number | null
+          error_count?: number | null
+          id?: string
+          metadata?: Json | null
+          processed_records?: number | null
+          source_type?: string
+          status?: string
+          total_records?: number | null
+          updated_at?: string
+          user_id?: string
+          validated_records?: number | null
+        }
+        Relationships: []
+      }
       field_mappings: {
         Row: {
           destination_field: string
@@ -690,6 +735,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      validation_issues: {
+        Row: {
+          created_at: string
+          error_message: string
+          error_type: string
+          field_name: string
+          id: string
+          job_id: string
+          raw_value: string | null
+          record_index: number
+          suggestion: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message: string
+          error_type: string
+          field_name: string
+          id?: string
+          job_id: string
+          raw_value?: string | null
+          record_index: number
+          suggestion?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string
+          error_type?: string
+          field_name?: string
+          id?: string
+          job_id?: string
+          raw_value?: string | null
+          record_index?: number
+          suggestion?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "validation_issues_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "data_loading_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       validation_reports: {
         Row: {
