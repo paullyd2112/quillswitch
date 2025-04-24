@@ -45,7 +45,7 @@ const HeroSection = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate(user ? "/welcome" : "/auth")}
-                className="gap-2 px-8"
+                className="gap-2 px-8 bg-brand-500 hover:bg-brand-600"
               >
                 {user ? "Go to Dashboard" : "Get Started"} <ArrowRight size={16} />
               </Button>
@@ -54,7 +54,7 @@ const HeroSection = () => {
                 variant="outline" 
                 size="lg"
                 onClick={user ? showOnboardingTour : () => navigate("/features")}
-                className="gap-2 px-8 bg-[#1A1F2C] hover:bg-[#222736] text-white border-slate-800/50 hover:border-slate-700/70"
+                className="gap-2 px-8 bg-white/10 hover:bg-white/20 text-white border-white/20 hover:border-white/30"
               >
                 {user ? "Take a Tour" : "Learn More"} <Info size={16} />
               </Button>
