@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Eye, EyeOff, Copy, Trash2, Key, Lock, Calendar, KeyRound } from "lucide-react";
+import { Eye, EyeOff, Copy, Trash2, Key, Lock, Calendar, KeyRound, Clock } from "lucide-react";
 import { ServiceCredential } from "./types";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth";
@@ -10,13 +11,23 @@ import { fieldDecrypt, maskSensitiveData } from "@/utils/encryptionUtils";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { safeTable } from "@/services/utils/supabaseUtils";
+import CredentialTag from "./CredentialTag";
 
 interface CredentialItemProps {
   credential: ServiceCredential;
   onDelete: (id: string) => Promise<void>;
+  isSelectable?: boolean;
+  isSelected?: boolean;
+  onSelectChange?: (id: string, selected: boolean) => void;
 }
 
-const CredentialItem: React.FC<CredentialItemProps> = ({ credential, onDelete }) => {
+const CredentialItem: React.FC<CredentialItemProps> = ({ 
+  credential, 
+  onDelete,
+  isSelectable = false,
+  isSelected = false,
+  onSelectChange
+}) => {
   const { user } = useAuth();
   const [showCredential, setShowCredential] = useState(false);
   const [decryptedValue, setDecryptedValue] = useState<string | null>(null);
@@ -64,6 +75,31 @@ const CredentialItem: React.FC<CredentialItemProps> = ({ credential, onDelete })
         const decrypted = await fieldDecrypt(credential.credential_value, encryptionKey);
         setDecryptedValue(decrypted);
         setShowCredential(true);
+        
+        // Update last_used timestamp
+        if (credential.id) {
+          try {
+            const now = new Date().toISOString();
+            const metadata = {
+              ...(credential.metadata || {}),
+              last_used: now,
+              access_history: [
+                ...(credential.metadata?.access_history || []),
+                { timestamp: now, action: "view" }
+              ].slice(-10) // Keep last 10 accesses
+            };
+            
+            await safeTable<ServiceCredential>('service_credentials')
+              .update({ 
+                metadata,
+                updated_at: now
+              })
+              .eq('id', credential.id);
+          } catch (error) {
+            console.error("Failed to update usage timestamp:", error);
+            // Non-critical error, don't show to user
+          }
+        }
       } catch (error) {
         console.error("Error decrypting credential:", error);
         toast.error("Failed to decrypt credential");
@@ -89,6 +125,31 @@ const CredentialItem: React.FC<CredentialItemProps> = ({ credential, onDelete })
       
       await navigator.clipboard.writeText(valueToCopy || '');
       toast.success("Copied to clipboard");
+      
+      // Update last_used timestamp and access log
+      if (credential.id) {
+        try {
+          const now = new Date().toISOString();
+          const metadata = {
+            ...(credential.metadata || {}),
+            last_used: now,
+            access_history: [
+              ...(credential.metadata?.access_history || []),
+              { timestamp: now, action: "copy" }
+            ].slice(-10) // Keep last 10 accesses
+          };
+          
+          await safeTable<ServiceCredential>('service_credentials')
+            .update({ 
+              metadata,
+              updated_at: now
+            })
+            .eq('id', credential.id);
+        } catch (error) {
+          console.error("Failed to update usage timestamp:", error);
+          // Non-critical error, don't show to user
+        }
+      }
     } catch (error) {
       console.error("Error copying credential:", error);
       toast.error("Failed to copy credential");
@@ -121,44 +182,95 @@ const CredentialItem: React.FC<CredentialItemProps> = ({ credential, onDelete })
     return { label: `Expires in ${daysUntilExpiry} days`, color: "bg-green-50 text-green-700 border-green-200" };
   };
 
+  const formatLastUsed = () => {
+    if (!credential.metadata?.last_used) return null;
+    
+    const lastUsed = new Date(credential.metadata.last_used);
+    const now = new Date();
+    const diffMs = now.getTime() - lastUsed.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      if (diffHours === 0) {
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        return `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''} ago`;
+      }
+      return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    } else if (diffDays < 30) {
+      return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+    } else {
+      return lastUsed.toLocaleDateString();
+    }
+  };
+
   const expiryStatus = calculateExpiryStatus();
+  const lastUsedFormatted = formatLastUsed();
 
   return (
-    <Card className="p-4 hover:shadow-md transition-shadow">
+    <Card className={`p-4 hover:shadow-md transition-shadow ${isSelected ? 'ring-2 ring-primary' : ''}`}>
       <div className="space-y-2">
         <div className="flex justify-between items-start">
-          <div className="space-y-1">
-            <div className="flex items-center">
-              <h3 className="font-medium">
-                {credential.service_name}: {credential.credential_name}
-              </h3>
-              {credential.environment && (
-                <Badge 
-                  variant="outline" 
-                  className={`ml-2 ${getEnvironmentColor()}`}
-                >
-                  {credential.environment}
-                </Badge>
-              )}
-              {expiryStatus && (
-                <Badge 
-                  variant="outline" 
-                  className={`ml-2 ${expiryStatus.color}`}
-                >
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {expiryStatus.label}
-                </Badge>
+          <div className="flex items-start">
+            {isSelectable && (
+              <div className="mr-2 pt-1">
+                <Checkbox 
+                  checked={isSelected} 
+                  onCheckedChange={(checked) => {
+                    if (onSelectChange && credential.id) {
+                      onSelectChange(credential.id, checked === true);
+                    }
+                  }} 
+                  aria-label="Select credential"
+                />
+              </div>
+            )}
+            <div className="space-y-1">
+              <div className="flex items-center flex-wrap">
+                <h3 className="font-medium">
+                  {credential.service_name}: {credential.credential_name}
+                </h3>
+                {credential.environment && (
+                  <Badge 
+                    variant="outline" 
+                    className={`ml-2 ${getEnvironmentColor()}`}
+                  >
+                    {credential.environment}
+                  </Badge>
+                )}
+                {expiryStatus && (
+                  <Badge 
+                    variant="outline" 
+                    className={`ml-2 ${expiryStatus.color}`}
+                  >
+                    <Calendar className="h-3 w-3 mr-1" />
+                    {expiryStatus.label}
+                  </Badge>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground flex items-center flex-wrap">
+                {getCredentialIcon()}
+                <span className="ml-1">{formatCredentialType(credential.credential_type)}</span>
+                {credential.created_at && (
+                  <span className="ml-2 text-xs">
+                    Added {new Date(credential.created_at).toLocaleDateString()}
+                  </span>
+                )}
+                {lastUsedFormatted && (
+                  <span className="ml-2 text-xs flex items-center">
+                    <Clock className="h-3 w-3 mr-1" /> 
+                    Last used {lastUsedFormatted}
+                  </span>
+                )}
+              </p>
+              {credential.tags && credential.tags.length > 0 && (
+                <div className="flex flex-wrap mt-1">
+                  {credential.tags.map(tag => (
+                    <CredentialTag key={tag} tag={tag} />
+                  ))}
+                </div>
               )}
             </div>
-            <p className="text-sm text-muted-foreground flex items-center">
-              {getCredentialIcon()}
-              <span className="ml-1">{formatCredentialType(credential.credential_type)}</span>
-              {credential.created_at && (
-                <span className="ml-2 text-xs">
-                  Added {new Date(credential.created_at).toLocaleDateString()}
-                </span>
-              )}
-            </p>
           </div>
           
           <div className="flex gap-1">

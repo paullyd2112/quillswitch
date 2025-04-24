@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +8,20 @@ import { AlertTriangle, Calendar } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
+import TagInput from "./TagInput";
 
 interface AddCredentialFormProps extends CommonFormProps {
   onAdd: (credential: ServiceCredential) => Promise<void>;
   onCancel: () => void;
+  availableTags?: string[];
 }
 
-const AddCredentialForm: React.FC<AddCredentialFormProps> = ({ onAdd, onCancel, isSubmitting }) => {
+const AddCredentialForm: React.FC<AddCredentialFormProps> = ({ 
+  onAdd, 
+  onCancel, 
+  isSubmitting,
+  availableTags = [] 
+}) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState<ServiceCredential>({
     service_name: '',
@@ -25,6 +31,7 @@ const AddCredentialForm: React.FC<AddCredentialFormProps> = ({ onAdd, onCancel, 
     environment: 'development',
     expires_at: null,
     user_id: user?.id || '', // Add user_id to initial state with a default empty string
+    tags: [],
   });
 
   const [expiry, setExpiry] = useState<string>('never');
@@ -41,6 +48,13 @@ const AddCredentialForm: React.FC<AddCredentialFormProps> = ({ onAdd, onCancel, 
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleTagsChange = (tags: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      tags
     }));
   };
 
@@ -210,6 +224,18 @@ const AddCredentialForm: React.FC<AddCredentialFormProps> = ({ onAdd, onCancel, 
         )}
         <p className="text-xs text-muted-foreground mt-1">
           This value will be encrypted before storage and can only be decrypted by you.
+        </p>
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="tags">Tags</Label>
+        <TagInput 
+          tags={formData.tags || []} 
+          onChange={handleTagsChange} 
+          suggestions={availableTags}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Add tags to organize your credentials. Press Enter or comma after each tag.
         </p>
       </div>
       
