@@ -1,7 +1,7 @@
 
 export interface ServiceCredential {
   id?: string;
-  user_id?: string;
+  user_id: string; // Changed from optional to required to match the DB schema
   service_name: string;
   credential_name: string;
   credential_type: 'api_key' | 'oauth_token' | 'connection_string' | 'secret_key';

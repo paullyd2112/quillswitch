@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { useAuth } from "@/contexts/auth";
 import { fieldDecrypt, maskSensitiveData } from "@/utils/encryptionUtils";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import { safeTable } from "@/services/utils/supabaseUtils";
 
 interface CredentialItemProps {
   credential: ServiceCredential;

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,10 +102,10 @@ const AddCredentialForm: React.FC<AddCredentialFormProps> = ({ onAdd, onCancel, 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Add user_id to the credential
+    // Make sure user_id is required, not optional
     const credentialWithUserId = {
       ...formData,
-      user_id: user?.id
+      user_id: user?.id || ''
     };
     
     await onAdd(credentialWithUserId);

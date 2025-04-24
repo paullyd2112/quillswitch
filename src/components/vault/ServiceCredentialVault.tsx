@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import CredentialItem from "./CredentialItem";
 import AddCredentialForm from "./AddCredentialForm";
 import { ServiceCredential } from "./types";
 import CredentialSecurityInfo from "./CredentialSecurityInfo";
+import { safeTable } from "@/services/utils/supabaseUtils";
 
 export const ServiceCredentialVault = () => {
   const { user } = useAuth();
@@ -35,8 +35,7 @@ export const ServiceCredentialVault = () => {
   const loadCredentials = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('service_credentials')
+      const { data, error } = await safeTable<ServiceCredential>('service_credentials')
         .select('*')
         .order('service_name');
         
@@ -69,8 +68,7 @@ export const ServiceCredentialVault = () => {
         );
       }
       
-      const { error } = await supabase
-        .from('service_credentials')
+      const { error } = await safeTable<ServiceCredential>('service_credentials')
         .insert(encryptedCredential);
       
       if (error) throw error;
@@ -89,8 +87,7 @@ export const ServiceCredentialVault = () => {
   const handleDeleteCredential = async (id: string) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase
-        .from('service_credentials')
+      const { error } = await safeTable<ServiceCredential>('service_credentials')
         .delete()
         .eq('id', id);
       

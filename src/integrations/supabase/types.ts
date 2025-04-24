@@ -560,6 +560,48 @@ export type Database = {
         }
         Relationships: []
       }
+      service_credentials: {
+        Row: {
+          created_at: string
+          credential_name: string
+          credential_type: string
+          credential_value: string
+          environment: string | null
+          expires_at: string | null
+          id: string
+          metadata: Json | null
+          service_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credential_name: string
+          credential_type: string
+          credential_value: string
+          environment?: string | null
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          service_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credential_name?: string
+          credential_type?: string
+          credential_value?: string
+          environment?: string | null
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          service_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_activities: {
         Row: {
           activity_description: string
