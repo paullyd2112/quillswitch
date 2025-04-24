@@ -13,7 +13,6 @@ const HeroSection = () => {
   
   return (
     <div className="relative px-4 py-20 md:py-28 lg:py-32 overflow-hidden">
-      {/* Background styling */}
       <div
         className="absolute inset-0 w-full h-full bg-gradient-to-b from-indigo-50/5 to-slate-950/50"
         aria-hidden="true"
@@ -44,7 +43,7 @@ const HeroSection = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate(user ? "/welcome" : "/auth")}
-                className="gap-2 px-8 bg-slate-200/80 text-slate-900 hover:bg-slate-300/80"
+                className="gap-2 px-8 bg-slate-200 text-black hover:bg-slate-300"
               >
                 {user ? "Go to Dashboard" : "Get Started"} <ArrowRight size={16} />
               </Button>
@@ -53,7 +52,7 @@ const HeroSection = () => {
                 variant="outline" 
                 size="lg"
                 onClick={user ? showOnboardingTour : () => navigate("/features")}
-                className="gap-2 px-8 bg-slate-200/80 text-slate-900 border-slate-300/50 hover:bg-slate-300/80 hover:border-slate-400/60"
+                className="gap-2 px-8 bg-slate-200 text-black border-slate-300 hover:bg-slate-300 hover:border-slate-400"
               >
                 {user ? "Take a Tour" : "Learn More"} <Info size={16} />
               </Button>
