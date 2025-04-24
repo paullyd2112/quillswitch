@@ -3,7 +3,7 @@ import React from 'react';
 import { ConnectionStatus } from '@/types/connectionHealth';
 import { CheckCircle, AlertCircle, XCircle, HelpCircle, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 
 interface ConnectionHealthIndicatorProps {
@@ -118,14 +118,16 @@ const ConnectionHealthIndicator: React.FC<ConnectionHealthIndicatorProps> = ({
   
   if (showTooltip) {
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {indicator}
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="whitespace-pre-line text-sm">{getTooltipContent()}</p>
-        </TooltipContent>
-      </Tooltip>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {indicator}
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="whitespace-pre-line text-sm">{getTooltipContent()}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   }
   
