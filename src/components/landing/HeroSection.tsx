@@ -35,7 +35,7 @@ const HeroSection = () => {
               size="lg" 
               variant="outline"
               onClick={() => navigate("/features")}
-              className="gap-2 border-slate-700 text-white hover:bg-slate-800"
+              className="gap-2 border-slate-700 text-white hover:bg-slate-800/50"
             >
               Learn More <CheckCircle size={16} />
             </Button>
