@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRightLeft, Database, Globe, Server, Layers, Zap, Shield } from "lucide-react";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
+import ConnectionHealthIndicator from "@/components/integrations/ConnectionHealthIndicator";
+import { ConnectionStatus } from "@/types/connectionHealth";
 
 interface CrmArchitectureDiagramProps {
   sourceCrm?: string;
@@ -13,6 +15,7 @@ interface CrmArchitectureDiagramProps {
     category: "marketing" | "support" | "sales" | "analytics" | "other";
   }>;
   className?: string;
+  connectionStatus?: ConnectionStatus;
 }
 
 const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
@@ -20,6 +23,7 @@ const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
   destinationCrm = "HubSpot",
   connectedTools = [],
   className,
+  connectionStatus = 'healthy'
 }) => {
   // Group tools by category
   const toolsByCategory = connectedTools.reduce((acc, tool) => {
@@ -42,7 +46,14 @@ const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
     <div className={className}>
       <Card className="shadow-md">
         <CardContent className="p-6">
-          <h3 className="text-lg font-medium mb-6">CRM Integration Architecture</h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-medium">CRM Integration Architecture</h3>
+            <ConnectionHealthIndicator 
+              status={connectionStatus} 
+              showLabel 
+              size="sm"
+            />
+          </div>
           
           <div className="relative h-[400px] rounded-lg border border-dashed border-border bg-slate-50 dark:bg-slate-900/50 p-4">
             {/* Source CRM Box */}
@@ -70,8 +81,11 @@ const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
             {/* Central Migration Engine */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px]">
               <GlassPanel className="h-[240px] flex flex-col items-center justify-center text-center p-4">
-                <div className="bg-brand-100 dark:bg-brand-900/50 p-3 rounded-full mb-3">
+                <div className="bg-brand-100 dark:bg-brand-900/50 p-3 rounded-full mb-3 relative">
                   <ArrowRightLeft className="h-8 w-8 text-brand-600" />
+                  <div className="absolute -top-1 -right-1">
+                    <ConnectionHealthIndicator status={connectionStatus} size="sm" />
+                  </div>
                 </div>
                 <div className="font-medium mb-1">Integration Engine</div>
                 <div className="text-xs text-muted-foreground mb-3">
@@ -98,6 +112,18 @@ const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
               </GlassPanel>
             </div>
             
+            {/* Connection Lines */}
+            <div className="absolute left-[126px] top-1/2 w-[calc(50%-126px-90px)] h-0 border-t border-dashed border-gray-300 dark:border-gray-700" />
+            <div className="absolute right-[126px] top-1/2 w-[calc(50%-126px-90px)] h-0 border-t border-dashed border-gray-300 dark:border-gray-700" />
+            
+            {/* Add connection health indicator on lines */}
+            <div className="absolute left-[calc(25%-45px)] top-[calc(50%-10px)]">
+              <ConnectionHealthIndicator status={connectionStatus} size="sm" />
+            </div>
+            <div className="absolute right-[calc(25%-45px)] top-[calc(50%-10px)]">
+              <ConnectionHealthIndicator status={connectionStatus} size="sm" />
+            </div>
+            
             {/* Connected Tools */}
             <div className="absolute left-0 right-0 bottom-4 flex justify-center">
               <GlassPanel className="px-4 py-2">
@@ -118,10 +144,6 @@ const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
                 </div>
               </GlassPanel>
             </div>
-            
-            {/* Connection Lines */}
-            <div className="absolute left-[126px] top-1/2 w-[calc(50%-126px-90px)] h-0 border-t border-dashed border-gray-300 dark:border-gray-700" />
-            <div className="absolute right-[126px] top-1/2 w-[calc(50%-126px-90px)] h-0 border-t border-dashed border-gray-300 dark:border-gray-700" />
             
             {/* Vertical connection to tools */}
             <div className="absolute left-1/2 top-[240px] w-0 h-[80px] border-l border-dashed border-gray-300 dark:border-gray-700" />

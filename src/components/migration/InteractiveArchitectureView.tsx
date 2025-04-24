@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Info } from "lucide-react";
+import { ArrowRight, Check, Info, RefreshCw } from "lucide-react";
 import CrmArchitectureDiagram from "./CrmArchitectureDiagram";
 import { 
   Tooltip,
@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ConnectionStatus } from "@/types/connectionHealth";
 
 type ArchitectureExplanation = {
   title: string;
@@ -61,6 +62,8 @@ const InteractiveArchitectureView: React.FC<InteractiveArchitectureViewProps> = 
 }) => {
   const [activeExplanation, setActiveExplanation] = useState<string | null>(null);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('healthy');
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleMarkComplete = (aspect: string) => {
     if (!completedSteps.includes(aspect)) {
@@ -69,15 +72,35 @@ const InteractiveArchitectureView: React.FC<InteractiveArchitectureViewProps> = 
       setCompletedSteps(completedSteps.filter(step => step !== aspect));
     }
   };
+  
+  // Simulate checking connection health
+  const refreshConnectionHealth = () => {
+    setIsRefreshing(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      const statuses: ConnectionStatus[] = ['healthy', 'healthy', 'degraded', 'healthy', 'failed'];
+      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      setConnectionStatus(randomStatus);
+      setIsRefreshing(false);
+    }, 1500);
+  };
 
   return (
     <Card>
       <CardContent className="p-6">
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-2">CRM Migration Architecture</h2>
-          <p className="text-muted-foreground">
-            Visual representation of how your data will flow between systems while maintaining external integrations.
-          </p>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold">CRM Migration Architecture</h2>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={refreshConnectionHealth}
+            disabled={isRefreshing}
+            className="gap-2"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>Check Connection Health</span>
+          </Button>
         </div>
 
         <div className="mb-6">
@@ -86,6 +109,7 @@ const InteractiveArchitectureView: React.FC<InteractiveArchitectureViewProps> = 
             destinationCrm={destinationCrm}
             connectedTools={connectedTools}
             className="mb-4"
+            connectionStatus={connectionStatus}
           />
         </div>
         
