@@ -1,4 +1,5 @@
-import { Docs, Features, Feedback, Overview, Pricing } from "@/components/icons";
+
+import { FileText, Star, MessageSquare, LayoutDashboard, CreditCard } from "lucide-react";
 
 export const topNavItems = [
   { name: "Features", href: "/features" },
@@ -15,25 +16,25 @@ export const sidebarNavItems = [
       {
         title: "Overview",
         href: "/dashboard",
-        icon: Overview,
+        icon: LayoutDashboard,
         description: "Get a birds eye view of your CRM migrations.",
       },
       {
         title: "Features",
         href: "/features",
-        icon: Features,
+        icon: Star,
         description: "See all the features we offer.",
       },
       {
         title: "Pricing",
         href: "/pricing",
-        icon: Pricing,
+        icon: CreditCard,
         description: "Choose the plan that's right for you.",
       },
       {
         title: "Documentation",
         href: "/docs",
-        icon: Docs,
+        icon: FileText,
         description: "Learn how to use our platform.",
       },
     ],
@@ -44,7 +45,7 @@ export const sidebarNavItems = [
       {
         title: "Feedback",
         href: "/feedback",
-        icon: Feedback,
+        icon: MessageSquare,
         description: "Share your thoughts and ideas with us.",
       },
     ],

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 
 interface DataQualityMetricsProps {
   metrics: {
@@ -38,7 +39,7 @@ export const DataQualityMetrics: React.FC<DataQualityMetricsProps> = ({ metrics 
           </div>
           <span className="text-sm font-medium">{metrics.completeness}%</span>
         </div>
-        <Progress value={metrics.completeness} className="h-2" indicatorClassName={getQualityColor(metrics.completeness)} />
+        <Progress value={metrics.completeness} className={cn("h-2", getQualityColor(metrics.completeness))} />
         
         <div className="flex justify-between items-center mb-1">
           <div>
@@ -47,7 +48,7 @@ export const DataQualityMetrics: React.FC<DataQualityMetricsProps> = ({ metrics 
           </div>
           <span className="text-sm font-medium">{metrics.accuracy}%</span>
         </div>
-        <Progress value={metrics.accuracy} className="h-2" indicatorClassName={getQualityColor(metrics.accuracy)} />
+        <Progress value={metrics.accuracy} className={cn("h-2", getQualityColor(metrics.accuracy))} />
         
         <div className="flex justify-between items-center mb-1">
           <div>
@@ -56,7 +57,7 @@ export const DataQualityMetrics: React.FC<DataQualityMetricsProps> = ({ metrics 
           </div>
           <span className="text-sm font-medium">{metrics.uniqueness}%</span>
         </div>
-        <Progress value={metrics.uniqueness} className="h-2" indicatorClassName={getQualityColor(metrics.uniqueness)} />
+        <Progress value={metrics.uniqueness} className={cn("h-2", getQualityColor(metrics.uniqueness))} />
         
         <div className="flex justify-between items-center mb-1">
           <div>
@@ -65,7 +66,7 @@ export const DataQualityMetrics: React.FC<DataQualityMetricsProps> = ({ metrics 
           </div>
           <span className="text-sm font-medium">{metrics.consistency}%</span>
         </div>
-        <Progress value={metrics.consistency} className="h-2" indicatorClassName={getQualityColor(metrics.consistency)} />
+        <Progress value={metrics.consistency} className={cn("h-2", getQualityColor(metrics.consistency))} />
       </div>
       
       <div className="mt-6 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
