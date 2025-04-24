@@ -54,6 +54,181 @@ export type Database = {
           },
         ]
       }
+      field_mappings_extended: {
+        Row: {
+          created_at: string
+          data_type: Database["public"]["Enums"]["crm_data_type"]
+          destination_field: string
+          id: string
+          is_primary_key: boolean
+          is_required: boolean
+          mapping_status: string
+          object_mapping_id: string
+          source_field: string
+          transformation_rule: string | null
+          transformation_type: Database["public"]["Enums"]["transformation_type"]
+          updated_at: string
+          validation_rules: Json | null
+        }
+        Insert: {
+          created_at?: string
+          data_type: Database["public"]["Enums"]["crm_data_type"]
+          destination_field: string
+          id?: string
+          is_primary_key?: boolean
+          is_required?: boolean
+          mapping_status?: string
+          object_mapping_id: string
+          source_field: string
+          transformation_rule?: string | null
+          transformation_type?: Database["public"]["Enums"]["transformation_type"]
+          updated_at?: string
+          validation_rules?: Json | null
+        }
+        Update: {
+          created_at?: string
+          data_type?: Database["public"]["Enums"]["crm_data_type"]
+          destination_field?: string
+          id?: string
+          is_primary_key?: boolean
+          is_required?: boolean
+          mapping_status?: string
+          object_mapping_id?: string
+          source_field?: string
+          transformation_rule?: string | null
+          transformation_type?: Database["public"]["Enums"]["transformation_type"]
+          updated_at?: string
+          validation_rules?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_mappings_extended_object_mapping_id_fkey"
+            columns: ["object_mapping_id"]
+            isOneToOne: false
+            referencedRelation: "object_mappings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_jobs: {
+        Row: {
+          created_at: string
+          id: string
+          job_type: string
+          object_mapping_id: string | null
+          project_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_type: string
+          object_mapping_id?: string | null
+          project_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_type?: string
+          object_mapping_id?: string | null
+          project_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_jobs_object_mapping_id_fkey"
+            columns: ["object_mapping_id"]
+            isOneToOne: false
+            referencedRelation: "object_mappings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_jobs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "integration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_projects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lookup_mappings: {
+        Row: {
+          created_at: string
+          destination_field: string
+          destination_object: string
+          fallback_value: string | null
+          field_mapping_id: string
+          id: string
+          lookup_filter: Json | null
+          source_field: string
+          source_object: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          destination_field: string
+          destination_object: string
+          fallback_value?: string | null
+          field_mapping_id: string
+          id?: string
+          lookup_filter?: Json | null
+          source_field: string
+          source_object: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          destination_field?: string
+          destination_object?: string
+          fallback_value?: string | null
+          field_mapping_id?: string
+          id?: string
+          lookup_filter?: Json | null
+          source_field?: string
+          source_object?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lookup_mappings_field_mapping_id_fkey"
+            columns: ["field_mapping_id"]
+            isOneToOne: false
+            referencedRelation: "field_mappings_extended"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       migration_errors: {
         Row: {
           created_at: string
@@ -282,6 +457,82 @@ export type Database = {
           },
         ]
       }
+      object_mappings: {
+        Row: {
+          created_at: string
+          destination_object: string
+          id: string
+          project_id: string
+          source_object: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          destination_object: string
+          id?: string
+          project_id: string
+          source_object: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          destination_object?: string
+          id?: string
+          project_id?: string
+          source_object?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "object_mappings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "integration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      picklist_value_mappings: {
+        Row: {
+          created_at: string
+          destination_value: string
+          field_mapping_id: string
+          id: string
+          is_default: boolean
+          source_value: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          destination_value: string
+          field_mapping_id: string
+          id?: string
+          is_default?: boolean
+          source_value: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          destination_value?: string
+          field_mapping_id?: string
+          id?: string
+          is_default?: boolean
+          source_value?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "picklist_value_mappings_field_mapping_id_fkey"
+            columns: ["field_mapping_id"]
+            isOneToOne: false
+            referencedRelation: "field_mappings_extended"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -454,7 +705,32 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      crm_data_type:
+        | "TEXT"
+        | "NUMBER"
+        | "DATE"
+        | "DATETIME"
+        | "BOOLEAN"
+        | "PICKLIST"
+        | "MULTI_PICKLIST"
+        | "LOOKUP"
+        | "EMAIL"
+        | "PHONE"
+        | "URL"
+        | "CURRENCY"
+        | "PERCENT"
+        | "ID"
+      transformation_type:
+        | "NONE"
+        | "DIRECT"
+        | "FORMULA"
+        | "LOOKUP"
+        | "PICKLIST_MAP"
+        | "CONCATENATE"
+        | "SPLIT"
+        | "DATE_FORMAT"
+        | "NUMBER_FORMAT"
+        | "CUSTOM_FUNCTION"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -569,6 +845,35 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      crm_data_type: [
+        "TEXT",
+        "NUMBER",
+        "DATE",
+        "DATETIME",
+        "BOOLEAN",
+        "PICKLIST",
+        "MULTI_PICKLIST",
+        "LOOKUP",
+        "EMAIL",
+        "PHONE",
+        "URL",
+        "CURRENCY",
+        "PERCENT",
+        "ID",
+      ],
+      transformation_type: [
+        "NONE",
+        "DIRECT",
+        "FORMULA",
+        "LOOKUP",
+        "PICKLIST_MAP",
+        "CONCATENATE",
+        "SPLIT",
+        "DATE_FORMAT",
+        "NUMBER_FORMAT",
+        "CUSTOM_FUNCTION",
+      ],
+    },
   },
 } as const

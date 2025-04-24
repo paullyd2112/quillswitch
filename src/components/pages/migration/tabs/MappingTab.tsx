@@ -1,15 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useMigration } from '../MigrationContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DataMappingVisualizer from '@/components/migration/DataMappingVisualizer';
 import FieldMappingsTable from '@/components/migration/data-mapping/FieldMappingsTable';
 import CrmArchitectureDiagram from '@/components/migration/CrmArchitectureDiagram';
+import InteractiveArchitectureView from '@/components/migration/InteractiveArchitectureView';
 import { FieldMapping } from '@/integrations/supabase/migrationTypes';
 
 export const MappingTab = () => {
   const { objectType, fieldMappings, setFieldMappings } = useMigration();
+  const [activeArchitectureTab, setActiveArchitectureTab] = useState<string>("standard");
 
   const handleUpdateMapping = (mappingId: string, updates: Partial<FieldMapping>) => {
     // Create a new array with the updated mapping
@@ -46,15 +48,36 @@ export const MappingTab = () => {
         </TabsContent>
         
         <TabsContent value="architecture">
-          <CrmArchitectureDiagram 
-            sourceCrm="Salesforce"
-            destinationCrm="HubSpot"
-            connectedTools={[
-              { name: "Mailchimp", category: "marketing" },
-              { name: "Zendesk", category: "support" },
-              { name: "Tableau", category: "analytics" }
-            ]}
-          />
+          <Tabs value={activeArchitectureTab} onValueChange={setActiveArchitectureTab}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="standard">Standard View</TabsTrigger>
+              <TabsTrigger value="interactive">Interactive View</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="standard">
+              <CrmArchitectureDiagram 
+                sourceCrm="Salesforce"
+                destinationCrm="HubSpot"
+                connectedTools={[
+                  { name: "Mailchimp", category: "marketing" },
+                  { name: "Zendesk", category: "support" },
+                  { name: "Tableau", category: "analytics" }
+                ]}
+              />
+            </TabsContent>
+            
+            <TabsContent value="interactive">
+              <InteractiveArchitectureView
+                sourceCrm="Salesforce"
+                destinationCrm="HubSpot"
+                connectedTools={[
+                  { name: "Mailchimp", category: "marketing" },
+                  { name: "Zendesk", category: "support" },
+                  { name: "Tableau", category: "analytics" }
+                ]}
+              />
+            </TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
     </div>
