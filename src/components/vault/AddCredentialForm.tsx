@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ const AddCredentialForm: React.FC<AddCredentialFormProps> = ({ onAdd, onCancel, 
     credential_value: '',
     environment: 'development',
     expires_at: null,
+    user_id: user?.id || '', // Add user_id to initial state with a default empty string
   });
 
   const [expiry, setExpiry] = useState<string>('never');
