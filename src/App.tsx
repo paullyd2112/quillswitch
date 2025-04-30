@@ -11,12 +11,9 @@ import ApiDocs from './pages/ApiDocs';
 import Auth from './pages/Auth';
 import About from './pages/About';
 import Features from './pages/Features';
-import KnowledgeBase from './pages/KnowledgeBase';
-import KnowledgeArticle from './pages/KnowledgeArticle';
 import MigrationDashboard from './pages/MigrationDashboard';
 import MigrationsList from './pages/MigrationsList';
 import NotFound from './pages/NotFound';
-import PricingEstimator from './pages/PricingEstimator';
 import Profile from './pages/Profile';
 import Reports from './pages/Reports';
 import Resources from './pages/Resources';
@@ -48,9 +45,6 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/about" element={<About />} />
             <Route path="/features" element={<Features />} />
-            <Route path="/knowledge-base" element={<KnowledgeBase />} />
-            <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
-            <Route path="/pricing" element={<PricingEstimator />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/resources" element={<Resources />} />
