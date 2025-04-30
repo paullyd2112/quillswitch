@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,6 +35,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
+import DataSubjectRights from "../gdpr/DataSubjectRights";
 
 const DataPrivacySettings = () => {
   const [exportOptions, setExportOptions] = useState({
@@ -100,6 +100,8 @@ const DataPrivacySettings = () => {
 
   return (
     <div className="space-y-6">
+      <DataSubjectRights />
+      
       <Card>
         <CardHeader>
           <CardTitle>Data Export</CardTitle>
