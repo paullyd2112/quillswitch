@@ -18,7 +18,7 @@ const CtaSection = () => {
           <Button size="lg" onClick={() => navigate("/migrations/setup")} className="gap-2 bg-brand-600 hover:bg-brand-700">
             Start Migration <ArrowRight size={16} />
           </Button>
-          <Button size="lg" variant="outline" onClick={() => navigate("/features")} className="gap-2 border-slate-700 hover:bg-slate-800 text-slate-300">
+          <Button size="lg" variant="outline" onClick={() => navigate("/features")} className="gap-2 border-slate-700 hover:bg-slate-800 text-gray-300">
             View Features
           </Button>
         </div>
