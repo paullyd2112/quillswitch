@@ -9,6 +9,9 @@ const FeaturesCta = () => {
       description="Start your migration today and experience the difference with QuillSwitch's powerful features."
       primaryButtonText="Start Migration"
       primaryButtonLink="/migrations/setup"
+      secondaryButtonText="Learn More"
+      secondaryButtonLink="/about"
+      darkMode={false}
     />
   );
 };

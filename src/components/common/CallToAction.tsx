@@ -48,6 +48,10 @@ const CallToAction = ({
   const primaryButtonClasses = darkMode
     ? "gap-2 bg-brand-600 hover:bg-brand-700"
     : "gap-2 bg-brand-500 hover:bg-brand-600 text-white";
+    
+  const secondaryButtonClasses = darkMode
+    ? "gap-2 border-slate-700 hover:bg-slate-800 text-gray-300"
+    : "gap-2";
 
   return (
     <section className={containerClasses}>
@@ -72,7 +76,7 @@ const CallToAction = ({
                 size="lg" 
                 variant="outline" 
                 onClick={() => navigate(secondaryButtonLink)} 
-                className={darkMode ? "gap-2 border-slate-700 hover:bg-slate-800 text-gray-300" : ""}
+                className={secondaryButtonClasses}
               >
                 {secondaryButtonText}
               </Button>
@@ -80,7 +84,7 @@ const CallToAction = ({
               <Button 
                 size="lg" 
                 variant="outline" 
-                className={darkMode ? "gap-2 border-slate-700 hover:bg-slate-800 text-gray-300" : ""}
+                className={secondaryButtonClasses}
                 asChild
               >
                 <a href={secondaryButtonLink}>{secondaryButtonText}</a>

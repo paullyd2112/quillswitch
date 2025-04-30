@@ -1,10 +1,14 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 const HeroSection = () => {
   const navigate = useNavigate();
-  return <section className="relative py-24 px-4 md:px-8 overflow-hidden">
+  
+  return (
+    <section className="relative py-24 px-4 md:px-8 overflow-hidden">
       <div className="container max-w-6xl mx-auto text-center">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white">
@@ -24,7 +28,7 @@ const HeroSection = () => {
               Start Migration <ArrowRight size={16} />
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate("/features")} className="gap-2 border-slate-700 text-slate-200 bg-slate-900 hover:bg-slate-800">
-              Learn More <CheckCircle size={16} />
+              View Features <CheckCircle size={16} />
             </Button>
           </div>
           
@@ -44,6 +48,8 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default HeroSection;
