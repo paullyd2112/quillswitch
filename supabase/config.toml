@@ -3,3 +3,4 @@ project_id = "kxjidapjtcxwzpwdomnm"
 
 [functions.gemini-chat]
 verify_jwt = true
+

@@ -11,7 +11,6 @@ import { Toaster } from 'sonner'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './components/ui/theme-provider'
 import { UserOnboardingProvider } from './components/onboarding/UserOnboardingProvider'
-import GeminiChat from './pages/GeminiChat'
 
 function App() {
   return (
@@ -25,7 +24,6 @@ function App() {
               <Route path="/resources" element={<Resources />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
-              <Route path="/ai-chat" element={<GeminiChat />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </UserOnboardingProvider>

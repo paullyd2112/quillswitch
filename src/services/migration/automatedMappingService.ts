@@ -8,6 +8,7 @@ import {
   findPatternMatches, 
   findSimilarityMatches 
 } from "./fieldMapping";
+import { generateFieldMappingSuggestions } from "../gemini/geminiService";
 
 /**
  * Generate automated field mapping suggestions based on field names, data types,
@@ -19,9 +20,22 @@ export const generateMappingSuggestions = async (
   destinationFields: string[]
 ): Promise<MappingSuggestion[]> => {
   try {
-    const suggestions: MappingSuggestion[] = [];
+    let suggestions: MappingSuggestion[] = [];
     
-    // Process each source field
+    // First attempt to use AI-powered mapping with Gemini
+    try {
+      suggestions = await generateFieldMappingSuggestions(sourceFields, destinationFields);
+      console.log("Gemini AI mapping suggestions:", suggestions);
+      
+      if (suggestions.length > 0) {
+        return suggestions.sort((a, b) => b.confidence - a.confidence);
+      }
+    } catch (aiError) {
+      console.warn("AI-powered mapping failed, falling back to algorithmic mapping", aiError);
+      // Fall back to algorithmic mapping if AI fails
+    }
+    
+    // Fallback: Process each source field using algorithmic methods
     sourceFields.forEach(sourceField => {
       // First try exact matches
       const exactMatch = findExactMatches(sourceField, destinationFields);
