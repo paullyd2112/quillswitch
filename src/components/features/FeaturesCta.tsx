@@ -16,9 +16,6 @@ const FeaturesCta = () => {
           <Button asChild size="lg" className="gap-2 bg-brand-500 hover:bg-brand-600 text-white">
             <Link to="/migrations/setup">Start Migration <ArrowRight size={16} /></Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50">
-            <Link to="/pricing">View Pricing</Link>
-          </Button>
         </div>
       </div>
     </section>
