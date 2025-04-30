@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
@@ -30,9 +30,12 @@ const HeroSection = () => {
             <Button size="lg" variant="outline" onClick={() => navigate("/features")} className="gap-2 border-slate-700 text-slate-200 bg-slate-900 hover:bg-slate-800">
               View Features <CheckCircle size={16} />
             </Button>
+            <Button size="lg" onClick={() => navigate("/ai-chat")} className="gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+              Gemini AI Chat <Sparkles size={16} />
+            </Button>
           </div>
           
-          <div className="flex justify-center items-center space-x-4 text-slate-400">
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 text-slate-400">
             <div className="flex items-center gap-2">
               <CheckCircle size={16} className="text-green-500" />
               <span>No Data Loss</span>
@@ -44,6 +47,10 @@ const HeroSection = () => {
             <div className="flex items-center gap-2">
               <CheckCircle size={16} className="text-green-500" />
               <span>Enterprise Security</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-purple-400" />
+              <span>Gemini Advanced</span>
             </div>
           </div>
         </div>
