@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import ContentSection from "@/components/layout/ContentSection";
@@ -8,7 +7,7 @@ import SecuritySettings from "@/components/settings/SecuritySettings";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
 import ProjectSettings from "@/components/settings/ProjectSettings";
-import DataPrivacySettings from "@/components/settings/DataPrivacySettings";
+import DataPrivacySettings from "@/components/settings/privacy/DataPrivacySettings";
 import ApiKeySettings from "@/components/settings/ApiKeySettings";
 import ServiceCredentialVault from "@/components/vault/ServiceCredentialVault";
 
