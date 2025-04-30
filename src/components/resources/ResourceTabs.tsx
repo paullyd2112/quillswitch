@@ -2,7 +2,6 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import OverviewTabContent from "./OverviewTabContent";
-import FaqTabContent from "./FaqTabContent";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
@@ -26,18 +25,13 @@ const ResourceTabs = () => {
       className="w-full mt-6"
       onValueChange={handleTabChange}
     >
-      <TabsList className="grid w-full grid-cols-3 mb-8">
+      <TabsList className="grid w-full grid-cols-2 mb-8">
         <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="faq">FAQ</TabsTrigger>
         <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
       </TabsList>
       
       <TabsContent value="overview">
         <OverviewTabContent />
-      </TabsContent>
-      
-      <TabsContent value="faq">
-        <FaqTabContent />
       </TabsContent>
       
       <TabsContent value="knowledge">
