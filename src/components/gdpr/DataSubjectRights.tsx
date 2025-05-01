@@ -14,6 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import CookiePreferencesManager from "./CookiePreferencesManager";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const DataSubjectRights: React.FC = () => {
   const handleDataAccessRequest = () => {
@@ -111,16 +112,16 @@ const DataSubjectRights: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => window.open('#', '_blank')}
+                asChild
               >
-                Privacy Policy
+                <Link to="/privacy">Privacy Policy</Link>
               </Button>
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => window.open('#', '_blank')}
+                asChild
               >
-                Terms of Service
+                <Link to="/terms">Terms of Service</Link>
               </Button>
             </div>
           </div>

@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const PrivacyDocumentsCard = () => {
   return (
@@ -21,12 +22,14 @@ const PrivacyDocumentsCard = () => {
                 <FileText className="h-5 w-5 mr-3 text-muted-foreground" />
                 <div>
                   <h3 className="font-medium">Privacy Policy</h3>
-                  <p className="text-sm text-muted-foreground">Last updated: March 15, 2023</p>
+                  <p className="text-sm text-muted-foreground">Last updated: May 1, 2025</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm">
-                <ExternalLink className="h-4 w-4 mr-1" />
-                View
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/privacy">
+                  <ExternalLink className="h-4 w-4 mr-1" />
+                  View
+                </Link>
               </Button>
             </div>
           </div>
@@ -37,12 +40,14 @@ const PrivacyDocumentsCard = () => {
                 <FileText className="h-5 w-5 mr-3 text-muted-foreground" />
                 <div>
                   <h3 className="font-medium">Terms of Service</h3>
-                  <p className="text-sm text-muted-foreground">Last updated: February 28, 2023</p>
+                  <p className="text-sm text-muted-foreground">Last updated: May 1, 2025</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm">
-                <ExternalLink className="h-4 w-4 mr-1" />
-                View
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/terms">
+                  <ExternalLink className="h-4 w-4 mr-1" />
+                  View
+                </Link>
               </Button>
             </div>
           </div>
@@ -56,9 +61,11 @@ const PrivacyDocumentsCard = () => {
                   <p className="text-sm text-muted-foreground">Last updated: January 10, 2023</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm">
-                <ExternalLink className="h-4 w-4 mr-1" />
-                View
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/privacy?section=data-processing">
+                  <ExternalLink className="h-4 w-4 mr-1" />
+                  View
+                </Link>
               </Button>
             </div>
           </div>

@@ -13,6 +13,9 @@ import { ThemeProvider } from './components/ui/theme-provider'
 import { UserOnboardingProvider } from './components/onboarding/UserOnboardingProvider'
 import { CookieConsentProvider } from './contexts/CookieConsentContext'
 import CookieConsentBanner from './components/gdpr/CookieConsentBanner'
+import Settings from './pages/Settings'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 
 function App() {
   return (
@@ -27,6 +30,9 @@ function App() {
                 <Route path="/resources" element={<Resources />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </UserOnboardingProvider>
