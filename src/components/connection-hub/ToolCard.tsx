@@ -8,71 +8,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { SystemConfig } from "@/config/connectionSystems";
 import { useConnection } from "@/contexts/ConnectionContext";
 import ConnectionModal from "./ConnectionModal";
+import { getReconnectionCapability, reconnectionInfoMap, ReconnectionCapability } from "@/utils/reconnectionCapabilityUtils";
 
 interface ToolCardProps {
   tool: SystemConfig;
 }
-
-type ReconnectionCapability = "full" | "partial" | "basic" | "manual";
-
-interface ReconnectionInfo {
-  capability: ReconnectionCapability;
-  label: string;
-  icon: React.ReactNode;
-  description: string;
-  color: string;
-}
-
-const reconnectionInfoMap: Record<ReconnectionCapability, ReconnectionInfo> = {
-  full: {
-    capability: "full",
-    label: "Full Auto-Reconnection",
-    icon: <Check className="h-4 w-4" />,
-    description: "This tool can be completely auto-reconnected after migration",
-    color: "text-green-600 dark:text-green-400"
-  },
-  partial: {
-    capability: "partial",
-    label: "Partial Auto-Reconnection",
-    icon: <AlertCircle className="h-4 w-4" />,
-    description: "Some configuration may need manual review after migration",
-    color: "text-amber-600 dark:text-amber-400"
-  },
-  basic: {
-    capability: "basic",
-    label: "Basic Reconnection",
-    icon: <Info className="h-4 w-4" />,
-    description: "Credentials will be transferred, but manual configuration is needed",
-    color: "text-blue-600 dark:text-blue-400"
-  },
-  manual: {
-    capability: "manual",
-    label: "Manual Reconnection Required",
-    icon: <AlertCircle className="h-4 w-4" />,
-    description: "This tool requires manual reconnection after migration",
-    color: "text-red-600 dark:text-red-400"
-  }
-};
-
-// Helper function to determine reconnection capability (would be from backend in real app)
-const getReconnectionCapability = (toolId: string): ReconnectionCapability => {
-  // Simple mapping for demo purposes
-  const capabilityMap: Record<string, ReconnectionCapability> = {
-    salesforce: "full",
-    hubspot: "full",
-    dynamics: "partial",
-    zoho: "partial",
-    pipedrive: "full",
-    salesloft: "partial",
-    marketo: "basic",
-    outreach: "basic",
-    gong: "basic",
-    zoominfo: "manual",
-    pardot: "partial"
-  };
-  
-  return capabilityMap[toolId] || "manual";
-};
 
 const ToolCard: React.FC<ToolCardProps> = ({ tool }) => {
   const { connectedSystems, currentSystem } = useConnection();
@@ -81,9 +21,23 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool }) => {
   const isConnected = connectedSystems.some(s => s.id === tool.id);
   const isConnecting = currentSystem === tool.id;
   
-  // Get reconnection capability
-  const reconnectionCapability = getReconnectionCapability(tool.id);
+  // Get reconnection capability using our new utility function
+  const reconnectionCapability = getReconnectionCapability(tool.id, tool.category);
   const reconnectionInfo = reconnectionInfoMap[reconnectionCapability];
+  
+  // Helper function to render the appropriate icon
+  const renderIcon = (iconName: string) => {
+    switch (iconName) {
+      case "check":
+        return <Check className="h-4 w-4" />;
+      case "alert-circle":
+        return <AlertCircle className="h-4 w-4" />;
+      case "info":
+        return <Info className="h-4 w-4" />;
+      default:
+        return <Info className="h-4 w-4" />;
+    }
+  };
   
   return (
     <>
@@ -112,7 +66,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool }) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className={`flex items-center text-xs mt-1 ${reconnectionInfo.color}`}>
-                  {reconnectionInfo.icon}
+                  {renderIcon(reconnectionInfo.icon)}
                   <span className="ml-1">{reconnectionInfo.label}</span>
                 </div>
               </TooltipTrigger>
