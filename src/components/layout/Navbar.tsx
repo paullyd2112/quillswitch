@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
-import getNavLinks from "./navConfig";
+import { mainNav, userNav } from "./navConfig";
 import { useAuth } from "@/contexts/auth";
 
 // Import performance utilities
@@ -22,7 +22,9 @@ const Navbar = () => {
   const location = useLocation();
   
   // Create memoized navLinks to prevent unnecessary re-renders
-  const navLinks = useMemo(() => getNavLinks(user), [user]);
+  const navLinks = useMemo(() => {
+    return user ? [...mainNav, ...userNav] : mainNav;
+  }, [user]);
   
   // Create throttled scroll handler for better performance
   const handleScroll = useMemo(() => 
