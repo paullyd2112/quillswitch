@@ -1,6 +1,7 @@
 
 import React from "react";
-import { LucideIcon } from "lucide-react";
+
+export type SystemCategory = "crm" | "sales-engagement" | "marketing-automation" | "support" | "productivity" | "analytics" | "finance" | "data-enrichment" | "e-signature" | "connectivity";
 
 export interface SystemConfig {
   id: string;
@@ -9,6 +10,8 @@ export interface SystemConfig {
   icon?: React.ReactNode;
   authType: 'oauth' | 'api';
   connectionType: 'source' | 'destination' | 'related';
+  category?: SystemCategory;
+  popular?: boolean;
   apiKeyHelp?: string;
   connectionInstructions?: string;
   permissions?: string[];
@@ -29,6 +32,7 @@ export const crmSystems: SystemConfig[] = [
     icon: <SystemIcon initial="SF" color="blue-600" />,
     authType: 'oauth',
     connectionType: 'source',
+    popular: true,
     permissions: [
       'Read contacts, leads, and opportunities',
       'Read account information',
@@ -44,6 +48,7 @@ export const crmSystems: SystemConfig[] = [
     icon: <SystemIcon initial="SF" color="blue-600" />,
     authType: 'oauth',
     connectionType: 'destination',
+    popular: true,
     permissions: [
       'Read/write contacts, leads, and opportunities',
       'Create and update account information',
@@ -59,6 +64,7 @@ export const crmSystems: SystemConfig[] = [
     icon: <SystemIcon initial="HS" color="orange-600" />,
     authType: 'oauth',
     connectionType: 'source',
+    popular: true,
     permissions: [
       'Read contacts, companies, and deals',
       'Read marketing information',
@@ -73,6 +79,7 @@ export const crmSystems: SystemConfig[] = [
     icon: <SystemIcon initial="HS" color="orange-600" />,
     authType: 'oauth',
     connectionType: 'destination',
+    popular: true,
     permissions: [
       'Read/write contacts, companies, and deals',
       'Create and update marketing information',
@@ -82,11 +89,12 @@ export const crmSystems: SystemConfig[] = [
   },
   {
     id: 'dynamics',
-    name: 'Microsoft Dynamics',
+    name: 'Microsoft Dynamics 365',
     description: 'Connect to Microsoft Dynamics 365',
     icon: <SystemIcon initial="MD" color="cyan-600" />,
     authType: 'oauth',
     connectionType: 'source',
+    popular: true,
     permissions: [
       'Read contacts, accounts, and opportunities',
       'Read custom entities',
@@ -95,11 +103,12 @@ export const crmSystems: SystemConfig[] = [
   },
   {
     id: 'dynamics',
-    name: 'Microsoft Dynamics',
+    name: 'Microsoft Dynamics 365',
     description: 'Connect to Microsoft Dynamics 365',
     icon: <SystemIcon initial="MD" color="cyan-600" />,
     authType: 'oauth',
     connectionType: 'destination',
+    popular: true,
     permissions: [
       'Read/write contacts, accounts, and opportunities',
       'Create and update custom entities',
@@ -113,6 +122,7 @@ export const crmSystems: SystemConfig[] = [
     icon: <SystemIcon initial="ZH" color="red-600" />,
     authType: 'api',
     connectionType: 'source',
+    popular: true,
     apiKeyHelp: 'You can find your Zoho API key in your Zoho CRM account under Setup > Developer Space > API > Generate New Token.',
     connectionInstructions: 'Zoho requires an OAuth token for authentication. You will need to generate a self-client token from your Zoho account.'
   },
@@ -123,6 +133,7 @@ export const crmSystems: SystemConfig[] = [
     icon: <SystemIcon initial="ZH" color="red-600" />,
     authType: 'api',
     connectionType: 'destination',
+    popular: true,
     apiKeyHelp: 'You can find your Zoho API key in your Zoho CRM account under Setup > Developer Space > API > Generate New Token.',
     connectionInstructions: 'Zoho requires an OAuth token for authentication. You will need to generate a self-client token from your Zoho account.'
   },
@@ -133,6 +144,7 @@ export const crmSystems: SystemConfig[] = [
     icon: <SystemIcon initial="PD" color="green-600" />,
     authType: 'api',
     connectionType: 'source',
+    popular: true,
     apiKeyHelp: 'You can find your Pipedrive API key in your Pipedrive account under Settings > Personal Preferences > API.',
     connectionInstructions: 'Ensure your Pipedrive account has admin permissions to access all required data.'
   },
@@ -143,13 +155,54 @@ export const crmSystems: SystemConfig[] = [
     icon: <SystemIcon initial="PD" color="green-600" />,
     authType: 'api',
     connectionType: 'destination',
+    popular: true,
     apiKeyHelp: 'You can find your Pipedrive API key in your Pipedrive account under Settings > Personal Preferences > API.',
     connectionInstructions: 'Ensure your Pipedrive account has admin permissions to access all required data.'
+  },
+  // Additional CRMs
+  {
+    id: 'monday',
+    name: 'Monday Sales CRM',
+    description: 'Connect to Monday Sales CRM',
+    icon: <SystemIcon initial="MO" color="blue-500" />,
+    authType: 'api',
+    connectionType: 'source',
+    popular: false,
+    apiKeyHelp: 'You can find your Monday.com API key in Admin > API.'
+  },
+  {
+    id: 'monday',
+    name: 'Monday Sales CRM',
+    description: 'Connect to Monday Sales CRM',
+    icon: <SystemIcon initial="MO" color="blue-500" />,
+    authType: 'api',
+    connectionType: 'destination',
+    popular: false,
+    apiKeyHelp: 'You can find your Monday.com API key in Admin > API.'
+  },
+  {
+    id: 'freshsales',
+    name: 'Freshsales',
+    description: 'Connect to Freshsales CRM',
+    icon: <SystemIcon initial="FS" color="green-500" />,
+    authType: 'api',
+    connectionType: 'source',
+    apiKeyHelp: 'You can find your Freshsales API key in Administration > API Settings.'
+  },
+  {
+    id: 'freshsales',
+    name: 'Freshsales',
+    description: 'Connect to Freshsales CRM',
+    icon: <SystemIcon initial="FS" color="green-500" />,
+    authType: 'api',
+    connectionType: 'destination',
+    apiKeyHelp: 'You can find your Freshsales API key in Administration > API Settings.'
   }
 ];
 
 // Related Applications
 export const relatedApps: SystemConfig[] = [
+  // Sales Engagement
   {
     id: 'salesloft',
     name: 'SalesLoft',
@@ -157,18 +210,10 @@ export const relatedApps: SystemConfig[] = [
     icon: <SystemIcon initial="SL" color="blue-500" />,
     authType: 'api',
     connectionType: 'related',
+    category: 'sales-engagement',
+    popular: true,
     apiKeyHelp: 'You can find your SalesLoft API key in your SalesLoft account under Settings > API Keys.',
     connectionInstructions: 'Ensure your SalesLoft account has admin permissions to access all required data.'
-  },
-  {
-    id: 'marketo',
-    name: 'Marketo',
-    description: 'Connect to Marketo for marketing automation',
-    icon: <SystemIcon initial="MK" color="purple-600" />,
-    authType: 'api',
-    connectionType: 'related',
-    apiKeyHelp: 'You need both Client ID and Client Secret from your Marketo Admin area under Integration > LaunchPoint.',
-    connectionInstructions: 'Marketo requires both a Client ID and Client Secret for API authentication.'
   },
   {
     id: 'outreach',
@@ -177,6 +222,8 @@ export const relatedApps: SystemConfig[] = [
     icon: <SystemIcon initial="OR" color="green-500" />,
     authType: 'oauth',
     connectionType: 'related',
+    category: 'sales-engagement',
+    popular: true,
     permissions: [
       'Read prospect data',
       'Read sequence data',
@@ -190,18 +237,23 @@ export const relatedApps: SystemConfig[] = [
     icon: <SystemIcon initial="GG" color="yellow-600" />,
     authType: 'api',
     connectionType: 'related',
+    category: 'sales-engagement',
     apiKeyHelp: 'You can find your Gong API key in your Gong account under Admin > API Keys.',
     connectionInstructions: 'Ensure you have admin access to generate API keys in Gong.'
   },
+  
+  // Marketing Automation
   {
-    id: 'zoominfo',
-    name: 'ZoomInfo',
-    description: 'Connect to ZoomInfo for B2B data',
-    icon: <SystemIcon initial="ZI" color="blue-600" />,
+    id: 'marketo',
+    name: 'Marketo',
+    description: 'Connect to Marketo for marketing automation',
+    icon: <SystemIcon initial="MK" color="purple-600" />,
     authType: 'api',
     connectionType: 'related',
-    apiKeyHelp: 'Contact your ZoomInfo account representative to obtain API credentials.',
-    connectionInstructions: 'ZoomInfo API access requires a specific subscription tier. Contact your account representative for details.'
+    category: 'marketing-automation',
+    popular: true,
+    apiKeyHelp: 'You need both Client ID and Client Secret from your Marketo Admin area under Integration > LaunchPoint.',
+    connectionInstructions: 'Marketo requires both a Client ID and Client Secret for API authentication.'
   },
   {
     id: 'pardot',
@@ -210,10 +262,81 @@ export const relatedApps: SystemConfig[] = [
     icon: <SystemIcon initial="PT" color="blue-500" />,
     authType: 'oauth',
     connectionType: 'related',
+    category: 'marketing-automation',
+    popular: true,
     permissions: [
       'Read prospect data',
       'Read campaign data',
       'Access email templates'
     ]
+  },
+  {
+    id: 'mailchimp',
+    name: 'Mailchimp',
+    description: 'Connect to Mailchimp for email marketing',
+    icon: <SystemIcon initial="MC" color="yellow-500" />,
+    authType: 'api',
+    connectionType: 'related',
+    category: 'marketing-automation',
+    popular: true
+  },
+  
+  // Data Enrichment
+  {
+    id: 'zoominfo',
+    name: 'ZoomInfo',
+    description: 'Connect to ZoomInfo for B2B data',
+    icon: <SystemIcon initial="ZI" color="blue-600" />,
+    authType: 'api',
+    connectionType: 'related',
+    category: 'data-enrichment',
+    popular: true,
+    apiKeyHelp: 'Contact your ZoomInfo account representative to obtain API credentials.',
+    connectionInstructions: 'ZoomInfo API access requires a specific subscription tier. Contact your account representative for details.'
+  },
+  
+  // Connectivity
+  {
+    id: 'zapier',
+    name: 'Zapier',
+    description: 'Connect Zapier for workflow automation',
+    icon: <SystemIcon initial="ZP" color="orange-500" />,
+    authType: 'api',
+    connectionType: 'related',
+    category: 'connectivity',
+    popular: true
+  },
+  {
+    id: 'make',
+    name: 'Make (formerly Integromat)',
+    description: 'Connect to Make for workflow automation',
+    icon: <SystemIcon initial="MK" color="purple-500" />,
+    authType: 'api',
+    connectionType: 'related',
+    category: 'connectivity'
+  },
+  
+  // Support
+  {
+    id: 'zendesk',
+    name: 'Zendesk',
+    description: 'Connect to Zendesk for customer support',
+    icon: <SystemIcon initial="ZD" color="green-600" />,
+    authType: 'api',
+    connectionType: 'related',
+    category: 'support',
+    popular: true
+  },
+  
+  // Productivity
+  {
+    id: 'slack',
+    name: 'Slack',
+    description: 'Connect to Slack for team communication',
+    icon: <SystemIcon initial="SL" color="green-500" />,
+    authType: 'oauth',
+    connectionType: 'related',
+    category: 'productivity',
+    popular: true
   }
 ];
