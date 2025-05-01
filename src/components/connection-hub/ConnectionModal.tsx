@@ -1,0 +1,300 @@
+
+import React, { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SystemConfig } from "@/config/connectionSystems";
+import { useConnection } from "@/contexts/ConnectionContext";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Check, Info, X } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+interface ConnectionModalProps {
+  system: SystemConfig;
+  type: "source" | "destination" | "related";
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const ConnectionModal: React.FC<ConnectionModalProps> = ({ 
+  system, 
+  type,
+  isOpen, 
+  onClose 
+}) => {
+  const { connectSystem, validateConnection, showHelpGuide } = useConnection();
+  const [step, setStep] = useState<'intro' | 'oauth' | 'api' | 'success' | 'error'>('intro');
+  const [apiKey, setApiKey] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationState, setValidationState] = useState<'idle' | 'valid' | 'invalid'>('idle');
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorDetails, setErrorDetails] = useState<{ type: string; message: string } | null>(null);
+
+  const handleConnect = async () => {
+    if (system.authType === 'oauth') {
+      setStep('oauth');
+      // In a real app, this would initiate the OAuth flow
+      // For demo, we'll simulate success after a short delay
+      setTimeout(() => {
+        connectSystem(system.id, type);
+        setStep('success');
+      }, 2000);
+    } else {
+      setStep('api');
+    }
+  };
+
+  const handleApiKeySubmit = async () => {
+    setIsValidating(true);
+    try {
+      const result = await validateConnection(system.id, apiKey);
+      
+      if (result.valid) {
+        setValidationState('valid');
+        connectSystem(system.id, type, apiKey);
+        setStep('success');
+      } else {
+        setValidationState('invalid');
+        setErrorMessage(result.message || "Invalid API key");
+        
+        // If there's a specific permission error, show the error dialog
+        if (result.message?.includes("permission")) {
+          setStep('error');
+          setErrorDetails({
+            type: "permissions",
+            message: result.message
+          });
+        }
+      }
+    } catch (error) {
+      setValidationState('invalid');
+      setErrorMessage("Connection validation failed");
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleErrorHelp = () => {
+    if (errorDetails) {
+      showHelpGuide(errorDetails.type, system.name);
+      onClose();
+    }
+  };
+
+  const handleClose = () => {
+    setStep('intro');
+    setApiKey("");
+    setValidationState('idle');
+    setErrorMessage("");
+    setErrorDetails(null);
+    onClose();
+  };
+
+  const renderStepContent = () => {
+    switch (step) {
+      case 'intro':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Connect to {system.name}</DialogTitle>
+              <DialogDescription>
+                {system.authType === 'oauth' 
+                  ? `Securely connect to ${system.name} using OAuth. No credentials will be stored.`
+                  : `Connect to ${system.name} by providing your API key.`}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              {system.connectionInstructions && (
+                <Alert className="mb-4">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    {system.connectionInstructions}
+                  </AlertDescription>
+                </Alert>
+              )}
+              <div className="flex flex-col gap-4">
+                <p>
+                  Connecting to {system.name} will allow QuillSwitch to:
+                </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  {system.permissions?.map((permission, index) => (
+                    <li key={index} className="text-sm">{permission}</li>
+                  )) || (
+                    <>
+                      <li className="text-sm">Access your {system.name} data</li>
+                      <li className="text-sm">Perform migrations on your behalf</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleConnect}>
+                {system.authType === 'oauth' ? 'Continue with ' + system.name : 'Next'}
+              </Button>
+            </DialogFooter>
+          </>
+        );
+        
+      case 'oauth':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Connecting to {system.name}</DialogTitle>
+              <DialogDescription>
+                You'll be redirected to {system.name} to authorize QuillSwitch
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-10 flex items-center justify-center">
+              <div className="animate-pulse flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-brand-400"></div>
+                <div className="h-2 w-2 rounded-full bg-brand-400 animation-delay-200"></div>
+                <div className="h-2 w-2 rounded-full bg-brand-400 animation-delay-400"></div>
+              </div>
+            </div>
+          </>
+        );
+        
+      case 'api':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>Connect to {system.name}</DialogTitle>
+              <DialogDescription>
+                Provide your API key to connect securely to {system.name}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="apiKey">{system.name} API Key</Label>
+                  <div className="relative">
+                    <Input
+                      id="apiKey"
+                      type="text" 
+                      value={apiKey}
+                      onChange={(e) => {
+                        setApiKey(e.target.value);
+                        setValidationState('idle');
+                        setErrorMessage("");
+                      }}
+                      className={`pr-10 ${
+                        validationState === 'valid' ? 'border-green-500' : 
+                        validationState === 'invalid' ? 'border-red-500' : ''
+                      }`}
+                      placeholder={`Enter your ${system.name} API key`}
+                    />
+                    {validationState === 'valid' && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
+                        <Check className="h-5 w-5" />
+                      </div>
+                    )}
+                    {validationState === 'invalid' && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500">
+                        <X className="h-5 w-5" />
+                      </div>
+                    )}
+                  </div>
+                  {validationState === 'invalid' && (
+                    <p className="text-sm text-red-500">{errorMessage}</p>
+                  )}
+                </div>
+                
+                {system.apiKeyHelp && (
+                  <div className="bg-muted p-3 rounded-md">
+                    <h4 className="text-sm font-medium mb-2">Where to find your API key</h4>
+                    <p className="text-xs text-muted-foreground">{system.apiKeyHelp}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button 
+                onClick={handleApiKeySubmit} 
+                disabled={!apiKey || isValidating}
+              >
+                {isValidating ? 'Validating...' : 'Connect'}
+              </Button>
+            </DialogFooter>
+          </>
+        );
+        
+      case 'success':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-green-600 dark:text-green-400 flex items-center gap-2">
+                <Check className="h-5 w-5" />
+                Successfully Connected
+              </DialogTitle>
+              <DialogDescription>
+                Your {system.name} account has been connected successfully.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-6">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-4">
+                <p className="text-green-800 dark:text-green-300">
+                  QuillSwitch can now access your {system.name} data according to the permissions you granted.
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleClose}>Done</Button>
+            </DialogFooter>
+          </>
+        );
+        
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-md">
+          {renderStepContent()}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Error Dialog */}
+      {step === 'error' && errorDetails && (
+        <AlertDialog open={true} onOpenChange={() => setStep('api')}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-red-600 dark:text-red-400">
+                Connection Issue
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {errorDetails.message}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="py-4">
+              <div className="bg-muted p-4 rounded-md">
+                <h4 className="font-medium mb-2">How to fix this issue:</h4>
+                <ul className="text-sm space-y-2">
+                  <li>• Check if your API key has the right permissions</li>
+                  <li>• Make sure you're using an API key and not a personal token</li>
+                  <li>• Verify you have admin access in your {system.name} account</li>
+                </ul>
+              </div>
+            </div>
+            <AlertDialogFooter>
+              <Button variant="outline" onClick={() => setStep('api')}>
+                Try Again
+              </Button>
+              <Button onClick={handleErrorHelp} variant="default">
+                View Help Guide
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+    </>
+  );
+};
+
+export default ConnectionModal;

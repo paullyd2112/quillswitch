@@ -1,68 +1,63 @@
 
-import React from "react";
-import { Home, Bolt, Layers, FileBarChart2, FileText, HelpCircle, Settings, Users, BarChart3, Database } from "lucide-react";
-import { NavLink } from "./types";
+import React from 'react';
+import { Home, LayoutDashboard, Settings, FileText, Kanban, Zap, Database, Link } from 'lucide-react';
 
-const getNavLinks = (user: any): NavLink[] => {
-  // Links that are always shown
-  const publicLinks: NavLink[] = [
-    {
-      label: "Home",
-      href: "/",
-      icon: <Home className="h-4 w-4" />,
-    },
-    {
-      label: "Features",
-      href: "/features",
-      icon: <Bolt className="h-4 w-4" />,
-    },
-    {
-      label: "Resources",
-      href: "/resources",
-      icon: <HelpCircle className="h-4 w-4" />,
-    },
-    {
-      label: "About",
-      href: "/about",
-      icon: <Users className="h-4 w-4" />,
-    }
-  ];
-  
-  // Links shown only to authenticated users
-  const authenticatedLinks: NavLink[] = user ? [
-    {
-      label: "Migrations",
-      href: "/migrations",
-      icon: <Layers className="h-4 w-4" />,
-    },
-    {
-      label: "Integrations",
-      href: "/integrations",
-      icon: <Database className="h-4 w-4" />,
-    },
-    {
-      label: "Reports",
-      href: "/reports",
-      icon: <FileBarChart2 className="h-4 w-4" />,
-    },
-    {
-      label: "Analytics",
-      href: "/analytics",
-      icon: <BarChart3 className="h-4 w-4" />,
-    },
-    {
-      label: "API Docs",
-      href: "/api-docs",
-      icon: <FileText className="h-4 w-4" />,
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-      icon: <Settings className="h-4 w-4" />,
-    }
-  ] : [];
-  
-  return [...publicLinks, ...authenticatedLinks];
-};
+export interface NavLink {
+  title: string;
+  href: string;
+  icon?: React.ReactNode;
+  isExternal?: boolean;
+  isAuthRequired?: boolean;
+  children?: NavLink[];
+}
 
-export default getNavLinks;
+export const mainNav: NavLink[] = [
+  {
+    title: "Home",
+    href: "/",
+    icon: <Home className="mr-2 h-4 w-4" />,
+  },
+  {
+    title: "Features",
+    href: "/features",
+    icon: <Zap className="mr-2 h-4 w-4" />,
+  },
+  {
+    title: "Resources",
+    href: "/resources",
+    icon: <FileText className="mr-2 h-4 w-4" />,
+  },
+];
+
+export const userNav: NavLink[] = [
+  {
+    title: "Dashboard",
+    href: "/dashboard",
+    icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
+    isAuthRequired: true,
+  },
+  {
+    title: "Integrations",
+    href: "/integrations",
+    icon: <Kanban className="mr-2 h-4 w-4" />,
+    isAuthRequired: true,
+  },
+  {
+    title: "Connect",
+    href: "/connect",
+    icon: <Link className="mr-2 h-4 w-4" />,
+    isAuthRequired: true,
+  },
+  {
+    title: "Data Migration",
+    href: "/migration",
+    icon: <Database className="mr-2 h-4 w-4" />,
+    isAuthRequired: true,
+  },
+  {
+    title: "Settings",
+    href: "/settings",
+    icon: <Settings className="mr-2 h-4 w-4" />,
+    isAuthRequired: true,
+  },
+];
