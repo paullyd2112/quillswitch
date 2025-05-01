@@ -50,7 +50,7 @@ const MigrationInfo = () => {
       </div>
       
       <div className="pt-2">
-        <Link to="/setup">
+        <Link to="/migrations/setup">
           <Button size="lg" className="font-medium">
             Start Your Migration <ArrowRight className="ml-2 h-4 w-4" />
           </Button>

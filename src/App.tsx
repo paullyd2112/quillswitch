@@ -17,6 +17,9 @@ import Settings from './pages/Settings'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import ConnectionHub from './pages/ConnectionHub'
+import SetupMigration from './pages/SetupMigration'
+import MigrationsList from './pages/MigrationsList'
+import MigrationDashboard from './pages/MigrationDashboard'
 
 function App() {
   return (
@@ -35,6 +38,9 @@ function App() {
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/connect" element={<ConnectionHub />} />
+                <Route path="/migrations" element={<MigrationsList />} />
+                <Route path="/migrations/:id" element={<MigrationDashboard />} />
+                <Route path="/migrations/setup" element={<SetupMigration />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </UserOnboardingProvider>
