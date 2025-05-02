@@ -2,11 +2,12 @@
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { SystemConfig } from "@/config/connectionSystems";
+import { SystemConfig } from "@/config/types/connectionTypes";
 import { useConnection } from "@/contexts/ConnectionContext";
 import ConnectionModal from "./ConnectionModal";
-import { Check, ExternalLink } from "lucide-react";
+import { Check, ExternalLink, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ConnectionCardProps {
   system: SystemConfig;
@@ -39,10 +40,22 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ system, type }) => {
               </div>
             </div>
             {isConnected && (
-              <Badge variant="outline" className="bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
-                <Check className="h-3 w-3 mr-1" />
-                Connected
-              </Badge>
+              <div className="flex items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="text-green-700 dark:text-green-400 mr-1">
+                      <Lock className="h-3 w-3" />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">Securely connected with encrypted credentials</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Badge variant="outline" className="bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 border-green-200 dark:border-green-800">
+                  <Check className="h-3 w-3 mr-1" />
+                  Connected
+                </Badge>
+              </div>
             )}
           </div>
           

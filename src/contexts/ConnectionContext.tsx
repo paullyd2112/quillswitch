@@ -1,6 +1,7 @@
 
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { toast } from "sonner";
+import { storeSecureData, getSecureData, encryptData } from "@/utils/encryptionUtils";
 
 interface ConnectedSystem {
   id: string;
@@ -37,6 +38,32 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isConnecting, setIsConnecting] = useState(false);
   const [currentSystem, setCurrentSystem] = useState<string | null>(null);
 
+  // Load connected systems from secure storage on initialization
+  useEffect(() => {
+    const loadConnectedSystems = () => {
+      const storedSystems = getSecureData("connected_systems");
+      if (storedSystems) {
+        try {
+          const parsedSystems = JSON.parse(storedSystems);
+          if (Array.isArray(parsedSystems)) {
+            setConnectedSystems(parsedSystems);
+          }
+        } catch (error) {
+          console.error("Failed to parse stored connected systems", error);
+        }
+      }
+    };
+    
+    loadConnectedSystems();
+  }, []);
+
+  // Save connected systems to secure storage whenever they change
+  useEffect(() => {
+    if (connectedSystems.length > 0) {
+      storeSecureData("connected_systems", JSON.stringify(connectedSystems));
+    }
+  }, [connectedSystems]);
+
   const connectSystem = async (
     systemId: string, 
     type: "source" | "destination" | "related",
@@ -51,6 +78,11 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         toast.error(`API key is required to connect to ${systemId}`);
         return;
       }
+
+      // Store the API key securely
+      const secureKeyId = `api_key_${systemId}`;
+      const encryptedApiKey = encryptData(apiKey);
+      storeSecureData(secureKeyId, encryptedApiKey);
       
       // Simulate connection process
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -84,32 +116,58 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const disconnectSystem = (systemId: string) => {
+    // Remove the stored API key when disconnecting
+    const secureKeyId = `api_key_${systemId}`;
+    localStorage.removeItem(`secure_${secureKeyId}`);
+    
     setConnectedSystems(prev => prev.filter(system => system.id !== systemId));
     toast.success(`Disconnected from ${systemId}`);
   };
 
   const validateConnection = async (systemId: string, apiKey: string): Promise<{ valid: boolean; message?: string }> => {
-    // Always require API key validation
-    // Simulate API key validation
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Simple validation: API key must be at least 10 characters
-    if (!apiKey || apiKey.length < 10) {
+    if (!apiKey || apiKey.trim() === '') {
       return { 
         valid: false, 
-        message: "API key must be at least 10 characters long" 
+        message: "API key cannot be empty" 
       };
     }
     
-    // For demo, consider certain keys "invalid" to show error handling
-    if (apiKey === "invalid_permissions") {
+    // Simple validation: API key must be at least 10 characters with no spaces
+    if (apiKey.length < 10 || apiKey.includes(' ')) {
+      return { 
+        valid: false, 
+        message: "API key must be at least 10 characters long and contain no spaces" 
+      };
+    }
+    
+    try {
+      // Simulate API key validation
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // For demo, consider certain keys "invalid" to show error handling
+      if (apiKey === "invalid_permissions") {
+        return {
+          valid: false,
+          message: `QuillSwitch doesn't have permission to access required data in ${systemId}`
+        };
+      }
+      
+      // Check for common test/demo API keys that shouldn't be used in production
+      if (apiKey.includes("test") || apiKey.includes("demo") || apiKey.includes("example")) {
+        return {
+          valid: false,
+          message: `This appears to be a test API key. Please use a production key for ${systemId}`
+        };
+      }
+      
+      return { valid: true };
+    } catch (error) {
+      console.error("Validation error:", error);
       return {
         valid: false,
-        message: `QuillSwitch doesn't have permission to access required data in ${systemId}`
+        message: "Connection validation failed due to a network error. Please try again."
       };
     }
-    
-    return { valid: true };
   };
 
   const showHelpGuide = (errorType: string, systemName: string) => {

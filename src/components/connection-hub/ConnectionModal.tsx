@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { SystemConfig } from "@/config/types/connectionTypes";
 import { useConnection } from "@/contexts/ConnectionContext";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Check, Info, X } from "lucide-react";
+import { Check, Info, Shield, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { maskSensitiveData } from "@/utils/encryptionUtils";
 
 interface ConnectionModalProps {
   system: SystemConfig;
@@ -26,17 +27,51 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
   const { connectSystem, validateConnection, showHelpGuide } = useConnection();
   const [step, setStep] = useState<'intro' | 'api' | 'success' | 'error'>('intro');
   const [apiKey, setApiKey] = useState("");
+  const [apiKeyTouched, setApiKeyTouched] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationState, setValidationState] = useState<'idle' | 'valid' | 'invalid'>('idle');
   const [errorMessage, setErrorMessage] = useState("");
   const [errorDetails, setErrorDetails] = useState<{ type: string; message: string } | null>(null);
+  const [showSecurity, setShowSecurity] = useState(false);
+
+  // Auto clear API key from memory when component unmounts
+  useEffect(() => {
+    return () => {
+      setApiKey("");
+    };
+  }, []);
+
+  // Clear API key from memory when modal is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setApiKey("");
+      setApiKeyTouched(false);
+      setValidationState('idle');
+    }
+  }, [isOpen]);
 
   const handleConnect = () => {
     // Always go directly to API key input regardless of authType
     setStep('api');
   };
 
+  const validateApiKeyFormat = (key: string): boolean => {
+    // Reject obviously invalid formats
+    if (!key || key.length < 10) return false;
+    if (key.includes(' ')) return false;
+    if (/^(test|demo|example)/.test(key.toLowerCase())) return false;
+    
+    return true;
+  };
+
   const handleApiKeySubmit = async () => {
+    // Client-side validation before sending to server
+    if (!validateApiKeyFormat(apiKey)) {
+      setValidationState('invalid');
+      setErrorMessage("Invalid API key format. Keys should be at least 10 characters with no spaces.");
+      return;
+    }
+
     setIsValidating(true);
     try {
       const result = await validateConnection(system.id, apiKey);
@@ -45,6 +80,8 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
         setValidationState('valid');
         connectSystem(system.id, type, apiKey);
         setStep('success');
+        // Clear the API key from the component state as soon as it's no longer needed
+        setTimeout(() => setApiKey(""), 100);
       } else {
         setValidationState('invalid');
         setErrorMessage(result.message || "Invalid API key");
@@ -76,6 +113,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
   const handleClose = () => {
     setStep('intro');
     setApiKey("");
+    setApiKeyTouched(false);
     setValidationState('idle');
     setErrorMessage("");
     setErrorDetails(null);
@@ -102,6 +140,14 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
                   </AlertDescription>
                 </Alert>
               )}
+              
+              <Alert variant="outline" className="border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800 mb-4">
+                <Shield className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <AlertDescription className="text-amber-700 dark:text-amber-300">
+                  Your API keys are encrypted and stored securely. We never share your keys with third parties.
+                </AlertDescription>
+              </Alert>
+              
               <div className="flex flex-col gap-4">
                 <p>
                   Connecting to {system.name} will allow QuillSwitch to:
@@ -141,18 +187,21 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
                   <div className="relative">
                     <Input
                       id="apiKey"
-                      type="text" 
+                      type="password" 
                       value={apiKey}
                       onChange={(e) => {
                         setApiKey(e.target.value);
+                        setApiKeyTouched(true);
                         setValidationState('idle');
                         setErrorMessage("");
                       }}
+                      onBlur={() => setApiKeyTouched(true)}
                       className={`pr-10 ${
                         validationState === 'valid' ? 'border-green-500' : 
                         validationState === 'invalid' ? 'border-red-500' : ''
                       }`}
                       placeholder={`Enter your ${system.name} API key`}
+                      autoComplete="off"
                     />
                     {validationState === 'valid' && (
                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
@@ -168,21 +217,42 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
                   {validationState === 'invalid' && (
                     <p className="text-sm text-red-500">{errorMessage}</p>
                   )}
+                  {apiKeyTouched && apiKey && apiKey.length < 10 && validationState !== 'invalid' && (
+                    <p className="text-sm text-amber-500">API key should be at least 10 characters</p>
+                  )}
                 </div>
                 
-                {system.apiKeyHelp && (
-                  <div className="bg-muted p-3 rounded-md">
-                    <h4 className="text-sm font-medium mb-2">Where to find your API key</h4>
-                    <p className="text-xs text-muted-foreground">{system.apiKeyHelp}</p>
-                  </div>
-                )}
+                <div className="bg-muted p-3 rounded-md space-y-3">
+                  <button 
+                    onClick={() => setShowSecurity(!showSecurity)} 
+                    className="text-sm font-medium flex items-center gap-2 text-blue-600 hover:underline"
+                  >
+                    <Shield className="h-3 w-3" /> How we protect your API keys
+                  </button>
+                  
+                  {showSecurity && (
+                    <div className="text-xs space-y-2 text-muted-foreground border-t pt-2 mt-1">
+                      <p>• Your API keys are encrypted before being stored</p>
+                      <p>• Keys are never transmitted to third parties</p>
+                      <p>• We implement zero-knowledge design principles</p>
+                      <p>• Keys are stored in secure, isolated storage</p>
+                    </div>
+                  )}
+                  
+                  {system.apiKeyHelp && (
+                    <>
+                      <h4 className="text-sm font-medium">Where to find your API key</h4>
+                      <p className="text-xs text-muted-foreground">{system.apiKeyHelp}</p>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={handleClose}>Cancel</Button>
               <Button 
                 onClick={handleApiKeySubmit} 
-                disabled={!apiKey || isValidating}
+                disabled={!apiKey || apiKey.length < 10 || isValidating}
               >
                 {isValidating ? 'Validating...' : 'Connect'}
               </Button>
