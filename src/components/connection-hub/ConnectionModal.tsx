@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,8 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
   const [isValidating, setIsValidating] = useState(false);
   const [validationState, setValidationState] = useState<'idle' | 'valid' | 'invalid'>('idle');
   const [errorMessage, setErrorMessage] = useState("");
-  const [errorDetails, setErrorDetails: any] = useState(null);
+  // Fixed: proper type annotation for the state
+  const [errorDetails, setErrorDetails] = useState<{ type: string; message: string } | null>(null);
   const [showSecurity, setShowSecurity] = useState(false);
 
   // Auto clear API key from memory when component unmounts
