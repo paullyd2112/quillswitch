@@ -46,6 +46,12 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setIsConnecting(true);
       setCurrentSystem(systemId);
       
+      // Require API key for all connections
+      if (!apiKey) {
+        toast.error(`API key is required to connect to ${systemId}`);
+        return;
+      }
+      
       // Simulate connection process
       await new Promise(resolve => setTimeout(resolve, 1500));
       
@@ -83,6 +89,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const validateConnection = async (systemId: string, apiKey: string): Promise<{ valid: boolean; message?: string }> => {
+    // Always require API key validation
     // Simulate API key validation
     await new Promise(resolve => setTimeout(resolve, 800));
     

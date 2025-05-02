@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SystemConfig } from "@/config/connectionSystems";
+import { SystemConfig } from "@/config/connectionTypes";
 import { useConnection } from "@/contexts/ConnectionContext";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Check, Info, X } from "lucide-react";
@@ -24,25 +24,16 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
   onClose 
 }) => {
   const { connectSystem, validateConnection, showHelpGuide } = useConnection();
-  const [step, setStep] = useState<'intro' | 'oauth' | 'api' | 'success' | 'error'>('intro');
+  const [step, setStep] = useState<'intro' | 'api' | 'success' | 'error'>('intro');
   const [apiKey, setApiKey] = useState("");
   const [isValidating, setIsValidating] = useState(false);
   const [validationState, setValidationState] = useState<'idle' | 'valid' | 'invalid'>('idle');
   const [errorMessage, setErrorMessage] = useState("");
   const [errorDetails, setErrorDetails] = useState<{ type: string; message: string } | null>(null);
 
-  const handleConnect = async () => {
-    if (system.authType === 'oauth') {
-      setStep('oauth');
-      // In a real app, this would initiate the OAuth flow
-      // For demo, we'll simulate success after a short delay
-      setTimeout(() => {
-        connectSystem(system.id, type);
-        setStep('success');
-      }, 2000);
-    } else {
-      setStep('api');
-    }
+  const handleConnect = () => {
+    // Always go directly to API key input regardless of authType
+    setStep('api');
   };
 
   const handleApiKeySubmit = async () => {
@@ -99,9 +90,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
             <DialogHeader>
               <DialogTitle>Connect to {system.name}</DialogTitle>
               <DialogDescription>
-                {system.authType === 'oauth' 
-                  ? `Securely connect to ${system.name} using OAuth. No credentials will be stored.`
-                  : `Connect to ${system.name} by providing your API key.`}
+                Connect to {system.name} by providing your API key.
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
@@ -131,29 +120,8 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleConnect}>
-                {system.authType === 'oauth' ? 'Continue with ' + system.name : 'Next'}
-              </Button>
+              <Button onClick={handleConnect}>Next</Button>
             </DialogFooter>
-          </>
-        );
-        
-      case 'oauth':
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle>Connecting to {system.name}</DialogTitle>
-              <DialogDescription>
-                You'll be redirected to {system.name} to authorize QuillSwitch
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-10 flex items-center justify-center">
-              <div className="animate-pulse flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-brand-400"></div>
-                <div className="h-2 w-2 rounded-full bg-brand-400 animation-delay-200"></div>
-                <div className="h-2 w-2 rounded-full bg-brand-400 animation-delay-400"></div>
-              </div>
-            </div>
           </>
         );
         
