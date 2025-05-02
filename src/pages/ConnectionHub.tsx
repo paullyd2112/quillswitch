@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CrmConnectionSection from "@/components/connection-hub/CrmConnectionSection";
 import IntegratedToolsSection from "@/components/connection-hub/IntegratedToolsSection";
 import ConnectionGuide from "@/components/connection-hub/ConnectionGuide";
+import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 import { Info, Zap } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -22,6 +23,8 @@ const ConnectionHub: React.FC = () => {
               Connect your CRM systems and related applications
             </p>
           </div>
+          
+          <ProgressIndicator />
           
           <Alert className="mb-6 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
             <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />

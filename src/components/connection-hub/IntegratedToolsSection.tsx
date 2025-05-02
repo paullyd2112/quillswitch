@@ -47,6 +47,13 @@ const IntegratedToolsSection: React.FC<IntegratedToolsSectionProps> = ({
       </CardHeader>
       <CardContent className="pt-6">
         <div className="space-y-6">
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md">
+            <p className="text-sm text-blue-800 dark:text-blue-300">
+              Connecting tools like SalesLoft or Marketo helps ensure related data is handled correctly during migration 
+              and simplifies reconnecting them to your new CRM, preserving your critical workflows.
+            </p>
+          </div>
+
           <div className="flex flex-wrap items-center gap-3 justify-between">
             <div className="relative w-full md:w-auto flex-1 max-w-sm">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

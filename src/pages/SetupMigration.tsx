@@ -10,6 +10,7 @@ import { useConnection } from "@/contexts/ConnectionContext";
 import { ArrowRight, Check, Info, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
+import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 
 const SetupMigrationContent = () => {
   const navigate = useNavigate();
@@ -54,6 +55,8 @@ const SetupMigrationContent = () => {
             Configure your CRM migration settings
           </p>
         </div>
+        
+        <ProgressIndicator />
         
         <div className="grid gap-8">
           {/* Connection Status Card */}
