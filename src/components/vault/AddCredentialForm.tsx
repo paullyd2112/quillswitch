@@ -65,7 +65,7 @@ const AddCredentialForm: React.FC<AddCredentialFormProps> = ({
       <div className="grid grid-cols-2 gap-4">
         <CredentialTypeSelector
           credentialType={formData.credential_type}
-          credentialValue={formData.credential_value}
+          credentialValue={typeof formData.credential_value === 'string' ? formData.credential_value : ''}
           onChange={handleSelectChange}
           onValueChange={handleChange}
         />
@@ -74,7 +74,7 @@ const AddCredentialForm: React.FC<AddCredentialFormProps> = ({
           <Label htmlFor="environment">Environment</Label>
           <Select 
             value={formData.environment || 'development'} 
-            onValueChange={(value: any) => handleSelectChange('environment', value)}
+            onValueChange={(value) => handleSelectChange('environment', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select environment" />
@@ -111,7 +111,10 @@ const AddCredentialForm: React.FC<AddCredentialFormProps> = ({
         <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting || !formData.service_name || !formData.credential_value}>
+        <Button 
+          type="submit" 
+          disabled={isSubmitting || !formData.service_name || !formData.credential_value}
+        >
           {isSubmitting ? "Saving..." : "Save Credential"}
         </Button>
       </div>

@@ -7,7 +7,7 @@ export interface ServiceCredential {
   credential_type: 'api_key' | 'oauth_token' | 'connection_string' | 'secret_key';
   credential_value: string | Uint8Array;
   expires_at?: string | null;
-  environment?: 'development' | 'staging' | 'production';
+  environment?: 'development' | 'staging' | 'production' | null;
   created_at?: string;
   updated_at?: string;
   metadata?: Record<string, any>;

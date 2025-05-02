@@ -33,7 +33,17 @@ export const useVaultState = () => {
       
       if (error) throw error;
       
-      setCredentials(data || []);
+      // Cast the database response to match our ServiceCredential type
+      if (data) {
+        const typedCredentials = data.map(cred => ({
+          ...cred,
+          credential_type: cred.credential_type as ServiceCredential['credential_type'],
+          environment: cred.environment as ServiceCredential['environment']
+        }));
+        setCredentials(typedCredentials);
+      } else {
+        setCredentials([]);
+      }
     } catch (error) {
       console.error("Error loading credentials:", error);
       toast.error("Failed to load credentials");

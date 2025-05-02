@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ServiceCredential } from "@/components/vault/types";
 import { useAuth } from "@/contexts/auth";
@@ -12,7 +11,7 @@ export const useCredentialForm = (onAdd: (credential: ServiceCredential) => Prom
     service_name: '',
     credential_name: '',
     credential_type: 'api_key',
-    credential_value: '',
+    credential_value: '', // This is always a string when input by the user
     environment: 'development',
     expires_at: null,
     user_id: user?.id || '',
