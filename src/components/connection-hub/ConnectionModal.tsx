@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
   const [isValidating, setIsValidating] = useState(false);
   const [validationState, setValidationState] = useState<'idle' | 'valid' | 'invalid'>('idle');
   const [errorMessage, setErrorMessage] = useState("");
-  const [errorDetails, setErrorDetails] = useState<{ type: string; message: string } | null>(null);
+  const [errorDetails, setErrorDetails: any] = useState(null);
   const [showSecurity, setShowSecurity] = useState(false);
 
   // Auto clear API key from memory when component unmounts
@@ -141,7 +140,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
                 </Alert>
               )}
               
-              <Alert variant="outline" className="border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800 mb-4">
+              <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800 mb-4">
                 <Shield className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <AlertDescription className="text-amber-700 dark:text-amber-300">
                   Your API keys are encrypted and stored securely. We never share your keys with third parties.

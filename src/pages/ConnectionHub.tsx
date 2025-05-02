@@ -10,6 +10,7 @@ import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 import SecurityInfoCard from "@/components/connection-hub/SecurityInfoCard";
 import { Info, Shield, Zap } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const ConnectionHub: React.FC = () => {
   const [activeTab, setActiveTab] = useState("connect");
