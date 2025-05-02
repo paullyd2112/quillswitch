@@ -1,17 +1,17 @@
 
 export interface ServiceCredential {
   id?: string;
-  user_id: string; // Changed from optional to required to match the DB schema
+  user_id: string; 
   service_name: string;
   credential_name: string;
   credential_type: 'api_key' | 'oauth_token' | 'connection_string' | 'secret_key';
-  credential_value: string;
+  credential_value: string | Uint8Array;
   expires_at?: string | null;
   environment?: 'development' | 'staging' | 'production';
   created_at?: string;
   updated_at?: string;
   metadata?: Record<string, any>;
-  tags?: string[]; // Added tags for better organization
+  tags?: string[];
   last_used?: string; // Track when the credential was last accessed
 }
 

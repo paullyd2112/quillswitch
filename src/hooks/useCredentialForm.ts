@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { ServiceCredential } from "@/components/vault/types";
 import { useAuth } from "@/contexts/auth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useCredentialForm = (onAdd: (credential: ServiceCredential) => Promise<void>, onCancel: () => void) => {
   const { user } = useAuth();

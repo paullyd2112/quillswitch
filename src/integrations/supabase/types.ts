@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      credential_access_log: {
+        Row: {
+          accessed_at: string | null
+          action: string
+          credential_id: string | null
+          id: number
+          user_id: string | null
+        }
+        Insert: {
+          accessed_at?: string | null
+          action?: string
+          credential_id?: string | null
+          id?: number
+          user_id?: string | null
+        }
+        Update: {
+          accessed_at?: string | null
+          action?: string
+          credential_id?: string | null
+          id?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credential_access_log_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "service_credentials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       data_loading_jobs: {
         Row: {
           created_at: string
@@ -614,8 +646,10 @@ export type Database = {
           environment: string | null
           expires_at: string | null
           id: string
+          last_used: string | null
           metadata: Json | null
           service_name: string
+          tags: string[] | null
           updated_at: string
           user_id: string
         }
@@ -627,8 +661,10 @@ export type Database = {
           environment?: string | null
           expires_at?: string | null
           id?: string
+          last_used?: string | null
           metadata?: Json | null
           service_name: string
+          tags?: string[] | null
           updated_at?: string
           user_id: string
         }
@@ -640,8 +676,10 @@ export type Database = {
           environment?: string | null
           expires_at?: string | null
           id?: string
+          last_used?: string | null
           metadata?: Json | null
           service_name?: string
+          tags?: string[] | null
           updated_at?: string
           user_id?: string
         }
@@ -833,7 +871,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      encrypt_and_store_credential: {
+        Args: {
+          p_service_name: string
+          p_credential_name: string
+          p_credential_type: string
+          p_credential_value: string
+          p_environment?: string
+          p_expires_at?: string
+          p_metadata?: Json
+          p_tags?: string[]
+        }
+        Returns: string
+      }
+      get_decrypted_credential_with_logging: {
+        Args: { p_credential_id: string }
+        Returns: {
+          id: string
+          service_name: string
+          credential_name: string
+          credential_type: string
+          credential_value: string
+          environment: string
+          expires_at: string
+          metadata: Json
+          tags: string[]
+        }[]
+      }
     }
     Enums: {
       crm_data_type:

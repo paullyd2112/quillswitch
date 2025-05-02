@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useVaultState } from "@/hooks/useVaultState";
 import VaultHeader from "./VaultHeader";
 import VaultContent from "./VaultContent";
@@ -26,11 +26,18 @@ export const ServiceCredentialVault = () => {
     setFilter,
     setSelectedCredentialIds,
     setSelectedCredential,
+    loadCredentials,
     handleAddCredential,
     handleDeleteCredential,
     handleBulkDelete,
     handleUpdateCredential
   } = useVaultState();
+
+  // Load credentials on component mount
+  useEffect(() => {
+    loadCredentials();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filterCredentials = (credentials: ServiceCredential[]): ServiceCredential[] => {
     return credentials.filter(cred => {

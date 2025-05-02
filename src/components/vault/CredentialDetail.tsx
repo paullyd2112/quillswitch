@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -7,14 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Copy, Calendar, Clock, Tag } from "lucide-react";
 import { ServiceCredential } from "./types";
 import { useAuth } from "@/contexts/auth";
-import { fieldDecrypt, maskSensitiveData } from "@/utils/encryptionUtils";
+import { maskSensitiveData } from "@/utils/encryptionUtils";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import CredentialTag from "./CredentialTag";
 import TagInput from "./TagInput";
 import AccessLogViewer from "./AccessLogViewer";
 import { supabase } from "@/integrations/supabase/client";
-import { safeTable } from "@/services/utils/supabaseUtils";
 
 interface CredentialDetailProps {
   credential: ServiceCredential | null;
@@ -37,6 +36,13 @@ const CredentialDetail: React.FC<CredentialDetailProps> = ({
   const [tags, setTags] = useState<string[]>(credential?.tags || []);
   const [isSavingTags, setIsSavingTags] = useState(false);
 
+  // Reset state when credential changes
+  useEffect(() => {
+    setShowCredential(false);
+    setDecryptedValue(null);
+    setTags(credential?.tags || []);
+  }, [credential]);
+
   if (!credential) return null;
 
   const toggleCredentialVisibility = async () => {
@@ -44,35 +50,17 @@ const CredentialDetail: React.FC<CredentialDetailProps> = ({
       // Decrypt when showing for the first time
       try {
         setIsDecrypting(true);
-        const encryptionKey = `${user!.id}-credential-vault-key`;
-        const decrypted = await fieldDecrypt(credential.credential_value, encryptionKey);
-        setDecryptedValue(decrypted);
-        setShowCredential(true);
         
-        // Update last_used timestamp
-        if (credential.id) {
-          try {
-            const now = new Date().toISOString();
-            const metadata = {
-              ...(credential.metadata || {}),
-              last_used: now,
-              access_history: [
-                ...(credential.metadata?.access_history || []),
-                { timestamp: now, action: "view" }
-              ].slice(-10) // Keep last 10 accesses
-            };
-            
-            await safeTable<ServiceCredential>('service_credentials')
-              .update({ 
-                metadata,
-                updated_at: now
-              })
-              .eq('id', credential.id);
-          } catch (error) {
-            console.error("Failed to update usage timestamp:", error);
-            // Non-critical error, don't show to user
-          }
-        }
+        // Get decrypted credential value using RPC function
+        const { data, error } = await supabase.rpc('get_decrypted_credential_with_logging', {
+          p_credential_id: credential.id
+        });
+        
+        if (error) throw error;
+        if (!data || data.length === 0) throw new Error("No data returned");
+        
+        setDecryptedValue(data[0].credential_value);
+        setShowCredential(true);
       } catch (error) {
         console.error("Error decrypting credential:", error);
         toast.error("Failed to decrypt credential");
@@ -91,38 +79,23 @@ const CredentialDetail: React.FC<CredentialDetailProps> = ({
       let valueToCopy = decryptedValue;
       if (!valueToCopy) {
         setIsDecrypting(true);
-        const encryptionKey = `${user!.id}-credential-vault-key`;
-        valueToCopy = await fieldDecrypt(credential.credential_value, encryptionKey);
+        
+        // Get decrypted credential value using RPC function
+        const { data, error } = await supabase.rpc('get_decrypted_credential_with_logging', {
+          p_credential_id: credential.id
+        });
+        
+        if (error) throw error;
+        if (!data || data.length === 0) throw new Error("No data returned");
+        
+        valueToCopy = data[0].credential_value;
         setDecryptedValue(valueToCopy);
       }
       
       await navigator.clipboard.writeText(valueToCopy || '');
       toast.success("Copied to clipboard");
       
-      // Update last_used timestamp and access log
-      if (credential.id) {
-        try {
-          const now = new Date().toISOString();
-          const metadata = {
-            ...(credential.metadata || {}),
-            last_used: now,
-            access_history: [
-              ...(credential.metadata?.access_history || []),
-              { timestamp: now, action: "copy" }
-            ].slice(-10) // Keep last 10 accesses
-          };
-          
-          await safeTable<ServiceCredential>('service_credentials')
-            .update({ 
-              metadata,
-              updated_at: now
-            })
-            .eq('id', credential.id);
-        } catch (error) {
-          console.error("Failed to update usage timestamp:", error);
-          // Non-critical error, don't show to user
-        }
-      }
+      // Access logging is handled by the RPC function
     } catch (error) {
       console.error("Error copying credential:", error);
       toast.error("Failed to copy credential");
@@ -230,7 +203,7 @@ const CredentialDetail: React.FC<CredentialDetailProps> = ({
                       ) : showCredential && decryptedValue ? (
                         <span className="break-all">{decryptedValue}</span>
                       ) : (
-                        <span>{maskSensitiveData(credential.credential_value, 8)}</span>
+                        <span>{maskSensitiveData(credential.credential_value.toString(), 8)}</span>
                       )}
                     </div>
                     <Button 
@@ -264,10 +237,10 @@ const CredentialDetail: React.FC<CredentialDetailProps> = ({
                     )}
                   </div>
                   <div>
-                    {credential.metadata?.last_used && (
+                    {credential.last_used && (
                       <p className="flex items-center">
                         <Clock className="h-4 w-4 mr-1" />
-                        Last used on {new Date(credential.metadata.last_used).toLocaleDateString()}
+                        Last used on {new Date(credential.last_used).toLocaleDateString()}
                       </p>
                     )}
                   </div>

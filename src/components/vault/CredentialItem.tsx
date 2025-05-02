@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,13 +6,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Eye, EyeOff, Copy, Trash2, Key, Lock, Calendar, KeyRound, Clock } from "lucide-react";
 import { ServiceCredential } from "./types";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth";
-import { fieldDecrypt, maskSensitiveData } from "@/utils/encryptionUtils";
+import { maskSensitiveData } from "@/utils/encryptionUtils";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { safeTable } from "@/services/utils/supabaseUtils";
 import CredentialTag from "./CredentialTag";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CredentialItemProps {
   credential: ServiceCredential;
@@ -71,35 +71,19 @@ const CredentialItem: React.FC<CredentialItemProps> = ({
       // Decrypt when showing for the first time
       try {
         setIsDecrypting(true);
-        const encryptionKey = `${user!.id}-credential-vault-key`;
-        const decrypted = await fieldDecrypt(credential.credential_value, encryptionKey);
-        setDecryptedValue(decrypted);
+        
+        // Get decrypted credential value using RPC function
+        const { data, error } = await supabase.rpc('get_decrypted_credential_with_logging', {
+          p_credential_id: credential.id
+        });
+        
+        if (error) throw error;
+        if (!data || data.length === 0) throw new Error("No data returned");
+        
+        setDecryptedValue(data[0].credential_value);
         setShowCredential(true);
         
-        // Update last_used timestamp
-        if (credential.id) {
-          try {
-            const now = new Date().toISOString();
-            const metadata = {
-              ...(credential.metadata || {}),
-              last_used: now,
-              access_history: [
-                ...(credential.metadata?.access_history || []),
-                { timestamp: now, action: "view" }
-              ].slice(-10) // Keep last 10 accesses
-            };
-            
-            await safeTable<ServiceCredential>('service_credentials')
-              .update({ 
-                metadata,
-                updated_at: now
-              })
-              .eq('id', credential.id);
-          } catch (error) {
-            console.error("Failed to update usage timestamp:", error);
-            // Non-critical error, don't show to user
-          }
-        }
+        // Access logging is handled by the RPC function
       } catch (error) {
         console.error("Error decrypting credential:", error);
         toast.error("Failed to decrypt credential");
@@ -118,38 +102,23 @@ const CredentialItem: React.FC<CredentialItemProps> = ({
       let valueToCopy = decryptedValue;
       if (!valueToCopy) {
         setIsDecrypting(true);
-        const encryptionKey = `${user!.id}-credential-vault-key`;
-        valueToCopy = await fieldDecrypt(credential.credential_value, encryptionKey);
+        
+        // Get decrypted credential value using RPC function
+        const { data, error } = await supabase.rpc('get_decrypted_credential_with_logging', {
+          p_credential_id: credential.id
+        });
+        
+        if (error) throw error;
+        if (!data || data.length === 0) throw new Error("No data returned");
+        
+        valueToCopy = data[0].credential_value;
         setDecryptedValue(valueToCopy);
       }
       
       await navigator.clipboard.writeText(valueToCopy || '');
       toast.success("Copied to clipboard");
       
-      // Update last_used timestamp and access log
-      if (credential.id) {
-        try {
-          const now = new Date().toISOString();
-          const metadata = {
-            ...(credential.metadata || {}),
-            last_used: now,
-            access_history: [
-              ...(credential.metadata?.access_history || []),
-              { timestamp: now, action: "copy" }
-            ].slice(-10) // Keep last 10 accesses
-          };
-          
-          await safeTable<ServiceCredential>('service_credentials')
-            .update({ 
-              metadata,
-              updated_at: now
-            })
-            .eq('id', credential.id);
-        } catch (error) {
-          console.error("Failed to update usage timestamp:", error);
-          // Non-critical error, don't show to user
-        }
-      }
+      // Access logging is handled by the RPC function
     } catch (error) {
       console.error("Error copying credential:", error);
       toast.error("Failed to copy credential");
@@ -183,9 +152,9 @@ const CredentialItem: React.FC<CredentialItemProps> = ({
   };
 
   const formatLastUsed = () => {
-    if (!credential.metadata?.last_used) return null;
+    if (!credential.last_used) return null;
     
-    const lastUsed = new Date(credential.metadata.last_used);
+    const lastUsed = new Date(credential.last_used);
     const now = new Date();
     const diffMs = now.getTime() - lastUsed.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -337,7 +306,7 @@ const CredentialItem: React.FC<CredentialItemProps> = ({
               ) : showCredential && decryptedValue ? (
                 <span className="break-all">{decryptedValue}</span>
               ) : (
-                <span>{maskSensitiveData(credential.credential_value, 8)}</span>
+                <span>{maskSensitiveData(credential.credential_value.toString(), 8)}</span>
               )}
             </div>
           </div>
