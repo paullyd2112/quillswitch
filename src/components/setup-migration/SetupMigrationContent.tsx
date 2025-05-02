@@ -38,8 +38,10 @@ const SetupMigrationContent: React.FC = () => {
     
     // Simulate connection validation
     setTimeout(() => {
-      navigate("/setup-wizard");
-      // In a real implementation, this would be replaced with a redirect to the SetupWizard component
+      // Create a new migration and redirect to the migrations list
+      toast.success("Migration setup initialized successfully!");
+      navigate("/migrations");
+      // In a real implementation, this would create a migration and redirect to its dashboard
     }, 1500);
   };
 

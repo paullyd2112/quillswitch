@@ -20,7 +20,6 @@ import ConnectionHub from './pages/ConnectionHub'
 import SetupMigration from './pages/SetupMigration'
 import MigrationsList from './pages/MigrationsList'
 import MigrationDashboard from './pages/MigrationDashboard'
-import SetupWizard from './pages/SetupWizard'
 
 function App() {
   return (
@@ -42,7 +41,6 @@ function App() {
                 <Route path="/migrations" element={<MigrationsList />} />
                 <Route path="/migrations/setup" element={<SetupMigration />} />
                 <Route path="/migrations/:id" element={<MigrationDashboard />} />
-                <Route path="/setup-wizard" element={<SetupWizard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </UserOnboardingProvider>
