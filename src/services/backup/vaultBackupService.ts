@@ -11,6 +11,16 @@ interface BackupMetadata {
   backupId: string;
 }
 
+// Temporary in-memory storage for backups since we don't have a vault_backups table yet
+const memoryBackups: Map<string, {
+  id: string;
+  user_id: string;
+  metadata: BackupMetadata;
+  credentials_snapshot: ServiceCredential[];
+  created_at: string;
+  backup_type: string;
+}> = new Map();
+
 /**
  * Creates a backup of all user credentials
  */
@@ -38,19 +48,15 @@ export const createVaultBackup = async (): Promise<{ success: boolean; backupId?
       backupId
     };
     
-    // Store backup in the user's backup table
-    const { error: backupError } = await supabase
-      .from('vault_backups')
-      .insert({
-        id: backupId,
-        user_id: metadata.userId,
-        metadata,
-        credentials_snapshot: credentials,
-        created_at: metadata.timestamp,
-        backup_type: 'manual'
-      });
-      
-    if (backupError) throw backupError;
+    // Store backup in memory for now
+    memoryBackups.set(backupId, {
+      id: backupId,
+      user_id: metadata.userId,
+      metadata,
+      credentials_snapshot: credentials,
+      created_at: metadata.timestamp,
+      backup_type: 'manual'
+    });
     
     return { success: true, backupId };
   } catch (error) {
@@ -67,14 +73,19 @@ export const createVaultBackup = async (): Promise<{ success: boolean; backupId?
  */
 export const listBackups = async (): Promise<{ backups: any[]; error?: string }> => {
   try {
-    const { data: backups, error } = await supabase
-      .from('vault_backups')
-      .select('id, created_at, metadata, backup_type')
-      .order('created_at', { ascending: false });
-      
-    if (error) throw error;
+    // Get user ID from current session
+    const { data: { user } } = await supabase.auth.getUser();
     
-    return { backups: backups || [] };
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    
+    // Filter backups by user ID
+    const userBackups = Array.from(memoryBackups.values())
+      .filter(backup => backup.user_id === user.id)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    
+    return { backups: userBackups };
   } catch (error) {
     console.error('Failed to list backups:', error);
     return { 
@@ -96,19 +107,14 @@ export const restoreFromBackup = async (
   } = { conflictStrategy: 'skip' }
 ): Promise<{ success: boolean; processed: number; errors: number; error?: string }> => {
   try {
-    // Get the backup
-    const { data: backup, error } = await supabase
-      .from('vault_backups')
-      .select('credentials_snapshot')
-      .eq('id', backupId)
-      .single();
-      
-    if (error) throw error;
+    // Get the backup from memory
+    const backup = memoryBackups.get(backupId);
+    
     if (!backup || !backup.credentials_snapshot) {
       return { success: false, processed: 0, errors: 0, error: 'Backup not found or empty' };
     }
     
-    const credentials = backup.credentials_snapshot as any[];
+    const credentials = backup.credentials_snapshot;
     let processed = 0;
     let errors = 0;
     
@@ -198,20 +204,28 @@ export const restoreFromBackup = async (
  */
 export const scheduleAutomaticBackup = async (): Promise<void> => {
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return; // User not authenticated
+    }
+    
     // Check when the last automatic backup was created
-    const { data: lastBackup } = await supabase
-      .from('vault_backups')
-      .select('created_at')
-      .eq('backup_type', 'automatic')
-      .order('created_at', { ascending: false })
-      .limit(1);
+    const userBackups = Array.from(memoryBackups.values())
+      .filter(backup => backup.user_id === user.id && backup.backup_type === 'automatic')
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     
     // If no backup exists or the last one is more than a day old
-    if (!lastBackup || !lastBackup.length || 
-        new Date().getTime() - new Date(lastBackup[0].created_at).getTime() > 24 * 60 * 60 * 1000) {
+    if (!userBackups.length || 
+        new Date().getTime() - new Date(userBackups[0].created_at).getTime() > 24 * 60 * 60 * 1000) {
       const result = await createVaultBackup();
-      if (result.success) {
-        console.log(`Automatic backup created: ${result.backupId}`);
+      if (result.success && result.backupId) {
+        // Update the type to automatic
+        const backup = memoryBackups.get(result.backupId);
+        if (backup) {
+          backup.backup_type = 'automatic';
+          console.log(`Automatic backup created: ${result.backupId}`);
+        }
       }
     }
   } catch (error) {

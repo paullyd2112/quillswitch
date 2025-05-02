@@ -130,7 +130,7 @@ export const BackupRestorePanel: React.FC<BackupRestorePanelProps> = ({
                     </DialogDescription>
                   </DialogHeader>
                   
-                  <Alert variant="warning" className="my-4">
+                  <Alert className="my-4">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Please confirm your restore strategy</AlertTitle>
                     <AlertDescription>
