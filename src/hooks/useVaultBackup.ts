@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { handleAppError, tryExecute } from "@/services/errorHandling/errorService";
+import { ServiceCredential } from "@/components/vault/types";
 
 // Define backup interface for type safety
 interface VaultBackup {
