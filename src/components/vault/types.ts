@@ -10,7 +10,7 @@ export interface ServiceCredential {
   environment?: 'development' | 'staging' | 'production' | null;
   created_at?: string;
   updated_at?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, any> | null;
   tags?: string[];
   last_used?: string; // Track when the credential was last accessed
 }

@@ -1,15 +1,15 @@
 
 import React from "react";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ServiceCredential } from "../types";
 
 interface CredentialTypeSelectorProps {
-  credentialType: string;
+  credentialType: ServiceCredential['credential_type'];
   credentialValue: string;
   onChange: (name: string, value: string) => void;
-  onValueChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onValueChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const CredentialTypeSelector: React.FC<CredentialTypeSelectorProps> = ({
@@ -24,7 +24,7 @@ const CredentialTypeSelector: React.FC<CredentialTypeSelectorProps> = ({
         <Label htmlFor="credential_type">Credential Type</Label>
         <Select 
           value={credentialType} 
-          onValueChange={(value) => onChange('credential_type', value)}
+          onValueChange={(value) => onChange('credential_type', value as ServiceCredential['credential_type'])}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select credential type" />
@@ -40,34 +40,19 @@ const CredentialTypeSelector: React.FC<CredentialTypeSelectorProps> = ({
       
       <div className="space-y-2">
         <Label htmlFor="credential_value">
-          {credentialType === 'connection_string' ? 'Connection String' : 'Credential Value'}
+          {credentialType === 'api_key' ? 'API Key' : 
+           credentialType === 'oauth_token' ? 'OAuth Token' : 
+           credentialType === 'connection_string' ? 'Connection String' : 'Secret Key'}
         </Label>
-        {credentialType === 'connection_string' ? (
-          <Textarea
-            id="credential_value"
-            name="credential_value"
-            placeholder="Enter the full connection string"
-            value={credentialValue}
-            onChange={onValueChange}
-            rows={3}
-            className="font-mono text-sm"
-            required
-          />
-        ) : (
-          <Input
-            id="credential_value"
-            name="credential_value"
-            type="password"
-            placeholder="Enter secret value"
-            value={credentialValue}
-            onChange={onValueChange}
-            className="font-mono"
-            required
-          />
-        )}
-        <p className="text-xs text-muted-foreground mt-1">
-          This value will be encrypted before storage and can only be decrypted by you.
-        </p>
+        <Input
+          id="credential_value"
+          name="credential_value"
+          type="password"
+          autoComplete="off"
+          value={credentialValue}
+          onChange={onValueChange}
+          required
+        />
       </div>
     </>
   );

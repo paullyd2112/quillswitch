@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ServiceCredential, CredentialFilter } from "@/components/vault/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Json } from "@/integrations/supabase/types";
 
 export const useVaultState = () => {
   // State for managing credentials
@@ -38,7 +39,8 @@ export const useVaultState = () => {
         const typedCredentials = data.map(cred => ({
           ...cred,
           credential_type: cred.credential_type as ServiceCredential['credential_type'],
-          environment: cred.environment as ServiceCredential['environment']
+          environment: cred.environment as ServiceCredential['environment'],
+          metadata: cred.metadata as Record<string, any> | null
         }));
         setCredentials(typedCredentials);
       } else {
@@ -61,7 +63,7 @@ export const useVaultState = () => {
         p_service_name: credential.service_name,
         p_credential_name: credential.credential_name,
         p_credential_type: credential.credential_type,
-        p_credential_value: credential.credential_value,
+        p_credential_value: credential.credential_value as string,
         p_environment: credential.environment,
         p_expires_at: credential.expires_at,
         p_metadata: credential.metadata || {},
