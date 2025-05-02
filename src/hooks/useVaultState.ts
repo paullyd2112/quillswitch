@@ -1,9 +1,10 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ServiceCredential, CredentialFilter } from "@/components/vault/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Json } from "@/integrations/supabase/types";
+import { validateCredential, displayValidationErrors } from "@/services/validation/credentialValidationService";
+import { scheduleAutomaticBackup } from "@/services/backup/vaultBackupService";
 
 export const useVaultState = () => {
   // State for managing credentials
@@ -46,6 +47,11 @@ export const useVaultState = () => {
       } else {
         setCredentials([]);
       }
+
+      // Schedule an automatic backup after loading credentials
+      scheduleAutomaticBackup().catch(err => 
+        console.error("Failed to create automatic backup:", err)
+      );
     } catch (error) {
       console.error("Error loading credentials:", error);
       toast.error("Failed to load credentials");
@@ -56,6 +62,14 @@ export const useVaultState = () => {
   
   // Handle adding a new credential
   const handleAddCredential = async (credential: ServiceCredential): Promise<void> => {
+    // Validate the credential before saving
+    const validationResult = validateCredential(credential);
+    
+    if (!validationResult.isValid) {
+      displayValidationErrors(validationResult);
+      return;
+    }
+    
     setIsLoading(true);
     try {
       // Call the RPC function to encrypt and store the credential
@@ -146,6 +160,14 @@ export const useVaultState = () => {
   
   // Handle updating a credential
   const handleUpdateCredential = async (credential: ServiceCredential): Promise<void> => {
+    // Validate the credential before updating
+    const validationResult = validateCredential(credential);
+    
+    if (!validationResult.isValid) {
+      displayValidationErrors(validationResult);
+      return;
+    }
+    
     setIsLoading(true);
     try {
       // For now, we only support updating non-sensitive fields
