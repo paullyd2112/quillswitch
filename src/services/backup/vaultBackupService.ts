@@ -11,9 +11,21 @@ interface BackupMetadata {
   backupId: string;
 }
 
-// Simpler version of the credential type for backup storage
-type StorableCredential = Omit<ServiceCredential, 'credential_value'> & {
+// Simpler version of the credential type for backup storage that handles the DB response
+type StorableCredential = {
+  id: string;
+  user_id: string;
+  service_name: string;
+  credential_name: string;
+  credential_type: string; // Changed from the enum to string to match DB response
   credential_value: string;
+  environment?: string | null;
+  expires_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  metadata?: Record<string, any> | null;
+  tags?: string[];
+  last_used?: string | null;
 };
 
 // Temporary in-memory storage for backups since we don't have a vault_backups table yet
@@ -53,11 +65,12 @@ export const createVaultBackup = async (): Promise<{ success: boolean; backupId?
       backupId
     };
     
-    // Convert credential_value to string if it's not already
-    const storableCredentials = credentials.map(cred => ({
+    // Process credentials to ensure they match our StorableCredential type
+    const storableCredentials: StorableCredential[] = credentials.map(cred => ({
       ...cred,
-      credential_value: typeof cred.credential_value === 'string'
-        ? cred.credential_value
+      // Ensure credential_value is always a string
+      credential_value: typeof cred.credential_value === 'string' 
+        ? cred.credential_value 
         : '[Protected Value]' // Don't store actual binary value in memory
     }));
     

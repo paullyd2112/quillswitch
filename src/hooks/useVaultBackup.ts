@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { handleAppError, tryExecute } from "@/services/errorHandling/errorService";
 import { ServiceCredential } from "@/components/vault/types";
+import { createVaultBackup, listBackups, restoreFromBackup } from "@/services/backup/vaultBackupService";
 
 // Define backup interface for type safety
 interface VaultBackup {
@@ -19,9 +20,6 @@ interface VaultBackup {
   backup_type: 'manual' | 'automatic';
 }
 
-// In-memory backup storage until we have a proper table
-let temporaryBackups: VaultBackup[] = [];
-
 export const useVaultBackup = () => {
   const [backups, setBackups] = useState<VaultBackup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,8 +29,22 @@ export const useVaultBackup = () => {
   const loadBackups = async () => {
     setIsLoading(true);
     try {
-      // Use in-memory backups for now
-      setBackups(temporaryBackups);
+      const { backups: availableBackups, error } = await listBackups();
+      
+      if (error) {
+        toast.error(`Failed to load backups: ${error}`);
+        return;
+      }
+      
+      // Convert to our VaultBackup interface format
+      const formattedBackups: VaultBackup[] = availableBackups.map(backup => ({
+        id: backup.id,
+        created_at: backup.created_at,
+        metadata: backup.metadata,
+        backup_type: backup.backup_type as 'manual' | 'automatic'
+      }));
+      
+      setBackups(formattedBackups);
     } catch (error) {
       handleAppError(error, "Failed to load backups", "database");
     } finally {
@@ -44,45 +56,22 @@ export const useVaultBackup = () => {
   const createBackup = async () => {
     setIsLoading(true);
     try {
-      // Get all user credentials
-      const { data: credentials, error } = await supabase
-        .from('service_credentials')
-        .select('*');
-        
-      if (error) throw error;
-      if (!credentials || credentials.length === 0) {
-        toast.warning("No credentials found to backup");
+      const result = await createVaultBackup();
+      
+      if (!result.success) {
+        if (result.error === 'No credentials found to backup') {
+          toast.warning("No credentials found to backup");
+        } else {
+          toast.error(`Failed to create backup: ${result.error}`);
+        }
         return null;
       }
       
-      // Generate backup ID
-      const backupId = `vault_backup_${Date.now()}`;
-      
-      // Create backup metadata
-      const metadata = {
-        timestamp: new Date().toISOString(),
-        credentialCount: credentials.length,
-        version: '1.0',
-        userId: credentials[0].user_id, // All credentials should belong to the same user
-        backupId
-      };
-      
-      // Store backup in memory
-      const newBackup: VaultBackup = {
-        id: backupId,
-        created_at: new Date().toISOString(),
-        metadata,
-        backup_type: 'manual'
-      };
-      
-      // Add to our temporary storage
-      temporaryBackups.push(newBackup);
-      
-      // Update local state
-      setBackups([...temporaryBackups]);
+      // Refresh backups list
+      await loadBackups();
       
       toast.success(`Backup created successfully`);
-      return backupId;
+      return result.backupId;
     } catch (error) {
       handleAppError(error, "Failed to create backup", "database");
       return null;
@@ -96,18 +85,14 @@ export const useVaultBackup = () => {
     setIsLoading(true);
     
     try {
-      // Find backup in memory
-      const backup = temporaryBackups.find(b => b.id === backupId);
+      const result = await restoreFromBackup(backupId, { conflictStrategy });
       
-      if (!backup) {
-        toast.error("Backup not found");
+      if (!result.success) {
+        toast.error(result.error || "Failed to restore backup");
         return false;
       }
       
-      // In a real implementation, we would restore credentials from the backup
-      // For now, just simulate success
-      toast.success(`Restored ${backup.metadata.credentialCount} credentials successfully`);
-      
+      toast.success(`Restored ${result.processed} credentials successfully${result.errors ? `, with ${result.errors} errors` : ''}`);
       return true;
     } catch (error) {
       handleAppError(error, "Restore operation failed", "database");
@@ -120,11 +105,7 @@ export const useVaultBackup = () => {
   // Schedule an automatic backup
   const scheduleAutomaticBackup = async () => {
     try {
-      // Check if any backups exist
-      if (temporaryBackups.length === 0 || 
-          new Date().getTime() - new Date(temporaryBackups[0].created_at).getTime() > 24 * 60 * 60 * 1000) {
-        await createBackup();
-      }
+      await createBackup();
     } catch (error) {
       console.error('Failed to schedule automatic backup:', error);
     }
