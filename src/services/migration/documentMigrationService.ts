@@ -2,7 +2,7 @@
 // Re-export all document migration services through this index file
 // This provides backward compatibility with existing code while maintaining a clean structure
 
-export { 
+export type { 
   DocumentInfo, 
   DocumentMigrationParams, 
   DocumentMigrationResult, 
