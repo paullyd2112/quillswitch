@@ -66,13 +66,23 @@ export const createVaultBackup = async (): Promise<{ success: boolean; backupId?
     };
     
     // Process credentials to ensure they match our StorableCredential type
-    const storableCredentials: StorableCredential[] = credentials.map(cred => ({
-      ...cred,
-      // Ensure credential_value is always a string
-      credential_value: typeof cred.credential_value === 'string' 
-        ? cred.credential_value 
-        : '[Protected Value]' // Don't store actual binary value in memory
-    }));
+    const storableCredentials: StorableCredential[] = credentials.map(cred => {
+      // Check if metadata is actually an object
+      const isValidMetadataObject = 
+        cred.metadata !== null && 
+        typeof cred.metadata === 'object' && 
+        !Array.isArray(cred.metadata);
+      
+      return {
+        ...cred,
+        // Ensure credential_value is always a string
+        credential_value: typeof cred.credential_value === 'string' 
+          ? cred.credential_value 
+          : '[Protected Value]', // Don't store actual binary value in memory
+        // Ensure metadata is a valid Record<string, any> or null
+        metadata: isValidMetadataObject ? cred.metadata : null
+      };
+    });
     
     // Store backup in memory for now
     memoryBackups.set(backupId, {
