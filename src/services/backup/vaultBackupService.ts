@@ -1,4 +1,3 @@
-
 import { ServiceCredential } from "@/components/vault/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -21,9 +20,9 @@ type StorableCredential = {
   credential_value: string;
   environment?: string | null;
   expires_at?: string | null;
-  created_at?: string;
-  updated_at?: string;
-  metadata?: Record<string, any> | null;
+  created_at: string;
+  updated_at: string;
+  metadata?: Record<string, any> | null | string; // Updated to allow string or null as well
   tags?: string[];
   last_used?: string | null;
 };
@@ -67,11 +66,26 @@ export const createVaultBackup = async (): Promise<{ success: boolean; backupId?
     
     // Process credentials to ensure they match our StorableCredential type
     const storableCredentials: StorableCredential[] = credentials.map(cred => {
-      // Check if metadata is actually an object
-      const isValidMetadataObject = 
-        cred.metadata !== null && 
-        typeof cred.metadata === 'object' && 
-        !Array.isArray(cred.metadata);
+      // Parse metadata properly depending on its type
+      let processedMetadata: Record<string, any> | null | string = null;
+      
+      if (cred.metadata !== null) {
+        if (typeof cred.metadata === 'object' && !Array.isArray(cred.metadata)) {
+          // It's already a valid object
+          processedMetadata = cred.metadata;
+        } else if (typeof cred.metadata === 'string') {
+          // Try to parse if it's a JSON string
+          try {
+            processedMetadata = JSON.parse(cred.metadata);
+          } catch {
+            // If parsing fails, keep it as a string
+            processedMetadata = cred.metadata;
+          }
+        } else {
+          // For any other type, convert to string
+          processedMetadata = String(cred.metadata);
+        }
+      }
       
       return {
         ...cred,
@@ -79,8 +93,8 @@ export const createVaultBackup = async (): Promise<{ success: boolean; backupId?
         credential_value: typeof cred.credential_value === 'string' 
           ? cred.credential_value 
           : '[Protected Value]', // Don't store actual binary value in memory
-        // Ensure metadata is a valid Record<string, any> or null
-        metadata: isValidMetadataObject ? cred.metadata : null
+        // Use our properly processed metadata
+        metadata: processedMetadata
       };
     });
     
