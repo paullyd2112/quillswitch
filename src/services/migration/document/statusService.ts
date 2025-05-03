@@ -9,29 +9,29 @@ export const getDocumentMigrationStatus = async (
   migrationId: string
 ): Promise<DocumentMigrationStatus | null> => {
   try {
-    const { data, error } = await supabase
-      .from('document_migration')
-      .select('*')
-      .eq('id', migrationId)
-      .single();
+    const { data, error } = await supabase.functions.invoke('document-migration', {
+      body: {
+        operation: 'get-document-status',
+        migrationId
+      }
+    });
 
     if (error) throw error;
-    
-    if (!data) return null;
-    
-    // Transform data to match expected DocumentMigrationStatus interface
-    const result: DocumentMigrationStatus = {
-      id: data.id,
-      status: data.migration_status,
-      fileName: data.original_file_name,
-      sourceSystem: data.source_system,
-      destinationDocumentId: data.destination_document_id,
-      errorMessage: data.error_message
+    if (!data.success) throw new Error(data.error || 'Failed to get document status');
+
+    const document = data.document;
+
+    // Convert the DB record to the expected DocumentMigrationStatus format
+    return {
+      id: document.id,
+      status: document.migration_status,
+      fileName: document.original_file_name,
+      sourceSystem: document.source_system,
+      destinationDocumentId: document.destination_document_id,
+      errorMessage: document.error_message
     };
-    
-    return result;
   } catch (error) {
-    console.error('Error fetching document migration status:', error);
+    console.error('Error getting document migration status:', error);
     return null;
   }
 };
@@ -41,7 +41,7 @@ export const getDocumentMigrationStatus = async (
  */
 export const getDocumentMigrationsForProject = async (
   projectId: string
-): Promise<DocumentMigrationStatus[] | null> => {
+): Promise<DocumentMigrationStatus[]> => {
   try {
     const { data, error } = await supabase
       .from('document_migration')
@@ -50,23 +50,19 @@ export const getDocumentMigrationsForProject = async (
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    
-    if (!data) return null;
-    
-    // Transform data to match expected DocumentMigrationStatus interface
-    const results: DocumentMigrationStatus[] = data.map(item => ({
-      id: item.id,
-      status: item.migration_status,
-      fileName: item.original_file_name,
-      sourceSystem: item.source_system,
-      destinationDocumentId: item.destination_document_id,
-      errorMessage: item.error_message
+
+    // Convert the DB records to the expected DocumentMigrationStatus format
+    return data.map(doc => ({
+      id: doc.id,
+      status: doc.migration_status,
+      fileName: doc.original_file_name,
+      sourceSystem: doc.source_system,
+      destinationDocumentId: doc.destination_document_id,
+      errorMessage: doc.error_message
     }));
-    
-    return results;
   } catch (error) {
-    console.error('Error fetching document migrations:', error);
-    return null;
+    console.error('Error getting document migrations:', error);
+    return [];
   }
 };
 
@@ -75,20 +71,17 @@ export const getDocumentMigrationsForProject = async (
  */
 export const updateDocumentMigrationStatus = async (
   migrationId: string,
-  status: Partial<DocumentMigrationStatus>
+  status: string,
+  errorMessage?: string
 ): Promise<boolean> => {
   try {
-    // Convert from DocumentMigrationStatus to document_migration table format
-    const updateData: Record<string, any> = {};
-    
-    if (status.status) updateData.migration_status = status.status;
-    if (status.fileName) updateData.original_file_name = status.fileName;
-    if (status.destinationDocumentId) updateData.destination_document_id = status.destinationDocumentId;
-    if (status.errorMessage) updateData.error_message = status.errorMessage;
-    
     const { error } = await supabase
       .from('document_migration')
-      .update(updateData)
+      .update({
+        migration_status: status,
+        error_message: errorMessage,
+        updated_at: new Date().toISOString()
+      })
       .eq('id', migrationId);
 
     if (error) throw error;

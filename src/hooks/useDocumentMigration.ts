@@ -44,8 +44,9 @@ export const useDocumentMigration = ({
       const params: DocumentMigrationParams = {
         projectId,
         sourceSystem,
-        recordType,
-        recordId
+        documentInfo: documents[0], // We'll pass each document individually in batchProcessDocuments
+        associatedRecordType: recordType,
+        associatedRecordId: recordId
       };
 
       const result = await batchProcessDocuments(

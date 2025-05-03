@@ -1,4 +1,6 @@
 
+import { v4 as uuidv4 } from 'uuid';
+
 export interface DocumentInfo {
   id: string;
   name: string;
@@ -7,6 +9,7 @@ export interface DocumentInfo {
   url?: string;
   content?: string;
   metadata?: Record<string, any>;
+  sourceId?: string; // Added for compatibility with existing code
 }
 
 export interface DocumentMigrationParams {
@@ -31,3 +34,8 @@ export interface DocumentMigrationStatus {
   destinationDocumentId?: string;
   errorMessage?: string;
 }
+
+// Add the missing function that's used in batchService.ts
+export const generateUniqueDocId = (recordId: string): string => {
+  return `${recordId}_doc_${uuidv4().substring(0, 8)}`;
+};

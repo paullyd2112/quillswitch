@@ -51,10 +51,7 @@ export const useMigrationProject = (projectId?: string) => {
       } catch (err: any) {
         console.error('Error fetching migration project:', err);
         setError(err);
-        toast({
-          description: "Failed to load migration project data",
-          variant: "destructive"
-        });
+        toast.error("Failed to load migration project data");
       } finally {
         setLoading(false);
       }

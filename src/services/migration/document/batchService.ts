@@ -30,7 +30,11 @@ export const batchProcessDocuments = async (
         // Create a unique migration ID for each document
         const migrationId = await initDocumentExtraction({
           ...params,
-          recordId: `${params.recordId}_doc_${document.sourceId || uuidv4().substring(0, 8)}`
+          documentInfo: document,
+          // Create a unique record ID if it doesn't exist
+          associatedRecordId: params.associatedRecordId 
+            ? `${params.associatedRecordId}_doc_${document.sourceId || uuidv4().substring(0, 8)}`
+            : `doc_${uuidv4().substring(0, 8)}`
         });
         
         if (!migrationId) return false;

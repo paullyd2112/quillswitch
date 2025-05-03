@@ -7,6 +7,9 @@ export type {
   DocumentMigrationStatus
 } from './types';
 
+// Export the utility function as well
+export { generateUniqueDocId } from './types';
+
 // Document Migration Services
 export { initDocumentExtraction } from './extractionService';
 export { processDocumentTransfer } from './transferService';
