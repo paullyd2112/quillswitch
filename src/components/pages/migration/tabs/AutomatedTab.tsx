@@ -2,7 +2,7 @@
 import React from 'react';
 import { useMigration } from '../MigrationContext';
 import { Card, CardContent } from '@/components/ui/card';
-import AutomatedMappingPanel from '@/components/migration/AutomatedMappingPanel';
+import { AutomatedMappingPanel } from '@/components/migration/automated-mapping';
 import { validateApiKeys } from '@/components/pages/migration';
 import { toast } from 'sonner';
 

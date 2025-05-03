@@ -56,3 +56,9 @@ export {
   getDocumentMigrationsForProject,
   updateDocumentMigrationStatus
 } from './migration/documentMigrationService';
+
+// Automated Mapping Service
+export {
+  generateMappingSuggestions,
+  applyMappingSuggestions
+} from './migration/automatedMappingService';
