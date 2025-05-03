@@ -1,73 +1,60 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { handleServiceError } from "../../utils/serviceUtils";
 import { DocumentMigrationStatus } from "./types";
 
 /**
  * Get the status of a document migration
  */
-export const getDocumentMigrationStatus = async (migrationId: string) => {
+export const getDocumentMigrationStatus = async (
+  migrationId: string
+): Promise<DocumentMigrationStatus | null> => {
   try {
-    const { data, error } = await supabase.functions.invoke('document-migration', {
-      body: {
-        operation: 'get-document-status',
-        migrationId
-      }
-    });
+    const { data, error } = await supabase
+      .from('document_migrations')
+      .select('*')
+      .eq('id', migrationId)
+      .single();
 
     if (error) throw error;
-    if (!data.success) throw new Error(data.error || 'Failed to get document status');
-
     return data;
   } catch (error) {
-    return handleServiceError(error, "Error fetching document migration status", true);
+    console.error('Error fetching document migration status:', error);
+    return null;
   }
 };
 
 /**
  * Get all document migrations for a project
  */
-export const getDocumentMigrationsForProject = async (projectId: string) => {
+export const getDocumentMigrationsForProject = async (
+  projectId: string
+): Promise<DocumentMigrationStatus[] | null> => {
   try {
     const { data, error } = await supabase
-      .from('document_migration')
+      .from('document_migrations')
       .select('*')
       .eq('project_id', projectId)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return data;
   } catch (error) {
-    return handleServiceError(error, "Error fetching project document migrations", true);
+    console.error('Error fetching document migrations:', error);
+    return null;
   }
 };
 
 /**
- * Update document migration status
+ * Update the status of a document migration
  */
 export const updateDocumentMigrationStatus = async (
-  migrationId: string, 
-  status: string, 
-  details?: { destinationDocumentId?: string, errorMessage?: string }
-) => {
+  migrationId: string,
+  status: Partial<DocumentMigrationStatus>
+): Promise<boolean> => {
   try {
-    const updates: Record<string, any> = {
-      migration_status: status,
-      updated_at: new Date().toISOString()
-    };
-    
-    if (details) {
-      if (details.destinationDocumentId) {
-        updates.destination_document_id = details.destinationDocumentId;
-      }
-      if (details.errorMessage) {
-        updates.error_message = details.errorMessage;
-      }
-    }
-    
     const { error } = await supabase
-      .from('document_migration')
-      .update(updates)
+      .from('document_migrations')
+      .update(status)
       .eq('id', migrationId);
 
     if (error) throw error;
