@@ -1,6 +1,11 @@
 
 // Document Migration Types
-export type * from './types';
+export type { 
+  DocumentInfo,
+  DocumentMigrationParams,
+  DocumentMigrationResult,
+  DocumentMigrationStatus
+} from './types';
 
 // Document Migration Services
 export { initDocumentExtraction } from './extractionService';
