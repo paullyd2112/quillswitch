@@ -60,10 +60,11 @@ export const processDocumentTransfer = async (
   try {
     // If we have a content blob, upload it to storage first
     if (documentInfo.content) {
-      const { user } = await supabase.auth.getUser();
-      if (!user?.id) throw new Error('User not authenticated');
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!userData?.user?.id) throw new Error('User not authenticated');
 
-      const filePath = `${user.id}/${migrationId}/${documentInfo.fileName}`;
+      const filePath = `${userData.user.id}/${migrationId}/${documentInfo.fileName}`;
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('document_migration')
