@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { AuthError } from "@supabase/supabase-js";
 import { toast } from "sonner";
@@ -31,6 +30,37 @@ export async function signIn(email: string, password: string) {
     console.error("Unexpected error signing in:", error);
     toast.error("An unexpected error occurred. Please try again later.");
     return { error: error as AuthError };
+  }
+}
+
+export async function signInWithGoogle(setIsLoading: (loading: boolean) => void) {
+  try {
+    console.log("Attempting sign in with Google");
+    setIsLoading(true);
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
+      }
+    });
+    
+    if (error) {
+      console.error("Google sign in error:", error.message);
+      toast.error(`Failed to sign in with Google: ${error.message}`);
+    }
+    
+    return { error };
+  } catch (error) {
+    console.error("Unexpected error signing in with Google:", error);
+    toast.error("An unexpected error occurred. Please try again later.");
+    return { error: error as AuthError };
+  } finally {
+    setIsLoading(false);
   }
 }
 

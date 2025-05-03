@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Mail } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,7 @@ interface LoginFormProps {
 
 const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -50,22 +49,13 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
 
   const handleGoogleSignIn = async () => {
     try {
-      setIsLoading(true);
+      const { error } = await signInWithGoogle();
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        }
-      });
-
       if (error) {
         toast.error(error.message);
       }
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
-    } finally {
-      setIsLoading(false);
     }
   };
 

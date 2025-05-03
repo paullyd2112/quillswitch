@@ -1,6 +1,12 @@
 
 project_id = "kxjidapjtcxwzpwdomnm"
 
+[auth.external.google]
+enabled = true
+# Keep client_id and secret as environment variables
+# client_id = ""
+# secret = ""
+
 [functions.gemini-chat]
 verify_jwt = true
 

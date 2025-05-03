@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -24,7 +25,7 @@ export interface UseRegisterReturn {
 
 export const useRegister = (): UseRegisterReturn => {
   const navigate = useNavigate();
-  const { signUp } = useAuth();
+  const { signUp, signInWithGoogle } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -88,12 +89,7 @@ export const useRegister = (): UseRegisterReturn => {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/welcome`,
-        }
-      });
+      const { error } = await signInWithGoogle();
 
       if (error) {
         console.error("Google signin error:", error);
