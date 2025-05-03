@@ -62,6 +62,8 @@ export const processDocumentTransfer = async (
     if (documentInfo.content) {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
+      
+      // Check if user exists and has an id
       if (!userData?.user?.id) throw new Error('User not authenticated');
 
       const filePath = `${userData.user.id}/${migrationId}/${documentInfo.fileName}`;
