@@ -18,6 +18,7 @@ export interface DashboardContextType {
   selectedObjectTypeId: string | null;
   fieldMappings: FieldMapping[];
   isProcessing: boolean;
+  isLoading: boolean;
   handleObjectTypeSelect: (objectTypeId: string) => void;
   handleToggleMigrationStatus: () => Promise<void>;
   handleSaveDeltaConfig: (config: any) => Promise<void>;

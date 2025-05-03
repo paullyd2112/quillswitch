@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MigrationStatusCard from "../MigrationStatusCard";
 import MigrationClarityDashboard from "./MigrationClarityDashboard";
 import MigrationSuccessSummary from "./MigrationSuccessSummary";
-import { useMigrationDashboard } from "./context";
+import { useDashboard } from "./context";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, ListChecks, Settings2, Zap } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -15,7 +14,7 @@ interface DashboardTabsProps {
 }
 
 const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab, setActiveTab }) => {
-  const { project, isLoading } = useMigrationDashboard();
+  const { project, isLoading } = useDashboard();
   
   const handleProceedToDataSelection = () => {
     setActiveTab("data");

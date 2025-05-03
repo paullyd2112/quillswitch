@@ -40,12 +40,18 @@ export const useMigrationProject = (projectId?: string) => {
           .single();
 
         if (error) throw error;
-        setProject(data);
+        
+        // Type cast the status to ensure it matches the expected type
+        const typedData = {
+          ...data,
+          status: data.status as MigrationProject['status']
+        };
+        
+        setProject(typedData);
       } catch (err: any) {
         console.error('Error fetching migration project:', err);
         setError(err);
         toast({
-          title: "Error",
           description: "Failed to load migration project data",
           variant: "destructive"
         });
