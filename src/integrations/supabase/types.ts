@@ -86,6 +86,112 @@ export type Database = {
         }
         Relationships: []
       }
+      document_migration: {
+        Row: {
+          associated_record_id: string | null
+          associated_record_type: string | null
+          content_type: string | null
+          created_at: string | null
+          destination_document_id: string | null
+          destination_path: string | null
+          error_message: string | null
+          file_size: number | null
+          id: string
+          migration_status: string | null
+          original_file_name: string
+          project_id: string | null
+          retry_count: number | null
+          source_document_id: string | null
+          source_system: string
+          source_url: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          associated_record_id?: string | null
+          associated_record_type?: string | null
+          content_type?: string | null
+          created_at?: string | null
+          destination_document_id?: string | null
+          destination_path?: string | null
+          error_message?: string | null
+          file_size?: number | null
+          id?: string
+          migration_status?: string | null
+          original_file_name: string
+          project_id?: string | null
+          retry_count?: number | null
+          source_document_id?: string | null
+          source_system: string
+          source_url?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          associated_record_id?: string | null
+          associated_record_type?: string | null
+          content_type?: string | null
+          created_at?: string | null
+          destination_document_id?: string | null
+          destination_path?: string | null
+          error_message?: string | null
+          file_size?: number | null
+          id?: string
+          migration_status?: string | null
+          original_file_name?: string
+          project_id?: string | null
+          retry_count?: number | null
+          source_document_id?: string | null
+          source_system?: string
+          source_url?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_migration_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "migration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_relationships: {
+        Row: {
+          created_at: string | null
+          document_id: string | null
+          id: string
+          related_record_id: string
+          related_record_type: string
+          relationship_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          related_record_id: string
+          related_record_type: string
+          relationship_type: string
+        }
+        Update: {
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          related_record_id?: string
+          related_record_type?: string
+          relationship_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_relationships_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "document_migration"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       field_mappings: {
         Row: {
           destination_field: string

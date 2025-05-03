@@ -46,3 +46,13 @@ export {
 export { 
   getUserActivities
 } from './migration/activityService';
+
+// Document Migration Service
+export {
+  initDocumentExtraction,
+  processDocumentTransfer,
+  getDocumentMigrationStatus,
+  batchProcessDocuments,
+  getDocumentMigrationsForProject,
+  updateDocumentMigrationStatus
+} from './migration/documentMigrationService';
