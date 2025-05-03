@@ -5,7 +5,7 @@ import {
   getDocumentMigrationsForProject,
   DocumentInfo,
   DocumentMigrationParams
-} from "@/services/migration/documentMigrationService";
+} from "@/services/migration/document";
 
 interface UseDocumentMigrationProps {
   projectId: string;
