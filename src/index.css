@@ -1,50 +1,51 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
 @layer base {
   :root {
-    --background: 222 87% 8%; /* #0a0f1f */
-    --foreground: 0 0% 88%; /* #e0e0e0 */
+    --background: 210 33% 98%; /* #f8f9fa */
+    --foreground: 210 10% 23%; /* #343a40 */
 
-    --card: 220 50% 14%; /* #111a33 */
-    --card-foreground: 0 0% 88%; /* #e0e0e0 */
+    --card: 0 0% 100%; /* #ffffff */
+    --card-foreground: 210 10% 23%; /* #343a40 */
 
-    --popover: 220 50% 14%; /* #111a33 */
-    --popover-foreground: 0 0% 88%; /* #e0e0e0 */
+    --popover: 0 0% 100%; /* #ffffff */
+    --popover-foreground: 210 10% 23%; /* #343a40 */
 
-    --primary: 210 100% 50%; /* #007bff */
+    --primary: 213 89% 50%; /* #1a73e8 */
     --primary-foreground: 0 0% 100%; /* White for primary buttons */
 
-    --secondary: 222 44% 26%; /* #1a2a4d */
-    --secondary-foreground: 0 0% 88%; /* #e0e0e0 */
+    --secondary: 210 16% 93%; /* #e8f0fe */
+    --secondary-foreground: 213 89% 50%; /* #1a73e8 */
 
-    --muted: 222 44% 26%; /* #1a2a4d */
-    --muted-foreground: 225 10% 70%; /* #a0a0b0 */
+    --muted: 210 16% 93%; /* #e8f0fe */
+    --muted-foreground: 215 14% 45%; /* #6c757d */
 
-    --accent: 222 44% 26%; /* #1a2a4d */
-    --accent-foreground: 0 0% 88%; /* #e0e0e0 */
+    --accent: 210 16% 93%; /* #e8f0fe */
+    --accent-foreground: 213 89% 50%; /* #1a73e8 */
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 222 44% 30%; /* #2a3a6b */
-    --input: 222 44% 30%; /* #2a3a6b */
-    --ring: 210 100% 50%; /* #007bff */
+    --border: 210 14% 89%; /* #dee2e6 */
+    --input: 210 14% 89%; /* #dee2e6 */
+    --ring: 213 89% 50%; /* #1a73e8 */
 
-    --radius: 4px;
+    --radius: 0.75rem;
 
-    --sidebar-background: 222 50% 14%; /* #111a33 */
-    --sidebar-foreground: 0 0% 88%; /* #e0e0e0 */
-    --sidebar-primary: 210 100% 50%; /* #007bff */
+    --sidebar-background: 0 0% 100%; /* #ffffff */
+    --sidebar-foreground: 210 10% 23%; /* #343a40 */
+    --sidebar-primary: 213 89% 50%; /* #1a73e8 */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 222 48% 20%; /* Slightly darker for sidebar accent */
-    --sidebar-accent-foreground: 0 0% 88%; /* #e0e0e0 */
-    --sidebar-border: 222 44% 30%; /* #2a3a6b */
-    --sidebar-ring: 210 100% 50%; /* #007bff */
+    --sidebar-accent: 210 16% 95%; /* Slightly lighter for sidebar accent */
+    --sidebar-accent-foreground: 210 10% 23%; /* #343a40 */
+    --sidebar-border: 210 14% 89%; /* #dee2e6 */
+    --sidebar-ring: 213 89% 50%; /* #1a73e8 */
   }
-
-  /* Remove light mode, use dark modern theme only */
 }
 
 @layer base {
@@ -53,9 +54,9 @@
   }
 
   html, body, #root {
-    @apply bg-modern-bg m-0 p-0 min-h-screen w-full;
+    @apply bg-friendly-bg m-0 p-0 min-h-screen w-full;
     overflow-x: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Nunito', sans-serif;
   }
 
   body {
@@ -65,7 +66,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-medium tracking-tight text-modern-text-primary;
+    @apply font-bold tracking-tight text-friendly-text-primary;
   }
 
   h1 {
@@ -73,7 +74,7 @@
   }
 
   h2 {
-    @apply text-3xl lg:text-4xl text-white mb-8;
+    @apply text-3xl lg:text-4xl mb-8;
   }
 
   h3 {
@@ -81,13 +82,13 @@
   }
 
   p {
-    @apply leading-relaxed text-modern-text-secondary;
+    @apply leading-relaxed text-friendly-text-secondary;
   }
 }
 
 @layer components {
   .glass-panel {
-    @apply bg-modern-card border border-modern-border shadow-lg;
+    @apply bg-friendly-card border border-friendly-border shadow-md rounded-xl;
   }
   
   .chip {
@@ -100,37 +101,37 @@
   
   .section-title::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-12 h-1 bg-modern-accent rounded-full;
+    @apply absolute bottom-0 left-0 w-12 h-1 bg-friendly-accent rounded-full;
   }
   
   .hero-gradient {
-    background: radial-gradient(circle at top right, rgba(0, 123, 255, 0.1), transparent 70%),
-                radial-gradient(circle at bottom left, rgba(0, 123, 255, 0.05), transparent 40%);
+    background: radial-gradient(circle at top right, rgba(26, 115, 232, 0.1), transparent 70%),
+                radial-gradient(circle at bottom left, rgba(26, 115, 232, 0.05), transparent 40%);
   }
   
   .shimmer {
-    @apply bg-gradient-to-r from-transparent via-white/10 to-transparent bg-[length:200%_100%] animate-shimmer;
+    @apply bg-gradient-to-r from-transparent via-black/5 to-transparent bg-[length:200%_100%] animate-shimmer;
   }
 
-  /* Modern feature card */
+  /* Friendly feature card */
   .feature-card {
-    @apply bg-modern-card border border-modern-border rounded-[4px] p-6 transition-all duration-200 flex flex-col;
+    @apply bg-friendly-card border border-friendly-border rounded-xl p-7 transition-all duration-200 flex flex-col shadow-md hover:shadow-lg;
   }
   
   .feature-card:hover {
-    @apply transform -translate-y-1 shadow-[0_8px_20px_rgba(0,123,255,0.15)];
+    @apply transform -translate-y-1.5;
   }
   
   .feature-card .icon-container {
-    @apply bg-modern-icon text-modern-accent text-2xl w-12 h-12 rounded-[4px] flex justify-center items-center mb-4;
+    @apply bg-friendly-icon text-friendly-accent rounded-full w-[60px] h-[60px] flex justify-center items-center mb-5;
   }
   
   .feature-card h3 {
-    @apply text-modern-text-primary text-lg mt-0 mb-2 font-semibold;
+    @apply text-friendly-text-primary text-xl mt-0 mb-2 font-bold;
   }
   
   .feature-card p {
-    @apply text-modern-text-secondary text-base mb-0 flex-grow;
+    @apply text-friendly-text-secondary text-base mb-0 flex-grow;
   }
 }
 
@@ -145,11 +146,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-modern-border rounded-full;
+  @apply bg-friendly-border rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-modern-accent/50;
+  @apply bg-friendly-accent/50;
 }
 
 /* Animation delays */

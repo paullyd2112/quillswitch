@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				nunito: ['Nunito', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -69,24 +72,24 @@ export default {
 					200: '#99c7ff',
 					300: '#66aaff',
 					400: '#338eff',
-					500: '#007bff', // Modern accent color
+					500: '#1a73e8', // Updated to match --accent-color
 					600: '#0062cc',
 					700: '#004a99',
 					800: '#003166',
 					900: '#001933',
 					950: '#000c19',
 				},
-				// Modern theme colors
-				modern: {
-					bg: '#0a0f1f',         // Dark background
-					card: '#111a33',       // Card background
+				// Friendly theme colors (new light theme)
+				friendly: {
+					bg: '#f8f9fa',         // Light grey background
+					card: '#ffffff',       // White card background
 					text: {
-						primary: '#e0e0e0',  // Light gray text
-						secondary: '#a0a0b0' // Dimmer text
+						primary: '#343a40',  // Dark grey text
+						secondary: '#6c757d' // Medium grey text
 					},
-					accent: '#007bff',      // Bright blue accent
-					icon: '#1a2a4d',        // Icon background
-					border: '#2a3a6b'       // Subtle border
+					accent: '#1a73e8',      // Friendly, vibrant blue
+					icon: '#e8f0fe',        // Light blue for icon background
+					border: '#dee2e6'       // Light border color
 				}
 			},
 			borderRadius: {
@@ -116,8 +119,8 @@ export default {
 					'100%': { transform: 'scale(1)' },
 				},
 				'border-pulse': {
-					'0%, 100%': { borderColor: 'rgba(59, 130, 246, 0.5)' },
-					'50%': { borderColor: 'rgba(59, 130, 246, 0.2)' },
+					'0%, 100%': { borderColor: 'rgba(26, 115, 232, 0.5)' },
+					'50%': { borderColor: 'rgba(26, 115, 232, 0.2)' },
 				},
 				'shimmer': {
 					'0%': { backgroundPosition: '-200% 0' },
