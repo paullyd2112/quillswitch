@@ -11,7 +11,7 @@ const CtaSection = () => {
       primaryButtonLink="/migrations/setup"
       secondaryButtonText="View Features"
       secondaryButtonLink="/features"
-      darkMode={false}
+      darkMode={true}
     />
   );
 };

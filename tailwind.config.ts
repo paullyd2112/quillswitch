@@ -79,17 +79,17 @@ export default {
 					900: '#001933',
 					950: '#000c19',
 				},
-				// Friendly theme colors (new light theme)
+				// Dark theme colors
 				friendly: {
-					bg: '#f8f9fa',         // Light grey background
-					card: '#ffffff',       // White card background
+					bg: '#0a0f1f',         // Dark background
+					card: '#111a33',       // Card background
 					text: {
-						primary: '#343a40',  // Dark grey text
-						secondary: '#6c757d' // Medium grey text
+						primary: '#e0e0e0',  // Light grey text
+						secondary: '#a0a0b0' // Secondary text
 					},
-					accent: '#1a73e8',      // Friendly, vibrant blue
-					icon: '#e8f0fe',        // Light blue for icon background
-					border: '#dee2e6'       // Light border color
+					accent: '#007bff',      // Bright blue accent
+					icon: '#1a2a4d',        // Icon background
+					border: '#2a3a6b'       // Border color
 				}
 			},
 			borderRadius: {
