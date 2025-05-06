@@ -64,17 +64,29 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				brand: {
-					50: '#f0f7ff',
-					100: '#e0effe',
-					200: '#bae0fd',
-					300: '#7cc5fb',
-					400: '#38a7f6',
-					500: '#0c8ce3',
-					600: '#0069c2',
-					700: '#01529e',
-					800: '#064682',
-					900: '#0c3b6b',
-					950: '#07254a',
+					50: '#e6f1ff',
+					100: '#cce3ff',
+					200: '#99c7ff',
+					300: '#66aaff',
+					400: '#338eff',
+					500: '#007bff', // Modern accent color
+					600: '#0062cc',
+					700: '#004a99',
+					800: '#003166',
+					900: '#001933',
+					950: '#000c19',
+				},
+				// Modern theme colors
+				modern: {
+					bg: '#0a0f1f',         // Dark background
+					card: '#111a33',       // Card background
+					text: {
+						primary: '#e0e0e0',  // Light gray text
+						secondary: '#a0a0b0' // Dimmer text
+					},
+					accent: '#007bff',      // Bright blue accent
+					icon: '#1a2a4d',        // Icon background
+					border: '#2a3a6b'       // Subtle border
 				}
 			},
 			borderRadius: {

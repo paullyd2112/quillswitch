@@ -37,13 +37,13 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section className="py-24 px-4 md:px-8 bg-slate-900/50">
+    <section className="py-24 px-4 md:px-8 bg-modern-bg">
       <div className="container max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4 text-white">
+          <h2 className="text-4xl font-bold mb-4">
             Why Choose QuillSwitch?
           </h2>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+          <p className="text-xl max-w-3xl mx-auto">
             We've built a comprehensive migration platform that addresses the most complex CRM transition challenges.
           </p>
         </div>
@@ -52,15 +52,15 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-slate-800 p-6 rounded-lg border border-slate-700 hover:border-brand-600 transition-all duration-300"
+              className="feature-card"
             >
-              <div className="mb-4">
-                <feature.icon size={42} className="text-brand-500" />
+              <div className="icon-container">
+                <feature.icon size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-white">
+              <h3>
                 {feature.title}
               </h3>
-              <p className="text-slate-400">
+              <p>
                 {feature.description}
               </p>
             </div>

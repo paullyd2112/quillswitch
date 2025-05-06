@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 
 const LandingPage = () => {
   return (
-    <div className="bg-slate-950 text-white min-h-screen">
+    <div className="bg-modern-bg text-modern-text-primary min-h-screen">
       <main>
         <HeroSection />
         <FeaturesSection />

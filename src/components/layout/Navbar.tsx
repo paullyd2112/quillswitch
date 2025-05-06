@@ -65,16 +65,16 @@ const Navbar = () => {
       className={cn(
         "fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-200", 
         isScrolled 
-          ? "bg-slate-950/95 backdrop-blur-md border-b border-slate-800" 
-          : "bg-transparent" // Explicitly set to transparent for initial state
+          ? "bg-modern-bg/95 backdrop-blur-md border-b border-modern-border" 
+          : "bg-transparent"
       )}
     >
       <div className="container px-4 md:px-6">
-        <div className="flex h-24 items-center justify-between"> {/* Increased from h-16 to h-24 */}
+        <div className="flex h-24 items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white font-semibold">Q</div>
-              <span className="font-medium text-lg text-white">QuillSwitch</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-modern-accent to-modern-accent/70 flex items-center justify-center text-white font-semibold">Q</div>
+              <span className="font-medium text-lg text-modern-text-primary">QuillSwitch</span>
             </Link>
           </div>
           
@@ -91,7 +91,7 @@ const Navbar = () => {
                 size="icon"
                 onClick={toggleMenu}
                 aria-label="Toggle Menu"
-                className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 text-white"
+                className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-modern-accent text-modern-text-primary"
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>

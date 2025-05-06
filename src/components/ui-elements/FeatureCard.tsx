@@ -22,26 +22,22 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   return (
     <div
       className={cn(
-        "glass-panel p-6 rounded-xl transition-all duration-300",
-        onClick && "cursor-pointer hover:shadow-lg hover:scale-[1.02]",
+        "feature-card",
+        onClick && "cursor-pointer hover:shadow-lg",
         className
       )}
       onClick={onClick}
     >
-      <div className="flex items-start">
-        <div
-          className={cn(
-            "rounded-full p-3 bg-brand-100 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400",
-            iconClassName
-          )}
-        >
-          {icon}
-        </div>
-        <div className="ml-4">
-          <h3 className="font-medium text-lg mb-1">{title}</h3>
-          <p className="text-muted-foreground">{description}</p>
-        </div>
+      <div
+        className={cn(
+          "icon-container",
+          iconClassName
+        )}
+      >
+        {icon}
       </div>
+      <h3 className="text-lg mb-1 font-medium">{title}</h3>
+      <p>{description}</p>
     </div>
   );
 };
