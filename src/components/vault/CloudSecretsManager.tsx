@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   Card, CardContent, CardDescription, 
@@ -22,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { isConnectionSecure } from "@/utils/encryptionUtils";
-import GCPSecretManagerService from "@/services/secrets/gcpSecretManagerService";
+import GCPSecretManagerService, { getAndMaskSecret } from "@/services/secrets/gcpSecretManagerService";
 
 export const CloudSecretsManager = () => {
   const [secrets, setSecrets] = useState<Array<{
@@ -47,7 +48,7 @@ export const CloudSecretsManager = () => {
 
   const handleImportSecret = async (secretName: string) => {
     toast.info(`Importing secret: ${secretName}`);
-    const { value } = await GCPSecretManagerService.getAndMaskSecret(secretName);
+    const { value } = await getAndMaskSecret(secretName);
     if (!value) {
       toast.error("Failed to import secret");
       return;
