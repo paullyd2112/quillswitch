@@ -3,8 +3,8 @@ project_id = "kxjidapjtcxwzpwdomnm"
 
 [auth.external.google]
 enabled = true
-# Keep client_id and secret as environment variables
-# client_id = ""
+client_id = "86400450407-7qsc2vqiavkv8agbr74rr8v7718eqamg.apps.googleusercontent.com"
+# Keep secret as environment variable
 # secret = ""
 
 [functions.gemini-chat]
@@ -18,4 +18,3 @@ verify_jwt = true
 
 [functions.gcp-secrets]
 verify_jwt = true
-
