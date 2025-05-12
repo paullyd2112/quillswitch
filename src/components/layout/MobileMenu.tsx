@@ -2,7 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { NavLink } from "./types";
+import { NavLink } from "./navConfig";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -14,7 +14,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
   return (
     <div 
       className={cn(
-        "fixed inset-x-0 top-16 bottom-0 z-[99] flex flex-col bg-slate-950 border-t border-slate-800 shadow-lg transition-transform duration-300 ease-in-out",
+        "fixed inset-x-0 top-24 bottom-0 z-[99] flex flex-col bg-background border-t border-border shadow-lg transition-transform duration-300 ease-in-out",
         isOpen ? "translate-y-0" : "-translate-y-full"
       )}
     >
@@ -25,10 +25,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, navLinks, onClose }) =>
               key={link.href}
               to={link.href}
               onClick={onClose}
-              className="flex items-center py-3 px-4 rounded-md text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+              className="flex items-center py-3 px-4 rounded-md text-foreground hover:bg-muted hover:text-accent transition-colors"
             >
               {link.icon && (
-                <span className="mr-3 text-slate-400">{link.icon}</span>
+                <span className="mr-3 text-muted-foreground">{link.icon}</span>
               )}
               <span>{link.label}</span>
             </Link>
