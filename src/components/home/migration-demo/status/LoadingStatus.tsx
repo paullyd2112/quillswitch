@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { MigrationStep, PerformanceMetrics } from "@/hooks/migration-demo/types";
-import { formatTimeSpan } from "../utils/format-utils";
+import { formatTimeSpan } from "@/services/migration/utils/progress/timeUtils";
 
 type LoadingStatusProps = {
   activeStep?: MigrationStep;
