@@ -14,7 +14,8 @@ import {
   HelpCircle,
   Code,
   Command,
-  Bell
+  Bell,
+  Play
 } from 'lucide-react';
 
 export interface NavLink {
@@ -33,6 +34,12 @@ export const mainNav: NavLink[] = [
     label: "Home",
     href: "/",
     icon: <Home className="mr-2 h-4 w-4" />,
+    category: "Navigation"
+  },
+  {
+    label: "Demo",
+    href: "/demo",
+    icon: <Play className="mr-2 h-4 w-4" />,
     category: "Navigation"
   },
   {

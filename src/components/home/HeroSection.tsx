@@ -1,8 +1,9 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import FadeIn from "@/components/animations/FadeIn";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, Info, Play } from "lucide-react";
 import { useUserOnboarding } from "@/components/onboarding/UserOnboardingProvider";
 import { useAuth } from "@/contexts/auth";
 
@@ -51,8 +52,17 @@ const HeroSection = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                onClick={user ? showOnboardingTour : () => navigate("/features")}
+                onClick={() => navigate("/demo")}
                 className="gap-2 px-8 bg-slate-200 text-black border-slate-300 hover:bg-slate-300 hover:border-slate-400"
+              >
+                <Play size={16} className="mr-1" /> See Live Demo
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={user ? showOnboardingTour : () => navigate("/features")}
+                className="gap-2 px-8 bg-transparent text-slate-200 border-slate-500 hover:bg-slate-800/50 hover:border-slate-400"
               >
                 {user ? "Take a Tour" : "Learn More"} <Info size={16} />
               </Button>
