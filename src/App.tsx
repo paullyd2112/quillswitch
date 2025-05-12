@@ -21,6 +21,7 @@ import SetupMigration from './pages/SetupMigration'
 import MigrationsList from './pages/MigrationsList'
 import MigrationDashboard from './pages/MigrationDashboard'
 import { TooltipProvider } from './components/ui/tooltip'
+import CredentialsVault from './pages/CredentialsVault'
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
                   <Route path="/migrations" element={<MigrationsList />} />
                   <Route path="/migrations/setup" element={<SetupMigration />} />
                   <Route path="/migrations/:id" element={<MigrationDashboard />} />
+                  <Route path="/credentials-vault" element={<CredentialsVault />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </UserOnboardingProvider>

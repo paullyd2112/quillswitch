@@ -50,7 +50,7 @@ const AuthButtons = () => {
   };
 
   const handleCredentialsVault = () => {
-    navigate("/settings?tab=credentials");
+    navigate("/credentials-vault");
     setOpen(false);
   };
 
