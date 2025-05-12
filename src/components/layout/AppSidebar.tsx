@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
   SidebarTrigger
 } from "@/components/ui/sidebar";
-import { mainNav, userNav } from "./navConfig";
+import { mainNav, userNav, getNavLinksByCategory } from "./navConfig";
 import { useAuth } from "@/contexts/auth";
 
 export function AppSidebar() {
@@ -23,6 +23,10 @@ export function AppSidebar() {
   
   // Combine navigation links based on authentication
   const navLinks = user ? [...mainNav, ...userNav] : mainNav;
+  
+  // Group links by category
+  const categorizedLinks = getNavLinksByCategory(navLinks);
+  const categories = Object.keys(categorizedLinks);
 
   return (
     <Sidebar variant="floating" collapsible="icon">
@@ -35,27 +39,29 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navLinks.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={location.pathname === item.href}
-                    tooltip={item.label}
-                  >
-                    <Link to={item.href}>
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {categories.map((category) => (
+          <SidebarGroup key={category}>
+            <SidebarGroupLabel>{category}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {categorizedLinks[category].map((item) => (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton 
+                      asChild 
+                      isActive={location.pathname === item.href}
+                      tooltip={item.label}
+                    >
+                      <Link to={item.href}>
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
       <SidebarFooter>
         <div className="px-3 py-2">
