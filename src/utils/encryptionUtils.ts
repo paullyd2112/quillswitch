@@ -77,14 +77,18 @@ export const fieldDecrypt = async (encryptedData: string, userKey: string): Prom
 
 /**
  * Masks sensitive data for display (e.g. API keys, personal info)
+ * @param data The sensitive data to mask
+ * @param visibleChars Number of characters to show at the end (default: 4)
+ * @returns Masked string with only the last few characters visible
  */
 export const maskSensitiveData = (data: string, visibleChars: number = 4): string => {
   if (!data) return '';
   if (data.length <= visibleChars) return data;
   
-  const prefix = data.slice(0, visibleChars);
-  const maskedPortion = '*'.repeat(Math.min(data.length - visibleChars, 10));
-  return `${prefix}${maskedPortion}`;
+  // For API keys, we typically want to show the last few characters
+  const visiblePart = data.slice(-visibleChars);
+  const maskedPortion = '•'.repeat(Math.min(data.length - visibleChars, 12));
+  return `${maskedPortion}${visiblePart}`;
 };
 
 /**
@@ -121,4 +125,55 @@ export const sanitizeInput = (input: string): string => {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+};
+
+/**
+ * Generates a secure random API key 
+ * For development and testing purposes only
+ * Production API keys should come from the service provider
+ */
+export const generateSecureKey = (length: number = 24): string => {
+  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const randomValues = new Uint8Array(length);
+  window.crypto.getRandomValues(randomValues);
+  
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += charset[randomValues[i] % charset.length];
+  }
+  
+  return result;
+};
+
+/**
+ * Verifies if the current connection is secure (HTTPS)
+ */
+export const isConnectionSecure = (): boolean => {
+  return window.location.protocol === 'https:';
+};
+
+/**
+ * Checks credential expiry and returns status
+ */
+export const checkCredentialExpiry = (expiryDate: string | null): {
+  hasExpired: boolean;
+  daysRemaining: number | null;
+  status: 'valid' | 'expiring-soon' | 'expired';
+} => {
+  if (!expiryDate) return { hasExpired: false, daysRemaining: null, status: 'valid' };
+  
+  const expiry = new Date(expiryDate);
+  const now = new Date();
+  
+  // Calculate days remaining
+  const diffTime = expiry.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) {
+    return { hasExpired: true, daysRemaining: diffDays, status: 'expired' };
+  } else if (diffDays < 30) {
+    return { hasExpired: false, daysRemaining: diffDays, status: 'expiring-soon' };
+  } else {
+    return { hasExpired: false, daysRemaining: diffDays, status: 'valid' };
+  }
 };

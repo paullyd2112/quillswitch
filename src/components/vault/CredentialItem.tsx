@@ -1,10 +1,9 @@
-
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Eye, EyeOff, Copy, Trash2, Key, Lock, Calendar, KeyRound, Clock } from "lucide-react";
+import { Eye, EyeOff, Copy, Trash2, Key, Lock, Calendar, KeyRound, Clock, Shield } from "lucide-react";
 import { ServiceCredential } from "./types";
 import { useAuth } from "@/contexts/auth";
 import { maskSensitiveData } from "@/utils/encryptionUtils";
@@ -68,7 +67,6 @@ const CredentialItem: React.FC<CredentialItemProps> = ({
 
   const toggleCredentialVisibility = async () => {
     if (!showCredential && !decryptedValue) {
-      // Decrypt when showing for the first time
       try {
         setIsDecrypting(true);
         
@@ -83,7 +81,10 @@ const CredentialItem: React.FC<CredentialItemProps> = ({
         setDecryptedValue(data[0].credential_value);
         setShowCredential(true);
         
-        // Access logging is handled by the RPC function
+        // Auto-hide after a period for security
+        setTimeout(() => {
+          setShowCredential(false);
+        }, 30000); // Hide after 30 seconds for list view
       } catch (error) {
         console.error("Error decrypting credential:", error);
         toast.error("Failed to decrypt credential");
@@ -116,9 +117,12 @@ const CredentialItem: React.FC<CredentialItemProps> = ({
       }
       
       await navigator.clipboard.writeText(valueToCopy || '');
-      toast.success("Copied to clipboard");
+      toast.success("Copied to clipboard", {
+        description: "For security, the key will not be displayed in plain text"
+      });
       
-      // Access logging is handled by the RPC function
+      // Do not show credential after copying - safer default
+      setShowCredential(false);
     } catch (error) {
       console.error("Error copying credential:", error);
       toast.error("Failed to copy credential");
@@ -304,9 +308,15 @@ const CredentialItem: React.FC<CredentialItemProps> = ({
               {isDecrypting ? (
                 <div className="animate-pulse bg-gray-200 h-5 w-44 rounded"></div>
               ) : showCredential && decryptedValue ? (
+              <div>
                 <span className="break-all">{decryptedValue}</span>
+                <p className="text-xs text-amber-600 mt-1 flex items-center">
+                  <Shield className="h-3 w-3 mr-1" />
+                  Will be hidden automatically after 30 seconds
+                </p>
+              </div>
               ) : (
-                <span>{maskSensitiveData(credential.credential_value.toString(), 8)}</span>
+                <span>{maskSensitiveData(credential.credential_value.toString(), 4)}</span>
               )}
             </div>
           </div>

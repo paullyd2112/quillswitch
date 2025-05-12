@@ -1,8 +1,12 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import { isConnectionSecure } from "@/utils/encryptionUtils";
+import { AlertTriangle, Lock } from "lucide-react";
 
 const Footer = () => {
+  const isSecure = isConnectionSecure();
+  
   return (
     <footer className="bg-friendly-card py-12 px-4 md:px-8 border-t border-friendly-border">
       <div className="container max-w-6xl mx-auto">
@@ -31,18 +35,35 @@ const Footer = () => {
           </div>
           
           <div>
-            <h4 className="font-bold mb-4 text-friendly-text-primary">Legal</h4>
+            <h4 className="font-bold mb-4 text-friendly-text-primary">Security</h4>
             <ul className="space-y-2">
               <li><Link to="/privacy" className="text-friendly-text-secondary hover:text-friendly-accent transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="text-friendly-text-secondary hover:text-friendly-accent transition-colors">Terms of Service</Link></li>
+              <li><Link to="/credentials-vault" className="text-friendly-text-secondary hover:text-friendly-accent transition-colors">Credentials Vault</Link></li>
             </ul>
           </div>
         </div>
         
-        <div className="mt-8 pt-8 border-t border-friendly-border text-center">
-          <p className="text-friendly-text-secondary">
-            © {new Date().getFullYear()} QuillSwitch. All rights reserved.
-          </p>
+        <div className="mt-8 pt-8 border-t border-friendly-border">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-friendly-text-secondary">
+              © {new Date().getFullYear()} QuillSwitch. All rights reserved.
+            </p>
+            
+            <div className="flex items-center mt-4 md:mt-0">
+              {isSecure ? (
+                <div className="text-sm text-green-600 dark:text-green-400 flex items-center">
+                  <Lock className="h-3 w-3 mr-1" />
+                  Secure Connection
+                </div>
+              ) : (
+                <div className="text-sm text-red-600 dark:text-red-400 flex items-center">
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  Insecure Connection
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </footer>
