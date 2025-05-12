@@ -1,6 +1,16 @@
 
 import React from 'react';
-import { Home, LayoutDashboard, Settings, FileText, Kanban, Zap, Database, Link } from 'lucide-react';
+import { 
+  Home, 
+  LayoutDashboard, 
+  FileText, 
+  Kanban, 
+  Database, 
+  Link, 
+  BookOpen, 
+  ListOrdered, 
+  User 
+} from 'lucide-react';
 
 export interface NavLink {
   label: string;
@@ -11,6 +21,7 @@ export interface NavLink {
   children?: NavLink[];
 }
 
+// Public navigation (pre-login)
 export const mainNav: NavLink[] = [
   {
     label: "Home",
@@ -20,7 +31,7 @@ export const mainNav: NavLink[] = [
   {
     label: "Features",
     href: "/features",
-    icon: <Zap className="mr-2 h-4 w-4" />,
+    icon: <Kanban className="mr-2 h-4 w-4" />,
   },
   {
     label: "Resources",
@@ -29,6 +40,7 @@ export const mainNav: NavLink[] = [
   },
 ];
 
+// Authenticated user navigation (post-login)
 export const userNav: NavLink[] = [
   {
     label: "Dashboard",
@@ -37,27 +49,33 @@ export const userNav: NavLink[] = [
     isAuthRequired: true,
   },
   {
-    label: "Integrations",
-    href: "/integrations",
-    icon: <Kanban className="mr-2 h-4 w-4" />,
+    label: "Start Migration",
+    href: "/migrations/setup",
+    icon: <Database className="mr-2 h-4 w-4" />,
     isAuthRequired: true,
   },
   {
-    label: "Connect",
+    label: "My Migrations",
+    href: "/migrations",
+    icon: <ListOrdered className="mr-2 h-4 w-4" />,
+    isAuthRequired: true,
+  },
+  {
+    label: "Connections",
     href: "/connect",
     icon: <Link className="mr-2 h-4 w-4" />,
     isAuthRequired: true,
   },
   {
-    label: "Data Migration",
-    href: "/migrations",
-    icon: <Database className="mr-2 h-4 w-4" />,
+    label: "Knowledge Base",
+    href: "/resources",
+    icon: <BookOpen className="mr-2 h-4 w-4" />,
     isAuthRequired: true,
   },
   {
-    label: "Settings",
-    href: "/settings",
-    icon: <Settings className="mr-2 h-4 w-4" />,
+    label: "Support",
+    href: "/support",
+    icon: <User className="mr-2 h-4 w-4" />,
     isAuthRequired: true,
   },
 ];

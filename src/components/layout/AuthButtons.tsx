@@ -35,13 +35,26 @@ const AuthButtons = () => {
   };
 
   const handleLogin = () => {
-    // Updated to match the route in App.tsx
     navigate("/auth");
   };
 
   const handleRegister = () => {
-    // Updated to match the route in App.tsx
     navigate("/auth");
+  };
+
+  const handleProfileSettings = () => {
+    navigate("/profile");
+    setOpen(false);
+  };
+
+  const handleAccountSettings = () => {
+    navigate("/settings");
+    setOpen(false);
+  };
+
+  const handleBillingSettings = () => {
+    navigate("/settings?tab=billing");
+    setOpen(false);
   };
 
   const handleSecuritySettings = () => {
@@ -68,13 +81,17 @@ const AuthButtons = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={() => { navigate("/profile"); setOpen(false); }} className="cursor-pointer">
+          <DropdownMenuItem onClick={handleProfileSettings} className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { navigate("/settings"); setOpen(false); }} className="cursor-pointer">
+          <DropdownMenuItem onClick={handleAccountSettings} className="cursor-pointer">
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>Account Settings</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleBillingSettings} className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Billing & Subscription</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleSecuritySettings} className="cursor-pointer">
             <Shield className="mr-2 h-4 w-4" />
