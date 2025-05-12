@@ -9,6 +9,10 @@ import CommonChallenges from "@/components/demo/CommonChallenges";
 import ExpertKnowledgeBase from "@/components/demo/ExpertKnowledgeBase";
 import DemoFooterCta from "@/components/demo/DemoFooterCta";
 import { Separator } from "@/components/ui/separator";
+import ReportsDemo from "@/components/demo/ReportsDemo";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FileBarChart, FileText, AlertTriangle } from "lucide-react";
 
 const Demo = () => {
   return (
@@ -39,6 +43,81 @@ const Demo = () => {
             <section>
               <h2 className="text-2xl font-bold mb-6">Try It Yourself</h2>
               <TryItExperience />
+            </section>
+            
+            <Separator />
+            
+            {/* Migration Reports Section */}
+            <section>
+              <h2 className="text-2xl font-bold mb-6">Detailed Migration Reports</h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <p className="mb-6 text-muted-foreground">
+                    QuillSwitch provides comprehensive migration reports that give you insight into every aspect 
+                    of your migration process. Track progress, identify issues, and measure performance with 
+                    detailed analytics and visualizations.
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <Card className="border border-border shadow-sm">
+                      <CardContent className="p-4">
+                        <h3 className="text-md font-semibold mb-2 flex items-center gap-2">
+                          <FileBarChart className="h-5 w-5 text-brand-500" />
+                          Performance Analytics
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Track migration speed, resource utilization, and throughput rates with 
+                          real-time performance monitoring.
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border border-border shadow-sm">
+                      <CardContent className="p-4">
+                        <h3 className="text-md font-semibold mb-2 flex items-center gap-2">
+                          <FileText className="h-5 w-5 text-brand-500" />
+                          Data Quality Reports
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Ensure data integrity with comprehensive validation reports that identify 
+                          and resolve inconsistencies before they become problems.
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border border-border shadow-sm">
+                      <CardContent className="p-4">
+                        <h3 className="text-md font-semibold mb-2 flex items-center gap-2">
+                          <AlertTriangle className="h-5 w-5 text-brand-500" />
+                          Error Analysis
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Quickly identify and resolve issues with detailed error reports and 
+                          actionable recommendations.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+                
+                <div>
+                  <Card className="h-full border border-border shadow-sm bg-slate-100/30 dark:bg-slate-800/30">
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="flex-1 min-h-[300px] bg-card rounded-md border border-border p-4 mb-4 overflow-hidden">
+                        <MigrationPerformanceChart />
+                      </div>
+                      <div className="flex justify-between">
+                        <Button variant="outline">
+                          Download PDF
+                        </Button>
+                        <Button>
+                          View All Reports
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </section>
             
             <Separator />
