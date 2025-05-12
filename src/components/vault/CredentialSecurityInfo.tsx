@@ -1,8 +1,9 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Shield, Lock, AlertTriangle } from "lucide-react";
+import { Shield, Lock, AlertTriangle, Globe } from "lucide-react";
 import { isConnectionSecure } from "@/utils/encryptionUtils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const CredentialSecurityInfo = () => {
   const isSecure = isConnectionSecure();
@@ -52,7 +53,7 @@ const CredentialSecurityInfo = () => {
               </div>
               
               <div className="flex items-start gap-2">
-                <Lock className="h-4 w-4 text-blue-700 dark:text-blue-300 mt-0.5" />
+                <Globe className="h-4 w-4 text-blue-700 dark:text-blue-300 mt-0.5" />
                 <div>
                   <p className="font-medium text-blue-900 dark:text-blue-300">Secure Transmission</p>
                   <p className="text-blue-800/70 dark:text-blue-400/80">
@@ -63,6 +64,15 @@ const CredentialSecurityInfo = () => {
                 </div>
               </div>
             </div>
+            
+            {!isSecure && (
+              <Alert variant="destructive" className="mt-2">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  For security, we recommend using HTTPS for all credential operations.
+                </AlertDescription>
+              </Alert>
+            )}
             
             <div className="pt-2">
               <div className="flex items-start gap-2">
@@ -76,6 +86,7 @@ const CredentialSecurityInfo = () => {
                     <li>Always use the most restrictive API permissions possible</li>
                     <li>Enable 2FA on all your service accounts</li>
                     <li>Never share your API keys in code repositories, emails or messages</li>
+                    <li>Where possible, use OAuth instead of API keys</li>
                   </ul>
                 </div>
               </div>

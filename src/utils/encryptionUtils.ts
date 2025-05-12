@@ -149,7 +149,9 @@ export const generateSecureKey = (length: number = 24): string => {
  * Verifies if the current connection is secure (HTTPS)
  */
 export const isConnectionSecure = (): boolean => {
-  return window.location.protocol === 'https:';
+  return window.location.protocol === 'https:' || 
+         window.location.hostname === 'localhost' || 
+         window.location.hostname === '127.0.0.1';
 };
 
 /**
