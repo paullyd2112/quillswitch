@@ -1,6 +1,5 @@
 
 import React from "react";
-import Navbar from "./Navbar";
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -10,8 +9,7 @@ interface BaseLayoutProps {
 const BaseLayout = ({ children, className = "" }: BaseLayoutProps) => {
   return (
     <div className={`min-h-screen bg-background ${className}`}>
-      <Navbar />
-      <div className="pt-24">
+      <div className="pt-8">
         {children}
       </div>
     </div>

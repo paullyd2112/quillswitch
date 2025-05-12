@@ -21,11 +21,9 @@ const Navbar = () => {
   const { user } = useAuth();
   const location = useLocation();
   
-  // Create memoized navLinks for display
+  // Create memoized navLinks to prevent unnecessary re-renders
   const navLinks = useMemo(() => {
-    // For public routes, just show mainNav
-    // For authenticated users, show mainNav + userNav
-    return user ? [...mainNav, ...userNav.filter(nav => nav.isAuthRequired)] : mainNav;
+    return user ? [...mainNav, ...userNav] : mainNav;
   }, [user]);
   
   // Create throttled scroll handler for better performance
@@ -49,6 +47,13 @@ const Navbar = () => {
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
+    
+    // Also close any open dropdowns when route changes
+    document.dispatchEvent(new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window
+    }));
   }, [location.pathname]);
   
   const toggleMenu = () => {
@@ -60,7 +65,7 @@ const Navbar = () => {
       className={cn(
         "fixed top-0 left-0 right-0 w-full z-[100] transition-colors duration-200", 
         isScrolled 
-          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm" 
+          ? "bg-white/95 backdrop-blur-md border-b border-friendly-border shadow-sm" 
           : "bg-transparent"
       )}
     >
@@ -68,8 +73,8 @@ const Navbar = () => {
         <div className="flex h-24 items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-primary/70 flex items-center justify-center text-white font-bold">Q</div>
-              <span className="font-bold text-lg">QuillSwitch</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-friendly-accent to-friendly-accent/70 flex items-center justify-center text-white font-bold">Q</div>
+              <span className="font-bold text-lg text-friendly-text-primary">QuillSwitch</span>
             </Link>
           </div>
           
@@ -86,6 +91,7 @@ const Navbar = () => {
                 size="icon"
                 onClick={toggleMenu}
                 aria-label="Toggle Menu"
+                className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-friendly-accent text-friendly-text-primary"
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </Button>
@@ -94,7 +100,7 @@ const Navbar = () => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
+      {/* Mobile Menu with improved accessibility */}
       <MobileMenu 
         isOpen={isMenuOpen}
         navLinks={navLinks}
