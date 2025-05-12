@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BackupRestorePanel } from "@/components/vault/backup/BackupRestorePanel";
 import { Button } from "@/components/ui/button";
-import { Shield, RefreshCw, AlertTriangle } from "lucide-react";
+import { Shield, RefreshCw, AlertTriangle, Cloud } from "lucide-react";
 import { toast } from "sonner";
+import CloudSecretsManager from "@/components/vault/CloudSecretsManager";
 
 interface VaultSettingsProps {
   onRefreshVault?: () => Promise<void>;
@@ -49,9 +50,10 @@ export const VaultSettings: React.FC<VaultSettingsProps> = ({ onRefreshVault }) 
       </div>
       
       <Tabs defaultValue="backup" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-4">
+        <TabsList className="grid w-full grid-cols-4 mb-4">
           <TabsTrigger value="backup">Backup & Restore</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="cloud">Cloud Integration</TabsTrigger>
           <TabsTrigger value="preferences">Preferences</TabsTrigger>
         </TabsList>
         
@@ -108,6 +110,10 @@ export const VaultSettings: React.FC<VaultSettingsProps> = ({ onRefreshVault }) 
               </Card>
             </CardContent>
           </Card>
+        </TabsContent>
+        
+        <TabsContent value="cloud">
+          <CloudSecretsManager />
         </TabsContent>
         
         <TabsContent value="preferences">

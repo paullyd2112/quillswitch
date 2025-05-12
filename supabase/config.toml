@@ -12,3 +12,10 @@ verify_jwt = true
 
 [functions.document-migration]
 verify_jwt = true
+
+[functions.encrypt-data]
+verify_jwt = true
+
+[functions.gcp-secrets]
+verify_jwt = true
+
