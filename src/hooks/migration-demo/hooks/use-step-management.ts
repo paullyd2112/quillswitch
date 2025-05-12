@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MigrationStep, MigrationStatus } from '../types';
 import { toast } from "@/hooks/use-toast";
 import { initialMigrationSteps } from '../migration-data';
@@ -40,7 +40,7 @@ export const useStepManagement = (initialStatus: MigrationStatus): UseStepManage
         const currentStep = newSteps[currentStepIndex];
         
         // Update progress of current step with smaller increments for smoother animation
-        if (currentStep && currentStep.status === 'in_progress') {
+        if (currentStep && currentStep.status === 'in-progress') {
           // Set active step for display purposes
           setActiveStep(currentStep);
           
@@ -49,7 +49,7 @@ export const useStepManagement = (initialStatus: MigrationStatus): UseStepManage
           
           // If step is complete, move to next step
           if (currentStep.progress === 100) {
-            currentStep.status = 'complete';
+            currentStep.status = 'completed';
             
             // Show toast notification when a step completes
             toast({
@@ -60,7 +60,7 @@ export const useStepManagement = (initialStatus: MigrationStatus): UseStepManage
             // Move to the next step if there is one
             if (currentStepIndex < newSteps.length - 1) {
               const nextStep = newSteps[currentStepIndex + 1];
-              nextStep.status = 'in_progress';
+              nextStep.status = 'in-progress';
               setCurrentStepIndex(currentStepIndex + 1);
               
               // Show toast notification when a new step starts

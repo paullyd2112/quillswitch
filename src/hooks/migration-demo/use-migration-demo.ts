@@ -77,7 +77,7 @@ export const useMigrationDemo = (): UseMigrationDemoReturn => {
   useEffect(() => {
     // Check if all steps are complete
     if (migrationStatus === "loading" && 
-        steps.every(step => step.status === 'complete')) {
+        steps.every(step => step.status === 'completed')) {
       
       setMigrationStatus("success");
       setActiveStep(undefined);

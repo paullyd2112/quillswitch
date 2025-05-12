@@ -6,7 +6,7 @@ export type MigrationStep = {
   name: string;
   description: string;
   progress: number;
-  status: "pending" | "in-progress" | "completed" | "error";
+  status: "idle" | "in-progress" | "completed" | "error";
   recordSize?: number;
 };
 
@@ -44,3 +44,13 @@ export type MigrationPerformanceData = {
   memory: number;
   network: number;
 };
+
+export interface UseMigrationDemoReturn {
+  migrationStatus: MigrationStatus;
+  steps: MigrationStep[];
+  overallProgress: number;
+  activeStep?: MigrationStep;
+  performanceMetrics?: Partial<PerformanceMetrics>;
+  errorMessage?: string;
+  handleMigrationDemo: () => void;
+}

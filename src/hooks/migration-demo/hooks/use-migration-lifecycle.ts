@@ -58,7 +58,7 @@ export const useMigrationLifecycle = (
       // Start the first step
       setSteps(prevSteps => {
         const newSteps = [...prevSteps];
-        newSteps[0].status = 'in_progress';
+        newSteps[0].status = 'in-progress';
         setActiveStep(newSteps[0]);
         
         // Show toast notification when migration starts

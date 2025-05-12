@@ -13,8 +13,12 @@ import ReportsDemo from "@/components/demo/ReportsDemo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileBarChart, FileText, AlertTriangle } from "lucide-react";
+import MigrationPerformanceChart from "@/components/home/migration-demo/MigrationPerformanceChart";
+import { useDemoReports } from "@/hooks/migration-demo/use-demo-reports";
 
 const Demo = () => {
+  const { historyPoints } = useDemoReports();
+  
   return (
     <>
       <Helmet>
@@ -104,7 +108,7 @@ const Demo = () => {
                   <Card className="h-full border border-border shadow-sm bg-slate-100/30 dark:bg-slate-800/30">
                     <CardContent className="p-6 flex flex-col h-full">
                       <div className="flex-1 min-h-[300px] bg-card rounded-md border border-border p-4 mb-4 overflow-hidden">
-                        <MigrationPerformanceChart />
+                        <MigrationPerformanceChart progressHistory={historyPoints} />
                       </div>
                       <div className="flex justify-between">
                         <Button variant="outline">

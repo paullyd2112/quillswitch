@@ -2,7 +2,7 @@
 import React from "react";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import MigrationFooter from "./MigrationFooter";
-import type { MigrationStep } from "@/hooks/migration-demo/types";
+import type { MigrationStep, PerformanceMetrics } from "@/hooks/migration-demo/types";
 import MigrationHeaderSection from "./visualizer/MigrationHeaderSection";
 import MigrationStatusSection from "./visualizer/MigrationStatusSection";
 import MigrationProgressSection from "./visualizer/MigrationProgressSection";
@@ -14,13 +14,7 @@ type MigrationVisualizerProps = {
   activeStep?: MigrationStep;
   onClick: () => void;
   errorMessage?: string;
-  performanceMetrics?: {
-    averageRecordsPerSecond?: number;
-    peakRecordsPerSecond?: number;
-    estimatedTimeRemaining?: number;
-    totalRecordsProcessed?: number;
-    dataVolume?: number;
-  };
+  performanceMetrics?: Partial<PerformanceMetrics>;
 }
 
 const MigrationVisualizer = ({ 
