@@ -1,91 +1,84 @@
 
 import React from "react";
-import { Check } from "lucide-react";
-import { formatBytes, formatRecordsPerSecond } from "../utils/format-utils";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle2 } from "lucide-react";
+import { PerformanceMetrics } from "@/hooks/migration-demo/types";
 
 type SuccessStatusProps = {
-  performanceMetrics?: {
-    averageRecordsPerSecond?: number;
-    peakRecordsPerSecond?: number;
-    estimatedTimeRemaining?: number;
-    totalRecordsProcessed?: number;
-    dataVolume?: number;
-  };
+  performanceMetrics?: Partial<PerformanceMetrics>;
 };
 
 const SuccessStatus = ({ performanceMetrics }: SuccessStatusProps) => {
-  // Default metrics if real ones aren't available
-  const defaultMetrics = {
-    totalRecordsProcessed: 2238,
-    averageRecordsPerSecond: 27.5,
-    dataVolume: 12800, // 12.8 MB
-    peakRecordsPerSecond: 32.3
-  };
-
-  // Use provided metrics or fallback to defaults
-  const displayMetrics = {
-    totalRecordsProcessed: performanceMetrics?.totalRecordsProcessed && performanceMetrics.totalRecordsProcessed > 0 
-      ? performanceMetrics.totalRecordsProcessed 
-      : defaultMetrics.totalRecordsProcessed,
-    averageRecordsPerSecond: performanceMetrics?.averageRecordsPerSecond && performanceMetrics.averageRecordsPerSecond > 0 
-      ? performanceMetrics.averageRecordsPerSecond 
-      : defaultMetrics.averageRecordsPerSecond,
-    dataVolume: performanceMetrics?.dataVolume && performanceMetrics.dataVolume > 0 
-      ? performanceMetrics.dataVolume 
-      : defaultMetrics.dataVolume,
-    peakRecordsPerSecond: performanceMetrics?.peakRecordsPerSecond && performanceMetrics.peakRecordsPerSecond > 0 
-      ? performanceMetrics.peakRecordsPerSecond 
-      : defaultMetrics.peakRecordsPerSecond
-  };
+  // Calculate the time taken if we have the data
+  const formattedTimeTaken = performanceMetrics?.progressHistory && performanceMetrics.progressHistory.length > 1
+    ? formatTimeTaken(
+        performanceMetrics.progressHistory[0].timestamp,
+        performanceMetrics.progressHistory[performanceMetrics.progressHistory.length - 1].timestamp
+      )
+    : null;
 
   return (
-    <div className="flex flex-col items-center justify-center py-8 space-y-4">
-      <div className="relative">
-        {/* Success glow effect */}
-        <div className="absolute inset-0 rounded-full bg-green-500/20 animate-ping" style={{ animationDuration: '1.5s' }}></div>
-        <div className="absolute inset-[-4px] rounded-full bg-gradient-to-r from-green-400/30 to-emerald-500/30 animate-pulse"></div>
-        
-        {/* Success icon with glassy effect */}
-        <div className="relative bg-gradient-to-br from-green-100 to-green-200/30 dark:from-green-900/40 dark:to-green-800/20 p-4 rounded-full backdrop-blur-md border border-green-200/50 dark:border-green-700/30">
-          <Check className="h-10 w-10 text-green-600 dark:text-green-400" />
-        </div>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <Badge variant="secondary" className="bg-green-100/30 text-green-600 dark:bg-green-900/30 dark:text-green-400 border-none">
+          <CheckCircle2 className="mr-1 h-3 w-3" />
+          Complete
+        </Badge>
       </div>
-      <div className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-400 font-medium tracking-wide">
-        All data migrated successfully!
-      </div>
-      <div className="text-xs text-center text-muted-foreground space-y-1">
-        <div className="text-green-500 dark:text-green-400">✓ Contacts</div>
-        <div className="text-green-500 dark:text-green-400">✓ Opportunities & Deals</div>
-        <div className="text-green-500 dark:text-green-400">✓ Activities & Tasks</div>
-        <div className="text-green-500 dark:text-green-400">✓ Cases & Tickets</div>
-        <div className="text-green-500 dark:text-green-400">✓ Accounts & Companies</div>
-        <div className="text-green-500 dark:text-green-400">✓ Custom Objects</div>
-      </div>
-      
-      {/* Always show summary metrics for completed migration */}
-      <div className="w-full max-w-[250px] bg-green-50/30 dark:bg-green-900/20 rounded-lg p-3 border border-green-100/30 dark:border-green-800/30">
-        <div className="text-center text-green-800 dark:text-green-300 text-xs mb-2 font-medium">Migration Summary</div>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Records:</span>
-            <span className="font-medium">{displayMetrics.totalRecordsProcessed.toLocaleString()}</span>
+
+      <div className="grid grid-cols-2 gap-2 text-sm">
+        {performanceMetrics?.totalRecordsProcessed !== undefined && (
+          <div>
+            <div className="text-xs text-muted-foreground">Records Migrated</div>
+            <div className="font-medium">{performanceMetrics.totalRecordsProcessed.toLocaleString()}</div>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Avg Speed:</span>
-            <span className="font-medium">{formatRecordsPerSecond(displayMetrics.averageRecordsPerSecond)}</span>
+        )}
+
+        {performanceMetrics?.averageRecordsPerSecond !== undefined && (
+          <div>
+            <div className="text-xs text-muted-foreground">Avg. Speed</div>
+            <div className="font-medium">{performanceMetrics.averageRecordsPerSecond.toFixed(1)} records/sec</div>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Data Volume:</span>
-            <span className="font-medium">{formatBytes(displayMetrics.dataVolume)}</span>
+        )}
+
+        {performanceMetrics?.dataVolume !== undefined && (
+          <div>
+            <div className="text-xs text-muted-foreground">Data Volume</div>
+            <div className="font-medium">{(performanceMetrics.dataVolume / 1024 / 1024).toFixed(2)} MB</div>
           </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Peak Speed:</span>
-            <span className="font-medium">{formatRecordsPerSecond(displayMetrics.peakRecordsPerSecond)}</span>
+        )}
+
+        {formattedTimeTaken && (
+          <div>
+            <div className="text-xs text-muted-foreground">Time Taken</div>
+            <div className="font-medium">{formattedTimeTaken}</div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 };
+
+// Format time taken in a human readable format
+function formatTimeTaken(startTime: number, endTime: number): string {
+  const durationMs = endTime - startTime;
+  const seconds = Math.floor(durationMs / 1000);
+  
+  if (seconds < 60) {
+    return `${seconds} sec`;
+  }
+  
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  
+  if (minutes < 60) {
+    return `${minutes}m ${remainingSeconds}s`;
+  }
+  
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  
+  return `${hours}h ${remainingMinutes}m ${remainingSeconds}s`;
+}
 
 export default SuccessStatus;

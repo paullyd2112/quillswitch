@@ -1,4 +1,3 @@
-
 export type MigrationStatus = "idle" | "loading" | "success" | "error";
 
 export type MigrationStep = {
@@ -10,6 +9,7 @@ export type MigrationStep = {
   recordSize?: number;
 };
 
+// Make sure all fields are optional in Partial
 export type MigrationHistoryPoint = {
   timestamp: number;
   records: number;

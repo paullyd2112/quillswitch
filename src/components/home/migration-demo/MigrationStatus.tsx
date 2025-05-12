@@ -9,7 +9,7 @@ import ErrorStatus from "./status/ErrorStatus";
 type MigrationStatusProps = {
   status: "idle" | "loading" | "success" | "error";
   activeStep?: MigrationStep;
-  performanceMetrics?: PerformanceMetrics;
+  performanceMetrics?: Partial<PerformanceMetrics>;
   errorMessage?: string;
 };
 
