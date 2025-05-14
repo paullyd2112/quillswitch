@@ -1,83 +1,73 @@
 
-import { 
-  toast as sonnerToast, 
-  type ToastT as SonnerToast
-} from "sonner";
-import { 
-  type ToastActionElement, 
-  type ToastProps 
-} from "@/components/ui/toast";
+import { toast as sonnerToast } from "sonner";
 
-type ToastProps4 = ToastProps & {
-  action?: ToastActionElement;
-  description?: React.ReactNode;
+type ToastProps = {
+  title?: string;
+  description?: string;
+  variant?: "default" | "destructive" | "success";
+  duration?: number;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
 };
-
-type Toast = {
-  id: string;
-  title: string;
-  description?: React.ReactNode;
-  action?: ToastActionElement;
-  variant?: "default" | "destructive";
-};
-
-// In-memory store for toasts as we're using sonner which doesn't provide a way to get all toasts
-const TOAST_LIMIT = 20;
-const TOAST_REMOVE_DELAY = 1000;
-
-const toasts: Toast[] = [];
 
 const useToast = () => {
-  const toast = ({ title, description, variant = "default", action }: ToastProps4) => {
-    const id = crypto.randomUUID();
-    const newToast = {
-      id,
-      title,
-      description,
-      variant,
-      action
+  const toast = ({
+    title,
+    description,
+    variant = "default",
+    duration = 5000,
+    action,
+  }: ToastProps) => {
+    const toastOptions = {
+      duration,
+      action: action
+        ? {
+            label: action.label,
+            onClick: action.onClick,
+          }
+        : undefined,
     };
-    
-    // Add toast to our local array
-    toasts.push(newToast);
-    
-    // Limit the number of toasts
-    if (toasts.length > TOAST_LIMIT) {
-      toasts.shift();
+
+    if (variant === "destructive") {
+      return sonnerToast.error(title, {
+        description,
+        ...toastOptions,
+      });
     }
-    
-    const options: SonnerToast = {
-      id,
-      className: variant === "destructive" ? "destructive" : undefined,
+
+    if (variant === "success") {
+      return sonnerToast.success(title, {
+        description,
+        ...toastOptions,
+      });
+    }
+
+    return sonnerToast(title, {
       description,
-      action,
-    };
-    
-    sonnerToast(title, options);
-    
-    setTimeout(() => {
-      const index = toasts.findIndex((t) => t.id === id);
-      if (index !== -1) {
-        toasts.splice(index, 1);
-      }
-    }, TOAST_REMOVE_DELAY);
+      ...toastOptions,
+    });
   };
 
-  return { toast, toasts: [...toasts] };
+  return { toast };
 };
 
-// This is the toast function from the shadcn/ui toast component
-// It's provided for backward compatibility, but we are using sonner for toasts
-const toast = ({ title, description, variant = "default", action }: ToastProps4) => {
-  const id = crypto.randomUUID();
-  const options: SonnerToast = {
-    id,
-    className: variant === "destructive" ? "destructive" : undefined,
+// Also export a simpler function for direct usage
+const toast = ({
+  title,
+  description,
+  variant = "default",
+  duration = 5000,
+  action,
+}: ToastProps) => {
+  return useToast().toast({
+    title,
     description,
+    variant,
+    duration,
     action,
-  };
-  
-  sonnerToast(title, options);
+  });
 };
 
 export { useToast, toast };

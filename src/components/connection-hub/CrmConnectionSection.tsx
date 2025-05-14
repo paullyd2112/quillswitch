@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
-import CrmSystemCard from "./CrmSystemCard";
+import ConnectionCard from "./ConnectionCard";
 import { crmSystems } from "@/config/connectionSystems";
 
 interface CrmConnectionSectionProps {
@@ -38,19 +38,19 @@ const CrmConnectionSection: React.FC<CrmConnectionSectionProps> = ({
   const displaySystems = [...popularSystems, ...otherSystems];
   
   return (
-    <Card className="border-2 border-slate-200 dark:border-slate-800">
-      <CardHeader className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800">
+    <Card className="border-2 border-slate-200 dark:border-slate-800 overflow-hidden">
+      <CardHeader className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800 py-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-medium">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 font-medium shrink-0">
             {step}
           </div>
           <div>
-            <CardTitle>{title}</CardTitle>
+            <CardTitle className="text-lg">{title}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">{description}</p>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent className="pt-6 pb-4">
         <div className="space-y-6">
           <div className="flex flex-wrap items-center gap-3 justify-between">
             <div className="relative w-full md:w-auto flex-1 max-w-sm">
@@ -82,9 +82,9 @@ const CrmConnectionSection: React.FC<CrmConnectionSectionProps> = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
             {displaySystems.map(system => (
-              <CrmSystemCard
+              <ConnectionCard
                 key={`${system.id}-${system.connectionType}`}
                 system={system}
                 type={type}
