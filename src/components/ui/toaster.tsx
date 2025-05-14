@@ -8,6 +8,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
+import { Button } from "@/components/ui/button"
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -23,7 +24,16 @@ export function Toaster() {
                 <ToastDescription>{description}</ToastDescription>
               )}
             </div>
-            {action}
+            {action && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={action.onClick}
+                className="mt-2"
+              >
+                {action.label}
+              </Button>
+            )}
             <ToastClose />
           </Toast>
         )
