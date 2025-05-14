@@ -8,10 +8,9 @@ import IntegratedToolsSection from "@/components/connection-hub/IntegratedToolsS
 import ConnectionGuide from "@/components/connection-hub/ConnectionGuide";
 import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 import SecurityInfoCard from "@/components/connection-hub/SecurityInfoCard";
-import { Info, Lock, Shield, Zap } from "lucide-react";
+import { Info, Shield, Zap } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import FadeIn from "@/components/animations/FadeIn";
 
 const ConnectionHub: React.FC = () => {
   const [activeTab, setActiveTab] = useState("connect");
@@ -19,189 +18,157 @@ const ConnectionHub: React.FC = () => {
   return (
     <BaseLayout>
       <ConnectionProvider>
-        <div className="container px-6 py-12 max-w-7xl mx-auto">
-          <FadeIn>
-            <div className="mb-12 max-w-3xl">
-              <h1 className="text-4xl font-semibold mb-3">Connection Hub</h1>
-              <p className="text-lg text-tech-text-secondary">
-                Configure and manage your CRM connections with enterprise-grade security
-              </p>
-            </div>
-          </FadeIn>
-          
-          <FadeIn delay="100">
-            <ProgressIndicator />
-          </FadeIn>
-          
-          <div className="flex flex-col md:flex-row gap-6 mb-8">
-            <FadeIn delay="200" className="flex-grow">
-              <Alert className="bg-tech-subtle border-tech-accent/30 mb-0">
-                <Info className="h-4 w-4 text-tech-accent" />
-                <AlertDescription className="text-tech-text-secondary">
-                  Start by connecting both your old and new CRM systems, then add any additional tools you use.
-                </AlertDescription>
-              </Alert>
-            </FadeIn>
-            
-            <FadeIn delay="300" className="md:w-1/3">
-              <Alert className="bg-tech-subtle border-tech-accent/30 mb-0 h-full">
-                <Shield className="h-4 w-4 text-tech-highlight" />
-                <AlertDescription className="text-tech-text-secondary">
-                  Your credentials are secured using end-to-end encryption.
-                </AlertDescription>
-              </Alert>
-            </FadeIn>
+        <div className="container px-4 py-8 max-w-7xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold">Connection Hub</h1>
+            <p className="text-muted-foreground">
+              Connect your CRM systems and related applications
+            </p>
           </div>
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="bg-tech-subtle border border-tech-border rounded-xl p-1 w-full flex justify-start overflow-x-auto scrollbar-thin mb-8">
-              <TabsTrigger value="connect" className="data-[state=active]:bg-tech-accent data-[state=active]:text-tech-text-primary rounded-lg flex-1">
-                Connect Systems
-              </TabsTrigger>
-              <TabsTrigger value="manage" className="data-[state=active]:bg-tech-accent data-[state=active]:text-tech-text-primary rounded-lg flex-1">
-                Manage Connections
-              </TabsTrigger>
-              <TabsTrigger value="help" className="data-[state=active]:bg-tech-accent data-[state=active]:text-tech-text-primary rounded-lg flex-1">
-                Help & Guides
-              </TabsTrigger>
-              <TabsTrigger value="security" className="data-[state=active]:bg-tech-accent data-[state=active]:text-tech-text-primary rounded-lg flex-1">
-                Security
-              </TabsTrigger>
+          <ProgressIndicator />
+          
+          <Alert className="mb-6 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
+            <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <AlertDescription className="text-blue-700 dark:text-blue-300">
+              Start by connecting both your old and new CRM systems, then add any additional tools you use.
+            </AlertDescription>
+          </Alert>
+          
+          <Alert className="mb-6 bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
+            <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertDescription className="text-green-700 dark:text-green-300">
+              Your API keys and credentials are secured using end-to-end encryption. We never store your keys in plain text.
+            </AlertDescription>
+          </Alert>
+          
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="connect">Connect Systems</TabsTrigger>
+              <TabsTrigger value="manage">Manage Connections</TabsTrigger>
+              <TabsTrigger value="help">Help & Guides</TabsTrigger>
+              <TabsTrigger value="security">Security</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="connect" className="space-y-10 animate-fade-in">
-              <FadeIn>
-                <div className="grid gap-12">
-                  {/* Step 1: Connect Old CRM */}
-                  <CrmConnectionSection 
-                    step="1" 
-                    title="Connect Old CRM" 
-                    description="Select and connect your current CRM system that you want to migrate from"
-                    type="source"
-                  />
-                  
-                  {/* Step 2: Connect New CRM */}
-                  <CrmConnectionSection 
-                    step="2" 
-                    title="Connect New CRM" 
-                    description="Select and connect your target CRM system where your data will be migrated to"
-                    type="destination"
-                  />
-                  
-                  {/* Step 3: Connect Other Tools */}
-                  <IntegratedToolsSection 
-                    step="3" 
-                    title="Connect Your Other Tools" 
-                    description="Select and connect additional tools and applications you use with your CRM"
-                  />
-                </div>
+            <TabsContent value="connect" className="space-y-8">
+              <div className="grid gap-10">
+                {/* Step 1: Connect Old CRM */}
+                <CrmConnectionSection 
+                  step="1" 
+                  title="Connect Old CRM" 
+                  description="Select and connect your current CRM system that you want to migrate from"
+                  type="source"
+                />
                 
-                <div className="flex justify-center mt-16">
-                  <a 
-                    href="/migrations/setup" 
-                    className="btn-tech-primary inline-flex items-center font-medium justify-center"
-                  >
-                    <Zap className="mr-2 h-5 w-5" /> Continue to Migration Setup
-                  </a>
-                </div>
-              </FadeIn>
+                {/* Step 2: Connect New CRM */}
+                <CrmConnectionSection 
+                  step="2" 
+                  title="Connect New CRM" 
+                  description="Select and connect your target CRM system where your data will be migrated to"
+                  type="destination"
+                />
+                
+                {/* Step 3: Connect Other Tools */}
+                <IntegratedToolsSection 
+                  step="3" 
+                  title="Connect Your Other Tools" 
+                  description="Select and connect additional tools and applications you use with your CRM"
+                />
+              </div>
+              
+              <div className="flex justify-center mt-10">
+                <a 
+                  href="/migrations/setup" 
+                  className="px-6 py-3 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors inline-flex items-center font-medium"
+                >
+                  <Zap className="mr-2 h-4 w-4" /> Continue to Migration Setup
+                </a>
+              </div>
             </TabsContent>
             
-            <TabsContent value="manage" className="animate-fade-in">
-              <FadeIn>
-                <div className="grid gap-6">
-                  <h2 className="text-2xl font-semibold">Manage Your Connections</h2>
-                  <p className="text-tech-text-secondary">View and manage all your connected services.</p>
-                  
-                  <div className="grid gap-8 mt-6">
-                    <div className="p-12 text-center bg-tech-subtle/40 rounded-xl border border-dashed border-tech-border">
-                      <p className="text-tech-text-secondary mb-4">
-                        Connect systems in the Connect tab to manage them here.
-                      </p>
-                      <a href="#connect" onClick={() => setActiveTab("connect")} className="btn-tech-secondary inline-flex">
-                        Go to Connect Systems
-                      </a>
-                    </div>
+            <TabsContent value="manage">
+              <div className="grid gap-4">
+                <h2 className="text-xl font-semibold">Manage Your Connections</h2>
+                <p>View and manage all your connected services.</p>
+                <div className="grid gap-6 mt-4">
+                  <div className="p-6 text-center bg-muted/40 rounded-lg border border-dashed">
+                    <p className="text-muted-foreground">
+                      Connect systems in the Connect tab to manage them here.
+                    </p>
                   </div>
                 </div>
-              </FadeIn>
+              </div>
             </TabsContent>
             
-            <TabsContent value="help" className="animate-fade-in">
+            <TabsContent value="help">
               <ConnectionGuide />
             </TabsContent>
             
-            <TabsContent value="security" className="animate-fade-in">
-              <FadeIn>
-                <div className="space-y-8">
-                  <h2 className="text-2xl font-semibold">Security & Privacy</h2>
-                  <p className="text-tech-text-secondary max-w-3xl">
-                    Learn how QuillSwitch protects your sensitive API keys and connection credentials with enterprise-grade security protocols.
-                  </p>
+            <TabsContent value="security">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold">Security & Privacy</h2>
+                <p className="text-muted-foreground">
+                  Learn how we protect your sensitive API keys and connection credentials.
+                </p>
+                
+                <SecurityInfoCard />
+                
+                <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <Card className="border-blue-100">
+                    <CardHeader className="bg-blue-50 dark:bg-blue-900/20 border-b border-blue-100 dark:border-blue-800">
+                      <CardTitle className="text-blue-800 dark:text-blue-400">Best Practices</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-4">
+                      <ul className="space-y-2">
+                        <li className="flex items-start gap-2">
+                          <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
+                          <p className="text-sm">Use dedicated API keys for QuillSwitch with proper access control</p>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
+                          <p className="text-sm">Regularly rotate your API keys for enhanced security</p>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
+                          <p className="text-sm">Avoid using personal accounts; create service accounts when possible</p>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
+                          <p className="text-sm">Never share API keys via email or insecure channels</p>
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
                   
-                  <SecurityInfoCard />
-                  
-                  <div className="grid md:grid-cols-2 gap-8 mt-8">
-                    <Card className="bg-tech-card border-tech-border shadow-tech">
-                      <CardHeader className="bg-tech-subtle border-b border-tech-border">
-                        <CardTitle className="text-tech-accent flex items-center">
-                          <Lock className="mr-2 h-5 w-5" /> Best Practices
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-6 space-y-4">
-                        <ul className="space-y-3">
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1.5 text-tech-highlight text-lg">•</div>
-                            <p className="text-sm text-tech-text-secondary">Use dedicated API keys for QuillSwitch with proper access control</p>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1.5 text-tech-highlight text-lg">•</div>
-                            <p className="text-sm text-tech-text-secondary">Regularly rotate your API keys for enhanced security</p>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1.5 text-tech-highlight text-lg">•</div>
-                            <p className="text-sm text-tech-text-secondary">Avoid using personal accounts; create service accounts when possible</p>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1.5 text-tech-highlight text-lg">•</div>
-                            <p className="text-sm text-tech-text-secondary">Never share API keys via email or insecure channels</p>
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card className="bg-tech-card border-tech-border shadow-tech">
-                      <CardHeader className="bg-tech-subtle border-b border-tech-border">
-                        <CardTitle className="text-tech-accent flex items-center">
-                          <Shield className="mr-2 h-5 w-5" /> Security FAQ
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-6 space-y-4">
-                        <div className="space-y-4">
-                          <div>
-                            <h3 className="font-medium text-tech-text-primary">Where are my API keys stored?</h3>
-                            <p className="text-sm text-tech-text-secondary mt-1">
-                              Your encrypted API keys are stored in our secure vault using pgsodium encryption.
-                            </p>
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-tech-text-primary">Can QuillSwitch access my API keys?</h3>
-                            <p className="text-sm text-tech-text-secondary mt-1">
-                              No. Your API keys are encrypted with your personal encryption key that only exists on your device.
-                            </p>
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-tech-text-primary">What happens if I use a different device?</h3>
-                            <p className="text-sm text-tech-text-secondary mt-1">
-                              You'll need to reconnect your systems when using a new device for security reasons.
-                            </p>
-                          </div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Security FAQ</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="space-y-3">
+                        <div>
+                          <h3 className="font-medium">Where are my API keys stored?</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Your encrypted API keys are stored locally on your device using secure browser storage.
+                          </p>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                        <div>
+                          <h3 className="font-medium">Can QuillSwitch access my API keys?</h3>
+                          <p className="text-sm text-muted-foreground">
+                            No. Your API keys are encrypted with your personal encryption key that only exists on your device.
+                          </p>
+                        </div>
+                        <div>
+                          <h3 className="font-medium">What happens if I use a different device?</h3>
+                          <p className="text-sm text-muted-foreground">
+                            You'll need to reconnect your systems when using a new device for security reasons.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </FadeIn>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

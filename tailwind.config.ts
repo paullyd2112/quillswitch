@@ -21,7 +21,6 @@ export default {
 		extend: {
 			fontFamily: {
 				nunito: ['Nunito', 'sans-serif'],
-				sf: ['SF Pro Display', 'Nunito', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -68,30 +67,29 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				brand: {
-					50: '#e6f0ff',
-					100: '#cce0ff',
-					200: '#99c1ff',
-					300: '#66a3ff',
-					400: '#3384ff',
-					500: '#0066ff', // Updated to a more vibrant blue
-					600: '#0052cc',
-					700: '#003d99',
-					800: '#002966',
-					900: '#001433',
-					950: '#000a19',
+					50: '#e6f1ff',
+					100: '#cce3ff',
+					200: '#99c7ff',
+					300: '#66aaff',
+					400: '#338eff',
+					500: '#1a73e8', // Updated to match --accent-color
+					600: '#0062cc',
+					700: '#004a99',
+					800: '#003166',
+					900: '#001933',
+					950: '#000c19',
 				},
-				// High-tech theme colors
-				tech: {
-					bg: '#080b14',         // Deeper dark background
-					card: '#0f1525',       // Card background
-					subtle: '#161f32',      // Subtle accent background
+				// Dark theme colors
+				friendly: {
+					bg: '#0a0f1f',         // Dark background
+					card: '#111a33',       // Card background
 					text: {
-						primary: '#ffffff',  // Pure white for main text
-						secondary: '#a0a7b8' // Secondary text with blue hint
+						primary: '#e0e0e0',  // Light grey text
+						secondary: '#a0a0b0' // Secondary text
 					},
-					accent: '#0066ff',      // Vibrant blue accent
-					highlight: '#00e6c3',   // Teal highlight for special elements
-					border: '#1e2947'       // Border color
+					accent: '#007bff',      // Bright blue accent
+					icon: '#1a2a4d',        // Icon background
+					border: '#2a3a6b'       // Border color
 				}
 			},
 			borderRadius: {
@@ -121,24 +119,12 @@ export default {
 					'100%': { transform: 'scale(1)' },
 				},
 				'border-pulse': {
-					'0%, 100%': { borderColor: 'rgba(0, 102, 255, 0.5)' },
-					'50%': { borderColor: 'rgba(0, 102, 255, 0.2)' },
+					'0%, 100%': { borderColor: 'rgba(26, 115, 232, 0.5)' },
+					'50%': { borderColor: 'rgba(26, 115, 232, 0.2)' },
 				},
 				'shimmer': {
 					'0%': { backgroundPosition: '-200% 0' },
 					'100%': { backgroundPosition: '200% 0' },
-				},
-				'slide-in-left': {
-					'0%': { transform: 'translateX(-30px)', opacity: '0' },
-					'100%': { transform: 'translateX(0)', opacity: '1' },
-				},
-				'slide-in-right': {
-					'0%': { transform: 'translateX(30px)', opacity: '0' },
-					'100%': { transform: 'translateX(0)', opacity: '1' },
-				},
-				'float': {
-					'0%, 100%': { transform: 'translateY(0)' },
-					'50%': { transform: 'translateY(-10px)' },
 				},
 			},
 			animation: {
@@ -149,15 +135,7 @@ export default {
 				'scale-up': 'scale-up 0.5s ease-out forwards',
 				'border-pulse': 'border-pulse 2s ease-in-out infinite',
 				'shimmer': 'shimmer 2s infinite linear',
-				'slide-in-left': 'slide-in-left 0.6s ease-out forwards',
-				'slide-in-right': 'slide-in-right 0.6s ease-out forwards',
-				'float': 'float 6s ease-in-out infinite',
 			},
-			boxShadow: {
-				'tech': '0 8px 30px rgba(0, 102, 255, 0.07)',
-				'glass': '0 4px 20px rgba(0, 102, 255, 0.1)',
-				'glow': '0 0 15px rgba(0, 102, 255, 0.3)',
-			}
 		},
 	},
 	plugins: [require("tailwindcss-animate")],
