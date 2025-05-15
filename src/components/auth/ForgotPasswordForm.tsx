@@ -28,10 +28,10 @@ const ForgotPasswordForm = ({ isOpen, onOpenChange }: ForgotPasswordFormProps) =
     
     try {
       setIsLoading(true);
-      const { error } = await resetPassword(forgotEmail);
+      const result = await resetPassword(forgotEmail);
 
-      if (error) {
-        toast.error(error.message);
+      if (result?.error) {
+        toast.error(result.error.message);
         return;
       }
 

@@ -10,9 +10,9 @@ const MigrationDemoSection = () => {
     steps,
     overallProgress,
     activeStep,
-    startMigration,
+    performanceMetrics,
     errorMessage,
-    performanceMetrics
+    handleMigrationDemo
   } = useMigrationDemo();
   
   return (
@@ -26,11 +26,11 @@ const MigrationDemoSection = () => {
           
           <div>
             <MigrationVisualizer
-              migrationStatus={migrationStatus}
+              migrationStatus={migrationStatus as "idle" | "loading" | "success" | "error"}
               steps={steps}
               overallProgress={overallProgress}
               activeStep={activeStep}
-              onClick={startMigration}
+              onClick={handleMigrationDemo}
               errorMessage={errorMessage}
               performanceMetrics={performanceMetrics}
             />

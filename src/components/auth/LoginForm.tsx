@@ -31,10 +31,10 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
     
     try {
       setIsLoading(true);
-      const { error } = await signIn(loginEmail, loginPassword);
+      const result = await signIn(loginEmail, loginPassword);
 
-      if (error) {
-        toast.error(error.message);
+      if (result?.error) {
+        toast.error(result.error.message);
         return;
       }
 
@@ -49,10 +49,10 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const { error } = await signInWithGoogle();
+      const result = await signInWithGoogle();
       
-      if (error) {
-        toast.error(error.message);
+      if (result?.error) {
+        toast.error(result.error.message);
       }
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");

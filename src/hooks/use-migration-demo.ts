@@ -2,7 +2,7 @@
 // This file is kept for backwards compatibility but no longer used in the home page
 // Re-export an empty object to prevent import errors elsewhere in the codebase
 export const useMigrationDemo = () => ({
-  migrationStatus: "idle",
+  migrationStatus: "idle" as "idle" | "loading" | "success" | "error",
   steps: [],
   overallProgress: 0,
   activeStep: undefined,

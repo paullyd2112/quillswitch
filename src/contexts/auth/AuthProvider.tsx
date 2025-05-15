@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { AuthContextType, User, AuthError } from "./types";
 import { toast } from "sonner";
+import { signIn, signUp, signInWithGoogle, resetPassword, signOut } from "./authMethods";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -22,12 +23,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
         
-        setUser(session?.user || null);
+        if (session?.user) {
+          const userData: User = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: session.user.user_metadata?.name,
+            avatar_url: session.user.user_metadata?.avatar_url,
+            created_at: session.user.created_at,
+          };
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
         
         // Subscribe to auth changes
         const { data: { subscription } } = await supabase.auth.onAuthStateChange(
           (_event, session) => {
-            setUser(session?.user || null);
+            if (session?.user) {
+              const userData: User = {
+                id: session.user.id,
+                email: session.user.email || '',
+                name: session.user.user_metadata?.name,
+                avatar_url: session.user.user_metadata?.avatar_url,
+                created_at: session.user.created_at,
+              };
+              setUser(userData);
+            } else {
+              setUser(null);
+            }
           }
         );
         
@@ -44,108 +67,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkUser();
   }, []);
   
-  // Sign in with email and password
-  const signIn = async (email: string, password: string) => {
+  // Sign in with email and password wrapper function
+  const handleSignIn = async (email: string, password: string) => {
     try {
       setLoading(true);
       setError(null);
-      
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      
-      if (error) {
-        setError({ message: error.message, code: error.code });
-        toast.error("Sign in failed: " + error.message);
-        return;
-      }
-      
-      if (data && data.user) {
-        setUser(data.user);
-        toast.success("Successfully signed in!");
-      }
-    } catch (err: any) {
-      setError({ message: err.message });
-      toast.error("An unexpected error occurred");
+      return await signIn(email, password);
     } finally {
       setLoading(false);
     }
   };
   
-  // Sign up with email and password
-  const signUp = async (email: string, password: string, name?: string) => {
+  // Sign up with email and password wrapper function
+  const handleSignUp = async (email: string, password: string, name?: string) => {
     try {
       setLoading(true);
       setError(null);
-      
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { name },
-        },
-      });
-      
-      if (error) {
-        setError({ message: error.message, code: error.code });
-        toast.error("Sign up failed: " + error.message);
-        return;
-      }
-      
-      if (data) {
-        toast.success("Check your email to confirm your account!");
-      }
-    } catch (err: any) {
-      setError({ message: err.message });
-      toast.error("An unexpected error occurred");
+      return await signUp(email, password);
     } finally {
       setLoading(false);
     }
   };
   
-  // Sign out
-  const signOut = async () => {
+  // Sign in with Google wrapper function
+  const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        setError({ message: error.message, code: error.code });
-        toast.error("Sign out failed: " + error.message);
-        return;
-      }
-      
-      setUser(null);
-      toast.success("Successfully signed out");
-    } catch (err: any) {
-      setError({ message: err.message });
-      toast.error("An unexpected error occurred");
+      return await signInWithGoogle(setLoading);
+    } catch (error) {
+      return { error: error as AuthError };
+    }
+  };
+  
+  // Sign out wrapper function
+  const handleSignOut = async () => {
+    try {
+      setLoading(true);
+      await signOut(setLoading);
     } finally {
       setLoading(false);
     }
   };
   
-  // Reset password
-  const resetPassword = async (email: string) => {
+  // Reset password wrapper function
+  const handleResetPassword = async (email: string) => {
     try {
       setLoading(true);
       setError(null);
-      
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      
-      if (error) {
-        setError({ message: error.message, code: error.code });
-        toast.error("Password reset failed: " + error.message);
-        return;
-      }
-      
-      toast.success("Password reset email sent");
-    } catch (err: any) {
-      setError({ message: err.message });
-      toast.error("An unexpected error occurred");
+      return await resetPassword(email, setLoading);
     } finally {
       setLoading(false);
     }
@@ -212,17 +181,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
   
-  const value = {
+  const value: AuthContextType = {
     user,
     loading,
+    isLoading: loading, // Alias for isLoading
     error,
-    signIn,
-    signUp,
-    signOut,
-    resetPassword,
+    signIn: handleSignIn,
+    signUp: handleSignUp,
+    signOut: handleSignOut,
+    resetPassword: handleResetPassword,
     updateProfile,
     sendVerificationEmail,
     isAuthenticated: !!user,
+    signInWithGoogle: handleGoogleSignIn,
   };
   
   return (

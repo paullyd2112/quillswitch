@@ -47,17 +47,17 @@ export const useRegister = (): UseRegisterReturn => {
       setSignupStatus("idle");
       setErrorMessage("");
       
-      const { error, emailConfirmationSent } = await signUp(email, password);
+      const result = await signUp(email, password);
 
-      if (error) {
-        console.error("Signup error:", error);
+      if (result?.error) {
+        console.error("Signup error:", result.error);
         setSignupStatus("error");
-        setErrorMessage(error.message);
+        setErrorMessage(result.error.message);
         return;
       }
 
       // Only update user metadata if signup was successful
-      if (!emailConfirmationSent) {
+      if (!result?.emailConfirmationSent) {
         // Update user metadata with full name
         const { error: metadataError } = await supabase.auth.updateUser({
           data: { full_name: fullName }
@@ -89,11 +89,11 @@ export const useRegister = (): UseRegisterReturn => {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      const { error } = await signInWithGoogle();
+      const result = await signInWithGoogle();
 
-      if (error) {
-        console.error("Google signin error:", error);
-        toast.error(error.message);
+      if (result?.error) {
+        console.error("Google signin error:", result.error);
+        toast.error(result.error.message);
       }
     } catch (error: any) {
       console.error("Unexpected error during Google signin:", error);
