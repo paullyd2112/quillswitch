@@ -1,4 +1,3 @@
-
 export const onboardingFlows = [
   {
     id: "flow-1",
@@ -151,5 +150,54 @@ export const featureHighlights = [
     title: "Knowledge Assessment",
     description: "Verify learning with quizzes and interactive challenges",
     icon: "CheckCircle"
+  }
+];
+
+// Add the mockMigrations data that's being imported in MigrationsList.tsx
+export const mockMigrations = [
+  {
+    id: '1',
+    user_id: 'user-1',
+    company_name: 'Acme Corp',
+    source_crm: 'HubSpot',
+    destination_crm: 'Salesforce',
+    migration_strategy: 'Full Migration',
+    status: "completed",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    completed_at: new Date().toISOString(),
+    total_objects: 100,
+    migrated_objects: 100,
+    failed_objects: 0
+  },
+  {
+    id: '2',
+    user_id: 'user-1',
+    company_name: 'Beta Inc',
+    source_crm: 'ActiveCampaign',
+    destination_crm: 'MailChimp',
+    migration_strategy: 'Selective Migration',
+    status: "in_progress",
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+    completed_at: null,
+    total_objects: 200,
+    migrated_objects: 130,
+    failed_objects: 0
+  },
+  {
+    id: '3',
+    user_id: 'user-1',
+    company_name: 'Gamma LLC',
+    source_crm: 'Zoho',
+    destination_crm: 'HubSpot',
+    migration_strategy: 'Incremental Migration',
+    status: "failed",
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+    updated_at: new Date(Date.now() - 172800000).toISOString(),
+    completed_at: null,
+    total_objects: 150,
+    migrated_objects: 45,
+    failed_objects: 10
   }
 ];
