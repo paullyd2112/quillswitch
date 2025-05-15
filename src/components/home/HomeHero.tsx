@@ -80,12 +80,11 @@ const HomeHero = () => {
         </div>
         
         {/* Stats section */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="mt-20 grid grid-cols-2 md:grid-cols-3 gap-6">
           {[
             { value: "97%", label: "Success Rate" },
-            { value: "50%", label: "Faster Than Manual" },
-            { value: "1M+", label: "Records Moved" },
-            { value: "5.0", label: "Customer Rating" }
+            { value: "90%", label: "Faster Than Manual" },
+            { value: "200k+", label: "Records Moved" }
           ].map((stat, index) => (
             <div key={index} className="text-center p-4 rounded-lg bg-slate-900/50 border border-slate-800">
               <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.value}</div>
