@@ -9,7 +9,7 @@ interface DesktopNavProps {
 
 const DesktopNav = ({ navLinks }: DesktopNavProps) => {
   return (
-    <nav className="hidden md:flex items-center space-x-1">
+    <nav className="hidden md:flex items-center ml-8 space-x-1">
       {navLinks.map((link) => (
         <NavLink
           key={link.href}
@@ -17,8 +17,8 @@ const DesktopNav = ({ navLinks }: DesktopNavProps) => {
           className={({ isActive }) => 
             `px-4 py-2 rounded-sm text-sm transition-colors duration-200 ${
               isActive
-                ? "text-friendly-accent bg-friendly-accent/10 font-bold"
-                : "text-friendly-text-secondary hover:text-friendly-text-primary hover:bg-friendly-card"
+                ? "text-friendly-accent bg-friendly-accent/10 font-medium"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/50"
             }`
           }
         >

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
-import { mainNav, userNav } from "./navConfig";
+import { mainNav } from "./navConfig";
 import { useAuth } from "@/contexts/auth";
 import { throttle } from "@/utils/performance";
 
@@ -16,11 +16,6 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { user } = useAuth();
   const location = useLocation();
-  
-  // Create memoized navLinks to prevent unnecessary re-renders
-  const navLinks = React.useMemo(() => {
-    return user ? [...mainNav, ...userNav] : mainNav;
-  }, [user]);
   
   // Create throttled scroll handler for better performance
   const handleScroll = React.useMemo(() => 
@@ -67,15 +62,15 @@ const Navbar = () => {
     >
       <div className="container px-4 md:px-6">
         <div className="flex h-20 items-center justify-between">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-primary/70 flex items-center justify-center text-white font-bold">Q</div>
               <span className="font-bold text-lg text-white">QuillSwitch</span>
             </Link>
+            
+            {/* Desktop Navigation */}
+            <DesktopNav navLinks={mainNav} />
           </div>
-          
-          {/* Desktop Navigation */}
-          <DesktopNav navLinks={navLinks} />
           
           <div className="flex items-center gap-2">
             {/* Auth Buttons Component */}
@@ -99,7 +94,7 @@ const Navbar = () => {
       {/* Mobile Menu with improved accessibility */}
       <MobileMenu 
         isOpen={isMenuOpen}
-        navLinks={navLinks}
+        navLinks={mainNav}
         onClose={() => setIsMenuOpen(false)}
       />
     </header>
