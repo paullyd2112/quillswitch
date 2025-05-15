@@ -1,5 +1,4 @@
 
-import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Index from './pages/Index'
@@ -9,7 +8,7 @@ import Auth from './pages/Auth'
 import KnowledgeArticle from './pages/KnowledgeArticle'
 import NotFound from './pages/NotFound'
 import { Toaster } from 'sonner'
-import { AuthProvider } from './contexts/AuthContext'
+import { AuthProvider } from './contexts/auth'
 import { ThemeProvider } from './components/ui/theme-provider'
 import { UserOnboardingProvider } from './components/onboarding/UserOnboardingProvider'
 import { CookieConsentProvider } from './contexts/CookieConsentContext'
@@ -26,6 +25,7 @@ import CredentialsVault from './pages/CredentialsVault'
 import Support from './pages/Support'
 import Demo from './pages/Demo'
 import Welcome from './pages/Welcome'
+import BaseLayout from './components/layout/BaseLayout'
 
 function App() {
   return (
@@ -43,16 +43,21 @@ function App() {
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/welcome" element={<Welcome />} />
                   <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
-                  <Route path="/settings" element={<Settings />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/terms" element={<TermsOfService />} />
-                  <Route path="/connect" element={<ConnectionHub />} />
-                  <Route path="/migrations" element={<MigrationsList />} />
-                  <Route path="/migrations/setup" element={<SetupMigration />} />
-                  <Route path="/migrations/:id" element={<MigrationDashboard />} />
-                  <Route path="/credentials-vault" element={<CredentialsVault />} />
-                  <Route path="/support" element={<Support />} />
                   <Route path="/demo" element={<Demo />} />
+
+                  {/* Protected routes with sidebar layout */}
+                  <Route path="/app" element={<BaseLayout />}>
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="connect" element={<ConnectionHub />} />
+                    <Route path="migrations" element={<MigrationsList />} />
+                    <Route path="migrations/setup" element={<SetupMigration />} />
+                    <Route path="migrations/:id" element={<MigrationDashboard />} />
+                    <Route path="credentials-vault" element={<CredentialsVault />} />
+                    <Route path="support" element={<Support />} />
+                  </Route>
+                  
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </UserOnboardingProvider>

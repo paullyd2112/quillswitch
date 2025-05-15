@@ -1,154 +1,81 @@
 
-import React from 'react';
-import { 
-  Home, 
-  LayoutDashboard, 
-  FileText, 
-  Kanban, 
-  Database, 
-  Link, 
-  BookOpen, 
-  ListOrdered, 
-  User,
-  Settings,
-  HelpCircle,
-  Code,
-  Command,
-  Bell,
-  Play
-} from 'lucide-react';
+import React from "react";
+import { NavLink } from "./types";
+import {
+  Home, Lightbulb, FileText, LogIn, Settings, 
+  ExternalLink, Save, Database, Layout, 
+  LifeBuoy, Key, CircleDollarSign
+} from "lucide-react";
 
-export interface NavLink {
-  label: string;
-  href: string;
-  icon?: React.ReactNode;
-  isExternal?: boolean;
-  isAuthRequired?: boolean;
-  children?: NavLink[];
-  category?: string;
-}
-
-// Public navigation (pre-login)
 export const mainNav: NavLink[] = [
   {
-    label: "Home",
     href: "/",
-    icon: <Home className="mr-2 h-4 w-4" />,
-    category: "Navigation"
+    label: "Home",
+    icon: <Home size={20} />,
+    category: "Main",
   },
   {
-    label: "Demo",
-    href: "/demo",
-    icon: <Play className="mr-2 h-4 w-4" />,
-    category: "Navigation"
-  },
-  {
-    label: "Features",
     href: "/features",
-    icon: <Kanban className="mr-2 h-4 w-4" />,
-    category: "Navigation"
+    label: "Features",
+    icon: <Lightbulb size={20} />,
+    category: "Main",
   },
   {
-    label: "Resources",
     href: "/resources",
-    icon: <FileText className="mr-2 h-4 w-4" />,
-    category: "Navigation"
+    label: "Resources",
+    icon: <FileText size={20} />,
+    category: "Main",
+  },
+  {
+    href: "/demo",
+    label: "Demo",
+    icon: <ExternalLink size={20} />,
+    category: "Main",
   },
 ];
 
-// Authenticated user navigation (post-login)
 export const userNav: NavLink[] = [
   {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Dashboard"
+    href: "/app/migrations",
+    label: "Migrations",
+    icon: <Layout size={20} />,
+    category: "Workspace",
   },
   {
-    label: "Start Migration",
-    href: "/migrations/setup",
-    icon: <Database className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Migration"
+    href: "/app/connect",
+    label: "Connect",
+    icon: <Database size={20} />,
+    category: "Workspace",
   },
   {
-    label: "My Migrations",
-    href: "/migrations",
-    icon: <ListOrdered className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Migration"
+    href: "/app/credentials-vault",
+    label: "Credentials Vault",
+    icon: <Key size={20} />,
+    category: "Workspace",
   },
   {
-    label: "Connections",
-    href: "/connect",
-    icon: <Link className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Integration"
-  },
-  {
-    label: "Knowledge Base",
-    href: "/resources",
-    icon: <BookOpen className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Resources"
-  },
-  {
-    label: "Support",
-    href: "/support",
-    icon: <User className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Resources"
-  },
-  {
-    label: "API Docs",
-    href: "/api-docs",
-    icon: <Code className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Developer"
-  },
-  {
+    href: "/app/settings",
     label: "Settings",
-    href: "/settings",
-    icon: <Settings className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "User"
+    icon: <Settings size={20} />,
+    category: "Account",
   },
   {
-    label: "Notifications",
-    href: "/notifications",
-    icon: <Bell className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "User"
+    href: "/app/support",
+    label: "Support",
+    icon: <LifeBuoy size={20} />,
+    category: "Account",
   },
-  {
-    label: "Help",
-    href: "/help",
-    icon: <HelpCircle className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Resources"
-  },
-  {
-    label: "Command Center",
-    href: "/command-center",
-    icon: <Command className="mr-2 h-4 w-4" />,
-    isAuthRequired: true,
-    category: "Developer"
-  }
 ];
 
-// Group navlinks by category
 export const getNavLinksByCategory = (links: NavLink[]) => {
-  const categorizedLinks: Record<string, NavLink[]> = {};
-  
-  links.forEach(link => {
-    const category = link.category || 'Other';
-    if (!categorizedLinks[category]) {
-      categorizedLinks[category] = [];
-    }
-    categorizedLinks[category].push(link);
-  });
-  
-  return categorizedLinks;
+  return links.reduce(
+    (acc: Record<string, NavLink[]>, link) => {
+      if (!acc[link.category]) {
+        acc[link.category] = [];
+      }
+      acc[link.category].push(link);
+      return acc;
+    },
+    {}
+  );
 };
-
