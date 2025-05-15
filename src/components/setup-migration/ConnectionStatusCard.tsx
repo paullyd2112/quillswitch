@@ -119,26 +119,27 @@ const ConnectionStatusCard: React.FC<ConnectionStatusCardProps> = ({ handleNeedC
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Connection Status</CardTitle>
-          <CardDescription>
+      <Card className="border-slate-700 dark:border-slate-700 bg-slate-900">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-3xl font-semibold text-white">Connection Status</CardTitle>
+          <CardDescription className="text-slate-400 text-lg">
             Check the status of your CRM connections
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-3 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+        <CardContent className="space-y-5">
+          {/* Source CRM */}
+          <div className="flex items-center justify-between p-4 rounded-md bg-slate-800 border border-slate-700">
+            <div className="flex items-center gap-5">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-semibold ${
                 hasSourceCrm 
-                  ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400" 
-                  : "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
+                  ? "bg-green-600/20 text-green-400" 
+                  : "bg-amber-700/30 text-amber-400"
               }`}>
-                {hasSourceCrm ? <Check className="h-4 w-4" /> : "1"}
+                {hasSourceCrm ? <Check className="h-6 w-6" /> : "1"}
               </div>
               <div>
-                <h3 className="font-medium">Source CRM</h3>
-                <p className="text-xs text-muted-foreground">Your original CRM system</p>
+                <h3 className="text-3xl font-normal text-white">Source CRM</h3>
+                <p className="text-slate-400">Your original CRM system</p>
               </div>
             </div>
             
@@ -148,36 +149,38 @@ const ConnectionStatusCard: React.FC<ConnectionStatusCardProps> = ({ handleNeedC
                   href={getCrmUrl(sourceCrms[0]?.id)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-green-600 dark:text-green-400 font-medium hover:underline inline-flex items-center gap-1"
+                  className="text-green-400 font-medium hover:underline inline-flex items-center"
                 >
                   Connected: {sourceCrms[0]?.name}
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-4 w-4 ml-1" />
                 </a>
               ) : (
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="lg"
                   onClick={() => handleOpenConnectionDialog("source")}
+                  className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
                 >
-                  <KeyRound className="h-3 w-3 mr-1" />
+                  <KeyRound className="h-4 w-4 mr-2" />
                   Connect Source
                 </Button>
               )}
             </div>
           </div>
           
-          <div className="flex items-center justify-between p-3 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+          {/* Destination CRM */}
+          <div className="flex items-center justify-between p-4 rounded-md bg-slate-800 border border-slate-700">
+            <div className="flex items-center gap-5">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl font-semibold ${
                 hasDestinationCrm 
-                  ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400" 
-                  : "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
+                  ? "bg-green-600/20 text-green-400" 
+                  : "bg-amber-700/30 text-amber-400"
               }`}>
-                {hasDestinationCrm ? <Check className="h-4 w-4" /> : "2"}
+                {hasDestinationCrm ? <Check className="h-6 w-6" /> : "2"}
               </div>
               <div>
-                <h3 className="font-medium">Destination CRM</h3>
-                <p className="text-xs text-muted-foreground">Your target CRM system</p>
+                <h3 className="text-3xl font-normal text-white">Destination CRM</h3>
+                <p className="text-slate-400">Your target CRM system</p>
               </div>
             </div>
             
@@ -187,41 +190,43 @@ const ConnectionStatusCard: React.FC<ConnectionStatusCardProps> = ({ handleNeedC
                   href={getCrmUrl(destinationCrms[0]?.id)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-green-600 dark:text-green-400 font-medium hover:underline inline-flex items-center gap-1"
+                  className="text-green-400 font-medium hover:underline inline-flex items-center"
                 >
                   Connected: {destinationCrms[0]?.name}
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-4 w-4 ml-1" />
                 </a>
               ) : (
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="lg"
                   onClick={() => handleOpenConnectionDialog("destination")}
+                  className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
                 >
-                  <KeyRound className="h-3 w-3 mr-1" />
+                  <KeyRound className="h-4 w-4 mr-2" />
                   Connect Destination
                 </Button>
               )}
             </div>
           </div>
           
-          {/* Related Tools Status */}
-          <div className="flex items-center justify-between p-3 rounded-md bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                <Info className="h-4 w-4" />
+          {/* Related Tools */}
+          <div className="flex items-center justify-between p-4 rounded-md bg-slate-800 border border-slate-700">
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-900/30 text-blue-400">
+                <Info className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="font-medium">Related Tools</h3>
-                <p className="text-xs text-muted-foreground">Other tools and applications</p>
+                <h3 className="text-3xl font-normal text-white">Related Tools</h3>
+                <p className="text-slate-400">Other tools and applications</p>
               </div>
             </div>
             
             <div>
               <Button 
                 variant="outline" 
-                size="sm" 
+                size="lg"
                 onClick={handleNeedConnection}
+                className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
               >
                 Manage Tools
               </Button>
@@ -232,10 +237,10 @@ const ConnectionStatusCard: React.FC<ConnectionStatusCardProps> = ({ handleNeedC
 
       {/* Connection Dialog */}
       <Dialog open={connectionDialogOpen} onOpenChange={setConnectionDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-slate-900 border-slate-700">
           <DialogHeader>
-            <DialogTitle>Connect {connectionType === "source" ? "Source" : "Destination"} CRM</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Connect {connectionType === "source" ? "Source" : "Destination"} CRM</DialogTitle>
+            <DialogDescription className="text-slate-400">
               Select your CRM and enter your API key to connect
             </DialogDescription>
           </DialogHeader>
