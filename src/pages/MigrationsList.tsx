@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BaseLayout from '@/components/layout/BaseLayout';
-import { MigrationsList as MigrationsListComponent } from '@/components/migrations';
+import MigrationsTable from '@/components/migrations/MigrationsTable';
 import ContentSection from '@/components/layout/ContentSection';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -33,7 +33,10 @@ const MigrationsList = () => {
             </Button>
           </div>
 
-          <MigrationsListComponent migrations={migrations} />
+          <MigrationsTable 
+            projects={migrations}
+            isLoading={false}
+          />
         </ContentSection>
       </div>
     </BaseLayout>

@@ -1,4 +1,6 @@
+
 import { KnowledgeArticle } from "@/types/knowledge";
+import { MigrationProject } from "@/integrations/supabase/migrationTypes";
 
 export const mockKnowledgeArticles: KnowledgeArticle[] = [
   {
@@ -27,11 +29,7 @@ export const mockKnowledgeArticles: KnowledgeArticle[] = [
   },
 ];
 
-// Properly define the MigrationProject type for the mockMigrations data
-import { MigrationProject } from "@/integrations/supabase/migrationTypes";
-
-// Mock data for migrations
-// Add the mockMigrations data with proper typing for the status field
+// Mock data for migrations with proper typing for the status field
 export const mockMigrations: MigrationProject[] = [
   {
     id: '1',
@@ -40,7 +38,7 @@ export const mockMigrations: MigrationProject[] = [
     source_crm: 'HubSpot',
     destination_crm: 'Salesforce',
     migration_strategy: 'Full Migration',
-    status: "completed",
+    status: "completed" as const,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     completed_at: new Date().toISOString(),
@@ -55,7 +53,7 @@ export const mockMigrations: MigrationProject[] = [
     source_crm: 'ActiveCampaign',
     destination_crm: 'MailChimp',
     migration_strategy: 'Selective Migration',
-    status: "in_progress",
+    status: "in_progress" as const,
     created_at: new Date(Date.now() - 86400000).toISOString(),
     updated_at: new Date(Date.now() - 86400000).toISOString(),
     completed_at: null,
@@ -70,7 +68,7 @@ export const mockMigrations: MigrationProject[] = [
     source_crm: 'Zoho',
     destination_crm: 'HubSpot',
     migration_strategy: 'Incremental Migration',
-    status: "failed",
+    status: "failed" as const,
     created_at: new Date(Date.now() - 172800000).toISOString(),
     updated_at: new Date(Date.now() - 172800000).toISOString(),
     completed_at: null,
