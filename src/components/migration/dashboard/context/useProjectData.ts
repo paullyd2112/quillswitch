@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -21,9 +22,9 @@ import {
 interface UseProjectDataProps {
   projectId: string;
   onError?: (error: Error) => void;
-  onLoaded?: (void) => void;
+  onLoaded?: () => void;  // Fixed the syntax error here by adding parentheses
   retryOnError?: boolean;
-  retryCount?: number; // Add this property
+  retryCount?: number;
 }
 
 interface UseProjectDataReturn {
@@ -50,7 +51,7 @@ export const useProjectData = ({
   onError, 
   onLoaded,
   retryOnError = false,
-  retryCount = 3 // Added default value
+  retryCount = 3
 }: UseProjectDataProps): UseProjectDataReturn => {
   const navigate = useNavigate();
   const { toast } = useToast();
