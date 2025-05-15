@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BaseLayout from '@/components/layout/BaseLayout';
-import MigrationsTable from '@/components/migrations/MigrationsTable';
 import ContentSection from '@/components/layout/ContentSection';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { mockMigrations } from "@/assets/mockData";
+import MigrationsTable from '@/components/migrations/MigrationsTable';
 
 const MigrationsList = () => {
   const navigate = useNavigate();
