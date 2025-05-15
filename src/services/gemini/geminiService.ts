@@ -19,6 +19,9 @@ export interface MappingSuggestion {
   is_required?: boolean;
 }
 
+/**
+ * Send a message to Gemini AI API
+ */
 export const sendMessageToGemini = async (
   messages: ChatMessage[],
   systemPrompt?: string
@@ -40,6 +43,9 @@ export const sendMessageToGemini = async (
   }
 };
 
+/**
+ * Generate field mapping suggestions using Gemini AI
+ */
 export const generateFieldMappingSuggestions = async (
   sourceFields: string[],
   destinationFields: string[]
@@ -74,5 +80,24 @@ export const generateFieldMappingSuggestions = async (
   } catch (error: any) {
     console.error("Exception in gemini mapping service:", error);
     throw error;
+  }
+};
+
+/**
+ * Call Gemini API with custom parameters
+ * This function is for compatibility with existing code
+ */
+export const callGeminiApi = async (params: any): Promise<string | null> => {
+  try {
+    const { sourceFields, destinationFields } = params;
+    
+    // Use the more structured function internally
+    const suggestions = await generateFieldMappingSuggestions(sourceFields, destinationFields);
+    
+    // Return as JSON string for backward compatibility
+    return JSON.stringify(suggestions);
+  } catch (error) {
+    console.error("Error in callGeminiApi:", error);
+    return null;
   }
 };

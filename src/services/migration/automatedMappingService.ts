@@ -23,7 +23,7 @@ export const generateMappingSuggestions = async (
     // Get field metadata
     const { data: objectType, error } = await supabase
       .from('migration_object_types')
-      .select('name, source_id, destination_id')
+      .select('name, project_id')
       .eq('id', objectTypeId)
       .single();
     
@@ -33,7 +33,10 @@ export const generateMappingSuggestions = async (
     const aiSuggestions = await generateAiMappingSuggestions(sourceFields, destinationFields);
     
     // Return combined suggestions
-    return aiSuggestions;
+    return aiSuggestions.map(suggestion => ({
+      ...suggestion,
+      project_id: objectType.project_id // Add the project_id to each suggestion
+    }));
   } catch (error: any) {
     console.error("Error generating mapping suggestions:", error);
     toast.error("Failed to generate mapping suggestions");
@@ -51,12 +54,23 @@ export const applyMappingSuggestions = async (
   try {
     console.log(`Applying ${suggestions.length} mapping suggestions for object type: ${objectTypeId}`);
     
+    // First, get the project_id for this object type
+    const { data: objectType, error: objectTypeError } = await supabase
+      .from('migration_object_types')
+      .select('project_id')
+      .eq('id', objectTypeId)
+      .single();
+    
+    if (objectTypeError) throw objectTypeError;
+    
     // Prepare mapping objects for database insertion
     const mappingsToInsert = suggestions.map(suggestion => ({
       object_type_id: objectTypeId,
+      project_id: objectType.project_id, // Add project_id from the object type
       source_field: suggestion.source_field,
       destination_field: suggestion.destination_field,
       transformation_rule: null,
+      is_required: suggestion.is_required || false,
       confidence_score: suggestion.confidence || 0.5
     }));
     
@@ -113,7 +127,8 @@ const generateAiMappingSuggestions = async (
         source_field: suggestion.source_field,
         destination_field: suggestion.destination_field,
         confidence: suggestion.confidence || 0.8,
-        reason: suggestion.reason || "AI-generated mapping"
+        reason: suggestion.reason || "AI-generated mapping",
+        is_required: suggestion.is_required || false
       }));
     } catch (parseError) {
       console.error("Failed to parse AI suggestions:", parseError);

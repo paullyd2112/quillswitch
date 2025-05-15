@@ -317,14 +317,17 @@ export const saveNotificationPreferences = async (
 const triggerWebhookNotification = async (notification: MigrationNotification): Promise<void> => {
   try {
     // Get all registered webhooks - Fixed to use the correct method
-    const webhooks = await apiClient.webhooks.getWebhooks();
+    const webhooksResponse = await apiClient.webhooks.getWebhooks();
     
-    if (!webhooks?.data?.data?.length) {
+    // Type guard to ensure we have the proper response structure
+    const webhooks = webhooksResponse?.data?.data;
+    
+    if (!webhooks || !Array.isArray(webhooks) || webhooks.length === 0) {
       return;
     }
     
     // Trigger each webhook with the notification data
-    for (const webhook of webhooks.data.data) {
+    for (const webhook of webhooks) {
       try {
         // Call the webhook URL with notification data
         const response = await fetch(webhook.url, {

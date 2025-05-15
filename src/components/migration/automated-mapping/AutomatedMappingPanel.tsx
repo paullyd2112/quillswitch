@@ -33,11 +33,9 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
       setProcessingLocal(true);
       toast.info("Generating field mapping suggestions...");
       
-      // Generate mapping suggestions - fixed parameter count
-      const suggestions = await generateMappingSuggestions(
-        objectTypeId,
-        sourceFields.concat(destinationFields) // Combine fields into one parameter
-      );
+      // Generate mapping suggestions - combine source and destination fields into one array
+      const allFields = [...sourceFields, ...destinationFields];
+      const suggestions = await generateMappingSuggestions(objectTypeId, allFields);
       
       if (suggestions.length === 0) {
         toast.error("No mapping suggestions could be generated");

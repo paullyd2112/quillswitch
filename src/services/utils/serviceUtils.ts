@@ -42,3 +42,21 @@ export const formatFileSize = (bytes: number): string => {
   
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
+
+/**
+ * Handle service errors consistently
+ * @param error Error to handle
+ * @param message User-friendly error message
+ * @returns null to standardize error returns
+ */
+export const handleServiceError = <T>(error: any, message: string): T | null => {
+  console.error(`${message}:`, error);
+  
+  // Check if we have a Supabase error
+  if (error?.code && error?.message) {
+    console.error(`Supabase error ${error.code}: ${error.message}`);
+  }
+  
+  // Return null as a standard error return value
+  return null;
+};
