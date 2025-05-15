@@ -8,7 +8,7 @@ const CtaSection = () => {
   const navigate = useNavigate();
   
   const handleGetStarted = () => {
-    navigate("/migrations/setup");
+    navigate("/app/setup");
   };
   
   return (

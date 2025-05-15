@@ -15,7 +15,7 @@ const HeroSection = () => {
   // Main CTA function - directs user to the appropriate next step
   const handleMainCta = () => {
     if (user) {
-      navigate("/setup-wizard");
+      navigate("/app/setup");
     } else {
       navigate("/auth");
     }

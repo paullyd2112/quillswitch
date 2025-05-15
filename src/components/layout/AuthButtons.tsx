@@ -21,7 +21,7 @@ const AuthButtons = () => {
         </Button>
         
         <Button 
-          onClick={() => navigate("/setup-wizard")}
+          onClick={() => navigate("/app/setup")}
           className="bg-primary text-white hover:bg-primary/90 gap-2"
         >
           New Migration <ArrowRight size={16} />

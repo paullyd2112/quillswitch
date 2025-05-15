@@ -8,7 +8,7 @@ const FeaturesCta = () => {
       title="Ready to transform your CRM migration?"
       description="Start your migration today and experience the difference with QuillSwitch's powerful features."
       primaryButtonText="Start Migration"
-      primaryButtonLink="/migrations/setup"
+      primaryButtonLink="/app/setup"
       secondaryButtonText="Learn More"
       secondaryButtonLink="/about"
       darkMode={false}
