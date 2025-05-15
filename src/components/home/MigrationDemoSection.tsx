@@ -1,43 +1,43 @@
 
 import React from "react";
-import ContentSection from "@/components/layout/ContentSection";
-import SlideUp from "@/components/animations/SlideUp";
-import MigrationInfo from "./migration-demo/MigrationInfo";
 import MigrationVisualizer from "./migration-demo/MigrationVisualizer";
-import { useMigrationDemo } from "@/hooks/migration-demo/use-migration-demo";
+import MigrationInfo from "./migration-demo/MigrationInfo";
+import { useMigrationDemo } from "@/hooks/use-migration-demo";
 
 const MigrationDemoSection = () => {
-  const { 
-    migrationStatus, 
-    steps, 
-    overallProgress, 
-    activeStep, 
-    performanceMetrics,
+  const {
+    migrationStatus,
+    steps,
+    overallProgress,
+    activeStep,
+    startMigration,
     errorMessage,
-    handleMigrationDemo 
+    performanceMetrics
   } = useMigrationDemo();
-
+  
   return (
-    <ContentSection>
-      <div className="grid md:grid-cols-2 gap-12 items-center">
-        <div>
+    <section className="py-24 relative">
+      {/* Background element */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 z-0"></div>
+      
+      <div className="container relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           <MigrationInfo />
-        </div>
-        <div>
-          <SlideUp>
+          
+          <div>
             <MigrationVisualizer
               migrationStatus={migrationStatus}
               steps={steps}
               overallProgress={overallProgress}
               activeStep={activeStep}
-              performanceMetrics={performanceMetrics}
+              onClick={startMigration}
               errorMessage={errorMessage}
-              onClick={handleMigrationDemo}
+              performanceMetrics={performanceMetrics}
             />
-          </SlideUp>
+          </div>
         </div>
       </div>
-    </ContentSection>
+    </section>
   );
 };
 

@@ -29,8 +29,8 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#0070f3', // Modern blue
+					foreground: '#ffffff'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -72,7 +72,7 @@ export default {
 					200: '#99c7ff',
 					300: '#66aaff',
 					400: '#338eff',
-					500: '#1a73e8', // Updated to match --accent-color
+					500: '#0070f3', // Primary blue
 					600: '#0062cc',
 					700: '#004a99',
 					800: '#003166',
@@ -87,7 +87,7 @@ export default {
 						primary: '#e0e0e0',  // Light grey text
 						secondary: '#a0a0b0' // Secondary text
 					},
-					accent: '#007bff',      // Bright blue accent
+					accent: '#0070f3',      // Bright blue accent
 					icon: '#1a2a4d',        // Icon background
 					border: '#2a3a6b'       // Border color
 				}
@@ -96,6 +96,9 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'glow-primary': '0 0 20px rgba(0, 112, 243, 0.35)',
 			},
 			keyframes: {
 				'accordion-down': {

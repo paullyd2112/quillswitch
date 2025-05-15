@@ -1,6 +1,7 @@
 
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
 import Index from './pages/Index'
 import Features from './pages/Features'
 import Resources from './pages/Resources'
@@ -24,6 +25,7 @@ import { TooltipProvider } from './components/ui/tooltip'
 import CredentialsVault from './pages/CredentialsVault'
 import Support from './pages/Support'
 import Demo from './pages/Demo'
+import Welcome from './pages/Welcome'
 
 function App() {
   return (
@@ -34,10 +36,12 @@ function App() {
             <AuthProvider>
               <UserOnboardingProvider>
                 <Routes>
-                  <Route path="/" element={<Index />} />
+                  <Route path="/" element={<Home />} />
+                  <Route path="/old" element={<Index />} />
                   <Route path="/features" element={<Features />} />
                   <Route path="/resources" element={<Resources />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/welcome" element={<Welcome />} />
                   <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
