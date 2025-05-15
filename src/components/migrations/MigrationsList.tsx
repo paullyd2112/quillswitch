@@ -5,29 +5,55 @@ import { PlusCircle } from 'lucide-react';
 import BaseLayout from '@/components/layout/BaseLayout';
 import { Link } from 'react-router-dom';
 import MigrationsTable from './MigrationsTable';
+import { MigrationProject } from '@/integrations/supabase/migrationTypes';
+import { getMigrationProjects } from '@/services/migration/projectService';
 
-// Mock data for migrations
-const mockMigrations = [
+// Mock data for migrations with the correct shape to match MigrationProject type
+const mockMigrations: MigrationProject[] = [
   {
     id: '1',
-    name: 'HubSpot to Salesforce',
-    status: 'completed',
-    progress: 100,
-    createdAt: new Date().toISOString(),
+    user_id: 'user-1',
+    company_name: 'Acme Corp',
+    source_crm: 'HubSpot',
+    destination_crm: 'Salesforce',
+    migration_strategy: 'Full Migration',
+    status: "completed",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    completed_at: new Date().toISOString(),
+    total_objects: 100,
+    migrated_objects: 100,
+    failed_objects: 0
   },
   {
     id: '2',
-    name: 'ActiveCampaign to MailChimp',
-    status: 'in-progress',
-    progress: 65,
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    user_id: 'user-1',
+    company_name: 'Beta Inc',
+    source_crm: 'ActiveCampaign',
+    destination_crm: 'MailChimp',
+    migration_strategy: 'Selective Migration',
+    status: "in_progress",
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 86400000).toISOString(),
+    completed_at: null,
+    total_objects: 200,
+    migrated_objects: 130,
+    failed_objects: 0
   },
   {
     id: '3',
-    name: 'Zoho to HubSpot',
-    status: 'failed',
-    progress: 30,
-    createdAt: new Date(Date.now() - 172800000).toISOString(),
+    user_id: 'user-1',
+    company_name: 'Gamma LLC',
+    source_crm: 'Zoho',
+    destination_crm: 'HubSpot',
+    migration_strategy: 'Incremental Migration',
+    status: "failed",
+    created_at: new Date(Date.now() - 172800000).toISOString(),
+    updated_at: new Date(Date.now() - 172800000).toISOString(),
+    completed_at: null,
+    total_objects: 150,
+    migrated_objects: 45,
+    failed_objects: 10
   }
 ];
 

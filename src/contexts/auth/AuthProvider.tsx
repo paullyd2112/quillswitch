@@ -61,7 +61,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleSignOut = async () => {
-    return await signOut(setLoading);
+    // Make sure the return value matches the expected type in AuthContextType
+    try {
+      await signOut(setLoading);
+      return { error: null };
+    } catch (error) {
+      return { error: error instanceof Error ? error : new Error("Unknown error during sign out") };
+    }
   };
 
   const handleResetPassword = async (email: string) => {
@@ -72,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return await signInWithGoogle(setLoading);
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
     session,
     loading,

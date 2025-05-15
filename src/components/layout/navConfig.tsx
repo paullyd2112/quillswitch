@@ -1,11 +1,11 @@
 
 import React from "react";
-import { NavLink } from "./types";
 import {
   Home, Lightbulb, FileText, LogIn, Settings, 
   ExternalLink, Save, Database, Layout, 
   LifeBuoy, Key, CircleDollarSign
 } from "lucide-react";
+import { NavLink } from "./types"; // Import from types file instead of defining locally
 
 export const mainNav: NavLink[] = [
   {

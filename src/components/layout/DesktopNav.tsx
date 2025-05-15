@@ -1,7 +1,7 @@
 
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { NavLink as NavItem } from "./navConfig";
+import { NavLink as NavItem } from "./types";
 
 interface DesktopNavProps {
   navLinks: NavItem[];
