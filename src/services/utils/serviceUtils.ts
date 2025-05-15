@@ -1,20 +1,16 @@
 
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
-/**
- * Error handler for service functions
- * @param error The error that occurred
- * @param message A custom error message to display
- * @returns null
- */
-export const handleServiceError = (error: any, message: string, silent: boolean = false): null => {
-  if (!silent) {
-    toast({
-      title: message,
-      description: error.message,
-      variant: "destructive",
-    });
-  }
-  console.error(`${message}:`, error);
+export const handleServiceError = (error: any, defaultMessage: string) => {
+  console.error(`${defaultMessage}:`, error);
+  
+  const errorMessage = error.message || defaultMessage;
+  
+  toast.error(errorMessage);
   return null;
+};
+
+export const isUUID = (id: string): boolean => {
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidPattern.test(id);
 };

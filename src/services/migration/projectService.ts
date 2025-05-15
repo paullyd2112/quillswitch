@@ -1,8 +1,8 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { MigrationProject } from "@/integrations/supabase/migrationTypes";
-import { handleServiceError } from "../utils/serviceUtils";
-import { toast } from "@/components/ui/use-toast";
+import { handleServiceError, isUUID } from "../utils/serviceUtils";
+import { toast } from "sonner";
 
 /**
  * Create a new migration project
@@ -50,13 +50,25 @@ export const getMigrationProjects = async (): Promise<MigrationProject[]> => {
  */
 export const getMigrationProject = async (id: string): Promise<MigrationProject | null> => {
   try {
+    // Validate UUID format before querying
+    if (!isUUID(id)) {
+      throw new Error(`Invalid migration project ID format: ${id}`);
+    }
+    
     const { data, error } = await supabase
       .from('migration_projects')
       .select('*')
       .eq('id', id)
       .single();
     
-    if (error) throw error;
+    if (error) {
+      // Handle "No rows found" differently
+      if (error.code === 'PGRST116') {
+        console.warn(`No migration project found with ID: ${id}`);
+        return null;
+      }
+      throw error;
+    }
     
     return data as MigrationProject;
   } catch (error: any) {
@@ -91,6 +103,6 @@ export const updateMigrationProject = async (id: string, updates: Partial<Migrat
  * Get project progress percentage
  */
 export const getProjectProgress = (project: MigrationProject): number => {
-  if (project.total_objects === 0) return 0;
+  if (!project || project.total_objects === 0) return 0;
   return Math.round((project.migrated_objects / project.total_objects) * 100);
 };

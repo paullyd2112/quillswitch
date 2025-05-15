@@ -1,5 +1,5 @@
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DashboardProvider } from "@/components/migration/dashboard/context";
 import DashboardHeader from "@/components/migration/dashboard/DashboardHeader";
@@ -9,11 +9,16 @@ import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 
 const MigrationDashboard = () => {
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
   
+  // Handle case when ID is missing
   if (!id) {
-    return <LoadingFallback error={new Error("Migration ID is missing")} />;
+    return (
+      <LoadingFallback 
+        error={new Error("Migration ID is missing")} 
+        onRetry={() => navigate("/migrations")} 
+      />
+    );
   }
 
   return (
@@ -23,13 +28,12 @@ const MigrationDashboard = () => {
           <div className="container px-4 pt-8 pb-20">
             <DashboardHeader />
             
-            {/* Add the ProgressIndicator for consistent journey steps */}
             <div className="mt-8">
               <ProgressIndicator />
             </div>
             
             <div className="mt-8">
-              <DashboardTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+              <DashboardTabs activeTab="overview" setActiveTab={() => {}} />
             </div>
           </div>
         </div>

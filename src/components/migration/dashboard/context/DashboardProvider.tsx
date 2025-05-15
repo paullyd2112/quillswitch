@@ -32,13 +32,17 @@ export const DashboardProvider: React.FC<{
     selectedObjectTypeId,
     isLoading,
     isRefreshing,
+    hasError,
+    errorMessage,
     setSelectedObjectTypeId,
     setFieldMappings,
     setActivities,
     setProject
   } = useProjectData({ 
     projectId, 
-    onError: (error) => setLoadError(error) 
+    onError: (error) => setLoadError(error),
+    retryOnError: true,
+    autoRetryCount: 2
   });
 
   const {
@@ -65,8 +69,22 @@ export const DashboardProvider: React.FC<{
     return <LoadingIndicator />;
   }
 
-  if (loadError) {
-    return <LoadingFallback error={loadError} />;
+  if (loadError || hasError) {
+    return (
+      <LoadingFallback 
+        error={loadError || new Error(errorMessage || "Failed to load project data")}
+        autoRetryCount={2}
+      />
+    );
+  }
+
+  // Handle case when project not found
+  if (!project) {
+    return (
+      <LoadingFallback 
+        error={new Error("Migration project not found. It may have been deleted or you don't have access to it.")}
+      />
+    );
   }
 
   const value: DashboardContextType = {

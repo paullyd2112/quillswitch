@@ -1,15 +1,15 @@
 
-import {
-  MigrationProject,
-  MigrationStage,
-  MigrationObjectType,
+import { 
+  MigrationProject, 
+  MigrationStage, 
+  MigrationObjectType, 
   MigrationError,
   UserActivity,
   FieldMapping
 } from "@/integrations/supabase/migrationTypes";
 
 export interface DashboardContextType {
-  project: MigrationProject | null;
+  project: MigrationProject;
   projectId: string;
   stages: MigrationStage[];
   objectTypes: MigrationObjectType[];
