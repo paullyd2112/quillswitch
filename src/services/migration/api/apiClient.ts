@@ -40,13 +40,15 @@ export class ApiClient {
     return this.baseClient.getApiKey();
   }
   
-  // Basic HTTP methods
+  // Basic HTTP methods - make them public instead of calling protected methods
   async get(url: string, headers?: Record<string, string>) {
-    return this.baseClient.request(url, 'GET', undefined, 30000, false);
+    // Use baseClient but delegate to a public method instead of accessing protected one
+    return this.baseClient.publicRequest(url, 'GET', undefined, 30000, false);
   }
   
   async post(url: string, data: any, headers?: Record<string, string>) {
-    return this.baseClient.request(url, 'POST', data, 30000, false);
+    // Use baseClient but delegate to a public method instead of accessing protected one
+    return this.baseClient.publicRequest(url, 'POST', data, 30000, false);
   }
   
   // Core API methods
@@ -101,6 +103,9 @@ export class ApiClient {
     },
     trigger: async (params: any) => {
       return this.post('webhooks/trigger', params);
+    },
+    getWebhooks: async () => {
+      return this.get('webhooks');
     }
   };
 }

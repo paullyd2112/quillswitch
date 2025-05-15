@@ -316,7 +316,7 @@ export const saveNotificationPreferences = async (
  */
 const triggerWebhookNotification = async (notification: MigrationNotification): Promise<void> => {
   try {
-    // Get all registered webhooks
+    // Get all registered webhooks - Fixed to use the correct method
     const webhooks = await apiClient.webhooks.getWebhooks();
     
     if (!webhooks?.data?.data?.length) {

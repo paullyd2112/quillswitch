@@ -50,6 +50,21 @@ export class BaseApiClient {
     return `${method}-${endpoint}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }
 
+  /**
+   * Public request method that can be called from outside this class
+   * This is a wrapper around the protected request method
+   */
+  public async publicRequest<T>(
+    endpoint: string, 
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
+    data?: any,
+    timeoutMs: number = 30000,
+    skipRetry: boolean = false,
+    paginationParams?: PaginationParams
+  ): Promise<T> {
+    return this.request<T>(endpoint, method, data, timeoutMs, skipRetry, paginationParams);
+  }
+
   protected async request<T>(
     endpoint: string, 
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',

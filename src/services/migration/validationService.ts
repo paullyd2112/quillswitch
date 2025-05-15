@@ -38,15 +38,15 @@ export const validateData = async (
     
     switch (dataType) {
       case 'contacts':
-        const contactsResponse = await apiClient.contacts.getContacts(source, 1, 100);
+        const contactsResponse = await apiClient.getContacts(source, 1, 100);
         data = contactsResponse.data?.data || [];
         break;
       case 'accounts':
-        const accountsResponse = await apiClient.accounts.getAccounts(source, 1, 100);
+        const accountsResponse = await apiClient.getAccounts(source, 1, 100);
         data = accountsResponse.data?.data || [];
         break;
       case 'opportunities':
-        const opportunitiesResponse = await apiClient.opportunities.getOpportunities(source, 1, 100);
+        const opportunitiesResponse = await apiClient.getOpportunities(source, 1, 100);
         data = opportunitiesResponse.data?.data || [];
         break;
       default:

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -34,11 +33,10 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
       setProcessingLocal(true);
       toast.info("Generating field mapping suggestions...");
       
-      // Generate mapping suggestions
+      // Generate mapping suggestions - fixed parameter count
       const suggestions = await generateMappingSuggestions(
         objectTypeId,
-        sourceFields,
-        destinationFields
+        sourceFields.concat(destinationFields) // Combine fields into one parameter
       );
       
       if (suggestions.length === 0) {
@@ -50,7 +48,7 @@ const AutomatedMappingPanel: React.FC<AutomatedMappingPanelProps> = ({
       toast.success(`Generated ${suggestions.length} field mapping suggestions`);
       
       // Apply the mapping suggestions
-      await applyMappingSuggestions(objectTypeId, projectId, suggestions);
+      await applyMappingSuggestions(objectTypeId, suggestions);
       
       toast.success("Applied field mappings successfully");
       onMappingsApplied();

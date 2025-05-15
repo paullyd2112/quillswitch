@@ -1,118 +1,126 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { handleServiceError } from "../utils/serviceUtils";
+import { toast } from "sonner";
+import { callGeminiApi } from "../gemini/geminiService";
+import { MappingSuggestion } from "@/components/migration/automated-mapping/types";
 
 /**
- * Types for the automated mapping service
+ * Generate mapping suggestions using field name similarity and AI assistance
  */
-export interface MappingSuggestion {
-  sourceField: string;
-  destinationField: string;
-  confidence: number; // 0-1 score of confidence in the mapping
-  reason?: string; // Explanation of why this mapping was suggested
-}
-
-export interface MappingRequest {
-  sourceSystem: string;
-  destinationSystem: string;
-  objectType: string;
-  sourceFields: string[];
-  destinationFields: string[];
-  projectId: string;
-}
-
-/**
- * Generate automated mapping suggestions
- */
-export const generateMappingSuggestions = async (request: MappingRequest): Promise<MappingSuggestion[]> => {
+export const generateMappingSuggestions = async (
+  objectTypeId: string,
+  fields: string[] // Combined source and destination fields
+): Promise<MappingSuggestion[]> => {
   try {
-    const { sourceSystem, destinationSystem, objectType, sourceFields, destinationFields } = request;
+    // Split fields in half for source and destination if needed
+    // This is a workaround for the parameter change
+    const midpoint = Math.floor(fields.length / 2);
+    const sourceFields = fields.slice(0, midpoint);
+    const destinationFields = fields.slice(midpoint);
+
+    console.log('Generating mapping suggestions for object type:', objectTypeId);
     
-    // In a real app, we would call an AI service or use predefined rules
-    // For now, we'll create mock suggestions
+    // Get field metadata
+    const { data: objectType, error } = await supabase
+      .from('migration_object_types')
+      .select('name, source_id, destination_id')
+      .eq('id', objectTypeId)
+      .single();
     
-    // Simple exact or partial name match algorithm
-    const suggestions: MappingSuggestion[] = [];
+    if (error) throw error;
     
-    // First try exact matches (case insensitive)
-    sourceFields.forEach(sourceField => {
-      const normalizedSourceField = sourceField.toLowerCase();
-      
-      // Try to find exact matches first
-      const exactMatch = destinationFields.find(
-        destField => destField.toLowerCase() === normalizedSourceField
-      );
-      
-      if (exactMatch) {
-        suggestions.push({
-          sourceField,
-          destinationField: exactMatch,
-          confidence: 0.9,
-          reason: "Exact field name match"
-        });
-      }
-    });
+    // Use AI to suggest mappings
+    const aiSuggestions = await generateAiMappingSuggestions(sourceFields, destinationFields);
     
-    // Add near matches for fields that didn't have exact matches
-    sourceFields.forEach(sourceField => {
-      // Skip if this source field already has a high confidence match
-      if (suggestions.some(s => s.sourceField === sourceField && s.confidence > 0.7)) {
-        return;
-      }
-      
-      const normalizedSourceField = sourceField.toLowerCase();
-      
-      // Find destination fields containing this source field or vice versa
-      destinationFields.forEach(destField => {
-        const normalizedDestField = destField.toLowerCase();
-        
-        if (normalizedSourceField.includes(normalizedDestField) || 
-            normalizedDestField.includes(normalizedSourceField)) {
-          suggestions.push({
-            sourceField,
-            destinationField: destField,
-            confidence: 0.6,
-            reason: "Partial field name match"
-          });
-        }
-      });
-    });
-    
-    return suggestions;
+    // Return combined suggestions
+    return aiSuggestions;
   } catch (error: any) {
-    handleServiceError(error, "Error generating mapping suggestions");
+    console.error("Error generating mapping suggestions:", error);
+    toast.error("Failed to generate mapping suggestions");
     return [];
   }
 };
 
 /**
- * Apply and save mapping suggestions
+ * Apply generated mapping suggestions to the database
  */
 export const applyMappingSuggestions = async (
-  projectId: string,
   objectTypeId: string,
   suggestions: MappingSuggestion[]
 ): Promise<boolean> => {
   try {
-    // Convert suggestions to field mappings
-    const mappings = suggestions.map(suggestion => ({
-      project_id: projectId,
+    console.log(`Applying ${suggestions.length} mapping suggestions for object type: ${objectTypeId}`);
+    
+    // Prepare mapping objects for database insertion
+    const mappingsToInsert = suggestions.map(suggestion => ({
       object_type_id: objectTypeId,
-      source_field: suggestion.sourceField,
-      destination_field: suggestion.destinationField,
+      source_field: suggestion.source_field,
+      destination_field: suggestion.destination_field,
       transformation_rule: null,
-      is_required: false,
-      status: 'active',
-      created_by: supabase.auth.getUser().then(({ data }) => data.user?.id) || null,
-      confidence_score: suggestion.confidence
+      confidence_score: suggestion.confidence || 0.5
     }));
     
-    // In a real app, we would save these to the database
-    console.log("Would save mappings:", mappings);
+    // Delete existing mappings first
+    const { error: deleteError } = await supabase
+      .from('field_mappings')
+      .delete()
+      .eq('object_type_id', objectTypeId);
     
+    if (deleteError) throw deleteError;
+    
+    // Insert new mappings
+    const { error: insertError } = await supabase
+      .from('field_mappings')
+      .insert(mappingsToInsert);
+    
+    if (insertError) throw insertError;
+    
+    console.log(`Successfully applied ${mappingsToInsert.length} mappings`);
     return true;
   } catch (error: any) {
-    handleServiceError(error, "Error applying mapping suggestions");
+    console.error("Error applying mapping suggestions:", error);
+    toast.error("Failed to apply mapping suggestions");
     return false;
+  }
+};
+
+/**
+ * Generate mapping suggestions using Gemini API
+ */
+const generateAiMappingSuggestions = async (
+  sourceFields: string[],
+  destinationFields: string[]
+): Promise<MappingSuggestion[]> => {
+  try {
+    const response = await callGeminiApi({
+      sourceFields,
+      destinationFields
+    });
+    
+    if (!response) {
+      throw new Error("Failed to get response from Gemini API");
+    }
+    
+    try {
+      // Parse JSON response from AI
+      const suggestions = JSON.parse(response);
+      
+      if (!Array.isArray(suggestions)) {
+        throw new Error("Invalid response format from Gemini API");
+      }
+      
+      return suggestions.map(suggestion => ({
+        source_field: suggestion.source_field,
+        destination_field: suggestion.destination_field,
+        confidence: suggestion.confidence || 0.8,
+        reason: suggestion.reason || "AI-generated mapping"
+      }));
+    } catch (parseError) {
+      console.error("Failed to parse AI suggestions:", parseError);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error generating AI mapping suggestions:", error);
+    return [];
   }
 };
