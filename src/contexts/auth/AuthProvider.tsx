@@ -1,21 +1,25 @@
 
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { User } from "@supabase/supabase-js";
+import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthContextType } from "./types";
+import { signIn, signInWithGoogle, signOut, signUp, resetPassword } from "./authMethods";
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   loading: true,
+  isLoading: true,
   signIn: async () => ({ error: new Error("Not implemented") }),
   signUp: async () => ({ error: new Error("Not implemented") }),
   signOut: async () => ({ error: new Error("Not implemented") }),
+  resetPassword: async () => ({ error: new Error("Not implemented") }),
+  signInWithGoogle: async () => ({ error: new Error("Not implemented") }),
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<any | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,52 +51,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const signIn = async ({ email, password }: { email: string; password: string }) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      return { error: null };
-    } catch (error: any) {
-      console.error("Error during sign in:", error);
-      return { error };
-    }
+  // Implement auth methods using our authMethods utility functions
+  const handleSignIn = async (email: string, password: string) => {
+    return await signIn(email, password);
   };
 
-  const signUp = async ({ email, password, metadata = {} }: { email: string; password: string; metadata?: any }) => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: metadata,
-        },
-      });
-      if (error) throw error;
-      return { error: null };
-    } catch (error: any) {
-      console.error("Error during sign up:", error);
-      return { error };
-    }
+  const handleSignUp = async (email: string, password: string, metadata = {}) => {
+    return await signUp(email, password);
   };
 
-  const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      return { error: null };
-    } catch (error: any) {
-      console.error("Error during sign out:", error);
-      return { error };
-    }
+  const handleSignOut = async () => {
+    return await signOut(setLoading);
+  };
+
+  const handleResetPassword = async (email: string) => {
+    return await resetPassword(email, setLoading);
+  };
+
+  const handleSignInWithGoogle = async () => {
+    return await signInWithGoogle(setLoading);
   };
 
   const value = {
     user,
     session,
     loading,
-    signIn,
-    signUp,
-    signOut,
+    isLoading: loading, // Added for backwards compatibility
+    signIn: handleSignIn,
+    signUp: handleSignUp,
+    signOut: handleSignOut,
+    resetPassword: handleResetPassword,
+    signInWithGoogle: handleSignInWithGoogle,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

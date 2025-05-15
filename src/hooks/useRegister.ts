@@ -57,7 +57,7 @@ export const useRegister = (): UseRegisterReturn => {
       }
 
       // Only update user metadata if signup was successful
-      if (!result?.emailConfirmationSent) {
+      if (result?.emailConfirmationSent) {
         // Update user metadata with full name
         const { error: metadataError } = await supabase.auth.updateUser({
           data: { full_name: fullName }
