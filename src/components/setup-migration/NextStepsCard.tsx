@@ -29,23 +29,23 @@ const NextStepsCard: React.FC<NextStepsCardProps> = ({
   return (
     <Card className="border-slate-700 dark:border-slate-700 bg-slate-900">
       <CardHeader className="pb-3">
-        <CardTitle className="text-3xl font-semibold text-white">Next Steps</CardTitle>
-        <CardDescription className="text-slate-400 text-lg">
+        <CardTitle className="text-4xl font-bold text-white">Next Steps</CardTitle>
+        <CardDescription className="text-slate-400 text-xl">
           Continue setting up your migration
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {(!hasSourceCrm || !hasDestinationCrm) ? (
-          <Alert className="bg-amber-900/20 border-amber-800 text-amber-300">
-            <AlertCircle className="h-5 w-5 text-amber-400" />
-            <AlertDescription className="text-amber-300 text-lg ml-2">
+          <Alert className="bg-amber-900/20 border-amber-800 text-amber-300 mb-6">
+            <AlertCircle className="h-6 w-6 text-amber-400" />
+            <AlertDescription className="text-amber-300 text-xl ml-2">
               Please connect both your source and destination CRM systems before proceeding with migration setup.
             </AlertDescription>
           </Alert>
         ) : (
-          <Alert className="bg-green-900/20 border-green-800 text-green-300">
-            <Check className="h-5 w-5 text-green-400" />
-            <AlertDescription className="text-green-300 text-lg ml-2">
+          <Alert className="bg-green-900/20 border-green-800 text-green-300 mb-6">
+            <Check className="h-6 w-6 text-green-400" />
+            <AlertDescription className="text-green-300 text-xl ml-2">
               Your CRM systems are connected. You can now continue with the migration setup.
             </AlertDescription>
           </Alert>
@@ -56,7 +56,7 @@ const NextStepsCard: React.FC<NextStepsCardProps> = ({
             variant="outline" 
             onClick={handleNeedConnection}
             size="lg"
-            className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
+            className="bg-slate-800 border-slate-600 text-white text-lg py-6 px-6 hover:bg-slate-700"
           >
             Back to Connection Hub
           </Button>
@@ -65,7 +65,7 @@ const NextStepsCard: React.FC<NextStepsCardProps> = ({
             onClick={handleStartSetup} 
             disabled={!hasSourceCrm || !hasDestinationCrm || isChecking}
             size="lg"
-            className="bg-brand-600 hover:bg-brand-700"
+            className="bg-brand-600 hover:bg-brand-700 text-lg py-6 px-6"
           >
             {isChecking ? (
               "Checking connections..."

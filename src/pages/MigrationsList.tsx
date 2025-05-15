@@ -1,30 +1,40 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import MigrationsTable from "@/components/migrations/MigrationsTable";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import BaseLayout from '@/components/layout/BaseLayout';
+import { MigrationsList as MigrationsListComponent } from '@/components/migrations';
+import ContentSection from '@/components/layout/ContentSection';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import { mockMigrations } from "@/assets/mockData";
-import BaseLayout from "@/components/layout/BaseLayout";
 
 const MigrationsList = () => {
+  const navigate = useNavigate();
+  const [migrations] = useState(mockMigrations);
+
+  const handleCreateMigration = () => {
+    navigate('/app/migrations/setup');
+  };
+
   return (
     <BaseLayout>
-      <div className="container px-4 py-8 mx-auto max-w-7xl space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Your Migrations</h1>
-          <Link to="/app/migrations/setup">
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
+      <div className="container px-4 py-8">
+        <ContentSection>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold">Your Migrations</h1>
+              <p className="text-muted-foreground">
+                Manage and monitor your CRM migration projects
+              </p>
+            </div>
+            <Button onClick={handleCreateMigration} className="gap-2">
+              <Plus size={16} />
               New Migration
             </Button>
-          </Link>
-        </div>
-        
-        <MigrationsTable 
-          projects={mockMigrations}
-          isLoading={false}
-        />
+          </div>
+
+          <MigrationsListComponent migrations={migrations} />
+        </ContentSection>
       </div>
     </BaseLayout>
   );

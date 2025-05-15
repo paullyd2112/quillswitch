@@ -118,8 +118,8 @@ const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
             {/* Data Models Box (Top) */}
             <div className="absolute left-1/2 top-6 -translate-x-1/2 w-[300px]">
               <GlassPanel className="h-[120px] flex flex-col items-center justify-center text-center p-4 bg-slate-800/80 border-slate-700">
-                <div className="text-xl font-medium mb-2 text-white">Universal Data Model</div>
-                <div className="text-slate-400">
+                <div className="text-2xl font-medium mb-2 text-white">Universal Data Model</div>
+                <div className="text-slate-400 text-lg">
                   Standardized schema mapping across CRMs
                 </div>
               </GlassPanel>
@@ -131,7 +131,7 @@ const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
             {/* Connected Tools */}
             <div className="absolute left-0 right-0 bottom-8 flex justify-center">
               <GlassPanel className="px-6 py-3 bg-slate-800/80 border-slate-700">
-                <div className="text-base font-medium mb-2 text-white text-center">Connected External Tools</div>
+                <div className="text-xl font-medium mb-2 text-white text-center">Connected External Tools</div>
                 <div className="flex flex-wrap gap-3 justify-center">
                   {Object.entries(toolsByCategory).length > 0 ? (
                     Object.entries(toolsByCategory).map(([category, tools]) => (
@@ -143,7 +143,7 @@ const CrmArchitectureDiagram: React.FC<CrmArchitectureDiagramProps> = ({
                       </div>
                     ))
                   ) : (
-                    <span className="text-slate-400">Marketing, Analytics, Support & Automation tools</span>
+                    <span className="text-slate-400 text-lg">Marketing, Analytics, Support & Automation tools</span>
                   )}
                 </div>
               </GlassPanel>
