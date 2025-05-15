@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
@@ -18,7 +19,8 @@ const ConnectionHub: React.FC = () => {
   const navigate = useNavigate();
 
   const handleContinueToSetup = () => {
-    navigate("/setup-wizard");
+    // Redirect to the unified setup page instead of the separate wizard
+    navigate("/app/setup");
   };
 
   return (

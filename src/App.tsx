@@ -23,7 +23,6 @@ import CredentialsVault from './pages/CredentialsVault'
 import Support from './pages/Support'
 import Demo from './pages/Demo'
 import BaseLayout from './components/layout/BaseLayout'
-import SetupWizard from './pages/SetupWizard'
 import MigrationSetup from './pages/MigrationSetup'
 
 function App() {
@@ -57,8 +56,7 @@ function App() {
                     <Route path="support" element={<Support />} />
                   </Route>
                   
-                  {/* Setup Wizard route */}
-                  <Route path="/setup-wizard" element={<SetupWizard />} />
+                  {/* Remove redundant setup wizard route */}
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>
