@@ -26,6 +26,7 @@ import Support from './pages/Support'
 import Demo from './pages/Demo'
 import Welcome from './pages/Welcome'
 import BaseLayout from './components/layout/BaseLayout'
+import SetupWizard from './pages/SetupWizard'
 
 function App() {
   return (
@@ -57,6 +58,9 @@ function App() {
                     <Route path="credentials-vault" element={<CredentialsVault />} />
                     <Route path="support" element={<Support />} />
                   </Route>
+                  
+                  {/* Setup Wizard route */}
+                  <Route path="/setup-wizard" element={<SetupWizard />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

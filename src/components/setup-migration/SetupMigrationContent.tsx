@@ -16,6 +16,7 @@ const SetupMigrationContent: React.FC = () => {
   const navigate = useNavigate();
   const [isChecking, setIsChecking] = useState(false);
   const { showOnboardingTour } = useUserOnboarding();
+  const { connectedSystems } = useConnection();
   
   // Redirect to the connection hub if needed
   const handleNeedConnection = () => {
@@ -23,13 +24,11 @@ const SetupMigrationContent: React.FC = () => {
       title: "Connection Required",
       description: "Please connect your CRM systems before proceeding"
     });
-    navigate("/connect");
+    navigate("/app/connect");
   };
   
   // Handle starting the migration setup wizard
   const handleStartSetup = () => {
-    const { connectedSystems } = useConnection();
-    
     // Check for connected source and destination CRMs
     const sourceCrms = connectedSystems.filter(system => system.type === "source");
     const destinationCrms = connectedSystems.filter(system => system.type === "destination");
