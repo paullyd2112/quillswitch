@@ -12,7 +12,7 @@ const MigrationInfo = () => {
           Affordable, Quality CRM Migrations
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Our platform simplifies CRM migrations with automated data mapping, 
+          Our platform simplifies CRM migrations with AI-powered data mapping, 
           field transformations, and validation - all at a fraction of the cost of custom solutions.
         </p>
       </div>
@@ -33,8 +33,8 @@ const MigrationInfo = () => {
             <ArrowRight className="h-4 w-4 text-brand-600 dark:text-brand-400" />
           </div>
           <div>
-            <h3 className="font-medium">Intelligent Field Mapping</h3>
-            <p className="text-muted-foreground">Our AI automatically matches fields between systems with 95%+ accuracy</p>
+            <h3 className="font-medium">AI-Powered Field Mapping</h3>
+            <p className="text-muted-foreground">Our advanced AI technology automatically matches fields between systems with 95%+ accuracy</p>
           </div>
         </div>
         

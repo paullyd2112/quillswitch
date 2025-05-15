@@ -40,8 +40,8 @@ const FeaturesSection = () => {
     },
     {
       icon: <GitMerge size={26} />,
-      title: "Smart Matching",
-      description: "Our system intelligently matches fields between different CRMs so you don't have to figure out what goes where."
+      title: "AI-Powered Smart Matching",
+      description: "Our advanced AI technology intelligently matches fields between different CRMs so you don't have to figure out what goes where."
     },
     {
       icon: <ListChecks size={26} />,

@@ -20,8 +20,8 @@ const features = [
   },
   {
     icon: GitMerge,
-    title: "Intelligent Field Mapping",
-    description: "AI-powered field matching with 95%+ accuracy to minimize manual intervention."
+    title: "AI-Powered Field Matching",
+    description: "Advanced artificial intelligence matches your fields with 95%+ accuracy to minimize manual work."
   },
   {
     icon: ListChecks,
