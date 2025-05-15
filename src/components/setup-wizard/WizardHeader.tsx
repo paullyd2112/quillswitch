@@ -1,31 +1,35 @@
 
 import React from "react";
-import { Badge } from "@/components/ui/badge";
-import FadeIn from "@/components/animations/FadeIn";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/auth";
 
 const WizardHeader: React.FC = () => {
+  const { user } = useAuth();
+  
   return (
-    <section className="pt-32 pb-16 md:pt-40 md:pb-20 relative">
-      <div className="container px-4 md:px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <FadeIn>
-            <Badge className="mb-4 bg-brand-100 text-brand-700 hover:bg-brand-200 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/40">
-              Migration Setup
-            </Badge>
-          </FadeIn>
-          <FadeIn delay="100">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-              CRM Migration Wizard
-            </h1>
-          </FadeIn>
-          <FadeIn delay="200">
-            <p className="text-xl text-muted-foreground mb-8">
-              Configure your CRM migration in just a few steps to switch platforms seamlessly
-            </p>
-          </FadeIn>
+    <div className="border-b dark:border-slate-800/70">
+      <div className="container flex items-center justify-between h-20 px-4">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-primary/70 flex items-center justify-center text-white font-bold">Q</div>
+          <span className="font-bold text-lg">QuillSwitch</span>
+        </Link>
+        
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" asChild>
+            <Link to={user ? "/app/migrations" : "/"}>
+              Cancel
+            </Link>
+          </Button>
+          
+          <Button variant="outline" asChild>
+            <Link to="/app/connect">
+              Connection Hub
+            </Link>
+          </Button>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

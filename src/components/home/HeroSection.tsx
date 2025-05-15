@@ -12,6 +12,15 @@ const HeroSection = () => {
   const { user } = useAuth();
   const { showOnboardingTour } = useUserOnboarding();
   
+  // Main CTA function - directs user to the appropriate next step
+  const handleMainCta = () => {
+    if (user) {
+      navigate("/setup-wizard");
+    } else {
+      navigate("/auth");
+    }
+  };
+  
   return (
     <div className="relative px-4 py-20 md:py-28 lg:py-32 overflow-hidden">
       <div
@@ -42,10 +51,10 @@ const HeroSection = () => {
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button 
                 size="lg"
-                onClick={() => navigate(user ? "/welcome" : "/auth")}
+                onClick={handleMainCta}
                 className="gap-2 px-8 bg-slate-200 text-black hover:bg-slate-300"
               >
-                {user ? "Go to Dashboard" : "Start Your Migration"} <ArrowRight size={16} />
+                {user ? "Start New Migration" : "Get Started"} <ArrowRight size={16} />
               </Button>
               
               <Button 

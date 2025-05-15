@@ -1,7 +1,6 @@
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
-import Index from './pages/Index'
 import Features from './pages/Features'
 import Resources from './pages/Resources'
 import Auth from './pages/Auth'
@@ -17,14 +16,12 @@ import Settings from './pages/Settings'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import ConnectionHub from './pages/ConnectionHub'
-import SetupMigration from './pages/SetupMigration'
 import MigrationsList from './pages/MigrationsList'
 import MigrationDashboard from './pages/MigrationDashboard'
 import { TooltipProvider } from './components/ui/tooltip'
 import CredentialsVault from './pages/CredentialsVault'
 import Support from './pages/Support'
 import Demo from './pages/Demo'
-import Welcome from './pages/Welcome'
 import BaseLayout from './components/layout/BaseLayout'
 import SetupWizard from './pages/SetupWizard'
 
@@ -37,12 +34,11 @@ function App() {
             <AuthProvider>
               <UserOnboardingProvider>
                 <Routes>
+                  {/* Public pages */}
                   <Route path="/" element={<Home />} />
-                  <Route path="/old" element={<Index />} />
                   <Route path="/features" element={<Features />} />
                   <Route path="/resources" element={<Resources />} />
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/welcome" element={<Welcome />} />
                   <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/terms" element={<TermsOfService />} />
@@ -50,12 +46,12 @@ function App() {
 
                   {/* Protected routes with sidebar layout */}
                   <Route path="/app" element={<BaseLayout />}>
-                    <Route path="settings" element={<Settings />} />
-                    <Route path="connect" element={<ConnectionHub />} />
+                    <Route index element={<MigrationsList />} />
                     <Route path="migrations" element={<MigrationsList />} />
-                    <Route path="migrations/setup" element={<SetupMigration />} />
                     <Route path="migrations/:id" element={<MigrationDashboard />} />
+                    <Route path="connect" element={<ConnectionHub />} />
                     <Route path="credentials-vault" element={<CredentialsVault />} />
+                    <Route path="settings" element={<Settings />} />
                     <Route path="support" element={<Support />} />
                   </Route>
                   

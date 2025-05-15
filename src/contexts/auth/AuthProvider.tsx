@@ -1,102 +1,115 @@
 
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import { AuthContextType } from "./types";
-import { signIn, signInWithGoogle, signOut, signUp, resetPassword } from "./authMethods";
+import React, { createContext, useEffect, useState } from 'react';
+import { supabase } from '../../integrations/supabase/client';
+import { User, Session } from '@supabase/supabase-js';
+import { AuthContextType } from './types';
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
-  loading: true,
   isLoading: true,
   signIn: async () => ({ error: new Error("Not implemented") }),
   signUp: async () => ({ error: new Error("Not implemented") }),
   signOut: async () => ({ error: new Error("Not implemented") }),
+  requestPasswordReset: async () => ({ error: new Error("Not implemented") }),
   resetPassword: async () => ({ error: new Error("Not implemented") }),
-  signInWithGoogle: async () => ({ error: new Error("Not implemented") }),
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
+  const [isLoading, setIsLoading] = useState(true);
+  
   useEffect(() => {
-    // Initial session check
-    const initSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error("Error fetching session:", error);
-      }
-      
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    };
-
-    initSession();
-
-    // Listen for auth changes
+    // Set up auth state listener FIRST to avoid missing events
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+      (event, currentSession) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        setIsLoading(false);
       }
     );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      setIsLoading(false);
+    });
 
     return () => {
       subscription.unsubscribe();
     };
   }, []);
 
-  // Implement auth methods using our authMethods utility functions
-  const handleSignIn = async (email: string, password: string) => {
-    return await signIn(email, password);
-  };
-
-  const handleSignUp = async (email: string, password: string, metadata = {}) => {
-    return await signUp(email, password);
-  };
-
-  const handleSignOut = async () => {
-    // Make sure the return value matches the expected type in AuthContextType
+  // Authentication methods
+  const signIn = async ({ email, password }: { email: string; password: string }) => {
     try {
-      await signOut(setLoading);
-      return { error: null };
-    } catch (error) {
-      return { error: error instanceof Error ? error : new Error("Unknown error during sign out") };
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      return { data, error };
+    } catch (error: any) {
+      return { error };
     }
   };
 
-  const handleResetPassword = async (email: string) => {
-    return await resetPassword(email, setLoading);
+  const signUp = async ({ email, password, metadata }: { email: string; password: string; metadata?: { [key: string]: any } }) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: metadata
+        }
+      });
+      return { data, error };
+    } catch (error: any) {
+      return { error };
+    }
   };
 
-  const handleSignInWithGoogle = async () => {
-    return await signInWithGoogle(setLoading);
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      return { error };
+    } catch (error: any) {
+      return { error };
+    }
   };
 
-  const value: AuthContextType = {
-    user,
-    session,
-    loading,
-    isLoading: loading, // Added for backwards compatibility
-    signIn: handleSignIn,
-    signUp: handleSignUp,
-    signOut: handleSignOut,
-    resetPassword: handleResetPassword,
-    signInWithGoogle: handleSignInWithGoogle,
+  const requestPasswordReset = async (email: string) => {
+    try {
+      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      return { data, error };
+    } catch (error: any) {
+      return { error };
+    }
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+  const resetPassword = async (newPassword: string) => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      return { data, error };
+    } catch (error: any) {
+      return { error };
+    }
+  };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  return (
+    <AuthContext.Provider value={{
+      user,
+      session,
+      isLoading,
+      signIn,
+      signUp,
+      signOut,
+      requestPasswordReset,
+      resetPassword,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

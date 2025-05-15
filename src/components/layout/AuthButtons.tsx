@@ -3,6 +3,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
+import { ArrowRight } from "lucide-react";
 
 const AuthButtons = () => {
   const { user } = useAuth();
@@ -12,7 +13,7 @@ const AuthButtons = () => {
     return (
       <div className="flex items-center gap-2">
         <Button 
-          onClick={() => navigate("/welcome")}
+          onClick={() => navigate("/app/migrations")}
           variant="outline"
           className="hidden md:flex border-slate-700 hover:bg-slate-800 text-white"
         >
@@ -20,10 +21,10 @@ const AuthButtons = () => {
         </Button>
         
         <Button 
-          onClick={() => navigate("/migrations/setup")}
-          className="bg-primary text-white hover:bg-primary/90"
+          onClick={() => navigate("/setup-wizard")}
+          className="bg-primary text-white hover:bg-primary/90 gap-2"
         >
-          New Migration
+          New Migration <ArrowRight size={16} />
         </Button>
       </div>
     );
@@ -43,7 +44,7 @@ const AuthButtons = () => {
         asChild 
         className="bg-primary text-white hover:bg-primary/90"
       >
-        <Link to="/auth/register">Get Started</Link>
+        <Link to="/auth">Get Started</Link>
       </Button>
     </div>
   );

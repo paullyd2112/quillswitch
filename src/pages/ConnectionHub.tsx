@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
@@ -8,12 +7,19 @@ import IntegratedToolsSection from "@/components/connection-hub/IntegratedToolsS
 import ConnectionGuide from "@/components/connection-hub/ConnectionGuide";
 import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 import SecurityInfoCard from "@/components/connection-hub/SecurityInfoCard";
-import { Info, Shield, Zap } from "lucide-react";
+import { ArrowRight, Info, Shield } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const ConnectionHub: React.FC = () => {
   const [activeTab, setActiveTab] = useState("connect");
+  const navigate = useNavigate();
+
+  const handleContinueToSetup = () => {
+    navigate("/setup-wizard");
+  };
 
   return (
     <BaseLayout>
@@ -77,14 +83,14 @@ const ConnectionHub: React.FC = () => {
                   description="Select and connect additional tools and applications you use with your CRM"
                 />
               </div>
-              
+            
               <div className="flex justify-center pt-6">
-                <a 
-                  href="/migrations/setup" 
-                  className="px-6 py-3 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors inline-flex items-center font-medium"
+                <Button 
+                  onClick={handleContinueToSetup} 
+                  className="px-6 py-3 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors inline-flex items-center font-medium gap-2"
                 >
-                  <Zap className="mr-2 h-4 w-4" /> Continue to Migration Setup
-                </a>
+                  Continue to Migration Setup <ArrowRight size={16} />
+                </Button>
               </div>
             </TabsContent>
             

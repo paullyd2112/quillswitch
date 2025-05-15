@@ -2,10 +2,10 @@
 import React from "react";
 import {
   Home, Lightbulb, FileText, LogIn, Settings, 
-  ExternalLink, Save, Database, Layout, 
-  LifeBuoy, Key, CircleDollarSign
+  ExternalLink, Layout, Database, 
+  LifeBuoy, Key, Plus
 } from "lucide-react";
-import { NavLink } from "./types"; // Import from types file instead of defining locally
+import { NavLink } from "./types";
 
 export const mainNav: NavLink[] = [
   {
@@ -39,6 +39,12 @@ export const userNav: NavLink[] = [
     href: "/app/migrations",
     label: "Migrations",
     icon: <Layout size={20} />,
+    category: "Workspace",
+  },
+  {
+    href: "/setup-wizard",
+    label: "New Migration",
+    icon: <Plus size={20} />,
     category: "Workspace",
   },
   {

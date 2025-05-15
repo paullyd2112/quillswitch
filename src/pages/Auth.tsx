@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
@@ -8,8 +8,9 @@ import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 import { useAuth } from "@/contexts/auth";
 
 const Auth = () => {
-  const { mode } = useParams<{ mode?: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get("mode");
   const { user, isLoading } = useAuth();
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("login");
@@ -17,10 +18,11 @@ const Auth = () => {
   // Check if user is already logged in
   useEffect(() => {
     if (user && !isLoading) {
-      // User is already logged in, redirect to home
-      navigate("/");
+      // User is logged in, redirect to setup wizard or migrations based on 'redirect' param
+      const redirectPath = searchParams.get("redirect") || "/setup-wizard";
+      navigate(redirectPath);
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isLoading, navigate, searchParams]);
   
   // Set active tab based on route param
   useEffect(() => {
@@ -37,6 +39,11 @@ const Auth = () => {
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
+  }
+
+  // Don't show auth page if user is already logged in
+  if (user) {
+    return null;
   }
 
   return (

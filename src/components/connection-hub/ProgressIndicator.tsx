@@ -13,22 +13,17 @@ const migrationSteps: Step[] = [
   {
     id: "connect",
     name: "Connect Systems",
-    path: "/connect"
+    path: "/app/connect"
   },
   {
     id: "setup",
     name: "Configure Migration",
-    path: "/migrations/setup"
+    path: "/setup-wizard"
   },
   {
     id: "run",
     name: "Run Migration",
-    path: "/migrations"
-  },
-  {
-    id: "validate",
-    name: "Validate Results",
-    path: "/migrations/validate"
+    path: "/app/migrations"
   }
 ];
 
@@ -39,9 +34,8 @@ const ProgressIndicator: React.FC = () => {
   // Determine current step based on path
   const getCurrentStepIndex = (): number => {
     if (currentPath.includes("/connect")) return 0;
-    if (currentPath.includes("/migrations/setup")) return 1;
-    if (currentPath === "/migrations") return 2;
-    if (currentPath.includes("/migrations/validate")) return 3;
+    if (currentPath.includes("/setup-wizard")) return 1;
+    if (currentPath === "/app/migrations" || currentPath.includes("/app/migrations/")) return 2;
     // Default to first step if path doesn't match
     return 0;
   };
