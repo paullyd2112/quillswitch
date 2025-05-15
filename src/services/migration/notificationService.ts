@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { apiClient } from "./apiClient";
@@ -34,6 +33,18 @@ export interface MigrationNotification {
   user_id?: string;
   is_read: boolean;
   created_at: string;
+}
+
+/**
+ * Interface for webhook response
+ */
+interface WebhookResponse {
+  data: {
+    data: Array<{
+      id: string;
+      url: string;
+    }>;
+  };
 }
 
 /**
@@ -320,7 +331,10 @@ const triggerWebhookNotification = async (notification: MigrationNotification): 
     const webhooksResponse = await apiClient.webhooks.getWebhooks();
     
     // Type guard to ensure we have the proper response structure
-    const webhooks = webhooksResponse?.data?.data;
+    const response = webhooksResponse as WebhookResponse;
+    
+    // Safely access the webhooks with proper type checking
+    const webhooks = response?.data?.data;
     
     if (!webhooks || !Array.isArray(webhooks) || webhooks.length === 0) {
       return;
