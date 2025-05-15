@@ -2,7 +2,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { supabase } from '../../integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
-import { AuthContextType } from './types';
+import { AuthContextType, AuthResponse } from './types';
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -11,6 +11,7 @@ export const AuthContext = createContext<AuthContextType>({
   signIn: async () => ({ error: new Error("Not implemented") }),
   signUp: async () => ({ error: new Error("Not implemented") }),
   signOut: async () => ({ error: new Error("Not implemented") }),
+  signInWithGoogle: async () => ({ error: new Error("Not implemented") }),
   requestPasswordReset: async () => ({ error: new Error("Not implemented") }),
   resetPassword: async () => ({ error: new Error("Not implemented") }),
 });
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   // Authentication methods
-  const signIn = async ({ email, password }: { email: string; password: string }) => {
+  const signIn = async (email: string, password: string): Promise<AuthResponse> => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       return { data, error };
@@ -52,49 +53,89 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const signUp = async ({ email, password, metadata }: { email: string; password: string; metadata?: { [key: string]: any } }) => {
+  const signUp = async (email: string, password: string, metadata?: { [key: string]: any }): Promise<AuthResponse> => {
     try {
       const { data, error } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
-          data: metadata
+          data: metadata,
+          emailRedirectTo: `${window.location.origin}/welcome`
         }
       });
-      return { data, error };
+      
+      if (error) {
+        return { error };
+      }
+      
+      // Check if email confirmation is required
+      const emailConfirmationSent = data.user && !data.user.confirmed_at;
+      
+      return { data, error: null, emailConfirmationSent };
     } catch (error: any) {
       return { error };
     }
   };
 
-  const signOut = async () => {
+  const signOut = async (): Promise<AuthResponse> => {
     try {
+      setIsLoading(true);
       const { error } = await supabase.auth.signOut();
       return { error };
     } catch (error: any) {
       return { error };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const signInWithGoogle = async (): Promise<AuthResponse> => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        }
+      });
+      
+      return { data, error };
+    } catch (error: any) {
+      return { error };
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const requestPasswordReset = async (email: string) => {
+  const requestPasswordReset = async (email: string): Promise<AuthResponse> => {
     try {
+      setIsLoading(true);
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       return { data, error };
     } catch (error: any) {
       return { error };
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const resetPassword = async (newPassword: string) => {
+  const resetPassword = async (newPassword: string): Promise<AuthResponse> => {
     try {
+      setIsLoading(true);
       const { data, error } = await supabase.auth.updateUser({
         password: newPassword,
       });
       return { data, error };
     } catch (error: any) {
       return { error };
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -106,6 +147,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       signIn,
       signUp,
       signOut,
+      signInWithGoogle,
       requestPasswordReset,
       resetPassword,
     }}>

@@ -47,7 +47,8 @@ export const useRegister = (): UseRegisterReturn => {
       setSignupStatus("idle");
       setErrorMessage("");
       
-      const result = await signUp(email, password);
+      const metadata = { full_name: fullName };
+      const result = await signUp(email, password, metadata);
 
       if (result?.error) {
         console.error("Signup error:", result.error);
@@ -56,17 +57,11 @@ export const useRegister = (): UseRegisterReturn => {
         return;
       }
 
-      // Only update user metadata if signup was successful
+      // Check if email confirmation is required
       if (result?.emailConfirmationSent) {
-        // Update user metadata with full name
-        const { error: metadataError } = await supabase.auth.updateUser({
-          data: { full_name: fullName }
-        });
-        
-        if (metadataError) {
-          console.error("Error updating user metadata:", metadataError);
-          // Non-critical error, continue with signup flow
-        }
+        toast.success("Check your email to confirm your account");
+      } else {
+        toast.success("Account created successfully!");
       }
       
       setSignupStatus("success");

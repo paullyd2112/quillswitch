@@ -6,4 +6,4 @@ import { apiClient, ApiClient } from './api/apiClient';
 export { apiClient };
 
 // Export the ApiClient class for dependency injection or testing
-export default ApiClient;
+export type { ApiClient };
