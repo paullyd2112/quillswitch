@@ -42,7 +42,7 @@ export const userNav: NavLink[] = [
     category: "Workspace",
   },
   {
-    href: "/setup-wizard",
+    href: "/app/setup",
     label: "New Migration",
     icon: <Plus size={20} />,
     category: "Workspace",

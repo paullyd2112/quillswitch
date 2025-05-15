@@ -1,115 +1,106 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Check, AlertCircle } from "lucide-react";
 import { useConnection } from "@/contexts/ConnectionContext";
 
 interface ConnectionStatusCardProps {
-  handleNeedConnection: () => void;
+  handleNeedConnection?: () => void;
+  inline?: boolean;
 }
 
 const ConnectionStatusCard: React.FC<ConnectionStatusCardProps> = ({ 
-  handleNeedConnection 
+  handleNeedConnection,
+  inline = false
 }) => {
   const { connectedSystems } = useConnection();
   
-  // Extract source and destination systems
-  const sourceSystem = connectedSystems.find(
-    system => system.type === "source"
-  );
-  const destinationSystem = connectedSystems.find(
-    system => system.type === "destination"
-  );
+  // Check for connected source and destination CRMs
+  const sourceCrms = connectedSystems.filter(system => system.type === "source");
+  const destinationCrms = connectedSystems.filter(system => system.type === "destination");
+  
+  const hasSourceCrm = sourceCrms.length > 0;
+  const hasDestinationCrm = destinationCrms.length > 0;
+  
+  const sourceCrmNames = sourceCrms.map(system => system.name).join(', ');
+  const destinationCrmNames = destinationCrms.map(system => system.name).join(', ');
+
+  if (inline) {
+    if (hasSourceCrm && hasDestinationCrm) {
+      return (
+        <Alert className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800 inline-flex w-auto">
+          <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <AlertDescription className="text-green-700 dark:text-green-300">
+            Connected: {sourceCrmNames} → {destinationCrmNames}
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    
+    return (
+      <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 inline-flex w-auto">
+        <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+        <AlertDescription className="text-amber-700 dark:text-amber-300">
+          {!hasSourceCrm && !hasDestinationCrm ? "No CRMs connected" : 
+           !hasSourceCrm ? "Missing source CRM connection" : "Missing destination CRM connection"}
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
-    <Card className="border-slate-700 dark:border-slate-700 bg-slate-900">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-4xl font-bold text-white">Connection Status</CardTitle>
-        <p className="text-slate-400 text-xl mt-1">
-          Check the status of your CRM connections
-        </p>
+    <Card>
+      <CardHeader>
+        <CardTitle>Connection Status</CardTitle>
+        <CardDescription>
+          Check your CRM system connections
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-6">
-          {/* Source CRM Connection */}
-          <div className="bg-slate-800/70 rounded-lg p-6">
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-amber-900/30 text-amber-500 font-bold text-xl">
-                  1
-                </div>
-                <div>
-                  <h3 className="text-3xl font-semibold text-white mb-1">Source CRM</h3>
-                  <p className="text-slate-400 text-lg">Your original CRM system</p>
-                </div>
-              </div>
-              
-              {sourceSystem ? (
-                <div className="flex items-center py-1 px-3 bg-green-900/20 border border-green-700 rounded-lg text-green-400">
-                  <span className="h-2 w-2 bg-green-400 rounded-full mr-2"></span>
-                  <span>Connected: {sourceSystem.name}</span>
-                </div>
+      <CardContent className="space-y-4">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between border-b pb-2">
+            <span className="font-medium">Source CRM</span>
+            <span className={hasSourceCrm ? "text-green-500 flex items-center gap-1" : "text-amber-500 flex items-center gap-1"}>
+              {hasSourceCrm ? (
+                <>
+                  <Check size={16} />
+                  {sourceCrmNames}
+                </>
               ) : (
-                <Button 
-                  onClick={handleNeedConnection}
-                  className="bg-slate-700 hover:bg-slate-600 gap-2"
-                >
-                  Connect Source
-                </Button>
+                <>
+                  <AlertCircle size={16} />
+                  Not Connected
+                </>
               )}
-            </div>
+            </span>
           </div>
           
-          {/* Destination CRM Connection */}
-          <div className="bg-slate-800/70 rounded-lg p-6">
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-amber-900/30 text-amber-500 font-bold text-xl">
-                  2
-                </div>
-                <div>
-                  <h3 className="text-3xl font-semibold text-white mb-1">Destination CRM</h3>
-                  <p className="text-slate-400 text-lg">Your target CRM system</p>
-                </div>
-              </div>
-              
-              {destinationSystem ? (
-                <div className="flex items-center py-1 px-3 bg-green-900/20 border border-green-700 rounded-lg text-green-400">
-                  <span className="h-2 w-2 bg-green-400 rounded-full mr-2"></span>
-                  <span>Connected: {destinationSystem.name}</span>
-                </div>
+          <div className="flex items-center justify-between border-b pb-2">
+            <span className="font-medium">Destination CRM</span>
+            <span className={hasDestinationCrm ? "text-green-500 flex items-center gap-1" : "text-amber-500 flex items-center gap-1"}>
+              {hasDestinationCrm ? (
+                <>
+                  <Check size={16} />
+                  {destinationCrmNames}
+                </>
               ) : (
-                <Button 
-                  onClick={handleNeedConnection}
-                  className="bg-slate-700 hover:bg-slate-600 gap-2"
-                >
-                  Connect Destination
-                </Button>
+                <>
+                  <AlertCircle size={16} />
+                  Not Connected
+                </>
               )}
-            </div>
+            </span>
           </div>
           
-          {/* Related Tools */}
-          <div className="bg-slate-800/70 rounded-lg p-6">
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-blue-900/30 text-blue-500 text-xl">
-                  <span className="i">i</span>
-                </div>
-                <div>
-                  <h3 className="text-3xl font-semibold text-white mb-1">Related Tools</h3>
-                  <p className="text-slate-400 text-lg">Other tools and integrations</p>
-                </div>
-              </div>
-              
-              <Button 
-                variant="outline" 
-                className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
-              >
-                Manage Tools
-              </Button>
-            </div>
-          </div>
+          {handleNeedConnection && (!hasSourceCrm || !hasDestinationCrm) && (
+            <button 
+              onClick={handleNeedConnection}
+              className="text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 text-sm font-medium mt-2"
+            >
+              Connect your CRMs
+            </button>
+          )}
         </div>
       </CardContent>
     </Card>

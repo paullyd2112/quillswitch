@@ -24,6 +24,7 @@ import Support from './pages/Support'
 import Demo from './pages/Demo'
 import BaseLayout from './components/layout/BaseLayout'
 import SetupWizard from './pages/SetupWizard'
+import MigrationSetup from './pages/MigrationSetup'
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
                     <Route path="migrations" element={<MigrationsList />} />
                     <Route path="migrations/:id" element={<MigrationDashboard />} />
                     <Route path="connect" element={<ConnectionHub />} />
+                    <Route path="setup" element={<MigrationSetup />} />
                     <Route path="credentials-vault" element={<CredentialsVault />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="support" element={<Support />} />
