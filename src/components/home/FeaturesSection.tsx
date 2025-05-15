@@ -25,33 +25,33 @@ const FeaturesSection = () => {
   const features = [
     {
       icon: <Database size={26} />,
-      title: "Comprehensive Migration",
-      description: "Transfer all CRM objects including contacts, opportunities, custom objects, and attachments with field-level mapping."
+      title: "Complete Data Transfer",
+      description: "Move all your contacts, deals, companies, and even custom data fields from one CRM to another with ease."
     },
     {
       icon: <Shield size={26} />,
-      title: "Enterprise Security",
-      description: "SOC 2 Type II certified with end-to-end encryption, secure OAuth, and zero data retention policies."
+      title: "Bank-Level Security",
+      description: "Your data is protected with the same security standards used by financial institutions. We never keep copies of your data."
     },
     {
       icon: <Zap size={26} />,
-      title: "High-Performance",
-      description: "Parallel processing and optimized throughput deliver migrations 50% faster than manual methods."
+      title: "Fast & Accurate",
+      description: "Get your new CRM up and running in half the time of manual transfers, with no missing information or duplicates."
     },
     {
       icon: <GitMerge size={26} />,
-      title: "Intelligent Mapping",
-      description: "AI-powered field matching with 95%+ accuracy minimizes manual configuration and prevents data loss."
+      title: "Smart Matching",
+      description: "Our system intelligently matches fields between different CRMs so you don't have to figure out what goes where."
     },
     {
       icon: <ListChecks size={26} />,
-      title: "Data Validation",
-      description: "Built-in validation rules and quality checks ensure data integrity throughout the migration process."
+      title: "Data Quality Checks",
+      description: "We automatically check for and fix common issues like duplicate contacts and formatting problems."
     },
     {
       icon: <BellRing size={26} />,
-      title: "Real-time Monitoring",
-      description: "Track migration progress with detailed analytics, instant alerts, and comprehensive reporting."
+      title: "Progress Updates",
+      description: "Always know exactly where your migration stands with easy-to-understand progress reports and notifications."
     },
   ];
 
@@ -66,13 +66,13 @@ const FeaturesSection = () => {
       <div className="container relative z-10">
         <div className="max-w-3xl mx-auto text-center mb-16">
           <div className="inline-block px-3 py-1 mb-4 text-sm font-medium rounded-md bg-primary/10 text-primary">
-            Powerful Features
+            Why Choose QuillSwitch
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-5">
-            Everything You Need for Seamless <br /> CRM Migration
+            Everything You Need For A <br /> Smooth CRM Switch
           </h2>
           <p className="text-lg text-slate-400">
-            Our comprehensive toolkit simplifies every aspect of CRM migration, from initial data mapping to ongoing synchronization.
+            We handle all the technical details so you can focus on your business while your data moves safely to your new CRM.
           </p>
         </div>
         
@@ -90,7 +90,7 @@ const FeaturesSection = () => {
         <div className="text-center">
           <Button asChild variant="outline" className="gap-2 px-8 py-6 border-slate-700 hover:bg-slate-800 hover:border-primary/50">
             <Link to="/features">
-              View All Features <ArrowRight size={16} />
+              See All Features <ArrowRight size={16} />
             </Link>
           </Button>
         </div>

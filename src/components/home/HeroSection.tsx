@@ -24,18 +24,17 @@ const HeroSection = () => {
           <FadeIn delay="none">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               <span className="block text-white">
-                Simplified CRM Migration
+                Move Your CRM Data
               </span>
               <span className="block text-brand-600 dark:text-brand-400 mt-1">
-                Zero Complexity
+                Without The Stress
               </span>
             </h1>
           </FadeIn>
           
           <FadeIn delay="100">
             <p className="mt-6 text-lg text-gray-300 leading-relaxed max-w-2xl mx-auto">
-              QuillSwitch helps you effortlessly migrate between CRM systems with
-              intelligent data mapping, validation, and transformation tools.
+              QuillSwitch makes switching CRMs simple. We help you transfer all your contacts, deals, and company data accurately and without the usual tech headaches.
             </p>
           </FadeIn>
           
@@ -46,16 +45,16 @@ const HeroSection = () => {
                 onClick={() => navigate(user ? "/welcome" : "/auth")}
                 className="gap-2 px-8 bg-slate-200 text-black hover:bg-slate-300"
               >
-                {user ? "Go to Dashboard" : "Get Started"} <ArrowRight size={16} />
+                {user ? "Go to Dashboard" : "Start Your Migration"} <ArrowRight size={16} />
               </Button>
               
               <Button 
                 variant="outline" 
                 size="lg"
                 onClick={() => navigate("/demo")}
-                className="gap-2 px-8 bg-slate-200 text-black border-slate-300 hover:bg-slate-300 hover:border-slate-400"
+                className="gap-2 px-8 bg-transparent text-slate-200 border-slate-500 hover:bg-slate-800/50 hover:border-slate-400"
               >
-                <Play size={16} className="mr-1" /> See Live Demo
+                <Play size={16} className="mr-1" /> See How It Works
               </Button>
               
               <Button 
