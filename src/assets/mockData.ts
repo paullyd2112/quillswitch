@@ -153,7 +153,7 @@ export const featureHighlights = [
   }
 ];
 
-// Add the mockMigrations data that's being imported in MigrationsList.tsx
+// Add the mockMigrations data with proper typing for the status field
 export const mockMigrations = [
   {
     id: '1',
@@ -162,7 +162,7 @@ export const mockMigrations = [
     source_crm: 'HubSpot',
     destination_crm: 'Salesforce',
     migration_strategy: 'Full Migration',
-    status: "completed",
+    status: "completed" as "completed" | "in_progress" | "failed" | "pending" | "paused",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     completed_at: new Date().toISOString(),
@@ -177,7 +177,7 @@ export const mockMigrations = [
     source_crm: 'ActiveCampaign',
     destination_crm: 'MailChimp',
     migration_strategy: 'Selective Migration',
-    status: "in_progress",
+    status: "in_progress" as "completed" | "in_progress" | "failed" | "pending" | "paused",
     created_at: new Date(Date.now() - 86400000).toISOString(),
     updated_at: new Date(Date.now() - 86400000).toISOString(),
     completed_at: null,
@@ -192,7 +192,7 @@ export const mockMigrations = [
     source_crm: 'Zoho',
     destination_crm: 'HubSpot',
     migration_strategy: 'Incremental Migration',
-    status: "failed",
+    status: "failed" as "completed" | "in_progress" | "failed" | "pending" | "paused",
     created_at: new Date(Date.now() - 172800000).toISOString(),
     updated_at: new Date(Date.now() - 172800000).toISOString(),
     completed_at: null,
