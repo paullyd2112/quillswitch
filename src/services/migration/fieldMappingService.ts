@@ -17,7 +17,7 @@ export const getFieldMappings = async (objectTypeId: string): Promise<FieldMappi
     
     return data || [];
   } catch (error: any) {
-    handleServiceError(error, "Error fetching field mappings", true);
+    handleServiceError(error, "Error fetching field mappings");
     return [];
   }
 };
@@ -37,7 +37,7 @@ export const createFieldMapping = async (mappingData: Omit<FieldMapping, 'id'>):
     
     return data;
   } catch (error: any) {
-    return handleServiceError(error, "Error creating field mapping", true);
+    return handleServiceError(error, "Error creating field mapping");
   }
 };
 
@@ -57,6 +57,6 @@ export const updateFieldMapping = async (id: string, updates: Partial<FieldMappi
     
     return data;
   } catch (error: any) {
-    return handleServiceError(error, "Error updating field mapping", true);
+    return handleServiceError(error, "Error updating field mapping");
   }
 };

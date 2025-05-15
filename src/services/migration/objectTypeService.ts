@@ -17,7 +17,7 @@ export const getMigrationObjectTypes = async (projectId: string): Promise<Migrat
     
     return data as MigrationObjectType[];
   } catch (error: any) {
-    handleServiceError(error, "Error fetching migration object types", true);
+    handleServiceError(error, "Error fetching migration object types");
     return [];
   }
 };
@@ -37,7 +37,7 @@ export const createMigrationObjectType = async (objectTypeData: Omit<MigrationOb
     
     return data as MigrationObjectType;
   } catch (error: any) {
-    return handleServiceError(error, "Error creating migration object type", true);
+    return handleServiceError(error, "Error creating migration object type");
   }
 };
 
@@ -57,6 +57,6 @@ export const updateMigrationObjectType = async (id: string, updates: Partial<Mig
     
     return data as MigrationObjectType;
   } catch (error: any) {
-    return handleServiceError(error, "Error updating migration object type", true);
+    return handleServiceError(error, "Error updating migration object type");
   }
 };

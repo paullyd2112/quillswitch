@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -22,8 +21,9 @@ import {
 interface UseProjectDataProps {
   projectId: string;
   onError?: (error: Error) => void;
-  onLoaded?: () => void;
+  onLoaded?: (void) => void;
   retryOnError?: boolean;
+  retryCount?: number; // Add this property
 }
 
 interface UseProjectDataReturn {
@@ -49,7 +49,8 @@ export const useProjectData = ({
   projectId, 
   onError, 
   onLoaded,
-  retryOnError = false
+  retryOnError = false,
+  retryCount = 3 // Added default value
 }: UseProjectDataProps): UseProjectDataReturn => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -64,7 +65,7 @@ export const useProjectData = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const [internalRetryCount, setInternalRetryCount] = useState(0);
   const MAX_RETRIES = 3;
 
   const fetchMigrationData = useCallback(async (isRefresh = false) => {
@@ -137,7 +138,7 @@ export const useProjectData = ({
       }
       
       // Reset retry count on success
-      setRetryCount(0);
+      setInternalRetryCount(0);
     } catch (error: any) {
       console.error("Error fetching migration data:", error);
       setHasError(true);
@@ -156,12 +157,12 @@ export const useProjectData = ({
       }
       
       // If retry is enabled and we haven't exceeded the max retries
-      if (retryOnError && retryCount < MAX_RETRIES) {
-        const nextRetry = retryCount + 1;
-        setRetryCount(nextRetry);
+      if (retryOnError && internalRetryCount < MAX_RETRIES) {
+        const nextRetry = internalRetryCount + 1;
+        setInternalRetryCount(nextRetry);
         
         // Calculate delay with exponential backoff (1s, 2s, 4s)
-        const delay = Math.pow(2, retryCount) * 1000;
+        const delay = Math.pow(2, internalRetryCount) * 1000;
         console.log(`Retrying in ${delay/1000} seconds (attempt ${nextRetry}/${MAX_RETRIES})...`);
         
         setTimeout(() => {
@@ -171,7 +172,7 @@ export const useProjectData = ({
     } finally {
       loadingState(false);
     }
-  }, [projectId, navigate, toast, onError, onLoaded, selectedObjectTypeId, retryCount, retryOnError]);
+  }, [projectId, navigate, toast, onError, onLoaded, selectedObjectTypeId, internalRetryCount, retryOnError]);
 
   // Initial data fetch
   useEffect(() => {

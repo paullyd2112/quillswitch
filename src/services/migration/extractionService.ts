@@ -1,4 +1,3 @@
-
 import { apiClient } from './api/apiClient';
 import { handleServiceError } from '../utils/serviceUtils';
 
@@ -45,7 +44,7 @@ export const extractDataPreview = async (
     const mockData = generateMockData(sourceSystem, objectType, limit, filters);
     return mockData;
   } catch (error: any) {
-    handleServiceError(error, `Failed to extract ${options.objectType} preview from ${options.sourceSystem}`, true);
+    handleServiceError(error, `Failed to extract ${options.objectType} preview from ${options.sourceSystem}`);
     return [];
   }
 };

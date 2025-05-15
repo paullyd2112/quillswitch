@@ -18,7 +18,7 @@ export const getMigrationStages = async (projectId: string): Promise<MigrationSt
     
     return data as MigrationStage[];
   } catch (error: any) {
-    handleServiceError(error, "Error fetching migration stages", true);
+    handleServiceError(error, "Error fetching migration stages");
     return [];
   }
 };
@@ -38,7 +38,7 @@ export const createMigrationStage = async (stageData: Omit<MigrationStage, 'id'>
     
     return data as MigrationStage;
   } catch (error: any) {
-    return handleServiceError(error, "Error creating migration stage", true);
+    return handleServiceError(error, "Error creating migration stage");
   }
 };
 
@@ -58,6 +58,6 @@ export const updateMigrationStage = async (id: string, updates: Partial<Migratio
     
     return data as MigrationStage;
   } catch (error: any) {
-    return handleServiceError(error, "Error updating migration stage", true);
+    return handleServiceError(error, "Error updating migration stage");
   }
 };

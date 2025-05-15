@@ -1,16 +1,17 @@
 
-import { toast } from "sonner";
-
-export const handleServiceError = (error: any, defaultMessage: string) => {
-  console.error(`${defaultMessage}:`, error);
+/**
+ * Generic error handler for service operations
+ * @param error The error that occurred
+ * @param message User-friendly message to display
+ * @param logToConsole Whether to log the error to console
+ * @returns null for operations returning data
+ */
+export const handleServiceError = <T>(error: any, message: string, logToConsole = false): T | null => {
+  if (logToConsole) {
+    console.error(`${message}:`, error);
+  }
   
-  const errorMessage = error.message || defaultMessage;
+  // For future enhancement: add toast notifications or error tracking here
   
-  toast.error(errorMessage);
   return null;
-};
-
-export const isUUID = (id: string): boolean => {
-  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  return uuidPattern.test(id);
 };

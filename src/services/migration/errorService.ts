@@ -18,7 +18,7 @@ export const getMigrationErrors = async (projectId: string): Promise<MigrationEr
     
     return data || [];
   } catch (error: any) {
-    handleServiceError(error, "Error fetching migration errors", true);
+    handleServiceError(error, "Error fetching migration errors");
     return [];
   }
 };
@@ -38,7 +38,7 @@ export const createMigrationError = async (errorData: Omit<MigrationError, 'id' 
     
     return data;
   } catch (error: any) {
-    return handleServiceError(error, "Error logging migration error", true);
+    return handleServiceError(error, "Error logging migration error");
   }
 };
 
@@ -61,6 +61,6 @@ export const resolveError = async (errorId: string, notes: string): Promise<Migr
     
     return data;
   } catch (error: any) {
-    return handleServiceError(error, "Error resolving migration error", true);
+    return handleServiceError(error, "Error resolving migration error");
   }
 };

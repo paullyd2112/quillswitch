@@ -42,7 +42,7 @@ export const DashboardProvider: React.FC<{
     projectId, 
     onError: (error) => setLoadError(error),
     retryOnError: true,
-    autoRetryCount: 2
+    retryCount: 2 // Use the new property instead of autoRetryCount
   });
 
   const {
