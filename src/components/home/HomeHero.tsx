@@ -83,7 +83,7 @@ const HomeHero = () => {
         <div className="mt-20 grid grid-cols-2 md:grid-cols-3 gap-6">
           {[
             { value: "97%", label: "Success Rate" },
-            { value: "90%", label: "Faster Than Manual" },
+            { value: "99%", label: "Faster Than Manual" },
             { value: "200k+", label: "Records Moved" }
           ].map((stat, index) => (
             <div key={index} className="text-center p-4 rounded-lg bg-slate-900/50 border border-slate-800">
