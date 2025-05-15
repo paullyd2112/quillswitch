@@ -11,6 +11,7 @@ interface ConnectedSystem {
   icon?: string;
   errorMessage?: string;
   connectionDate?: Date;
+  authMethod?: "oauth" | "api_key";
 }
 
 interface ConnectionContextType {
@@ -18,6 +19,7 @@ interface ConnectionContextType {
   isConnecting: boolean;
   currentSystem: string | null;
   connectSystem: (systemId: string, type: "source" | "destination" | "related", apiKey?: string) => void;
+  connectWithOAuth: (systemId: string, type: "source" | "destination" | "related") => void;
   disconnectSystem: (systemId: string) => void;
   validateConnection: (systemId: string, apiKey: string) => Promise<{ valid: boolean; message?: string }>;
   showHelpGuide: (errorType: string, systemName: string) => void;
@@ -64,6 +66,50 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   }, [connectedSystems]);
 
+  const connectWithOAuth = async (
+    systemId: string, 
+    type: "source" | "destination" | "related"
+  ) => {
+    try {
+      setIsConnecting(true);
+      setCurrentSystem(systemId);
+      
+      // Simulate OAuth flow - in a real app, this would redirect to the OAuth provider
+      toast.info(`Starting OAuth flow for ${systemId}...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // For demo purposes, we'll simulate a successful OAuth connection
+      // In a real app, you would handle the OAuth callback and token exchange
+      
+      // Check if system is already connected
+      if (connectedSystems.some(system => system.id === systemId)) {
+        toast.info(`${systemId} is already connected`);
+        return;
+      }
+      
+      // Add the new connected system
+      setConnectedSystems(prev => [
+        ...prev,
+        {
+          id: systemId,
+          name: systemId.charAt(0).toUpperCase() + systemId.slice(1),
+          type,
+          status: "connected",
+          connectionDate: new Date(),
+          authMethod: "oauth"
+        }
+      ]);
+      
+      toast.success(`Successfully connected to ${systemId} using OAuth`);
+    } catch (error) {
+      toast.error(`Failed to connect to ${systemId} with OAuth`);
+      console.error("OAuth connection error:", error);
+    } finally {
+      setIsConnecting(false);
+      setCurrentSystem(null);
+    }
+  };
+
   const connectSystem = async (
     systemId: string, 
     type: "source" | "destination" | "related",
@@ -73,7 +119,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setIsConnecting(true);
       setCurrentSystem(systemId);
       
-      // Require API key for all connections
+      // Require API key for API key connections
       if (!apiKey) {
         toast.error(`API key is required to connect to ${systemId}`);
         return;
@@ -101,7 +147,8 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           name: systemId.charAt(0).toUpperCase() + systemId.slice(1),
           type,
           status: "connected",
-          connectionDate: new Date()
+          connectionDate: new Date(),
+          authMethod: "api_key"
         }
       ]);
       
@@ -182,6 +229,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         isConnecting,
         currentSystem,
         connectSystem,
+        connectWithOAuth,
         disconnectSystem,
         validateConnection,
         showHelpGuide

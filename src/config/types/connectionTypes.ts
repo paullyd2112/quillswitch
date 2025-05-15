@@ -18,7 +18,7 @@ export interface SystemConfig {
   name: string;
   description: string;
   icon?: ReactNode;
-  authType: 'oauth' | 'api';
+  authType: 'oauth' | 'api'; // Required field that specifies primary auth method
   connectionType: 'source' | 'destination' | 'related';
   category?: SystemCategory;
   popular?: boolean;

@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label";
 import { SystemConfig } from "@/config/types/connectionTypes";
 import { useConnection } from "@/contexts/ConnectionContext";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Check, Info, Shield, X } from "lucide-react";
+import { Check, Info, Key, Lock, Shield, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { maskSensitiveData } from "@/utils/encryptionUtils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ConnectionModalProps {
   system: SystemConfig;
@@ -24,14 +25,14 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
   isOpen, 
   onClose 
 }) => {
-  const { connectSystem, validateConnection, showHelpGuide } = useConnection();
-  const [step, setStep] = useState<'intro' | 'api' | 'success' | 'error'>('intro');
+  const { connectSystem, connectWithOAuth, validateConnection, showHelpGuide } = useConnection();
+  const [step, setStep] = useState<'intro' | 'connect' | 'success' | 'error'>('intro');
+  const [authMethod, setAuthMethod] = useState<'oauth' | 'api_key'>(system.authType === 'oauth' ? 'oauth' : 'api_key');
   const [apiKey, setApiKey] = useState("");
   const [apiKeyTouched, setApiKeyTouched] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
   const [validationState, setValidationState] = useState<'idle' | 'valid' | 'invalid'>('idle');
   const [errorMessage, setErrorMessage] = useState("");
-  // Fixed: proper type annotation for the state
   const [errorDetails, setErrorDetails] = useState<{ type: string; message: string } | null>(null);
   const [showSecurity, setShowSecurity] = useState(false);
 
@@ -52,8 +53,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
   }, [isOpen]);
 
   const handleConnect = () => {
-    // Always go directly to API key input regardless of authType
-    setStep('api');
+    setStep('connect');
   };
 
   const validateApiKeyFormat = (key: string): boolean => {
@@ -63,6 +63,19 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
     if (/^(test|demo|example)/.test(key.toLowerCase())) return false;
     
     return true;
+  };
+
+  const handleOAuthConnect = async () => {
+    try {
+      await connectWithOAuth(system.id, type);
+      setStep('success');
+    } catch (error) {
+      setStep('error');
+      setErrorDetails({
+        type: "oauth_failure",
+        message: "Failed to connect with OAuth. Please try again or use API key instead."
+      });
+    }
   };
 
   const handleApiKeySubmit = async () => {
@@ -129,7 +142,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
             <DialogHeader>
               <DialogTitle>Connect to {system.name}</DialogTitle>
               <DialogDescription>
-                Connect to {system.name} by providing your API key.
+                Connect to {system.name} by selecting an authentication method.
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
@@ -145,7 +158,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
               <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800 mb-4">
                 <Shield className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <AlertDescription className="text-amber-700 dark:text-amber-300">
-                  Your API keys are encrypted and stored securely. We never share your keys with third parties.
+                  Your connection credentials are encrypted and stored securely. We never share your credentials with third parties.
                 </AlertDescription>
               </Alert>
               
@@ -172,91 +185,127 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
           </>
         );
         
-      case 'api':
+      case 'connect':
         return (
           <>
             <DialogHeader>
               <DialogTitle>Connect to {system.name}</DialogTitle>
               <DialogDescription>
-                Provide your API key to connect securely to {system.name}
+                Choose your preferred authentication method
               </DialogDescription>
             </DialogHeader>
             <div className="py-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="apiKey">{system.name} API Key</Label>
-                  <div className="relative">
-                    <Input
-                      id="apiKey"
-                      type="password" 
-                      value={apiKey}
-                      onChange={(e) => {
-                        setApiKey(e.target.value);
-                        setApiKeyTouched(true);
-                        setValidationState('idle');
-                        setErrorMessage("");
-                      }}
-                      onBlur={() => setApiKeyTouched(true)}
-                      className={`pr-10 ${
-                        validationState === 'valid' ? 'border-green-500' : 
-                        validationState === 'invalid' ? 'border-red-500' : ''
-                      }`}
-                      placeholder={`Enter your ${system.name} API key`}
-                      autoComplete="off"
-                    />
-                    {validationState === 'valid' && (
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
-                        <Check className="h-5 w-5" />
-                      </div>
-                    )}
-                    {validationState === 'invalid' && (
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500">
-                        <X className="h-5 w-5" />
-                      </div>
-                    )}
-                  </div>
-                  {validationState === 'invalid' && (
-                    <p className="text-sm text-red-500">{errorMessage}</p>
+              <Tabs defaultValue={system.authType === 'oauth' ? 'oauth' : 'api_key'} onValueChange={(value) => setAuthMethod(value as 'oauth' | 'api_key')}>
+                <TabsList className="grid w-full grid-cols-2">
+                  {system.authType === 'oauth' && (
+                    <TabsTrigger value="oauth">OAuth (Recommended)</TabsTrigger>
                   )}
-                  {apiKeyTouched && apiKey && apiKey.length < 10 && validationState !== 'invalid' && (
-                    <p className="text-sm text-amber-500">API key should be at least 10 characters</p>
-                  )}
-                </div>
+                  <TabsTrigger value="api_key">API Key</TabsTrigger>
+                </TabsList>
                 
-                <div className="bg-muted p-3 rounded-md space-y-3">
-                  <button 
-                    onClick={() => setShowSecurity(!showSecurity)} 
-                    className="text-sm font-medium flex items-center gap-2 text-blue-600 hover:underline"
-                  >
-                    <Shield className="h-3 w-3" /> How we protect your API keys
-                  </button>
-                  
-                  {showSecurity && (
-                    <div className="text-xs space-y-2 text-muted-foreground border-t pt-2 mt-1">
-                      <p>• Your API keys are encrypted before being stored</p>
-                      <p>• Keys are never transmitted to third parties</p>
-                      <p>• We implement zero-knowledge design principles</p>
-                      <p>• Keys are stored in secure, isolated storage</p>
+                {system.authType === 'oauth' && (
+                  <TabsContent value="oauth" className="space-y-4 mt-4">
+                    <div className="bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 rounded-md p-4">
+                      <h3 className="font-medium mb-2">Connect with OAuth (Recommended)</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        OAuth is the more secure authentication method. You'll be redirected to {system.name} to authorize access.
+                      </p>
+                      <Button 
+                        className="w-full"
+                        onClick={handleOAuthConnect}
+                      >
+                        Connect with OAuth
+                      </Button>
                     </div>
-                  )}
-                  
-                  {system.apiKeyHelp && (
-                    <>
-                      <h4 className="text-sm font-medium">Where to find your API key</h4>
-                      <p className="text-xs text-muted-foreground">{system.apiKeyHelp}</p>
-                    </>
-                  )}
-                </div>
-              </div>
+                  </TabsContent>
+                )}
+                
+                <TabsContent value="api_key" className="space-y-4 mt-4">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="apiKey">{system.name} API Key</Label>
+                      <div className="relative">
+                        <Input
+                          id="apiKey"
+                          type="password" 
+                          value={apiKey}
+                          onChange={(e) => {
+                            setApiKey(e.target.value);
+                            setApiKeyTouched(true);
+                            setValidationState('idle');
+                            setErrorMessage("");
+                          }}
+                          onBlur={() => setApiKeyTouched(true)}
+                          className={`pr-10 ${
+                            validationState === 'valid' ? 'border-green-500' : 
+                            validationState === 'invalid' ? 'border-red-500' : ''
+                          }`}
+                          placeholder={`Enter your ${system.name} API key`}
+                          autoComplete="off"
+                        />
+                        {validationState === 'valid' && (
+                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
+                            <Check className="h-5 w-5" />
+                          </div>
+                        )}
+                        {validationState === 'invalid' && (
+                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500">
+                            <X className="h-5 w-5" />
+                          </div>
+                        )}
+                      </div>
+                      {validationState === 'invalid' && (
+                        <p className="text-sm text-red-500">{errorMessage}</p>
+                      )}
+                      {apiKeyTouched && apiKey && apiKey.length < 10 && validationState !== 'invalid' && (
+                        <p className="text-sm text-amber-500">API key should be at least 10 characters</p>
+                      )}
+                    </div>
+                    
+                    <div className="bg-muted p-3 rounded-md space-y-3">
+                      <button 
+                        onClick={() => setShowSecurity(!showSecurity)} 
+                        className="text-sm font-medium flex items-center gap-2 text-blue-600 hover:underline"
+                      >
+                        <Shield className="h-3 w-3" /> How we protect your API keys
+                      </button>
+                      
+                      {showSecurity && (
+                        <div className="text-xs space-y-2 text-muted-foreground border-t pt-2 mt-1">
+                          <p>• Your API keys are encrypted before being stored</p>
+                          <p>• Keys are never transmitted to third parties</p>
+                          <p>• We implement zero-knowledge design principles</p>
+                          <p>• Keys are stored in secure, isolated storage</p>
+                        </div>
+                      )}
+                      
+                      {system.apiKeyHelp && (
+                        <>
+                          <h4 className="text-sm font-medium">Where to find your API key</h4>
+                          <p className="text-xs text-muted-foreground">{system.apiKeyHelp}</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={handleClose}>Cancel</Button>
-              <Button 
-                onClick={handleApiKeySubmit} 
-                disabled={!apiKey || apiKey.length < 10 || isValidating}
-              >
-                {isValidating ? 'Validating...' : 'Connect'}
-              </Button>
+              <Button variant="outline" onClick={() => setStep('intro')}>Back</Button>
+              {authMethod === 'api_key' ? (
+                <Button 
+                  onClick={handleApiKeySubmit} 
+                  disabled={!apiKey || apiKey.length < 10 || isValidating}
+                >
+                  {isValidating ? 'Validating...' : 'Connect'}
+                </Button>
+              ) : (
+                <Button 
+                  onClick={handleOAuthConnect}
+                >
+                  Connect with OAuth
+                </Button>
+              )}
             </DialogFooter>
           </>
         );
@@ -286,6 +335,42 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
           </>
         );
         
+      case 'error':
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-red-600 dark:text-red-400">
+                Connection Issue
+              </DialogTitle>
+              <DialogDescription>
+                {errorDetails?.message || "Failed to connect"}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="bg-muted p-4 rounded-md">
+                <h4 className="font-medium mb-2">How to fix this issue:</h4>
+                <ul className="text-sm space-y-2">
+                  <li>• Check if you have the right permissions</li>
+                  {authMethod === 'api_key' && (
+                    <>
+                      <li>• Make sure you're using a valid API key</li>
+                      <li>• Verify you have admin access in your {system.name} account</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setStep(authMethod === 'api_key' ? 'connect' : 'intro')}>
+                Try Again
+              </Button>
+              <Button onClick={handleErrorHelp} variant="default">
+                View Help Guide
+              </Button>
+            </DialogFooter>
+          </>
+        );
+        
       default:
         return null;
     }
@@ -298,40 +383,6 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
           {renderStepContent()}
         </DialogContent>
       </Dialog>
-      
-      {/* Error Dialog */}
-      {step === 'error' && errorDetails && (
-        <AlertDialog open={true} onOpenChange={() => setStep('api')}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-red-600 dark:text-red-400">
-                Connection Issue
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                {errorDetails.message}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <div className="py-4">
-              <div className="bg-muted p-4 rounded-md">
-                <h4 className="font-medium mb-2">How to fix this issue:</h4>
-                <ul className="text-sm space-y-2">
-                  <li>• Check if your API key has the right permissions</li>
-                  <li>• Make sure you're using an API key and not a personal token</li>
-                  <li>• Verify you have admin access in your {system.name} account</li>
-                </ul>
-              </div>
-            </div>
-            <AlertDialogFooter>
-              <Button variant="outline" onClick={() => setStep('api')}>
-                Try Again
-              </Button>
-              <Button onClick={handleErrorHelp} variant="default">
-                View Help Guide
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
     </>
   );
 };
