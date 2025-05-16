@@ -36,21 +36,9 @@ export const mainNav: NavLink[] = [
 
 export const userNav: NavLink[] = [
   {
-    href: "/app/migrations",
-    label: "Migrations",
-    icon: <Layout size={20} />,
-    category: "Workspace",
-  },
-  {
     href: "/app/setup",
     label: "New Migration",
     icon: <Plus size={20} />,
-    category: "Workspace",
-  },
-  {
-    href: "/app/connect",
-    label: "Connect",
-    icon: <Database size={20} />,
     category: "Workspace",
   },
   {
