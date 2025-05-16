@@ -2,8 +2,7 @@
 import React from "react";
 import {
   Home, Lightbulb, FileText, LogIn, Settings, 
-  ExternalLink, Layout, Database, 
-  LifeBuoy, Key, Plus
+  ExternalLink, Key, Plus, LifeBuoy
 } from "lucide-react";
 import { NavLink } from "./types";
 

@@ -1,5 +1,4 @@
-
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Features from './pages/Features'
 import Resources from './pages/Resources'
@@ -15,8 +14,6 @@ import CookieConsentBanner from './components/gdpr/CookieConsentBanner'
 import Settings from './pages/Settings'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
-import ConnectionHub from './pages/ConnectionHub'
-import MigrationsList from './pages/MigrationsList'
 import MigrationDashboard from './pages/MigrationDashboard'
 import { TooltipProvider } from './components/ui/tooltip'
 import CredentialsVault from './pages/CredentialsVault'
@@ -46,17 +43,22 @@ function App() {
 
                   {/* Protected routes with sidebar layout */}
                   <Route path="/app" element={<BaseLayout />}>
-                    <Route index element={<MigrationsList />} />
-                    <Route path="migrations" element={<MigrationsList />} />
+                    <Route index element={<Navigate to="/app/setup" replace />} />
+                    
+                    {/* Redirect /app/migrations to /app/setup */}
+                    <Route path="migrations" element={<Navigate to="/app/setup" replace />} />
+                    
+                    {/* Keep the migration dashboard (for viewing existing migrations) */}
                     <Route path="migrations/:id" element={<MigrationDashboard />} />
-                    <Route path="connect" element={<ConnectionHub />} />
+                    
+                    {/* Redirect /app/connect to /app/setup */}
+                    <Route path="connect" element={<Navigate to="/app/setup" replace />} />
+                    
                     <Route path="setup" element={<MigrationSetup />} />
                     <Route path="credentials-vault" element={<CredentialsVault />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="support" element={<Support />} />
                   </Route>
-                  
-                  {/* Remove redundant setup wizard route */}
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>
