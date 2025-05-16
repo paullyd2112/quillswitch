@@ -2,11 +2,9 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import BaseLayout from '@/components/layout/BaseLayout';
 import { Link } from 'react-router-dom';
 import MigrationsTable from './MigrationsTable';
 import { MigrationProject } from '@/integrations/supabase/migrationTypes';
-import { getMigrationProjects } from '@/services/migration/projectService';
 
 // Mock data for migrations with the correct shape to match MigrationProject type
 const mockMigrations: MigrationProject[] = [
@@ -62,7 +60,7 @@ const MigrationsList = () => {
     <div className="container px-4 py-8 mx-auto max-w-7xl space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Your Migrations</h1>
-        <Link to="/app/migrations/setup">
+        <Link to="/app/setup">
           <Button>
             <PlusCircle className="mr-2 h-4 w-4" />
             New Migration

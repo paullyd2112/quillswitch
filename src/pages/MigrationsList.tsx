@@ -13,7 +13,7 @@ const MigrationsList = () => {
   const [migrations] = useState(mockMigrations);
 
   const handleCreateMigration = () => {
-    navigate('/setup-wizard');
+    navigate('/app/setup');
   };
 
   return (

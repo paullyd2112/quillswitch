@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MigrationStatusCard from "../MigrationStatusCard";
@@ -32,7 +31,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab, setActiveTab }
   };
   
   const handleStartNewMigration = () => {
-    navigate("/setup-wizard");
+    navigate("/app/setup");
   };
 
   return (

@@ -26,7 +26,7 @@ const DemoFooterCta: React.FC = () => {
             <Button 
               size="lg" 
               className="gap-2"
-              onClick={() => navigate("/migrations/setup")}
+              onClick={() => navigate("/app/setup")}
             >
               Start Your Free Migration <ArrowRight size={16} />
             </Button>
