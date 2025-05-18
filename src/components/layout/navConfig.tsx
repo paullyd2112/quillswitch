@@ -2,7 +2,7 @@
 import React from "react";
 import {
   Home, Lightbulb, FileText, LogIn, Settings, 
-  ExternalLink, Key, Plus, LifeBuoy
+  ExternalLink, Key, Plus, LifeBuoy, Link
 } from "lucide-react";
 import { NavLink } from "./types";
 
@@ -38,6 +38,12 @@ export const userNav: NavLink[] = [
     href: "/app/setup",
     label: "New Migration",
     icon: <Plus size={20} />,
+    category: "Workspace",
+  },
+  {
+    href: "/app/crm-connections",
+    label: "CRM Connections",
+    icon: <Link size={20} />,
     category: "Workspace",
   },
   {

@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Features from './pages/Features'
@@ -21,6 +22,8 @@ import Support from './pages/Support'
 import Demo from './pages/Demo'
 import BaseLayout from './components/layout/BaseLayout'
 import MigrationSetup from './pages/MigrationSetup'
+import CrmConnections from './pages/CrmConnections'
+import OAuthCallback from './components/oauth/OAuthCallback'
 
 function App() {
   return (
@@ -58,6 +61,12 @@ function App() {
                     <Route path="credentials-vault" element={<CredentialsVault />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="support" element={<Support />} />
+                    
+                    {/* New CRM connections route */}
+                    <Route path="crm-connections" element={<CrmConnections />} />
+                    
+                    {/* OAuth callback route */}
+                    <Route path="oauth/callback" element={<OAuthCallback />} />
                   </Route>
                   
                   <Route path="*" element={<NotFound />} />
