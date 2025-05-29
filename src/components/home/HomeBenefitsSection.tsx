@@ -12,8 +12,8 @@ const benefits = [
   },
   {
     icon: <DollarSign className="h-12 w-12" />,
-    title: "Save on Consultant Costs",
-    subtitle: "Up to $50,000",
+    title: "Saving on Costs",
+    subtitle: "By up to 90%",
     description: "No need for expensive migration consultants. Our platform handles the complexity for you."
   },
   {
