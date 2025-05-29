@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
 @layer base {
   :root {
@@ -54,7 +54,7 @@
   }
 
   html, body, #root {
-    @apply bg-friendly-bg m-0 p-0 min-h-screen w-full;
+    @apply bg-slate-950 m-0 p-0 min-h-screen w-full;
     overflow-x: hidden;
     font-family: 'Nunito', sans-serif;
   }
@@ -66,29 +66,33 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight text-friendly-text-primary;
+    @apply font-bold tracking-tight text-white;
+    font-weight: 700;
   }
 
   h1 {
     @apply text-4xl lg:text-5xl;
+    font-weight: 800;
   }
 
   h2 {
     @apply text-3xl lg:text-4xl mb-8;
+    font-weight: 700;
   }
 
   h3 {
     @apply text-2xl lg:text-3xl;
+    font-weight: 600;
   }
 
   p {
-    @apply leading-relaxed text-friendly-text-secondary;
+    @apply leading-relaxed text-slate-300;
   }
 }
 
 @layer components {
   .glass-panel {
-    @apply bg-friendly-card border border-friendly-border shadow-md rounded-xl;
+    @apply bg-slate-900/50 border border-slate-800 shadow-md rounded-xl backdrop-blur-sm;
   }
   
   .chip {
@@ -101,7 +105,7 @@
   
   .section-title::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-12 h-1 bg-friendly-accent rounded-full;
+    @apply absolute bottom-0 left-0 w-12 h-1 bg-primary rounded-full;
   }
   
   .hero-gradient {
@@ -113,25 +117,29 @@
     @apply bg-gradient-to-r from-transparent via-black/5 to-transparent bg-[length:200%_100%] animate-shimmer;
   }
 
-  /* Dark feature card */
+  /* Enhanced feature card */
   .feature-card {
-    @apply bg-friendly-card border border-friendly-border rounded-sm p-7 transition-all duration-200 flex flex-col shadow-md hover:shadow-lg;
+    @apply bg-slate-900/80 border border-slate-800 rounded-lg p-7 transition-all duration-300 flex flex-col shadow-md hover:shadow-xl backdrop-blur-sm;
   }
   
   .feature-card:hover {
-    @apply transform -translate-y-1.5 border-friendly-accent/30;
+    @apply transform -translate-y-2 border-slate-700 shadow-2xl;
   }
   
   .feature-card .icon-container {
-    @apply bg-friendly-icon text-friendly-accent rounded-sm w-[50px] h-[50px] flex justify-center items-center mb-5;
+    @apply bg-slate-800 text-primary rounded-lg w-[50px] h-[50px] flex justify-center items-center mb-5 transition-all duration-300;
+  }
+  
+  .feature-card:hover .icon-container {
+    @apply bg-primary/20 scale-110;
   }
   
   .feature-card h3 {
-    @apply text-friendly-text-primary text-xl mt-0 mb-2 font-bold;
+    @apply text-white text-xl mt-0 mb-2 font-bold;
   }
   
   .feature-card p {
-    @apply text-friendly-text-secondary text-base mb-0 flex-grow;
+    @apply text-slate-400 text-base mb-0 flex-grow;
   }
 }
 
@@ -146,31 +154,119 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-friendly-border rounded-full;
+  @apply bg-slate-700 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-friendly-accent/50;
+  @apply bg-slate-600;
+}
+
+/* Enhanced animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes border-pulse {
+  0%, 100% { 
+    border-color: rgba(26, 115, 232, 0.5);
+    box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.4);
+  }
+  50% { 
+    border-color: rgba(26, 115, 232, 0.8);
+    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes breathing {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% { 
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
 }
 
 /* Animation delays */
-.delay-100 {
-  animation-delay: 100ms;
-}
-.delay-200 {
-  animation-delay: 200ms;
-}
-.delay-300 {
-  animation-delay: 300ms;
-}
-.delay-400 {
-  animation-delay: 400ms;
-}
-.delay-500 {
-  animation-delay: 500ms;
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+
+/* Utility classes */
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
 }
 
-/* Thin scrollbar for the migration demo */
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: scale-up 0.5s ease-out forwards;
+}
+
+.animate-border-pulse {
+  animation: border-pulse 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 3s ease infinite;
+}
+
+.animate-breathing {
+  animation: breathing 3s ease-in-out infinite;
+}
+
+/* Thin scrollbar for specific elements */
 .scrollbar-thin {
   scrollbar-width: thin;
 }
@@ -180,5 +276,9 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-slate-300/70 dark:bg-slate-700/70 rounded-full;
+  @apply bg-slate-600 rounded-full;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-500;
 }
