@@ -23,6 +23,7 @@ import BaseLayout from './components/layout/BaseLayout'
 import MigrationSetup from './pages/MigrationSetup'
 import CrmConnections from './pages/CrmConnections'
 import OAuthCallback from './components/oauth/OAuthCallback'
+import PricingEstimator from './pages/PricingEstimator'
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/terms" element={<TermsOfService />} />
                   <Route path="/demo" element={<Demo />} />
+                  <Route path="/pricing" element={<PricingEstimator />} />
 
                   {/* Legacy routes - redirect to new structure */}
                   <Route path="/migrations/*" element={<Navigate to="/app/setup" replace />} />
