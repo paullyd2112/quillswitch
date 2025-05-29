@@ -20,13 +20,12 @@ const PricingCalculator: React.FC = () => {
   const [transformationCount, setTransformationCount] = useState<number>(10);
   const [includeValidation, setIncludeValidation] = useState<boolean>(false);
   const [includeRollback, setIncludeRollback] = useState<boolean>(false);
-  const [tier, setTier] = useState<PricingTier>("quickStart");
+  const [tier, setTier] = useState<PricingTier>("essentials");
   const [showEstimate, setShowEstimate] = useState<boolean>(false);
 
   const tierOptions = [
-    { value: "quickStart", label: "Quick Start (SMB: 1,000-10,000 records)" },
-    { value: "scaleUp", label: "Scale Up (Mid-Market: 10,000-50,000 records)" },
-    { value: "fullPower", label: "Full Power (Enterprise: 50,000+ records)" },
+    { value: "essentials", label: "Essentials (Up to 50,000 records)" },
+    { value: "pro", label: "Pro (Up to 200,000 records)" },
   ];
 
   const handleCalculate = () => {
@@ -35,12 +34,10 @@ const PricingCalculator: React.FC = () => {
 
   // Auto-adjust tier based on record count
   useEffect(() => {
-    if (recordCount <= 10000) {
-      setTier("quickStart");
-    } else if (recordCount <= 50000) {
-      setTier("scaleUp");
+    if (recordCount <= 50000) {
+      setTier("essentials");
     } else {
-      setTier("fullPower");
+      setTier("pro");
     }
   }, [recordCount]);
 
@@ -89,9 +86,8 @@ const PricingCalculator: React.FC = () => {
                   onValueChange={(value: PricingTier) => {
                     setTier(value);
                     // Adjust record count based on tier selection
-                    if (value === "quickStart" && recordCount > 10000) setRecordCount(5000);
-                    if (value === "scaleUp" && (recordCount < 10000 || recordCount > 50000)) setRecordCount(30000);
-                    if (value === "fullPower" && recordCount < 50000) setRecordCount(100000);
+                    if (value === "essentials" && recordCount > 50000) setRecordCount(25000);
+                    if (value === "pro" && recordCount < 50000) setRecordCount(100000);
                   }}
                 >
                   <SelectTrigger className="w-full bg-background/80 backdrop-blur border-primary/20">
@@ -130,23 +126,23 @@ const PricingCalculator: React.FC = () => {
                 <div className="pt-2 px-1">
                   <Slider
                     defaultValue={[recordCount]}
-                    max={tier === "quickStart" ? 10000 : tier === "scaleUp" ? 50000 : 1000000}
-                    min={tier === "quickStart" ? 1000 : tier === "scaleUp" ? 10001 : 50001}
-                    step={tier === "fullPower" ? 10000 : 1000}
+                    max={tier === "essentials" ? 50000 : 200000}
+                    min={tier === "essentials" ? 1000 : 50001}
+                    step={tier === "pro" ? 10000 : 1000}
                     onValueChange={handleSliderChange}
                     className="my-4"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{tier === "quickStart" ? "1K" : tier === "scaleUp" ? "10K" : "50K"}</span>
-                    <span>{tier === "quickStart" ? "10K" : tier === "scaleUp" ? "50K" : "1M+"}</span>
+                    <span>{tier === "essentials" ? "1K" : "50K"}</span>
+                    <span>{tier === "essentials" ? "50K" : "200K+"}</span>
                   </div>
                 </div>
 
                 <Input
                   id="records"
                   type="number"
-                  min={tier === "quickStart" ? 1000 : tier === "scaleUp" ? 10001 : 50001}
-                  max={tier === "quickStart" ? 10000 : tier === "scaleUp" ? 50000 : 10000000}
+                  min={tier === "essentials" ? 1000 : 50001}
+                  max={tier === "essentials" ? 50000 : 200000}
                   value={recordCount}
                   onChange={(e) => setRecordCount(parseInt(e.target.value) || 0)}
                   className="mt-2 bg-background/80 backdrop-blur border-primary/20"

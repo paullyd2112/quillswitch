@@ -21,7 +21,7 @@ const ContactPricingCalculator: React.FC = () => {
   const [transformationCount, setTransformationCount] = useState<number>(10);
   const [includeValidation, setIncludeValidation] = useState<boolean>(false);
   const [includeRollback, setIncludeRollback] = useState<boolean>(false);
-  const [tier, setTier] = useState<PricingTier>("quickStart");
+  const [tier, setTier] = useState<PricingTier>("essentials");
   const [showEstimate, setShowEstimate] = useState<boolean>(false);
 
   const calculateEstimatedContacts = () => {
@@ -29,12 +29,10 @@ const ContactPricingCalculator: React.FC = () => {
     setRecordCount(estimate);
     
     // Adjust tier based on estimated contact count
-    if (estimate <= 10000) {
-      setTier("quickStart");
-    } else if (estimate <= 50000) {
-      setTier("scaleUp");
+    if (estimate <= 50000) {
+      setTier("essentials");
     } else {
-      setTier("fullPower");
+      setTier("pro");
     }
   };
 
@@ -184,7 +182,7 @@ const ContactPricingCalculator: React.FC = () => {
                   <p className="text-2xl font-bold">{recordCount.toLocaleString()}</p>
                 </div>
                 <div className="mt-2 sm:mt-0 bg-white/10 backdrop-blur-sm px-3 py-1 rounded text-sm">
-                  Tier: {tier === "quickStart" ? "Quick Start" : tier === "scaleUp" ? "Scale Up" : "Full Power"}
+                  Tier: {tier === "essentials" ? "Essentials" : "Pro"}
                 </div>
               </div>
 

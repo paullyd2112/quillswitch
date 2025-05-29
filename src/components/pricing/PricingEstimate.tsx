@@ -14,9 +14,8 @@ interface PricingEstimateProps {
 const PricingEstimate: React.FC<PricingEstimateProps> = ({ pricing, inputs }) => {
   const getTierName = () => {
     switch (inputs.tier) {
-      case "quickStart": return "Quick Start (SMB)";
-      case "scaleUp": return "Scale Up (Mid-Market)";
-      case "fullPower": return "Full Power (Enterprise)";
+      case "essentials": return "Essentials";
+      case "pro": return "Pro";
       default: return "Custom";
     }
   };
@@ -24,9 +23,8 @@ const PricingEstimate: React.FC<PricingEstimateProps> = ({ pricing, inputs }) =>
   // Get the minimum consultant cost for comparison based on tier
   const getConsultantRange = () => {
     switch (inputs.tier) {
-      case "quickStart": return "$8,000 - $15,000+";
-      case "scaleUp": return "$25,000 - $60,000+";
-      case "fullPower": return "$80,000 - $250,000+";
+      case "essentials": return "$8,000 - $15,000+";
+      case "pro": return "$25,000 - $60,000+";
       default: return "Significantly higher";
     }
   };
@@ -34,9 +32,8 @@ const PricingEstimate: React.FC<PricingEstimateProps> = ({ pricing, inputs }) =>
   // Get minimum and maximum consultant costs for savings calculation
   const getConsultantCosts = () => {
     switch (inputs.tier) {
-      case "quickStart": return { min: 8000, max: 15000 };
-      case "scaleUp": return { min: 25000, max: 60000 };
-      case "fullPower": return { min: 80000, max: 250000 };
+      case "essentials": return { min: 8000, max: 15000 };
+      case "pro": return { min: 25000, max: 60000 };
       default: return { min: 10000, max: 20000 };
     }
   };
