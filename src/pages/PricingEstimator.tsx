@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { formatCurrency, formatNumber } from "@/components/pricing/pricingUtils";
+import SavingsCalculator from "@/components/pricing/SavingsCalculator";
 
 const PricingEstimator: React.FC = () => {
   return (
@@ -20,8 +21,8 @@ const PricingEstimator: React.FC = () => {
           {/* Background elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-            <div className="absolute top-1/3 -left-40 w-80 h-80 bg-green-500/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-20 right-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />
+            <div className="absolute top-1/3 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-20 right-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
           </div>
           
           <div className="container relative mx-auto px-4 py-8 pt-16 z-10">
@@ -41,6 +42,11 @@ const PricingEstimator: React.FC = () => {
                     Choose the plan that fits your business size. No surprises, no hidden fees, no hourly rates.
                   </p>
                 </div>
+              </FadeIn>
+
+              {/* Savings Calculator */}
+              <FadeIn delay="100">
+                <SavingsCalculator />
               </FadeIn>
 
               {/* Pricing Tiers */}
