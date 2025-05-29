@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SetupFormData } from "@/contexts/setup-wizard/types";
+import RecordEstimator from "./RecordEstimator";
 
 interface DataSelectionStepProps {
   formData: SetupFormData;
@@ -114,6 +115,14 @@ const DataSelectionStep: React.FC<DataSelectionStepProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Record Estimator - only show if data types are selected */}
+        {formData.dataTypes.length > 0 && (
+          <RecordEstimator 
+            selectedDataTypes={formData.dataTypes}
+            className="mt-6"
+          />
+        )}
         
         <div className="space-y-2 pt-4">
           <Label>Migration Strategy</Label>

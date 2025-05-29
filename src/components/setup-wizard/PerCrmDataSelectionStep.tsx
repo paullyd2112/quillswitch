@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CrmSystem, SetupFormData, CrmDataSelection } from "@/contexts/setup-wizard/types";
+import RecordEstimator from "./RecordEstimator";
 
 interface PerCrmDataSelectionStepProps {
   formData: SetupFormData;
@@ -48,6 +49,16 @@ const PerCrmDataSelectionStep: React.FC<PerCrmDataSelectionStepProps> = ({
     
     handleCrmDataSelectionChange(crmId, updatedSelection);
   };
+
+  // Get all selected data types across all CRMs for record estimation
+  const allSelectedDataTypes = formData.crmDataSelections.reduce((acc: string[], selection) => {
+    selection.dataTypes.forEach(dataType => {
+      if (!acc.includes(dataType)) {
+        acc.push(dataType);
+      }
+    });
+    return acc;
+  }, []);
 
   return (
     <div>
@@ -109,6 +120,14 @@ const PerCrmDataSelectionStep: React.FC<PerCrmDataSelectionStepProps> = ({
             </Card>
           );
         })}
+
+        {/* Record Estimator for all selected data types */}
+        {allSelectedDataTypes.length > 0 && (
+          <RecordEstimator 
+            selectedDataTypes={allSelectedDataTypes}
+            className="mt-6"
+          />
+        )}
         
         <div className="space-y-2 pt-4 border-t">
           <Label>Migration Strategy</Label>
