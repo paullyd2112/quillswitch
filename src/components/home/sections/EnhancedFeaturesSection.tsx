@@ -9,37 +9,37 @@ const features = [
     icon: Brain,
     title: "AI Schema Mapping",
     description: "Gemini-powered intelligent field matching with 99.9% accuracy. Our AI understands data relationships and suggests optimal mappings automatically.",
-    gradient: "from-purple-500 to-pink-500"
+    gradient: "from-blue-500 to-blue-600"
   },
   {
     icon: Shield,
     title: "Enterprise Security",
     description: "Bank-level encryption, SOC 2 compliance, and zero-trust architecture ensure your data remains protected throughout every migration step.",
-    gradient: "from-blue-500 to-cyan-500"
+    gradient: "from-blue-600 to-blue-700"
   },
   {
     icon: Zap,
     title: "Lightning Performance",
     description: "Process millions of records in hours, not weeks. Our optimized algorithms and parallel processing deliver unmatched speed.",
-    gradient: "from-yellow-500 to-orange-500"
+    gradient: "from-blue-400 to-blue-500"
   },
   {
     icon: Database,
     title: "Universal Compatibility",
     description: "Connect to 50+ CRM platforms with native API integrations. From Salesforce to HubSpot, we speak every CRM's language.",
-    gradient: "from-green-500 to-emerald-500"
+    gradient: "from-blue-500 to-blue-600"
   },
   {
     icon: CheckCircle,
     title: "Guaranteed Accuracy",
     description: "Advanced validation engines and real-time monitoring ensure 100% data integrity with comprehensive rollback capabilities.",
-    gradient: "from-indigo-500 to-purple-500"
+    gradient: "from-blue-600 to-blue-500"
   },
   {
     icon: Clock,
     title: "Real-Time Intelligence",
     description: "Live progress tracking, predictive analytics, and instant notifications keep you informed throughout the entire process.",
-    gradient: "from-pink-500 to-red-500"
+    gradient: "from-blue-400 to-blue-600"
   }
 ];
 

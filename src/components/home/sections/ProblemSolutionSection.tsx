@@ -4,17 +4,17 @@ import { AlertTriangle, Shield, CheckCircle, Zap } from 'lucide-react';
 import FadeIn from '@/components/animations/FadeIn';
 
 const problems = [
-  { icon: AlertTriangle, text: "Data Loss?", color: "text-red-400" },
-  { icon: AlertTriangle, text: "Schema Mismatches?", color: "text-orange-400" },
-  { icon: AlertTriangle, text: "Security Risks?", color: "text-yellow-400" },
-  { icon: AlertTriangle, text: "Manual Complexity?", color: "text-red-400" }
+  { icon: AlertTriangle, text: "Data Loss?", color: "text-blue-400" },
+  { icon: AlertTriangle, text: "Schema Mismatches?", color: "text-blue-300" },
+  { icon: AlertTriangle, text: "Security Risks?", color: "text-blue-500" },
+  { icon: AlertTriangle, text: "Manual Complexity?", color: "text-blue-400" }
 ];
 
 const solutions = [
-  { icon: Shield, text: "Guaranteed Data Integrity", color: "text-green-400" },
+  { icon: Shield, text: "Guaranteed Data Integrity", color: "text-white" },
   { icon: CheckCircle, text: "Intelligent Schema Mapping", color: "text-blue-400" },
-  { icon: Shield, text: "Enterprise-Grade Security", color: "text-purple-400" },
-  { icon: Zap, text: "AI-Powered Automation", color: "text-cyan-400" }
+  { icon: Shield, text: "Enterprise-Grade Security", color: "text-white" },
+  { icon: Zap, text: "AI-Powered Automation", color: "text-blue-300" }
 ];
 
 const ProblemSolutionSection: React.FC = () => {
@@ -35,10 +35,10 @@ const ProblemSolutionSection: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Problems Column */}
           <div className="space-y-6">
-            <h3 className="text-2xl font-semibold text-red-400 mb-8 text-center">Common Challenges</h3>
+            <h3 className="text-2xl font-semibold text-blue-400 mb-8 text-center">Common Challenges</h3>
             {problems.map((problem, index) => (
               <FadeIn key={index} delay={`${(index + 1) * 100}` as any}>
-                <div className="flex items-center gap-4 p-4 rounded-lg bg-red-950/20 border border-red-900/30 hover:border-red-700/50 transition-all duration-300">
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-blue-950/20 border border-blue-900/30 hover:border-blue-700/50 transition-all duration-300">
                   <problem.icon className={`h-6 w-6 ${problem.color}`} />
                   <span className="text-lg text-slate-200">{problem.text}</span>
                 </div>
@@ -48,10 +48,10 @@ const ProblemSolutionSection: React.FC = () => {
 
           {/* Solutions Column */}
           <div className="space-y-6">
-            <h3 className="text-2xl font-semibold text-green-400 mb-8 text-center">QuillSwitch Solutions</h3>
+            <h3 className="text-2xl font-semibold text-white mb-8 text-center">QuillSwitch Solutions</h3>
             {solutions.map((solution, index) => (
               <FadeIn key={index} delay={`${(index + 1) * 100 + 200}` as any}>
-                <div className="flex items-center gap-4 p-4 rounded-lg bg-green-950/20 border border-green-900/30 hover:border-green-700/50 transition-all duration-300 transform hover:scale-105">
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-blue-950/20 border border-blue-900/30 hover:border-blue-700/50 transition-all duration-300 transform hover:scale-105">
                   <solution.icon className={`h-6 w-6 ${solution.color}`} />
                   <span className="text-lg text-slate-200">{solution.text}</span>
                 </div>

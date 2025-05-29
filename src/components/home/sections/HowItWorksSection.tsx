@@ -8,25 +8,25 @@ const steps = [
     icon: Database,
     title: "Connect",
     description: "Secure API connections to your source and target CRMs",
-    color: "from-blue-500 to-cyan-500"
+    color: "from-blue-500 to-blue-600"
   },
   {
     icon: Brain,
     title: "AI Analysis",
     description: "Gemini AI analyzes and maps your data structures intelligently",
-    color: "from-purple-500 to-pink-500"
+    color: "from-blue-600 to-blue-700"
   },
   {
     icon: Zap,
     title: "Migrate",
     description: "Lightning-fast transfer with real-time monitoring",
-    color: "from-yellow-500 to-orange-500"
+    color: "from-blue-400 to-blue-500"
   },
   {
     icon: CheckCircle,
     title: "Validate",
     description: "Comprehensive validation ensures 100% data integrity",
-    color: "from-green-500 to-emerald-500"
+    color: "from-blue-500 to-blue-600"
   }
 ];
 

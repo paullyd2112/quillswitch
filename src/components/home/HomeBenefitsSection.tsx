@@ -45,17 +45,17 @@ const HomeBenefitsSection = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {benefits.map((benefit, index) => (
-            <Card key={index} className="bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 hover:border-primary/30 transition-all duration-300">
+            <Card key={index} className="bg-gradient-to-br from-slate-900 to-slate-800 border-slate-700 hover:border-blue-500/30 transition-all duration-300">
               <CardContent className="p-8">
                 <div className="flex items-start space-x-4">
-                  <div className="text-primary flex-shrink-0">
+                  <div className="text-blue-400 flex-shrink-0">
                     {benefit.icon}
                   </div>
                   <div>
                     <h3 className="text-2xl font-semibold text-white mb-2">
                       {benefit.title}
                     </h3>
-                    <div className="text-primary font-bold text-lg mb-3">
+                    <div className="text-blue-400 font-bold text-lg mb-3">
                       {benefit.subtitle}
                     </div>
                     <p className="text-slate-400 leading-relaxed">
