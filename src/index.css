@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
 
 @layer base {
   :root {
@@ -113,6 +113,15 @@
     @apply bg-gradient-to-r from-transparent via-black/5 to-transparent bg-[length:200%_100%] animate-shimmer;
   }
 
+  /* Enhanced shadow utilities */
+  .shadow-glow-primary {
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.3), 0 0 40px rgba(0, 123, 255, 0.1);
+  }
+
+  .shadow-glow-primary:hover {
+    box-shadow: 0 0 30px rgba(0, 123, 255, 0.4), 0 0 60px rgba(0, 123, 255, 0.2);
+  }
+
   /* Dark feature card */
   .feature-card {
     @apply bg-friendly-card border border-friendly-border rounded-sm p-7 transition-all duration-200 flex flex-col shadow-md hover:shadow-lg;
@@ -132,6 +141,25 @@
   
   .feature-card p {
     @apply text-friendly-text-secondary text-base mb-0 flex-grow;
+  }
+
+  /* Enhanced animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
   }
 }
 
