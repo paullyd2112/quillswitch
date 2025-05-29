@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import HomeHero from "@/components/home/HomeHero";
 import HomeFeaturesSection from "@/components/home/HomeFeaturesSection";
 import HomeHowItWorksSection from "@/components/home/HomeHowItWorksSection";
+import MigrationDemoSection from "@/components/home/MigrationDemoSection";
 import HomeBenefitsSection from "@/components/home/HomeBenefitsSection";
 import HomeCtaSection from "@/components/home/HomeCtaSection";
 import Footer from "@/components/layout/Footer";
@@ -16,6 +17,7 @@ const Home = () => {
         <HomeHero />
         <HomeFeaturesSection />
         <HomeHowItWorksSection />
+        <MigrationDemoSection />
         <HomeBenefitsSection />
         <HomeCtaSection />
       </main>
