@@ -42,25 +42,12 @@ const GlowingCTA: React.FC<GlowingCTAProps> = ({ onClick, children }) => {
         
         {/* Breathing glow effect */}
         <div 
-          className="absolute inset-0 rounded-lg opacity-50 blur-xl"
+          className="absolute inset-0 rounded-lg opacity-50 blur-xl animate-breathing"
           style={{
             background: 'linear-gradient(45deg, #0070f3, #00a1ff)',
-            animation: 'breathing 3s ease-in-out infinite'
           }}
         />
       </Button>
-      
-      <style jsx>{`
-        @keyframes breathing {
-          0%, 100% { transform: scale(1); opacity: 0.5; }
-          50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        @keyframes gradient-shift {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-      `}</style>
     </div>
   );
 };
