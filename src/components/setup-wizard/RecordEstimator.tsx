@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info, Calculator, AlertTriangle } from "lucide-react";
+import { Info, Calculator, AlertTriangle, Users, Building2 } from "lucide-react";
 import { getRecordCountEstimate, getTierForRecordCount, formatNumber, formatCurrency } from "@/components/pricing/pricingUtils";
 
 interface RecordEstimatorProps {
@@ -28,12 +28,25 @@ const RecordEstimator: React.FC<RecordEstimatorProps> = ({
   };
 
   const tierInfo = {
-    essentials: { price: 1999, limit: 50000, name: "Essentials" },
-    pro: { price: 3999, limit: 200000, name: "Pro" }
+    essentials: { 
+      price: 1999, 
+      limit: 50000, 
+      name: "Essentials", 
+      description: "Perfect for Small Businesses",
+      icon: Users
+    },
+    pro: { 
+      price: 3999, 
+      limit: 200000, 
+      name: "Pro", 
+      description: "Built for SMB & Mid-Market",
+      icon: Building2
+    }
   };
 
   const currentTier = tierInfo[recommendedTier];
   const isNearLimit = estimatedRecords > (currentTier.limit * 0.8);
+  const IconComponent = currentTier.icon;
 
   return (
     <div className={className}>
@@ -73,7 +86,10 @@ const RecordEstimator: React.FC<RecordEstimatorProps> = ({
           {/* Recommended Plan */}
           <div className="border rounded-lg p-4 bg-gradient-to-r from-primary/5 to-primary/10">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-medium">Recommended Plan:</span>
+              <div className="flex items-center gap-2">
+                <IconComponent className="h-5 w-5 text-primary" />
+                <span className="font-medium">Recommended Plan:</span>
+              </div>
               <div className="text-right">
                 <div className="font-bold text-lg">{currentTier.name}</div>
                 <div className="text-sm text-muted-foreground">
@@ -81,8 +97,11 @@ const RecordEstimator: React.FC<RecordEstimatorProps> = ({
                 </div>
               </div>
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground mb-1">
               Up to {formatNumber(currentTier.limit)} records
+            </div>
+            <div className="text-xs text-muted-foreground/80">
+              {currentTier.description}
             </div>
           </div>
 
@@ -93,7 +112,7 @@ const RecordEstimator: React.FC<RecordEstimatorProps> = ({
               <AlertDescription>
                 Your estimated record count is close to the {currentTier.name} tier limit. 
                 Consider the Pro tier ({formatCurrency(tierInfo.pro.price)}) for {formatNumber(tierInfo.pro.limit)} records 
-                to ensure you have adequate capacity.
+                to ensure you have adequate capacity for your SMB or Mid-Market needs.
               </AlertDescription>
             </Alert>
           )}
