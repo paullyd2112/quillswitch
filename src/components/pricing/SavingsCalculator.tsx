@@ -19,18 +19,21 @@ interface CalculatorInputs {
   consultantRate: number;
   consultantHours: number;
   internalStaff: number;
-  monthlyCrmCost: number;
+  oldCrmCost: number;
+  newCrmCost: number;
 }
 
 interface SavingsResults {
   manualConsultantCost: number;
   manualInternalStaffCost: number;
-  wastedCrmSubscriptionCost: number;
+  wastedOldCrmCost: number;
+  newCrmCostDuringMigration: number;
   totalManualCost: number;
   quillSwitchCost: number;
   totalSavings: number;
   weeksSaved: number;
   hoursSaved: number;
+  monthlyCrmSavings: number;
 }
 
 const SavingsCalculator: React.FC = () => {
@@ -40,7 +43,8 @@ const SavingsCalculator: React.FC = () => {
     consultantRate: 125,
     consultantHours: 100,
     internalStaff: 2,
-    monthlyCrmCost: 1000,
+    oldCrmCost: 1000,
+    newCrmCost: 400,
   });
 
   const [showAssumptions, setShowAssumptions] = useState(false);
@@ -60,27 +64,35 @@ const SavingsCalculator: React.FC = () => {
     const manualInternalStaffTotalHours = inputs.internalStaff * (inputs.migrationWeeks * HOURS_PER_WEEK_PER_PERSON);
     const manualInternalStaffCost = manualInternalStaffTotalHours * INTERNAL_HOURLY_RATE;
 
-    const wastedCrmSubscriptionCost = (inputs.monthlyCrmCost / WEEKS_PER_MONTH) * 
-      (inputs.migrationWeeks - QUILLSWITCH_TIMELINE_WEEKS);
+    // Old CRM costs during the entire migration period
+    const wastedOldCrmCost = (inputs.oldCrmCost / WEEKS_PER_MONTH) * inputs.migrationWeeks;
+    
+    // New CRM costs during migration (they still need to pay for the new CRM during setup)
+    const newCrmCostDuringMigration = (inputs.newCrmCost / WEEKS_PER_MONTH) * inputs.migrationWeeks;
 
-    const totalManualCost = manualConsultantCost + manualInternalStaffCost + wastedCrmSubscriptionCost;
+    const totalManualCost = manualConsultantCost + manualInternalStaffCost + wastedOldCrmCost + newCrmCostDuringMigration;
 
     const quillSwitchInternalCost = QUILLSWITCH_INTERNAL_HOURS * INTERNAL_HOURLY_RATE;
-    const quillSwitchCost = QUILLSWITCH_PLAN_COST + quillSwitchInternalCost;
+    const quillSwitchOldCrmCost = (inputs.oldCrmCost / WEEKS_PER_MONTH) * QUILLSWITCH_TIMELINE_WEEKS;
+    const quillSwitchNewCrmCost = (inputs.newCrmCost / WEEKS_PER_MONTH) * QUILLSWITCH_TIMELINE_WEEKS;
+    const quillSwitchCost = QUILLSWITCH_PLAN_COST + quillSwitchInternalCost + quillSwitchOldCrmCost + quillSwitchNewCrmCost;
 
     const totalSavings = totalManualCost - quillSwitchCost;
     const weeksSaved = inputs.migrationWeeks - QUILLSWITCH_TIMELINE_WEEKS;
     const hoursSaved = manualInternalStaffTotalHours - QUILLSWITCH_INTERNAL_HOURS;
+    const monthlyCrmSavings = inputs.oldCrmCost - inputs.newCrmCost;
 
     return {
       manualConsultantCost,
       manualInternalStaffCost,
-      wastedCrmSubscriptionCost,
+      wastedOldCrmCost,
+      newCrmCostDuringMigration,
       totalManualCost,
       quillSwitchCost,
       totalSavings,
       weeksSaved,
       hoursSaved,
+      monthlyCrmSavings,
     };
   }, [inputs]);
 
@@ -227,26 +239,63 @@ const SavingsCalculator: React.FC = () => {
 
             <Separator />
 
-            {/* CRM Monthly Cost */}
-            <div className="space-y-2">
-              <Label htmlFor="monthlyCrmCost" className="text-sm font-medium">
-                New CRM monthly subscription cost
-              </Label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="monthlyCrmCost"
-                  type="number"
-                  value={inputs.monthlyCrmCost}
-                  onChange={(e) =>
-                    setInputs({
-                      ...inputs,
-                      monthlyCrmCost: Number(e.target.value),
-                    })
-                  }
-                  className="pl-9"
-                />
+            {/* CRM Costs */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="oldCrmCost" className="text-sm font-medium">
+                  Current CRM monthly cost
+                </Label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="oldCrmCost"
+                    type="number"
+                    value={inputs.oldCrmCost}
+                    onChange={(e) =>
+                      setInputs({
+                        ...inputs,
+                        oldCrmCost: Number(e.target.value),
+                      })
+                    }
+                    className="pl-9"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  What you're currently paying (e.g., Salesforce)
+                </p>
               </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="newCrmCost" className="text-sm font-medium">
+                  New CRM monthly cost
+                </Label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="newCrmCost"
+                    type="number"
+                    value={inputs.newCrmCost}
+                    onChange={(e) =>
+                      setInputs({
+                        ...inputs,
+                        newCrmCost: Number(e.target.value),
+                      })
+                    }
+                    className="pl-9"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  What you'll pay after migration (e.g., HubSpot)
+                </p>
+              </div>
+              
+              {results.monthlyCrmSavings > 0 && (
+                <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <p className="text-sm text-green-600 font-medium">
+                    Monthly CRM savings: {formatCurrency(results.monthlyCrmSavings)}
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -277,6 +326,12 @@ const SavingsCalculator: React.FC = () => {
                   <Users className="h-4 w-4" />
                   <span>Save {Math.round(results.hoursSaved)} internal team hours</span>
                 </div>
+                {results.monthlyCrmSavings > 0 && (
+                  <div className="flex items-center justify-center gap-2 text-green-600">
+                    <DollarSign className="h-4 w-4" />
+                    <span>Save {formatCurrency(results.monthlyCrmSavings)}/month ongoing</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -351,7 +406,7 @@ const SavingsCalculator: React.FC = () => {
                   <p><strong>Internal Staff Cost:</strong> $75/hour (fully-loaded)</p>
                   <p><strong>QuillSwitch Staff Time:</strong> 8 total hours for setup and review</p>
                   <p><strong>Manual Migration:</strong> 10 hours/week per internal staff member</p>
-                  <p><strong>Wasted Subscription:</strong> CRM costs during extended manual migration timeline</p>
+                  <p><strong>CRM Costs:</strong> Both old and new CRM subscription costs during migration timeline</p>
                   <p><strong>QuillSwitch Plan:</strong> Essentials plan at {formatCurrency(1999)}</p>
                 </div>
               </AlertDescription>
