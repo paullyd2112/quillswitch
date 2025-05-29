@@ -44,31 +44,31 @@ function App() {
                   <Route path="/terms" element={<TermsOfService />} />
                   <Route path="/demo" element={<Demo />} />
 
+                  {/* Legacy routes - redirect to new structure */}
+                  <Route path="/migrations/*" element={<Navigate to="/app/setup" replace />} />
+                  <Route path="/connect/*" element={<Navigate to="/app/setup" replace />} />
+
                   {/* Protected routes with sidebar layout */}
                   <Route path="/app" element={<BaseLayout />}>
                     <Route index element={<Navigate to="/app/setup" replace />} />
                     
-                    {/* Redirect /app/migrations to /app/setup */}
-                    <Route path="migrations" element={<Navigate to="/app/setup" replace />} />
-                    
-                    {/* Keep the migration dashboard (for viewing existing migrations) */}
-                    <Route path="migrations/:id" element={<MigrationDashboard />} />
-                    
-                    {/* Redirect /app/connect to /app/setup */}
-                    <Route path="connect" element={<Navigate to="/app/setup" replace />} />
-                    
+                    {/* Main application routes */}
                     <Route path="setup" element={<MigrationSetup />} />
+                    <Route path="crm-connections" element={<CrmConnections />} />
                     <Route path="credentials-vault" element={<CredentialsVault />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="support" element={<Support />} />
                     
-                    {/* New CRM connections route */}
-                    <Route path="crm-connections" element={<CrmConnections />} />
+                    {/* Migration-specific routes */}
+                    <Route path="migrations" element={<Navigate to="/app/setup" replace />} />
+                    <Route path="migrations/:id" element={<MigrationDashboard />} />
+                    <Route path="connect" element={<Navigate to="/app/setup" replace />} />
                     
                     {/* OAuth callback route */}
                     <Route path="oauth/callback" element={<OAuthCallback />} />
                   </Route>
                   
+                  {/* Catch-all route for 404 errors */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </UserOnboardingProvider>
