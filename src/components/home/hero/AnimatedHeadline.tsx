@@ -25,13 +25,13 @@ const AnimatedHeadline: React.FC = () => {
           <div 
             className="absolute top-0 left-0 w-full h-full opacity-30"
             style={{
-              background: `linear-gradient(90deg, transparent, rgba(0, 123, 255, 0.6), transparent)`,
+              background: `linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent)`,
               transform: `translateX(${shimmerPosition}%)`,
               transition: 'transform 0.1s linear'
             }}
           />
         </span>
-        <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-400 to-cyan-400 animate-pulse">
+        <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 animate-pulse">
           Powered by AI
         </span>
       </h1>

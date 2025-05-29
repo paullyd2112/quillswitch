@@ -8,25 +8,25 @@ const steps = [
     icon: Database,
     title: "Connect",
     description: "Secure API connections to your source and target CRMs",
-    color: "from-blue-500 to-blue-600"
+    color: "from-blue-400 to-blue-600"
   },
   {
     icon: Brain,
     title: "AI Analysis",
     description: "Gemini AI analyzes and maps your data structures intelligently",
-    color: "from-blue-600 to-blue-700"
+    color: "from-blue-500 to-blue-700"
   },
   {
     icon: Zap,
     title: "Migrate",
     description: "Lightning-fast transfer with real-time monitoring",
-    color: "from-blue-400 to-blue-500"
+    color: "from-blue-300 to-blue-500"
   },
   {
     icon: CheckCircle,
     title: "Validate",
     description: "Comprehensive validation ensures 100% data integrity",
-    color: "from-blue-500 to-blue-600"
+    color: "from-blue-400 to-blue-600"
   }
 ];
 
@@ -134,7 +134,7 @@ const HowItWorksSection: React.FC = () => {
                 onClick={() => setActiveStep(index)}
                 className={`
                   w-3 h-3 rounded-full transition-all duration-300
-                  ${activeStep === index ? 'bg-primary scale-125' : 'bg-slate-700 hover:bg-slate-600'}
+                  ${activeStep === index ? 'bg-blue-500 scale-125' : 'bg-slate-700 hover:bg-slate-600'}
                 `}
               />
             ))}
