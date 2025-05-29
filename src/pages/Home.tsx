@@ -7,6 +7,7 @@ import HowItWorksSection from "@/components/home/sections/HowItWorksSection";
 import HomeBenefitsSection from "@/components/home/HomeBenefitsSection";
 import HomeCtaSection from "@/components/home/HomeCtaSection";
 import Footer from "@/components/layout/Footer";
+import FeaturesSection from "@/components/home/FeaturesSection";
 
 const Home = () => {
   return (
@@ -15,6 +16,7 @@ const Home = () => {
         <HomeHero />
         <ProblemSolutionSection />
         <EnhancedFeaturesSection />
+        <FeaturesSection />
         <HowItWorksSection />
         <HomeBenefitsSection />
         <HomeCtaSection />

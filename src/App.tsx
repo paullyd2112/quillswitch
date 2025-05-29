@@ -1,7 +1,6 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
-import Features from './pages/Features'
 import Resources from './pages/Resources'
 import Auth from './pages/Auth'
 import KnowledgeArticle from './pages/KnowledgeArticle'
@@ -36,7 +35,7 @@ function App() {
                 <Routes>
                   {/* Public pages */}
                   <Route path="/" element={<Home />} />
-                  <Route path="/features" element={<Features />} />
+                  <Route path="/features" element={<Navigate to="/" replace />} />
                   <Route path="/resources" element={<Resources />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/knowledge/:id" element={<KnowledgeArticle />} />

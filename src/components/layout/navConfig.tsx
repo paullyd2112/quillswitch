@@ -1,80 +1,49 @@
 
-import React from "react";
-import {
-  Home, Lightbulb, FileText, LogIn, Settings, 
-  ExternalLink, Key, Plus, LifeBuoy, Link
-} from "lucide-react";
-import { NavLink } from "./types";
+import { Home, FileText, HelpCircle, Settings, Database, Shield, Zap } from "lucide-react";
+import type { NavItem } from "./types";
 
-export const mainNav: NavLink[] = [
+export const mainNavItems: NavItem[] = [
   {
+    title: "Home",
     href: "/",
-    label: "Home",
-    icon: <Home size={20} />,
-    category: "Main",
+    icon: Home,
   },
   {
-    href: "/features",
-    label: "Features",
-    icon: <Lightbulb size={20} />,
-    category: "Main",
-  },
-  {
+    title: "Resources", 
     href: "/resources",
-    label: "Resources",
-    icon: <FileText size={20} />,
-    category: "Main",
+    icon: FileText,
   },
   {
-    href: "/demo",
-    label: "Demo",
-    icon: <ExternalLink size={20} />,
-    category: "Main",
+    title: "Demo",
+    href: "/demo", 
+    icon: Zap,
   },
+  {
+    title: "Support",
+    href: "/support",
+    icon: HelpCircle,
+  }
 ];
 
-export const userNav: NavLink[] = [
+export const appNavItems: NavItem[] = [
   {
+    title: "Migration Setup",
     href: "/app/setup",
-    label: "New Migration",
-    icon: <Plus size={20} />,
-    category: "Workspace",
+    icon: Database,
   },
   {
+    title: "CRM Connections", 
     href: "/app/crm-connections",
-    label: "CRM Connections",
-    icon: <Link size={20} />,
-    category: "Workspace",
+    icon: Shield,
   },
   {
-    href: "/app/credentials-vault",
-    label: "Credentials Vault",
-    icon: <Key size={20} />,
-    category: "Workspace",
+    title: "Credentials Vault",
+    href: "/app/credentials-vault", 
+    icon: Shield,
   },
   {
+    title: "Settings",
     href: "/app/settings",
-    label: "Settings",
-    icon: <Settings size={20} />,
-    category: "Account",
-  },
-  {
-    href: "/app/support",
-    label: "Support",
-    icon: <LifeBuoy size={20} />,
-    category: "Account",
-  },
+    icon: Settings,
+  }
 ];
-
-export const getNavLinksByCategory = (links: NavLink[]) => {
-  return links.reduce(
-    (acc: Record<string, NavLink[]>, link) => {
-      if (!acc[link.category]) {
-        acc[link.category] = [];
-      }
-      acc[link.category].push(link);
-      return acc;
-    },
-    {}
-  );
-};
