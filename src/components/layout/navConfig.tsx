@@ -1,6 +1,6 @@
 
-import { Home, FileText, HelpCircle, Settings, Database, Shield, Zap } from "lucide-react";
-import type { NavItem } from "./types";
+import { Home, FileText, HelpCircle, Settings, Database, Shield, Zap, Plus, LifeBuoy } from "lucide-react";
+import type { NavItem, NavLink } from "./types";
 
 export const mainNavItems: NavItem[] = [
   {
@@ -47,3 +47,39 @@ export const appNavItems: NavItem[] = [
     icon: Settings,
   }
 ];
+
+// Convert NavItem to NavLink format for compatibility
+const convertToNavLink = (items: NavItem[], category: string): NavLink[] => {
+  return items.map(item => ({
+    label: item.title,
+    href: item.href,
+    icon: <item.icon size={20} />,
+    category
+  }));
+};
+
+// Legacy exports for backward compatibility
+export const mainNav: NavLink[] = convertToNavLink(mainNavItems, "Main");
+
+export const userNav: NavLink[] = [
+  ...convertToNavLink(appNavItems, "Workspace"),
+  {
+    label: "Support",
+    href: "/app/support",
+    icon: <LifeBuoy size={20} />,
+    category: "Account",
+  }
+];
+
+export const getNavLinksByCategory = (links: NavLink[]) => {
+  return links.reduce(
+    (acc: Record<string, NavLink[]>, link) => {
+      if (!acc[link.category]) {
+        acc[link.category] = [];
+      }
+      acc[link.category].push(link);
+      return acc;
+    },
+    {}
+  );
+};
