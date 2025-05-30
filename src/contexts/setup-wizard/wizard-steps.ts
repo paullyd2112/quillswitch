@@ -1,7 +1,6 @@
 
 import { WizardStep } from "./types";
-import { CheckCircle, ArrowRight, ArrowLeft, Database, FileCode, FileCheck, Settings } from "lucide-react";
-import React from "react";
+import { CheckCircle, Database, FileCode, FileCheck, Settings } from "lucide-react";
 
 // Create icon elements with a helper function instead of JSX
 const createIcon = (Icon: any) => {
@@ -33,14 +32,14 @@ export const wizardSteps: WizardStep[] = [
   },
   {
     id: "data",
-    title: "Data Selection",
-    description: "Choose what to migrate",
+    title: "Data & Strategy",
+    description: "Choose data and migration approach",
     icon: createIcon(FileCheck)
   },
   {
-    id: "confirmation",
-    title: "Confirmation",
-    description: "Review and confirm",
+    id: "review",
+    title: "Review & Confirm",
+    description: "Review and confirm your setup",
     icon: createIcon(CheckCircle)
   }
 ];

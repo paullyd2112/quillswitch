@@ -61,10 +61,42 @@ export const useFormData = () => {
       selection => selection.crmId !== crmId
     );
     
+    // Find existing selection to preserve custom mapping
+    const existingSelection = formData.crmDataSelections.find(
+      selection => selection.crmId === crmId
+    );
+    
     updatedSelections.push({
       crmId,
-      dataTypes
+      dataTypes,
+      customMapping: existingSelection?.customMapping || ""
     });
+    
+    setFormData({
+      ...formData,
+      crmDataSelections: updatedSelections
+    });
+  };
+
+  const handlePerCrmCustomMappingChange = (crmId: string, customMapping: string) => {
+    const updatedSelections = formData.crmDataSelections.map(selection => {
+      if (selection.crmId === crmId) {
+        return {
+          ...selection,
+          customMapping
+        };
+      }
+      return selection;
+    });
+    
+    // If no selection exists for this CRM, create one
+    if (!formData.crmDataSelections.find(s => s.crmId === crmId)) {
+      updatedSelections.push({
+        crmId,
+        dataTypes: [],
+        customMapping
+      });
+    }
     
     setFormData({
       ...formData,
@@ -80,5 +112,6 @@ export const useFormData = () => {
     handleRadioChange,
     handleCheckboxChange,
     handleCrmDataSelectionChange,
+    handlePerCrmCustomMappingChange,
   };
 };

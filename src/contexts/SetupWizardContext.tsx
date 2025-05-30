@@ -21,7 +21,8 @@ export const SetupWizardProvider: React.FC<{ children: React.ReactNode }> = ({ c
     handleApiKeyChange,
     handleRadioChange,
     handleCheckboxChange,
-    handleCrmDataSelectionChange
+    handleCrmDataSelectionChange,
+    handlePerCrmCustomMappingChange
   } = useFormData();
 
   const {
@@ -86,6 +87,7 @@ export const SetupWizardProvider: React.FC<{ children: React.ReactNode }> = ({ c
     handleRadioChange,
     handleCheckboxChange,
     handleCrmDataSelectionChange,
+    handlePerCrmCustomMappingChange,
     handleSourceCrmToggle,
     handleDestinationCrmToggle,
     setMultiCrmEnabled,

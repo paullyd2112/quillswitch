@@ -26,6 +26,7 @@ export interface CrmSystem {
 export interface CrmDataSelection {
   crmId: string;
   dataTypes: string[];
+  customMapping?: string; // Add per-CRM custom mapping
 }
 
 export interface SetupFormData {
@@ -67,6 +68,7 @@ export interface SetupWizardContextType {
   handleRadioChange: (value: string, field: string) => void;
   handleCheckboxChange: (value: string) => void;
   handleCrmDataSelectionChange: (crmId: string, dataTypes: string[]) => void;
+  handlePerCrmCustomMappingChange: (crmId: string, customMapping: string) => void;
   handleSourceCrmToggle: (crmId: string) => void;
   handleDestinationCrmToggle: (crmId: string) => void;
   setMultiCrmEnabled: (enabled: boolean) => void;

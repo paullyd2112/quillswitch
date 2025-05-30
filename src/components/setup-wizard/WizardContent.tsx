@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import CompanyInfoStep from "./CompanyInfoStep";
 import SourceCrmStep from "./SourceCrmStep";
 import DestinationCrmStep from "./DestinationCrmStep";
-import DataSelectionStep from "./DataSelectionStep";
+import UnifiedDataSelectionStep from "./UnifiedDataSelectionStep";
 import MigrationStrategyStep from "./MigrationStrategyStep";
 import ReviewStep from "./ReviewStep";
 import { sourceCrmOptions, destinationCrmOptions } from "@/config/crmSystems";
@@ -32,6 +32,7 @@ const WizardContent: React.FC = () => {
     handleRadioChange,
     handleCheckboxChange,
     handleCrmDataSelectionChange,
+    handlePerCrmCustomMappingChange,
     handleSourceCrmToggle,
     handleDestinationCrmToggle,
     setMultiCrmEnabled,
@@ -80,23 +81,20 @@ const WizardContent: React.FC = () => {
         );
       case 3:
         return (
-          <DataSelectionStep
+          <UnifiedDataSelectionStep
             formData={formData}
             handleCheckboxChange={handleCheckboxChange}
             handleCrmDataSelectionChange={handleCrmDataSelectionChange}
+            handlePerCrmCustomMappingChange={handlePerCrmCustomMappingChange}
             handleChange={handleChange}
             handleRadioChange={handleRadioChange}
+            showPerCrmDataSelection={showPerCrmDataSelection}
+            selectedSourceCrms={selectedSourceCrms}
+            sourceCrmOptions={sourceCrmOptions}
+            customCrmNames={customCrmNames}
           />
         );
       case 4:
-        return (
-          <MigrationStrategyStep
-            formData={formData}
-            handleRadioChange={handleRadioChange}
-            handleChange={handleChange}
-          />
-        );
-      case 5:
         return (
           <ReviewStep
             formData={formData}
