@@ -10,6 +10,7 @@ interface DataSelectionStepProps {
   formData: SetupFormData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleCheckboxChange: (value: string) => void;
+  handleCrmDataSelectionChange: (crmId: string, dataTypes: string[]) => void;
   handleRadioChange: (value: string, field: string) => void;
 }
 
@@ -17,6 +18,7 @@ const DataSelectionStep: React.FC<DataSelectionStepProps> = ({
   formData,
   handleChange,
   handleCheckboxChange,
+  handleCrmDataSelectionChange,
   handleRadioChange
 }) => {
   return (
