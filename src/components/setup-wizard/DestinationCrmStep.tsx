@@ -1,38 +1,88 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { CrmSystem, SetupFormData } from "@/contexts/setup-wizard/types";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CrmSystem, SetupFormData } from "@/types/setupWizard";
+import { useConnection } from "@/contexts/ConnectionContext";
+import ConnectionModal from "@/components/connection-hub/ConnectionModal";
+import { crmSystems } from "@/config/connectionSystems";
+import { Shield, CheckCircle, AlertCircle } from "lucide-react";
 
 interface DestinationCrmStepProps {
   formData: SetupFormData;
-  handleRadioChange: (value: string, field: string) => void;
-  handleApiKeyChange: (crmId: string, value: string) => void;
-  handleCustomCrmNameChange: (crmId: string, value: string) => void;
-  customCrmNames: Record<string, string>;
-  destinationCrmOptions: CrmSystem[];
   multiDestinationEnabled: boolean;
   setMultiDestinationEnabled: (enabled: boolean) => void;
   selectedDestinationCrms: string[];
   handleDestinationCrmToggle: (crmId: string) => void;
+  handleApiKeyChange: (crmId: string, value: string) => void;
+  handleCustomCrmNameChange: (crmId: string, value: string) => void;
+  customCrmNames: Record<string, string>;
+  destinationCrmOptions: CrmSystem[];
 }
 
 const DestinationCrmStep: React.FC<DestinationCrmStepProps> = ({
   formData,
-  handleRadioChange,
-  handleApiKeyChange,
-  handleCustomCrmNameChange,
-  customCrmNames,
-  destinationCrmOptions,
   multiDestinationEnabled,
   setMultiDestinationEnabled,
   selectedDestinationCrms,
-  handleDestinationCrmToggle
+  handleDestinationCrmToggle,
+  handleApiKeyChange,
+  handleCustomCrmNameChange,
+  customCrmNames,
+  destinationCrmOptions
 }) => {
+  const { connectedSystems } = useConnection();
+  const [selectedSystem, setSelectedSystem] = useState<any>(null);
+  const [showConnectionModal, setShowConnectionModal] = useState(false);
+
+  // Get connected destination CRMs
+  const connectedDestinationCrms = connectedSystems.filter(system => system.type === "destination");
+  
+  const handleConnectCrm = (crmId: string) => {
+    const systemConfig = crmSystems.find(system => 
+      system.id === crmId && system.connectionType === "destination"
+    );
+    
+    if (systemConfig) {
+      setSelectedSystem(systemConfig);
+      setShowConnectionModal(true);
+    }
+  };
+
+  const isConnected = (crmId: string) => {
+    return connectedDestinationCrms.some(system => system.id === crmId);
+  };
+
+  const renderConnectionStatus = (crmId: string) => {
+    const connected = isConnected(crmId);
+    
+    if (connected) {
+      return (
+        <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+          <CheckCircle className="h-4 w-4" />
+          <span className="text-sm">Connected</span>
+        </div>
+      );
+    }
+    
+    return (
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => handleConnectCrm(crmId)}
+        className="gap-2"
+      >
+        <Shield className="h-4 w-4" />
+        Connect
+      </Button>
+    );
+  };
   
   const renderDestinationCrmOptions = () => {
     const popularOptions = destinationCrmOptions.filter(crm => crm.popular);
@@ -41,43 +91,56 @@ const DestinationCrmStep: React.FC<DestinationCrmStepProps> = ({
     return (
       <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-          {popularOptions.map(crm => (
-            <div 
-              key={crm.id}
-              className={`border rounded-md p-3 cursor-pointer transition-colors ${
-                multiDestinationEnabled 
-                  ? selectedDestinationCrms.includes(crm.id) ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
-                  : formData.destinationCrm === crm.id ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
-              }`}
-              onClick={() => handleDestinationCrmToggle(crm.id)}
-            >
-              <div className="flex items-start gap-2">
-                {multiDestinationEnabled ? (
-                  <Checkbox 
-                    checked={selectedDestinationCrms.includes(crm.id)} 
-                    onCheckedChange={() => handleDestinationCrmToggle(crm.id)}
-                    className="mt-1"
-                  />
-                ) : (
-                  <RadioGroup value={formData.destinationCrm} onValueChange={(value) => handleRadioChange(value, "destinationCrm")}>
-                    <RadioGroupItem 
-                      value={crm.id} 
-                      id={`dest-${crm.id}`} 
+          {popularOptions.map(crm => {
+            const connected = isConnected(crm.id);
+            const isSelected = multiDestinationEnabled 
+              ? selectedDestinationCrms.includes(crm.id)
+              : formData.destinationCrm === crm.id;
+            
+            return (
+              <div 
+                key={crm.id}
+                className={`border rounded-md p-3 transition-colors ${
+                  isSelected ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
+                } ${connected ? "border-green-200 dark:border-green-800" : ""}`}
+              >
+                <div className="flex items-start gap-2 mb-3">
+                  {multiDestinationEnabled ? (
+                    <Checkbox 
+                      checked={selectedDestinationCrms.includes(crm.id)} 
+                      onCheckedChange={() => handleDestinationCrmToggle(crm.id)}
                       className="mt-1"
+                      disabled={!connected}
                     />
-                  </RadioGroup>
-                )}
-                <div>
-                  <Label htmlFor={`dest-${crm.id}`} className="font-medium cursor-pointer">
-                    {crm.name}
-                  </Label>
-                  {crm.description && (
-                    <p className="text-xs text-muted-foreground">{crm.description}</p>
+                  ) : (
+                    <RadioGroup value={formData.destinationCrm} onValueChange={(value) => handleDestinationCrmToggle(value)}>
+                      <RadioGroupItem 
+                        value={crm.id} 
+                        id={`destination-${crm.id}`} 
+                        className="mt-1"
+                        disabled={!connected}
+                      />
+                    </RadioGroup>
+                  )}
+                  <div className="flex-1">
+                    <Label htmlFor={`destination-${crm.id}`} className="font-medium cursor-pointer">
+                      {crm.name}
+                    </Label>
+                    {crm.description && (
+                      <p className="text-xs text-muted-foreground">{crm.description}</p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  {renderConnectionStatus(crm.id)}
+                  {!connected && (
+                    <span className="text-xs text-muted-foreground">Connection required</span>
                   )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         
         <Accordion type="single" collapsible className="mb-6">
@@ -85,43 +148,56 @@ const DestinationCrmStep: React.FC<DestinationCrmStepProps> = ({
             <AccordionTrigger className="text-sm">Show more CRM options</AccordionTrigger>
             <AccordionContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
-                {otherOptions.map(crm => (
-                  <div 
-                    key={crm.id}
-                    className={`border rounded-md p-3 cursor-pointer transition-colors ${
-                      multiDestinationEnabled 
-                        ? selectedDestinationCrms.includes(crm.id) ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
-                        : formData.destinationCrm === crm.id ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
-                    }`}
-                    onClick={() => handleDestinationCrmToggle(crm.id)}
-                  >
-                    <div className="flex items-start gap-2">
-                      {multiDestinationEnabled ? (
-                        <Checkbox 
-                          checked={selectedDestinationCrms.includes(crm.id)} 
-                          onCheckedChange={() => handleDestinationCrmToggle(crm.id)}
-                          className="mt-1"
-                        />
-                      ) : (
-                        <RadioGroup value={formData.destinationCrm} onValueChange={(value) => handleRadioChange(value, "destinationCrm")}>
-                          <RadioGroupItem 
-                            value={crm.id} 
-                            id={`dest-${crm.id}`} 
+                {otherOptions.map(crm => {
+                  const connected = isConnected(crm.id);
+                  const isSelected = multiDestinationEnabled 
+                    ? selectedDestinationCrms.includes(crm.id)
+                    : formData.destinationCrm === crm.id;
+                  
+                  return (
+                    <div 
+                      key={crm.id}
+                      className={`border rounded-md p-3 transition-colors ${
+                        isSelected ? "bg-brand-50 border-brand-200 dark:bg-brand-900/20 dark:border-brand-800" : ""
+                      } ${connected ? "border-green-200 dark:border-green-800" : ""}`}
+                    >
+                      <div className="flex items-start gap-2 mb-3">
+                        {multiDestinationEnabled ? (
+                          <Checkbox 
+                            checked={selectedDestinationCrms.includes(crm.id)} 
+                            onCheckedChange={() => handleDestinationCrmToggle(crm.id)}
                             className="mt-1"
+                            disabled={!connected}
                           />
-                        </RadioGroup>
-                      )}
-                      <div>
-                        <Label htmlFor={`dest-${crm.id}`} className="font-medium cursor-pointer">
-                          {crm.name}
-                        </Label>
-                        {crm.description && (
-                          <p className="text-xs text-muted-foreground">{crm.description}</p>
+                        ) : (
+                          <RadioGroup value={formData.destinationCrm} onValueChange={(value) => handleDestinationCrmToggle(value)}>
+                            <RadioGroupItem 
+                              value={crm.id} 
+                              id={`destination-${crm.id}`} 
+                              className="mt-1"
+                              disabled={!connected}
+                            />
+                          </RadioGroup>
+                        )}
+                        <div className="flex-1">
+                          <Label htmlFor={`destination-${crm.id}`} className="font-medium cursor-pointer">
+                            {crm.name}
+                          </Label>
+                          {crm.description && (
+                            <p className="text-xs text-muted-foreground">{crm.description}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-between items-center">
+                        {renderConnectionStatus(crm.id)}
+                        {!connected && (
+                          <span className="text-xs text-muted-foreground">Connection required</span>
                         )}
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -129,81 +205,39 @@ const DestinationCrmStep: React.FC<DestinationCrmStepProps> = ({
       </>
     );
   };
-  
-  const renderApiKeyInputs = () => {
-    const selectedCrms = multiDestinationEnabled 
-      ? selectedDestinationCrms 
-      : [formData.destinationCrm];
-    
-    return (
-      <div className="space-y-4 mt-6">
-        {selectedCrms.map(crmId => {
-          const crmOption = destinationCrmOptions.find(c => c.id === crmId);
-          
-          if (!crmOption) return null;
-          
-          return (
-            <div key={crmId} className="space-y-2 border p-4 rounded-md">
-              <div className="flex justify-between items-center">
-                <Label className="font-medium">{crmOption.name} Configuration</Label>
-                {multiDestinationEnabled && (
-                  <Badge variant="outline">{crmOption.name}</Badge>
-                )}
-              </div>
-              
-              {crmId === 'custom' ? (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor={`custom-dest-name-${crmId}`}>Custom CRM Name</Label>
-                    <Input 
-                      id={`custom-dest-name-${crmId}`}
-                      placeholder="Enter your CRM system name"
-                      value={customCrmNames[crmId] || ''}
-                      onChange={(e) => handleCustomCrmNameChange(crmId, e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor={`api-key-${crmId}`}>API Key</Label>
-                    <Input 
-                      id={`api-key-${crmId}`}
-                      placeholder="Enter your API key"
-                      value={formData.apiKeys[crmId] || ''}
-                      onChange={(e) => handleApiKeyChange(crmId, e.target.value)}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Please enter the API key for your custom CRM system
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Label htmlFor={`api-key-${crmId}`}>{crmOption.apiKeyLabel || `${crmOption.name} API Key`}</Label>
-                  <Input 
-                    id={`api-key-${crmId}`}
-                    placeholder={`Enter your ${crmOption.name} API key`}
-                    value={formData.apiKeys[crmId] || ''}
-                    onChange={(e) => handleApiKeyChange(crmId, e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {crmOption.apiKeyHelp || `Your API key can be found in your ${crmOption.name} account settings`}
-                  </p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
+
+  const connectedCount = connectedDestinationCrms.length;
+  const selectedConnectedCount = multiDestinationEnabled 
+    ? selectedDestinationCrms.filter(crmId => isConnected(crmId)).length
+    : (formData.destinationCrm && isConnected(formData.destinationCrm) ? 1 : 0);
 
   return (
     <div>
       <h3 className="text-xl font-medium mb-4">Destination CRM Configuration</h3>
       <p className="text-muted-foreground mb-6">
-        Configure access to the CRM system(s) you want to migrate to.
+        Configure access to your target CRM system where your data will be migrated to.
       </p>
       
       <div className="space-y-6">
+        {connectedCount === 0 && (
+          <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800">
+            <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <AlertDescription className="text-amber-700 dark:text-amber-300">
+              You need to connect at least one destination CRM to proceed. Click "Connect" on any CRM below to get started.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {connectedCount > 0 && (
+          <Alert className="border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800">
+            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertDescription className="text-green-700 dark:text-green-300">
+              You have {connectedCount} destination CRM{connectedCount > 1 ? 's' : ''} connected. 
+              {selectedConnectedCount > 0 && ` ${selectedConnectedCount} selected for migration.`}
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="flex items-start space-x-2 p-3 bg-muted/40 rounded-md">
           <Checkbox 
             id="multi-destination" 
@@ -211,7 +245,7 @@ const DestinationCrmStep: React.FC<DestinationCrmStepProps> = ({
             onCheckedChange={(checked) => setMultiDestinationEnabled(checked === true)}
           />
           <div>
-            <Label htmlFor="multi-destination" className="font-medium">Do you need to migrate to multiple CRMs?</Label>
+            <Label htmlFor="multi-destination" className="font-medium">Do you want to migrate to multiple CRMs?</Label>
             <p className="text-xs text-muted-foreground">Enable this to select and configure multiple destination CRMs</p>
           </div>
         </div>
@@ -220,9 +254,19 @@ const DestinationCrmStep: React.FC<DestinationCrmStepProps> = ({
           <Label>{multiDestinationEnabled ? "Select Destination CRMs" : "Destination CRM Platform"}</Label>
           {renderDestinationCrmOptions()}
         </div>
-        
-        {renderApiKeyInputs()}
       </div>
+
+      {selectedSystem && (
+        <ConnectionModal
+          system={selectedSystem}
+          type="destination"
+          isOpen={showConnectionModal}
+          onClose={() => {
+            setShowConnectionModal(false);
+            setSelectedSystem(null);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -1,3 +1,5 @@
+
+import { useConnection } from "@/contexts/ConnectionContext";
 import { SetupFormData } from "./types";
 
 export const useStepValidation = (
@@ -10,33 +12,48 @@ export const useStepValidation = (
   customCrmNames: Record<string, string>,
   showPerCrmDataSelection: boolean
 ) => {
+  const { connectedSystems } = useConnection();
+
   const isStepValid = (): boolean => {
+    const connectedSourceCrms = connectedSystems.filter(system => system.type === "source");
+    const connectedDestinationCrms = connectedSystems.filter(system => system.type === "destination");
+
     switch (currentStep) {
-      case 0: // Company Info
+      case 0: // Company details
         return formData.companyName.trim() !== "";
+      
       case 1: // Source CRM
-        // For multi-CRM, ensure at least one CRM is selected
         if (multiCrmEnabled) {
-          return selectedSourceCrms.length > 0;
+          const connectedSelectedSources = selectedSourceCrms.filter(crmId => 
+            connectedSourceCrms.some(system => system.id === crmId)
+          );
+          return connectedSelectedSources.length > 0;
+        } else {
+          return formData.sourceCrm !== "" && 
+                 connectedSourceCrms.some(system => system.id === formData.sourceCrm);
         }
-        // For single CRM, check if the selected CRM has an API key if needed
-        return true;
+      
       case 2: // Destination CRM
         if (multiDestinationEnabled) {
-          return selectedDestinationCrms.length > 0;
+          const connectedSelectedDestinations = selectedDestinationCrms.filter(crmId => 
+            connectedDestinationCrms.some(system => system.id === crmId)
+          );
+          return connectedSelectedDestinations.length > 0;
+        } else {
+          return formData.destinationCrm !== "" && 
+                 connectedDestinationCrms.some(system => system.id === formData.destinationCrm);
         }
-        if (formData.destinationCrm === "custom") {
-          return Boolean(customCrmNames["destination"] && formData.apiKeys["destination"]);
-        }
-        // Other validation for destination CRM
-        return true;
-      case 3: // Data Selection
-        // For per-CRM data selection in multi-CRM mode
+      
+      case 3: // Data types
         if (showPerCrmDataSelection) {
-          return formData.crmDataSelections.some(selection => selection.dataTypes.length > 0);
+          return formData.crmDataSelections.length > 0 && 
+                 formData.crmDataSelections.every(selection => selection.dataTypes.length > 0);
         }
-        // For regular data selection
         return formData.dataTypes.length > 0;
+      
+      case 4: // Migration strategy
+        return formData.migrationStrategy !== "";
+      
       default:
         return true;
     }
