@@ -1,5 +1,5 @@
 
-import { useCallback, useMemo, useRef, useEffect } from 'react';
+import React, { useCallback, useMemo, useRef, useEffect } from 'react';
 
 /**
  * Debounce hook for performance optimization

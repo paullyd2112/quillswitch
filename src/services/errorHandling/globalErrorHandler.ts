@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 export interface AppError {
@@ -197,9 +198,9 @@ export class GlobalErrorHandler {
     const highCodes = [ERROR_CODES.MIGRATION_SETUP_FAILED, ERROR_CODES.DATA_TRANSFER_FAILED];
     const lowCodes = [ERROR_CODES.INVALID_INPUT, ERROR_CODES.REQUIRED_FIELD_MISSING];
 
-    if (criticalCodes.includes(code)) return 'critical';
-    if (highCodes.includes(code)) return 'high';
-    if (lowCodes.includes(code)) return 'low';
+    if (criticalCodes.includes(code as any)) return 'critical';
+    if (highCodes.includes(code as any)) return 'high';
+    if (lowCodes.includes(code as any)) return 'low';
     return 'medium';
   }
 
