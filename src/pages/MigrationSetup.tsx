@@ -1,6 +1,5 @@
 
-import React, { useState } from "react";
-import BaseLayout from "@/components/layout/BaseLayout";
+import React from "react";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
 import { SetupWizardProvider } from "@/contexts/SetupWizardContext";
 import { UserOnboardingProvider } from "@/components/onboarding/UserOnboardingProvider";
@@ -8,15 +7,13 @@ import MigrationSetupContent from "@/components/migration-setup/MigrationSetupCo
 
 const MigrationSetup: React.FC = () => {
   return (
-    <BaseLayout>
-      <ConnectionProvider>
-        <SetupWizardProvider>
-          <UserOnboardingProvider>
-            <MigrationSetupContent />
-          </UserOnboardingProvider>
-        </SetupWizardProvider>
-      </ConnectionProvider>
-    </BaseLayout>
+    <ConnectionProvider>
+      <SetupWizardProvider>
+        <UserOnboardingProvider>
+          <MigrationSetupContent />
+        </UserOnboardingProvider>
+      </SetupWizardProvider>
+    </ConnectionProvider>
   );
 };
 

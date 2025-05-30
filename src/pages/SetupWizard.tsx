@@ -1,20 +1,31 @@
 
 import React from "react";
-import ContentSection from "@/components/layout/ContentSection";
 import WizardHeader from "@/components/setup-wizard/WizardHeader";
 import WizardContainer from "@/components/setup-wizard/WizardContainer";
 import { SetupWizardProvider } from "@/contexts/SetupWizardContext";
+import FadeIn from "@/components/animations/FadeIn";
 
 const SetupWizard: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
-      <WizardHeader />
-      
-      <ContentSection className="py-12 pb-32">
-        <SetupWizardProvider>
-          <WizardContainer />
-        </SetupWizardProvider>
-      </ContentSection>
+    <div className="min-h-screen bg-slate-950 relative overflow-hidden">
+      {/* Background elements matching home page */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative z-10">
+        <WizardHeader />
+        
+        <div className="container mx-auto px-4 py-12 pb-32">
+          <FadeIn>
+            <SetupWizardProvider>
+              <WizardContainer />
+            </SetupWizardProvider>
+          </FadeIn>
+        </div>
+      </div>
     </div>
   );
 };

@@ -4,18 +4,17 @@ import HeroSection from "@/components/landing/HeroSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import CtaSection from "@/components/landing/CtaSection";
 import Footer from "@/components/layout/Footer";
-import BaseLayout from "@/components/layout/BaseLayout";
 
 const LandingPage = () => {
   return (
-    <BaseLayout>
+    <div className="min-h-screen bg-slate-950">
       <main>
         <HeroSection />
         <FeaturesSection />
         <CtaSection />
       </main>
       <Footer />
-    </BaseLayout>
+    </div>
   );
 };
 
