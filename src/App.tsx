@@ -24,62 +24,97 @@ import MigrationSetup from './pages/MigrationSetup'
 import CrmConnections from './pages/CrmConnections'
 import OAuthCallback from './components/oauth/OAuthCallback'
 import PricingEstimator from './pages/PricingEstimator'
+import AppErrorBoundary from './components/error-handling/AppErrorBoundary'
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="quill-theme-mode">
-      <TooltipProvider>
-        <CookieConsentProvider>
-          <BrowserRouter>
-            <AuthProvider>
-              <UserOnboardingProvider>
-                <Routes>
-                  {/* Public pages */}
-                  <Route path="/" element={<Home />} />
-                  <Route path="/features" element={<Navigate to="/" replace />} />
-                  <Route path="/resources" element={<Resources />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
-                  <Route path="/privacy" element={<PrivacyPolicy />} />
-                  <Route path="/terms" element={<TermsOfService />} />
-                  <Route path="/demo" element={<Demo />} />
-                  <Route path="/pricing" element={<PricingEstimator />} />
+    <AppErrorBoundary>
+      <ThemeProvider defaultTheme="dark" storageKey="quill-theme-mode">
+        <TooltipProvider>
+          <CookieConsentProvider>
+            <BrowserRouter>
+              <AuthProvider>
+                <UserOnboardingProvider>
+                  <Routes>
+                    {/* Public pages */}
+                    <Route path="/" element={<Home />} />
+                    <Route path="/features" element={<Navigate to="/" replace />} />
+                    <Route path="/resources" element={<Resources />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/terms" element={<TermsOfService />} />
+                    <Route path="/demo" element={<Demo />} />
+                    <Route path="/pricing" element={<PricingEstimator />} />
 
-                  {/* Legacy routes - redirect to new structure */}
-                  <Route path="/migrations/*" element={<Navigate to="/app/setup" replace />} />
-                  <Route path="/connect/*" element={<Navigate to="/app/setup" replace />} />
+                    {/* Legacy routes - redirect to new structure */}
+                    <Route path="/migrations/*" element={<Navigate to="/app/setup" replace />} />
+                    <Route path="/connect/*" element={<Navigate to="/app/setup" replace />} />
 
-                  {/* Protected routes with sidebar layout */}
-                  <Route path="/app" element={<BaseLayout />}>
-                    <Route index element={<Navigate to="/app/setup" replace />} />
+                    {/* Protected routes with sidebar layout */}
+                    <Route path="/app" element={
+                      <AppErrorBoundary isolate>
+                        <BaseLayout />
+                      </AppErrorBoundary>
+                    }>
+                      <Route index element={<Navigate to="/app/setup" replace />} />
+                      
+                      {/* Main application routes */}
+                      <Route path="setup" element={
+                        <AppErrorBoundary isolate>
+                          <MigrationSetup />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="crm-connections" element={
+                        <AppErrorBoundary isolate>
+                          <CrmConnections />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="credentials-vault" element={
+                        <AppErrorBoundary isolate>
+                          <CredentialsVault />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="settings" element={
+                        <AppErrorBoundary isolate>
+                          <Settings />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="support" element={
+                        <AppErrorBoundary isolate>
+                          <Support />
+                        </AppErrorBoundary>
+                      } />
+                      
+                      {/* Migration-specific routes */}
+                      <Route path="migrations" element={<Navigate to="/app/setup" replace />} />
+                      <Route path="migrations/:id" element={
+                        <AppErrorBoundary isolate>
+                          <MigrationDashboard />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="connect" element={<Navigate to="/app/setup" replace />} />
+                      
+                      {/* OAuth callback route */}
+                      <Route path="oauth/callback" element={
+                        <AppErrorBoundary isolate>
+                          <OAuthCallback />
+                        </AppErrorBoundary>
+                      } />
+                    </Route>
                     
-                    {/* Main application routes */}
-                    <Route path="setup" element={<MigrationSetup />} />
-                    <Route path="crm-connections" element={<CrmConnections />} />
-                    <Route path="credentials-vault" element={<CredentialsVault />} />
-                    <Route path="settings" element={<Settings />} />
-                    <Route path="support" element={<Support />} />
-                    
-                    {/* Migration-specific routes */}
-                    <Route path="migrations" element={<Navigate to="/app/setup" replace />} />
-                    <Route path="migrations/:id" element={<MigrationDashboard />} />
-                    <Route path="connect" element={<Navigate to="/app/setup" replace />} />
-                    
-                    {/* OAuth callback route */}
-                    <Route path="oauth/callback" element={<OAuthCallback />} />
-                  </Route>
-                  
-                  {/* Catch-all route for 404 errors */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </UserOnboardingProvider>
-            </AuthProvider>
-          </BrowserRouter>
-          <CookieConsentBanner />
-          <Toaster position="top-right" />
-        </CookieConsentProvider>
-      </TooltipProvider>
-    </ThemeProvider>
+                    {/* Catch-all route for 404 errors */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </UserOnboardingProvider>
+              </AuthProvider>
+            </BrowserRouter>
+            <CookieConsentBanner />
+            <Toaster position="top-right" />
+          </CookieConsentProvider>
+        </TooltipProvider>
+      </ThemeProvider>
+    </AppErrorBoundary>
   )
 }
 
