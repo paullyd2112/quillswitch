@@ -3,10 +3,10 @@ import React from "react";
 import { useSetupWizard } from "@/contexts/SetupWizardContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import CompanyDetailsStep from "./CompanyDetailsStep";
+import CompanyInfoStep from "./CompanyInfoStep";
 import SourceCrmStep from "./SourceCrmStep";
 import DestinationCrmStep from "./DestinationCrmStep";
-import DataTypesStep from "./DataTypesStep";
+import DataSelectionStep from "./DataSelectionStep";
 import MigrationStrategyStep from "./MigrationStrategyStep";
 import ReviewStep from "./ReviewStep";
 import { sourceCrmOptions, destinationCrmOptions } from "@/config/crmSystems";
@@ -45,10 +45,9 @@ const WizardContent: React.FC = () => {
     switch (currentStep) {
       case 0:
         return (
-          <CompanyDetailsStep
+          <CompanyInfoStep
             formData={formData}
             handleChange={handleChange}
-            handleRadioChange={handleRadioChange}
           />
         );
       case 1:
@@ -81,13 +80,12 @@ const WizardContent: React.FC = () => {
         );
       case 3:
         return (
-          <DataTypesStep
+          <DataSelectionStep
             formData={formData}
             handleCheckboxChange={handleCheckboxChange}
             handleCrmDataSelectionChange={handleCrmDataSelectionChange}
-            showPerCrmDataSelection={showPerCrmDataSelection}
-            selectedSourceCrms={selectedSourceCrms}
-            sourceCrmOptions={sourceCrmOptions}
+            handleChange={handleChange}
+            handleRadioChange={handleRadioChange}
           />
         );
       case 4:
