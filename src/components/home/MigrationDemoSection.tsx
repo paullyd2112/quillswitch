@@ -1,24 +1,12 @@
 
 import React from "react";
-import MigrationVisualizer from "./migration-demo/MigrationVisualizer";
 import MigrationInfo from "./migration-demo/MigrationInfo";
-import { useMigrationDemo } from "@/hooks/use-migration-demo";
 
 interface MigrationDemoSectionProps {
   onViewReport?: () => void;
 }
 
 const MigrationDemoSection = ({ onViewReport }: MigrationDemoSectionProps) => {
-  const {
-    migrationStatus,
-    steps,
-    overallProgress,
-    activeStep,
-    performanceMetrics,
-    errorMessage,
-    handleMigrationDemo
-  } = useMigrationDemo();
-  
   return (
     <section className="py-24 relative">
       {/* Background element */}
@@ -28,16 +16,15 @@ const MigrationDemoSection = ({ onViewReport }: MigrationDemoSectionProps) => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <MigrationInfo />
           
-          <div>
-            <MigrationVisualizer
-              migrationStatus={migrationStatus as "idle" | "loading" | "success" | "error"}
-              steps={steps}
-              overallProgress={overallProgress}
-              activeStep={activeStep}
-              errorMessage={errorMessage}
-              performanceMetrics={performanceMetrics}
-              onViewReport={onViewReport}
-            />
+          <div className="flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
+              <p className="text-lg">
+                Ready to experience seamless CRM migration?
+              </p>
+              <p className="mt-2">
+                Get started with your actual migration today.
+              </p>
+            </div>
           </div>
         </div>
       </div>
