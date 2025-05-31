@@ -46,6 +46,7 @@ function App() {
                     <Route path="/terms" element={<TermsOfService />} />
                     <Route path="/demo" element={<Demo />} />
                     <Route path="/pricing" element={<PricingEstimator />} />
+                    <Route path="/support" element={<Support />} />
 
                     {/* Legacy routes - redirect to new structure */}
                     <Route path="/migrations/*" element={<Navigate to="/app/setup" replace />} />
