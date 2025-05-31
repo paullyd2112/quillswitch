@@ -1071,6 +1071,15 @@ export type Database = {
         }
         Returns: string
       }
+      get_credential_security_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_credentials: number
+          expired_credentials: number
+          expiring_soon: number
+          last_rotation_days: number
+        }[]
+      }
       get_decrypted_credential_with_logging: {
         Args: { p_credential_id: string }
         Returns: {
@@ -1083,6 +1092,16 @@ export type Database = {
           expires_at: string
           metadata: Json
           tags: string[]
+        }[]
+      }
+      get_expiring_credentials: {
+        Args: { days_ahead?: number }
+        Returns: {
+          id: string
+          service_name: string
+          credential_name: string
+          expires_at: string
+          days_until_expiry: number
         }[]
       }
     }

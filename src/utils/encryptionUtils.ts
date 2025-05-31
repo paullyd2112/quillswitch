@@ -1,181 +1,209 @@
-
 /**
- * Encryption utilities for handling sensitive data in the CRM migration tool
- * This is a client-side encryption utility for non-critical data.
- * For truly sensitive data, always use server-side encryption via Supabase functions.
+ * Enhanced encryption utilities for QuillSwitch security
  */
 
-// Simple encryption key from localStorage or generate a new one
-const getEncryptionKey = (): string => {
-  let key = localStorage.getItem('app_encryption_key');
-  if (!key) {
-    // Generate a random key and store it
-    key = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-    localStorage.setItem('app_encryption_key', key);
-  }
-  return key;
-};
-
-/**
- * Encrypts sensitive data for local storage
- * Note: This is for protecting data at rest in browser storage
- * Critical data should be encrypted on the server side
- */
-export const encryptData = (data: string): string => {
-  try {
-    // Simple XOR encryption with the key for localStorage protection
-    // NOT suitable for truly sensitive data - use server-side encryption for that
-    const key = getEncryptionKey();
-    const encrypted = Array.from(data).map((char, i) => {
-      return String.fromCharCode(char.charCodeAt(0) ^ key.charCodeAt(i % key.length));
-    }).join('');
-    return btoa(encrypted); // Base64 encode the result
-  } catch (e) {
-    console.error('Encryption failed:', e);
-    return '';
-  }
-};
-
-/**
- * Decrypts data that was encrypted with encryptData
- */
-export const decryptData = (encryptedData: string): string => {
-  try {
-    const key = getEncryptionKey();
-    const data = atob(encryptedData); // Base64 decode
-    const decrypted = Array.from(data).map((char, i) => {
-      return String.fromCharCode(char.charCodeAt(0) ^ key.charCodeAt(i % key.length));
-    }).join('');
-    return decrypted;
-  } catch (e) {
-    console.error('Decryption failed:', e);
-    return '';
-  }
-};
-
-/**
- * Strong field-level encryption is now handled serverside using the 
- * encrypt_and_store_credential and get_decrypted_credential_with_logging
- * database functions via Supabase RPC
- */
-export const fieldEncrypt = async (data: string, userKey: string): Promise<string> => {
-  // This function now returns the original value since encryption 
-  // is handled by the server-side function
-  return data;
-};
-
-/**
- * Field decryption is now handled server-side
- */
-export const fieldDecrypt = async (encryptedData: string, userKey: string): Promise<string> => {
-  // This function is kept for backward compatibility
-  // but decryption is now handled by server-side functions
-  return encryptedData;
-};
-
-/**
- * Masks sensitive data for display (e.g. API keys, personal info)
- * @param data The sensitive data to mask
- * @param visibleChars Number of characters to show at the end (default: 4)
- * @returns Masked string with only the last few characters visible
- */
-export const maskSensitiveData = (data: string, visibleChars: number = 4): string => {
-  if (!data) return '';
-  if (data.length <= visibleChars) return data;
-  
-  // For API keys, we typically want to show the last few characters
-  const visiblePart = data.slice(-visibleChars);
-  const maskedPortion = '•'.repeat(Math.min(data.length - visibleChars, 12));
-  return `${maskedPortion}${visiblePart}`;
-};
-
-/**
- * Securely stores sensitive data
- * For truly sensitive data, use Supabase's server-side encryption
- */
-export const storeSecureData = (key: string, value: string): void => {
-  const encryptedValue = encryptData(value);
-  localStorage.setItem(`secure_${key}`, encryptedValue);
-};
-
-/**
- * Retrieves securely stored data
- */
-export const getSecureData = (key: string): string | null => {
-  const encryptedValue = localStorage.getItem(`secure_${key}`);
-  if (!encryptedValue) return null;
-  return decryptData(encryptedValue);
-};
-
-/**
- * Securely clears sensitive data
- */
-export const clearSecureData = (key: string): void => {
-  localStorage.removeItem(`secure_${key}`);
-};
-
-/**
- * Sanitizes data to prevent XSS attacks
- */
-export const sanitizeInput = (input: string): string => {
-  return input
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-};
-
-/**
- * Generates a secure random API key 
- * For development and testing purposes only
- * Production API keys should come from the service provider
- */
-export const generateSecureKey = (length: number = 24): string => {
-  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const randomValues = new Uint8Array(length);
-  window.crypto.getRandomValues(randomValues);
-  
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += charset[randomValues[i] % charset.length];
-  }
-  
-  return result;
-};
-
-/**
- * Verifies if the current connection is secure (HTTPS)
- */
-export const isConnectionSecure = (): boolean => {
+// Function to check connection security
+export function isConnectionSecure(): boolean {
   return window.location.protocol === 'https:' || 
-         window.location.hostname === 'localhost' || 
+         window.location.hostname === 'localhost' ||
          window.location.hostname === '127.0.0.1';
-};
+}
+
+// Function to mask sensitive data for display
+export function maskSensitiveData(value: string, visibleChars: number = 4): string {
+  if (!value || typeof value !== 'string') return '';
+  
+  if (value.length <= visibleChars * 2) {
+    return '*'.repeat(value.length);
+  }
+  
+  const start = value.substring(0, visibleChars);
+  const end = value.substring(value.length - visibleChars);
+  const middle = '*'.repeat(Math.max(4, value.length - (visibleChars * 2)));
+  
+  return `${start}${middle}${end}`;
+}
 
 /**
- * Checks credential expiry and returns status
+ * Generate a secure random identifier
  */
-export const checkCredentialExpiry = (expiryDate: string | null): {
-  hasExpired: boolean;
-  daysRemaining: number | null;
-  status: 'valid' | 'expiring-soon' | 'expired';
-} => {
-  if (!expiryDate) return { hasExpired: false, daysRemaining: null, status: 'valid' };
-  
-  const expiry = new Date(expiryDate);
-  const now = new Date();
-  
-  // Calculate days remaining
-  const diffTime = expiry.getTime() - now.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  if (diffDays < 0) {
-    return { hasExpired: true, daysRemaining: diffDays, status: 'expired' };
-  } else if (diffDays < 30) {
-    return { hasExpired: false, daysRemaining: diffDays, status: 'expiring-soon' };
+export function generateSecureId(length: number = 32): string {
+  const array = new Uint8Array(length / 2);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Validate password strength
+ */
+export interface PasswordStrength {
+  score: number;
+  feedback: string[];
+  isStrong: boolean;
+}
+
+export function validatePasswordStrength(password: string): PasswordStrength {
+  const feedback: string[] = [];
+  let score = 0;
+
+  if (password.length >= 8) {
+    score += 1;
   } else {
-    return { hasExpired: false, daysRemaining: diffDays, status: 'valid' };
+    feedback.push('Use at least 8 characters');
   }
-};
+
+  if (/[A-Z]/.test(password)) {
+    score += 1;
+  } else {
+    feedback.push('Include uppercase letters');
+  }
+
+  if (/[a-z]/.test(password)) {
+    score += 1;
+  } else {
+    feedback.push('Include lowercase letters');
+  }
+
+  if (/[0-9]/.test(password)) {
+    score += 1;
+  } else {
+    feedback.push('Include numbers');
+  }
+
+  if (/[^A-Za-z0-9]/.test(password)) {
+    score += 1;
+  } else {
+    feedback.push('Include special characters');
+  }
+
+  // Additional checks
+  if (password.length >= 12) {
+    score += 1;
+  }
+
+  if (!/(.)\1{2,}/.test(password)) {
+    score += 1;
+  } else {
+    feedback.push('Avoid repeated characters');
+  }
+
+  const isStrong = score >= 5;
+
+  return {
+    score: Math.min(score, 5),
+    feedback,
+    isStrong
+  };
+}
+
+/**
+ * Check for common security headers
+ */
+export function checkSecurityHeaders(): Promise<{
+  hasCSP: boolean;
+  hasHSTS: boolean;
+  hasXFrameOptions: boolean;
+  score: number;
+}> {
+  return new Promise((resolve) => {
+    // In a real implementation, this would check actual response headers
+    // For now, we'll simulate based on the current environment
+    const isSecure = isConnectionSecure();
+    
+    resolve({
+      hasCSP: isSecure,
+      hasHSTS: isSecure,
+      hasXFrameOptions: isSecure,
+      score: isSecure ? 100 : 60
+    });
+  });
+}
+
+/**
+ * Validate API key format
+ */
+export function validateApiKeyFormat(apiKey: string, type: 'openai' | 'stripe' | 'generic' = 'generic'): {
+  isValid: boolean;
+  errors: string[];
+} {
+  const errors: string[] = [];
+
+  if (!apiKey || typeof apiKey !== 'string') {
+    errors.push('API key is required');
+    return { isValid: false, errors };
+  }
+
+  // Remove whitespace
+  apiKey = apiKey.trim();
+
+  // Basic length check
+  if (apiKey.length < 10) {
+    errors.push('API key is too short');
+  }
+
+  // Type-specific validation
+  switch (type) {
+    case 'openai':
+      if (!apiKey.startsWith('sk-')) {
+        errors.push('OpenAI API keys should start with "sk-"');
+      }
+      if (apiKey.length < 40) {
+        errors.push('OpenAI API key appears to be too short');
+      }
+      break;
+    case 'stripe':
+      if (!apiKey.startsWith('sk_') && !apiKey.startsWith('pk_')) {
+        errors.push('Stripe API keys should start with "sk_" or "pk_"');
+      }
+      break;
+    case 'generic':
+      // Generic validation - check for suspicious patterns
+      if (/\s/.test(apiKey)) {
+        errors.push('API key should not contain spaces');
+      }
+      break;
+  }
+
+  // Check for potentially copied text
+  if (apiKey.includes('your_api_key') || apiKey.includes('replace_with')) {
+    errors.push('Please enter your actual API key');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Sanitize data for logging (remove sensitive information)
+ */
+export function sanitizeForLogging(data: any): any {
+  if (typeof data !== 'object' || data === null) {
+    return data;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizeForLogging(item));
+  }
+
+  const sanitized: any = {};
+  const sensitiveKeys = [
+    'password', 'token', 'api_key', 'secret', 'private_key',
+    'credential_value', 'auth_token', 'session_token'
+  ];
+
+  for (const [key, value] of Object.entries(data)) {
+    const lowerKey = key.toLowerCase();
+    
+    if (sensitiveKeys.some(sensitiveKey => lowerKey.includes(sensitiveKey))) {
+      sanitized[key] = '[REDACTED]';
+    } else if (typeof value === 'object') {
+      sanitized[key] = sanitizeForLogging(value);
+    } else {
+      sanitized[key] = value;
+    }
+  }
+
+  return sanitized;
+}
