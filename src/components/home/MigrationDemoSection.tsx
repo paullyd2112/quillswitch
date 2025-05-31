@@ -34,7 +34,6 @@ const MigrationDemoSection = ({ onViewReport }: MigrationDemoSectionProps) => {
               steps={steps}
               overallProgress={overallProgress}
               activeStep={activeStep}
-              onClick={handleMigrationDemo}
               errorMessage={errorMessage}
               performanceMetrics={performanceMetrics}
               onViewReport={onViewReport}

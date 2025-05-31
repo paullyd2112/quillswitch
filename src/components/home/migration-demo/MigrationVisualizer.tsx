@@ -12,7 +12,7 @@ type MigrationVisualizerProps = {
   steps: MigrationStep[];
   overallProgress: number;
   activeStep?: MigrationStep;
-  onClick: () => void;
+  onClick?: () => void;
   errorMessage?: string;
   performanceMetrics?: Partial<PerformanceMetrics>;
   onViewReport?: () => void;
@@ -30,7 +30,7 @@ const MigrationVisualizer = ({
 }: MigrationVisualizerProps) => {
   return (
     <GlassPanel 
-      className={`p-6 transition-all duration-500 cursor-pointer hover:shadow-lg hover:scale-105 ${
+      className={`p-6 transition-all duration-500 ${
         migrationStatus === "loading" 
           ? "bg-gradient-to-br from-brand-50/30 to-brand-100/10 dark:from-brand-900/20 dark:to-brand-800/5 border-brand-200/30 dark:border-brand-700/20" 
           : migrationStatus === "success"
@@ -39,9 +39,8 @@ const MigrationVisualizer = ({
               ? "bg-gradient-to-br from-red-50/20 to-red-100/10 dark:from-red-900/10 dark:to-red-800/5 border-red-200/30 dark:border-red-700/20"
               : ""
       }`}
-      onClick={onClick}
       intensity="medium"
-      hover={true}
+      hover={false}
     >
       <div className="space-y-4">
         {/* Headers with improved visualization */}
