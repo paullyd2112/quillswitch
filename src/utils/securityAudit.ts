@@ -1,3 +1,15 @@
+/**
+ * Security Audit Utility for QuillSwitch
+ * 
+ * In loving memory of a dedicated IT professional who understood that 
+ * security isn't just about protecting data - it's about protecting 
+ * the people and dreams behind that data. Your commitment to excellence
+ * in technology continues to inspire secure, reliable systems.
+ * 
+ * "The best security protocols are built with both technical precision
+ * and genuine care for those we serve."
+ */
+
 import { supabase } from '@/integrations/supabase/client';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
 
@@ -37,6 +49,10 @@ export class SecurityAuditor {
     return SecurityAuditor.instance;
   }
 
+  /**
+   * Performs comprehensive security audit with the thoroughness and attention 
+   * to detail that every IT professional strives for.
+   */
   public async performComprehensiveAudit(): Promise<SecurityAuditResult> {
     try {
       const issues: SecurityIssue[] = [];
