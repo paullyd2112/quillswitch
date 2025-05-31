@@ -1,7 +1,6 @@
 
 import React from "react";
-import { Sparkles, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
 
 type MigrationFooterProps = {
   status: "idle" | "loading" | "success" | "error";
@@ -25,26 +24,10 @@ const MigrationFooter = ({ status, onViewReport }: MigrationFooterProps) => {
   };
 
   return (
-    <div className="mt-6 space-y-3">
-      <div className="flex justify-center items-center gap-2 text-sm text-center">
-        <Sparkles className="h-4 w-4 text-brand-500" />
-        <span>{getMessage()}</span>
-        <Sparkles className="h-4 w-4 text-brand-500" />
-      </div>
-      
-      {status === "success" && onViewReport && (
-        <div className="flex justify-center">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={onViewReport}
-            className="flex items-center gap-2"
-          >
-            <FileText className="h-4 w-4" />
-            View Migration Report
-          </Button>
-        </div>
-      )}
+    <div className="mt-6 flex justify-center items-center gap-2 text-sm text-center">
+      <Sparkles className="h-4 w-4 text-brand-500" />
+      <span>{getMessage()}</span>
+      <Sparkles className="h-4 w-4 text-brand-500" />
     </div>
   );
 };

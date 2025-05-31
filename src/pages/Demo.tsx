@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
@@ -9,10 +10,9 @@ import CommonChallenges from "@/components/demo/CommonChallenges";
 import ExpertKnowledgeBase from "@/components/demo/ExpertKnowledgeBase";
 import DemoFooterCta from "@/components/demo/DemoFooterCta";
 import { Separator } from "@/components/ui/separator";
-import ReportsDemo from "@/components/demo/ReportsDemo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileBarChart, FileText, AlertTriangle } from "lucide-react";
+import { FileBarChart, FileText } from "lucide-react";
 import MigrationPerformanceChart from "@/components/home/migration-demo/MigrationPerformanceChart";
 import { useDemoReports } from "@/hooks/migration-demo/use-demo-reports";
 import { toast } from "@/hooks/use-toast";
@@ -38,16 +38,6 @@ const Demo = () => {
     // In a real app, this would trigger a PDF download
     console.log("Demo: PDF download triggered");
   };
-
-  const handleViewMigrationReport = () => {
-    toast({
-      title: "View Migration Report",
-      description: "This would open a detailed migration report with full analytics and insights.",
-    });
-    // In a real app, this could navigate to a specific migration report page
-    // navigate("/app/migration-report");
-    console.log("Demo: View Migration Report clicked");
-  };
   
   return (
     <>
@@ -68,10 +58,8 @@ const Demo = () => {
             {/* Interactive Demo Section */}
             <section>
               <h2 className="text-2xl font-bold mb-6">Interactive Migration Visualizer</h2>
-              <MigrationDemoSection onViewReport={handleViewMigrationReport} />
+              <MigrationDemoSection />
             </section>
-            
-            
             
             <Separator />
             
@@ -117,19 +105,6 @@ const Demo = () => {
                         <p className="text-sm text-muted-foreground">
                           Ensure data integrity with comprehensive validation reports that identify 
                           and resolve inconsistencies before they become problems.
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="border border-border shadow-sm">
-                      <CardContent className="p-4">
-                        <h3 className="text-md font-semibold mb-2 flex items-center gap-2">
-                          <AlertTriangle className="h-5 w-5 text-brand-500" />
-                          Error Analysis
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          Quickly identify and resolve issues with detailed error reports and 
-                          actionable recommendations.
                         </p>
                       </CardContent>
                     </Card>

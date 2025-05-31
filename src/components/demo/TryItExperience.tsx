@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -5,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Check, Database, ArrowRight, ChevronDown, ChevronUp, Search, AlertTriangle } from "lucide-react";
+import { Check, Database, ArrowRight, ChevronDown, ChevronUp, Search } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 interface CrmSystem {
@@ -25,11 +26,11 @@ const crmSystems: CrmSystem[] = [
 ];
 
 const dataTypes = [
-  { id: "contacts", name: "Contacts", count: 250, selected: true },
-  { id: "companies", name: "Companies", count: 125, selected: true },
-  { id: "deals", name: "Deals/Opportunities", count: 75, selected: true },
-  { id: "activities", name: "Activities & Tasks", count: 320, selected: false },
-  { id: "custom", name: "Custom Objects", count: 40, selected: false }
+  { id: "contacts", name: "Contacts", count: 8500, selected: true },
+  { id: "companies", name: "Companies", count: 2000, selected: true },
+  { id: "deals", name: "Deals/Opportunities", count: 3200, selected: true },
+  { id: "activities", name: "Activities & Tasks", count: 4800, selected: false },
+  { id: "custom", name: "Custom Objects", count: 1500, selected: false }
 ];
 
 const TryItExperience: React.FC = () => {
@@ -49,9 +50,7 @@ const TryItExperience: React.FC = () => {
   const [migrationStats, setMigrationStats] = useState({
     recordsMigrated: 0,
     recordsPerSecond: 0,
-    timeElapsed: 0,
-    errors: 0,
-    warnings: 2
+    timeElapsed: 0
   });
 
   const filteredCrmSystems = crmSystems.filter(crm => 
@@ -140,7 +139,7 @@ const TryItExperience: React.FC = () => {
       timeCounter += 0.3; // 0.3 seconds per interval
       
       // Calculate records to migrate in this interval (vary it to simulate real-world conditions)
-      const recordsThisInterval = Math.floor(Math.random() * 20) + 10;
+      const recordsThisInterval = Math.floor(Math.random() * 20) + 15;
       recordsMigrated = Math.min(totalRecords, recordsMigrated + recordsThisInterval);
       
       // Update progress
@@ -151,9 +150,7 @@ const TryItExperience: React.FC = () => {
       setMigrationStats({
         recordsMigrated,
         recordsPerSecond: Math.floor(recordsMigrated / timeCounter),
-        timeElapsed: Math.floor(timeCounter),
-        errors: progress > 70 ? 3 : 0, // Simulate some errors appearing after 70%
-        warnings: 2
+        timeElapsed: Math.floor(timeCounter)
       });
       
       // Check if migration is complete
@@ -351,7 +348,7 @@ const TryItExperience: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="font-medium">{dataType.name}</div>
-                        <div className="text-sm text-muted-foreground">{dataType.count}</div>
+                        <div className="text-sm text-muted-foreground">{dataType.count.toLocaleString()}</div>
                       </div>
                     </div>
                   ))}
@@ -531,9 +528,9 @@ const TryItExperience: React.FC = () => {
                             </div>
                           </div>
                           <div className="text-sm text-blue-500 dark:text-blue-400 mt-2">
-                            {migrationStats.recordsMigrated} of {dataTypes
+                            {migrationStats.recordsMigrated.toLocaleString()} of {dataTypes
                               .filter(dt => selectedDataTypes.includes(dt.id))
-                              .reduce((acc, dt) => acc + dt.count, 0)} records migrated
+                              .reduce((acc, dt) => acc + dt.count, 0).toLocaleString()} records migrated
                           </div>
                         </div>
                       )}
@@ -546,7 +543,7 @@ const TryItExperience: React.FC = () => {
                           </div>
                           <div className="mt-2 text-green-600 dark:text-green-500 text-sm">
                             Your data migration from {sourceCrm?.name} to {targetCrm?.name} has been completed. 
-                            {migrationStats.recordsMigrated} records were successfully migrated.
+                            {migrationStats.recordsMigrated.toLocaleString()} records were successfully migrated.
                           </div>
                         </div>
                       )}
@@ -592,34 +589,11 @@ const TryItExperience: React.FC = () => {
                         <div className="text-xs text-muted-foreground mb-1">
                           Status
                         </div>
-                        <div className="font-bold text-blue-600 dark:text-blue-400">
+                        <div className="font-bold text-green-600 dark:text-green-400">
                           {isMigrationComplete ? "Completed" : "In Progress"}
                         </div>
                       </div>
                     </div>
-                    
-                    {migrationProgress > 70 && (
-                      <div className="mt-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                        <div className="flex items-start">
-                          <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mr-2 mt-0.5" />
-                          <div>
-                            <div className="font-medium text-amber-700 dark:text-amber-400">
-                              Migration Issues
-                            </div>
-                            <div className="text-sm text-amber-600 dark:text-amber-500 mt-1">
-                              <div className="flex justify-between">
-                                <span>Errors:</span>
-                                <span className="font-medium">{migrationStats.errors}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Warnings:</span>
-                                <span className="font-medium">{migrationStats.warnings}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                   
                   <div className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-6">
@@ -640,7 +614,7 @@ const TryItExperience: React.FC = () => {
                             <div className="flex items-center justify-between mb-2">
                               <div className="font-medium">{dataType.name}</div>
                               <div className="text-xs">
-                                {Math.round((typeMigrationProgress / 100) * dataType.count)} / {dataType.count}
+                                {Math.round((typeMigrationProgress / 100) * dataType.count).toLocaleString()} / {dataType.count.toLocaleString()}
                               </div>
                             </div>
                             
@@ -655,28 +629,28 @@ const TryItExperience: React.FC = () => {
                       
                       {isMigrationComplete && (
                         <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
-                          <h5 className="font-medium mb-3">Next Steps</h5>
+                          <h5 className="font-medium mb-3">Migration Complete</h5>
                           
                           <div className="space-y-2">
                             <div className="flex items-start">
                               <div className="rounded-full w-5 h-5 bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mr-2 mt-0.5">
                                 <Check className="h-3 w-3" />
                               </div>
-                              <span className="text-sm">Migration completed successfully</span>
+                              <span className="text-sm">All {migrationStats.recordsMigrated.toLocaleString()} records migrated successfully</span>
                             </div>
                             
                             <div className="flex items-start">
-                              <div className="rounded-full w-5 h-5 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 mr-2 mt-0.5">
-                                2
+                              <div className="rounded-full w-5 h-5 bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mr-2 mt-0.5">
+                                <Check className="h-3 w-3" />
                               </div>
-                              <span className="text-sm">View detailed migration report</span>
+                              <span className="text-sm">Data integrity maintained throughout migration</span>
                             </div>
                             
                             <div className="flex items-start">
-                              <div className="rounded-full w-5 h-5 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 mr-2 mt-0.5">
-                                3
+                              <div className="rounded-full w-5 h-5 bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mr-2 mt-0.5">
+                                <Check className="h-3 w-3" />
                               </div>
-                              <span className="text-sm">Verify data in target CRM</span>
+                              <span className="text-sm">Ready for production use in {targetCrm?.name}</span>
                             </div>
                           </div>
                         </div>
@@ -694,11 +668,6 @@ const TryItExperience: React.FC = () => {
                 >
                   Back: Validation
                 </Button>
-                {isMigrationComplete && (
-                  <Button>
-                    View Migration Report
-                  </Button>
-                )}
               </div>
             </div>
           </TabsContent>
