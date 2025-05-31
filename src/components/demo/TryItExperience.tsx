@@ -8,6 +8,7 @@ import MapTab from "./try-it-experience/tabs/MapTab";
 import ValidateTab from "./try-it-experience/tabs/ValidateTab";
 import MigrateTab from "./try-it-experience/tabs/MigrateTab";
 import { useTryItExperience } from "./try-it-experience/hooks/useTryItExperience";
+import { TabType } from "./try-it-experience/types";
 
 const TryItExperience: React.FC = () => {
   const {
@@ -43,6 +44,10 @@ const TryItExperience: React.FC = () => {
     formatTime
   } = useTryItExperience();
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value as TabType);
+  };
+
   return (
     <Card className="border border-slate-200 dark:border-slate-800">
       <CardHeader>
@@ -56,7 +61,7 @@ const TryItExperience: React.FC = () => {
       </CardHeader>
       
       <CardContent>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="w-full grid grid-cols-5 mb-8">
             <TabsTrigger value="connect" disabled={activeTab !== "connect" && !isConnectStepComplete}>
               1. Connect CRMs
@@ -85,7 +90,7 @@ const TryItExperience: React.FC = () => {
               onSelectSourceCrm={handleSelectSourceCrm}
               onSelectTargetCrm={handleSelectTargetCrm}
               onNext={handleProceedToNextStep}
-              isComplete={isConnectStepComplete}
+              isComplete={!!isConnectStepComplete}
             />
           </TabsContent>
           
@@ -98,7 +103,7 @@ const TryItExperience: React.FC = () => {
               onToggleDataType={handleToggleDataType}
               onNext={handleProceedToNextStep}
               onBack={() => setActiveTab("connect")}
-              isComplete={isSelectStepComplete}
+              isComplete={!!isSelectStepComplete}
             />
           </TabsContent>
           
@@ -111,7 +116,7 @@ const TryItExperience: React.FC = () => {
               onStartFieldMapping={handleStartFieldMapping}
               onNext={handleProceedToNextStep}
               onBack={() => setActiveTab("select")}
-              isComplete={isMappingStepComplete}
+              isComplete={!!isMappingStepComplete}
             />
           </TabsContent>
           
@@ -125,7 +130,7 @@ const TryItExperience: React.FC = () => {
               onRunValidation={handleRunValidation}
               onNext={handleProceedToNextStep}
               onBack={() => setActiveTab("map")}
-              isComplete={isValidationStepComplete}
+              isComplete={!!isValidationStepComplete}
             />
           </TabsContent>
           
