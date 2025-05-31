@@ -16,7 +16,7 @@ const PricingTiers: React.FC = () => {
             <h3 className="text-2xl font-bold">Essentials</h3>
           </div>
           <div className="text-4xl font-bold text-primary">{formatCurrency(1999)}</div>
-          <p className="text-muted-foreground">Up to {formatNumber(50000)} records</p>
+          <p className="text-muted-foreground">Up to {formatNumber(250000)} records</p>
           <p className="text-sm text-muted-foreground/80">Perfect for Small Businesses</p>
         </div>
         <div className="space-y-3 text-left">

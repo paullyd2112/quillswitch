@@ -15,7 +15,7 @@ export const formatNumber = (num: number): string => {
 };
 
 export const getTierForRecordCount = (recordCount: number): PricingTier => {
-  if (recordCount <= 50000) return "essentials";
+  if (recordCount <= 250000) return "essentials";
   return "pro";
 };
 

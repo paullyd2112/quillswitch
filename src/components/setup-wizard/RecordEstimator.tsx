@@ -30,7 +30,7 @@ const RecordEstimator: React.FC<RecordEstimatorProps> = ({
   const tierInfo = {
     essentials: { 
       price: 1999, 
-      limit: 50000, 
+      limit: 250000, 
       name: "Essentials", 
       description: "Perfect for Small Businesses",
       icon: Users
