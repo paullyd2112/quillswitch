@@ -42,6 +42,11 @@ export const appNavItems: NavItem[] = [
     icon: Shield,
   },
   {
+    title: "Security Center",
+    href: "/app/security",
+    icon: Shield,
+  },
+  {
     title: "Settings",
     href: "/app/settings",
     icon: Settings,
