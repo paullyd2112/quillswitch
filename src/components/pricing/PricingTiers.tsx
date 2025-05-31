@@ -61,8 +61,8 @@ const PricingTiers: React.FC = () => {
             <h3 className="text-2xl font-bold">Pro</h3>
             <Sparkles className="h-5 w-5 text-primary" />
           </div>
-          <div className="text-4xl font-bold text-primary">{formatCurrency(3999)}</div>
-          <p className="text-muted-foreground">Up to {formatNumber(200000)} records</p>
+          <div className="text-4xl font-bold text-primary">{formatCurrency(4999)}</div>
+          <p className="text-muted-foreground">Up to {formatNumber(500000)} records</p>
           <p className="text-sm text-muted-foreground/80">Built for SMB & Mid-Market</p>
         </div>
         <div className="space-y-3 text-left">

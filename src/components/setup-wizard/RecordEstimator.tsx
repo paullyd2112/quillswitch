@@ -36,8 +36,8 @@ const RecordEstimator: React.FC<RecordEstimatorProps> = ({
       icon: Users
     },
     pro: { 
-      price: 3999, 
-      limit: 200000, 
+      price: 4999, 
+      limit: 500000, 
       name: "Pro", 
       description: "Built for SMB & Mid-Market",
       icon: Building2

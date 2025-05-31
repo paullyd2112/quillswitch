@@ -105,7 +105,7 @@ const SavingsResultsCard: React.FC<SavingsResultsCardProps> = ({ results }) => {
           </Button>
           <div className="grid grid-cols-2 gap-2">
             <Button variant="outline" size="sm">
-              Learn About Pro
+              Learn About Pro ({formatCurrency(4999)})
             </Button>
             <Button variant="outline" size="sm">
               Talk to Expert
