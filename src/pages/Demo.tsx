@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Helmet } from "react-helmet";
+import { useNavigate } from "react-router-dom";
 import BaseLayout from "@/components/layout/BaseLayout";
 import ProductComparison from "@/components/demo/ProductComparison";
 import TryItExperience from "@/components/demo/TryItExperience";
@@ -15,9 +16,29 @@ import { Button } from "@/components/ui/button";
 import { FileBarChart, FileText, AlertTriangle } from "lucide-react";
 import MigrationPerformanceChart from "@/components/home/migration-demo/MigrationPerformanceChart";
 import { useDemoReports } from "@/hooks/migration-demo/use-demo-reports";
+import { toast } from "@/hooks/use-toast";
 
 const Demo = () => {
   const { historyPoints } = useDemoReports();
+  const navigate = useNavigate();
+  
+  const handleViewAllReports = () => {
+    toast({
+      title: "Demo Feature",
+      description: "This would open a detailed reports dashboard in the full product.",
+    });
+    // In a real app, this would navigate to a reports page
+    // navigate("/app/reports");
+  };
+  
+  const handleDownloadPDF = () => {
+    toast({
+      title: "Demo Feature", 
+      description: "This would download a detailed migration report as PDF in the full product.",
+    });
+    // In a real app, this would trigger a PDF download
+    console.log("Demo: PDF download triggered");
+  };
   
   return (
     <>
@@ -111,10 +132,10 @@ const Demo = () => {
                         <MigrationPerformanceChart progressHistory={historyPoints} />
                       </div>
                       <div className="flex justify-between">
-                        <Button variant="outline">
+                        <Button variant="outline" onClick={handleDownloadPDF}>
                           Download PDF
                         </Button>
-                        <Button>
+                        <Button onClick={handleViewAllReports}>
                           View All Reports
                         </Button>
                       </div>
