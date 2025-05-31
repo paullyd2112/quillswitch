@@ -1,6 +1,5 @@
 
 import { useCallback } from "react";
-import { apiClient } from "@/services/migration/apiClient";
 import { useMigrationError } from "./use-migration-error";
 
 type UseMigrationApiReturn = {
@@ -13,62 +12,27 @@ type UseMigrationApiReturn = {
 export const useMigrationApi = (): UseMigrationApiReturn => {
   const { handleMigrationError } = useMigrationError();
   
-  // Create a migration using the API
+  // Create a migration using a mock API for demo purposes
   const createMigration = useCallback(async () => {
     try {
-      // Prepare migration data for API
-      const migrationData = {
-        name: "Demo CRM Migration",
-        source: {
-          type: "salesforce",
-          credentials: {
-            accessToken: "demo_token_sf",
-            instanceUrl: "https://demo.salesforce.com"
-          }
-        },
-        destination: {
-          type: "hubspot",
-          credentials: {
-            apiKey: "demo_hubspot_key"
-          }
-        },
-        dataTypes: [
-          {
-            type: "contacts",
-            filters: {
-              updatedAfter: "2023-01-01T00:00:00Z"
-            },
-            fieldMapping: {
-              firstName: "firstName",
-              lastName: "lastName",
-              email: "email"
-            }
-          },
-          {
-            type: "accounts",
-            fieldMapping: {
-              name: "name",
-              industry: "industry"
-            }
-          }
-        ],
-        schedule: {
-          startNow: true
-        }
-      };
-
-      console.log("Creating migration with data:", migrationData);
+      // For demo purposes, simulate API call without actual backend
+      console.log("Demo: Simulating migration creation...");
       
-      // Call the migrations API
-      const response = await apiClient.createMigration(migrationData);
-      console.log("Migration created successfully:", response);
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      return response.data.migrationId;
+      // Generate a mock migration ID
+      const migrationId = `demo_migration_${Date.now()}`;
+      
+      console.log("Demo: Migration created successfully with ID:", migrationId);
+      
+      return migrationId;
     } catch (error) {
-      handleMigrationError(error);
-      throw error;
+      console.warn("Demo: Migration API simulation failed, continuing with demo anyway:", error);
+      // For demo, we'll continue even if there's an error
+      return `demo_migration_fallback_${Date.now()}`;
     }
-  }, [handleMigrationError]);
+  }, []);
   
   return {
     createMigration

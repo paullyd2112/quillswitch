@@ -2,9 +2,6 @@
 import { useState, useCallback } from "react";
 import { toast } from "@/hooks/use-toast";
 import { MigrationStatus, MigrationStep } from '../types';
-import { useMigrationProgress } from './use-migration-progress';
-import { usePerformanceMetrics } from './use-performance-metrics';
-import { useStepManagement } from './use-step-management';
 import { useMigrationApi } from './use-migration-api';
 import { useMigrationError } from './use-migration-error';
 
@@ -35,6 +32,7 @@ export const useMigrationLifecycle = (
   // Start migration process
   const handleStartMigration = useCallback(async () => {
     try {
+      console.log("Starting migration demo...");
       setMigrationStatus("loading");
       setStartTime(new Date());
       
@@ -47,37 +45,45 @@ export const useMigrationLifecycle = (
         dataVolume: 0
       });
       
-      // Create the migration in the API
+      // Create the migration (demo version)
       try {
-        await createMigration();
+        const migrationId = await createMigration();
+        console.log("Demo migration created with ID:", migrationId);
       } catch (error) {
-        console.warn("Failed to create migration through API, but continuing demo anyway:", error);
+        console.warn("Failed to create demo migration, but continuing anyway:", error);
         // For the demo, we'll continue even if the API call fails
       }
       
       // Start the first step
       setSteps(prevSteps => {
         const newSteps = [...prevSteps];
-        newSteps[0].status = 'in-progress';
-        setActiveStep(newSteps[0]);
-        
-        // Show toast notification when migration starts
-        toast({
-          title: "Migration Started",
-          description: `Starting with ${newSteps[0].name} migration...`,
-        });
+        if (newSteps.length > 0) {
+          newSteps[0].status = 'in-progress';
+          setActiveStep(newSteps[0]);
+          
+          // Show toast notification when migration starts
+          toast({
+            title: "Migration Started",
+            description: `Starting with ${newSteps[0].name} migration...`,
+          });
+        }
         
         return newSteps;
       });
     } catch (error) {
       console.error("Failed to start migration:", error);
       setMigrationStatus("error");
-      // Error is already handled in createMigration
+      toast({
+        title: "Migration Error",
+        description: "Failed to start migration. Please try again.",
+        variant: "destructive"
+      });
     }
   }, [createMigration, setActiveStep, setPerformanceMetrics, setStartTime, setSteps]);
   
   // Reset migration to initial state
   const handleResetMigration = useCallback(() => {
+    console.log("Resetting migration demo...");
     setMigrationStatus("idle");
     setCurrentStepIndex(0);
     setOverallProgress(0);
