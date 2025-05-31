@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -61,9 +60,9 @@ const SecurityMonitor = () => {
 
       if (logsError) throw logsError;
 
-      // Transform the data to flatten the structure
+      // Transform the data to flatten the structure and convert id to string
       const transformedLogs = logsData?.map(log => ({
-        id: log.id,
+        id: log.id.toString(), // Convert number to string
         credential_id: log.credential_id,
         action: log.action,
         accessed_at: log.accessed_at,

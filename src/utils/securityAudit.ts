@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
 
@@ -71,7 +70,7 @@ export class SecurityAuditor {
     } catch (error) {
       console.error('Security audit failed:', error);
       throw errorHandler.createError(
-        ERROR_CODES.OPERATION_FAILED,
+        ERROR_CODES.UNEXPECTED_ERROR,
         'Failed to complete security audit',
         { error }
       );

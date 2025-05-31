@@ -153,6 +153,12 @@ const ConnectionHealthDashboard: React.FC<ConnectionHealthDashboardProps> = ({
 const ConnectionRow: React.FC<{ connection: ConnectionHealth }> = ({ connection }) => {
   const [expanded, setExpanded] = useState(false);
   
+  const getSuccessRateColor = (rate: number) => {
+    if (rate > 95) return 'text-green-600';
+    if (rate > 80) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+  
   return (
     <div className="text-sm">
       <div 
@@ -177,15 +183,12 @@ const ConnectionRow: React.FC<{ connection: ConnectionHealth }> = ({ connection 
         <div className="col-span-2">
           {connection.metrics?.successRate ? (
             <div className="flex flex-col gap-1">
-              <div className="text-xs">{connection.metrics.successRate.toFixed(1)}%</div>
+              <div className={`text-xs ${getSuccessRateColor(connection.metrics.successRate)}`}>
+                {connection.metrics.successRate.toFixed(1)}%
+              </div>
               <Progress 
                 value={connection.metrics.successRate} 
-                className="h-1.5" 
-                indicatorClassName={
-                  connection.metrics.successRate > 95 ? 'bg-green-500' :
-                  connection.metrics.successRate > 80 ? 'bg-amber-500' :
-                  'bg-red-500'
-                }
+                className="h-1.5"
               />
             </div>
           ) : 'N/A'}

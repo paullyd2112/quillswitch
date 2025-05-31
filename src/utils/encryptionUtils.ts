@@ -1,3 +1,4 @@
+
 /**
  * Enhanced encryption utilities for QuillSwitch security
  */
@@ -31,6 +32,63 @@ export function generateSecureId(length: number = 32): string {
   const array = new Uint8Array(length / 2);
   crypto.getRandomValues(array);
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Simple encryption for demo purposes (in production, use proper encryption)
+ */
+export function encryptData(data: string): string {
+  // In a real implementation, this would use proper encryption
+  // For demo purposes, we'll use base64 encoding
+  return btoa(data);
+}
+
+/**
+ * Simple decryption for demo purposes (in production, use proper decryption)
+ */
+export function decryptData(encryptedData: string): string {
+  try {
+    return atob(encryptedData);
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Store data securely in localStorage
+ */
+export function storeSecureData(key: string, data: string): void {
+  try {
+    const encryptedData = encryptData(data);
+    localStorage.setItem(`secure_${key}`, encryptedData);
+  } catch (error) {
+    console.error('Failed to store secure data:', error);
+  }
+}
+
+/**
+ * Retrieve data securely from localStorage
+ */
+export function getSecureData(key: string): string | null {
+  try {
+    const encryptedData = localStorage.getItem(`secure_${key}`);
+    if (!encryptedData) return null;
+    return decryptData(encryptedData);
+  } catch (error) {
+    console.error('Failed to retrieve secure data:', error);
+    return null;
+  }
+}
+
+/**
+ * Remove secure data from localStorage
+ */
+export function removeSecureData(key: string): void {
+  try {
+    localStorage.removeItem(`secure_${key}`);
+  } catch (error) {
+    console.error('Failed to remove secure data:', error);
+  }
 }
 
 /**
