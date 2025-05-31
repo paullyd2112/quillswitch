@@ -124,17 +124,20 @@ export class SmartDataOptimizer {
    */
   async initializeBloomFilter(projectId: string, objectType: string): Promise<void> {
     try {
-      // Load existing records from destination to populate bloom filter
+      // Load existing records from the new migration_records table
       const { data: existingRecords, error } = await supabase
-        .from('migration_records')
-        .select('external_id, last_modified')
-        .eq('project_id', projectId)
-        .eq('object_type', objectType);
+        .rpc('get_migration_records', {
+          p_project_id: projectId,
+          p_object_type: objectType
+        });
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error loading existing records, proceeding without bloom filter initialization:', error);
+        return;
+      }
 
       this.bloomFilter.clear();
-      existingRecords?.forEach(record => {
+      existingRecords?.forEach((record: any) => {
         if (record.external_id) {
           this.bloomFilter.add(record.external_id);
         }
@@ -143,7 +146,7 @@ export class SmartDataOptimizer {
       console.log(`Bloom filter initialized with ${existingRecords?.length || 0} existing records`);
     } catch (error) {
       console.error('Error initializing bloom filter:', error);
-      throw error;
+      // Don't throw error, just proceed without bloom filter optimization
     }
   }
 
@@ -229,19 +232,20 @@ export class SmartDataOptimizer {
     objectType: string
   ): Promise<{ status: 'new' | 'existing' | 'modified'; existingRecord?: any }> {
     try {
+      // Use RPC function to check for existing records
       const { data: existingRecord, error } = await supabase
-        .from('migration_records')
-        .select('*')
-        .eq('project_id', projectId)
-        .eq('object_type', objectType)
-        .eq('external_id', record.id || record.external_id)
-        .single();
+        .rpc('get_migration_record_by_external_id', {
+          p_project_id: projectId,
+          p_object_type: objectType,
+          p_external_id: record.id || record.external_id
+        });
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        throw error;
+        console.warn('Error in traditional delta check:', error);
+        return { status: 'new' }; // Err on the side of processing
       }
 
-      if (!existingRecord) {
+      if (!existingRecord || (Array.isArray(existingRecord) && existingRecord.length === 0)) {
         return { status: 'new' };
       }
 
@@ -259,8 +263,8 @@ export class SmartDataOptimizer {
 
   private isRecordModified(sourceRecord: any, existingRecord: any): boolean {
     // Compare modification timestamps or checksums
-    const sourceModified = new Date(sourceRecord.last_modified || sourceRecord.updated_at);
-    const existingModified = new Date(existingRecord.last_modified);
+    const sourceModified = new Date(sourceRecord.last_modified || sourceRecord.updated_at || 0);
+    const existingModified = new Date(existingRecord.last_modified || 0);
     
     return sourceModified > existingModified;
   }
@@ -376,16 +380,20 @@ export class SmartDataOptimizer {
   async saveBloomFilterState(projectId: string, objectType: string): Promise<void> {
     try {
       const filterData = this.bloomFilter.serialize();
+      const cacheKey = `bloom_filter_${projectId}_${objectType}`;
       
-      await supabase
-        .from('optimization_cache')
-        .upsert({
-          project_id: projectId,
-          object_type: objectType,
-          cache_type: 'bloom_filter',
-          cache_data: filterData,
-          updated_at: new Date().toISOString()
+      const { error } = await supabase
+        .rpc('upsert_optimization_cache', {
+          p_cache_key: cacheKey,
+          p_project_id: projectId,
+          p_object_type: objectType,
+          p_cache_type: 'bloom_filter',
+          p_cache_data: JSON.parse(filterData)
         });
+
+      if (error) {
+        console.error('Error saving bloom filter state:', error);
+      }
     } catch (error) {
       console.error('Error saving bloom filter state:', error);
     }
@@ -396,19 +404,19 @@ export class SmartDataOptimizer {
    */
   async loadBloomFilterState(projectId: string, objectType: string): Promise<boolean> {
     try {
+      const cacheKey = `bloom_filter_${projectId}_${objectType}`;
+      
       const { data, error } = await supabase
-        .from('optimization_cache')
-        .select('cache_data')
-        .eq('project_id', projectId)
-        .eq('object_type', objectType)
-        .eq('cache_type', 'bloom_filter')
-        .single();
+        .rpc('get_optimization_cache', {
+          p_cache_key: cacheKey,
+          p_cache_type: 'bloom_filter'
+        });
 
-      if (error || !data) {
+      if (error || !data || data.length === 0) {
         return false;
       }
 
-      this.bloomFilter = BloomFilter.deserialize(data.cache_data);
+      this.bloomFilter = BloomFilter.deserialize(JSON.stringify(data[0].cache_data));
       return true;
     } catch (error) {
       console.error('Error loading bloom filter state:', error);

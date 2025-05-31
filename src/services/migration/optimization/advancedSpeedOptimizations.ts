@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -77,23 +76,34 @@ export class SchemaMappingCache {
       return this.cache.get(cacheKey)!;
     }
 
-    // Fetch mapping configuration
+    // Fetch mapping configuration from field_mappings table
     const { data: mappings, error } = await supabase
       .from('field_mappings')
       .select('*')
-      .eq('project_id', projectId)
-      .eq('source_system', sourceSystem)
-      .eq('destination_system', destinationSystem)
-      .eq('object_type', objectType);
+      .eq('project_id', projectId);
 
-    if (error) throw error;
+    if (error) {
+      console.warn('Error fetching field mappings:', error);
+      // Return default mapping
+      return this.createDefaultMapping();
+    }
+
+    // Transform database mappings to SchemaMapping format
+    const schemaMappings: SchemaMapping[] = (mappings || []).map(mapping => ({
+      sourceField: mapping.source_field,
+      destinationField: mapping.destination_field,
+      transform: mapping.transformation_rule || undefined,
+      validation: undefined, // Add validation logic if needed
+      isRequired: mapping.is_required || false,
+      cacheKey: `${mapping.source_field}_${mapping.destination_field}`
+    }));
 
     // Compile transformation and validation functions
-    const transformFunction = this.compileTransformFunction(mappings || []);
-    const validationFunction = this.compileValidationFunction(mappings || []);
+    const transformFunction = this.compileTransformFunction(schemaMappings);
+    const validationFunction = this.compileValidationFunction(schemaMappings);
 
     const compiled: CompiledMapping = {
-      mappings: mappings || [],
+      mappings: schemaMappings,
       transformFunction,
       validationFunction,
       cacheVersion: 'v1.0',
@@ -109,21 +119,46 @@ export class SchemaMappingCache {
     return compiled;
   }
 
-  private compileTransformFunction(mappings: any[]): Function {
+  private createDefaultMapping(): CompiledMapping {
+    const defaultMappings: SchemaMapping[] = [
+      {
+        sourceField: 'id',
+        destinationField: 'id',
+        isRequired: true,
+        cacheKey: 'id_id'
+      },
+      {
+        sourceField: 'name',
+        destinationField: 'name',
+        isRequired: false,
+        cacheKey: 'name_name'
+      }
+    ];
+
+    return {
+      mappings: defaultMappings,
+      transformFunction: this.compileTransformFunction(defaultMappings),
+      validationFunction: this.compileValidationFunction(defaultMappings),
+      cacheVersion: 'v1.0',
+      compiledAt: new Date().toISOString()
+    };
+  }
+
+  private compileTransformFunction(mappings: SchemaMapping[]): Function {
     // Generate optimized transformation function at compile time
     let functionBody = 'const result = {};\n';
     
     mappings.forEach(mapping => {
-      if (mapping.transformation_rule) {
+      if (mapping.transform) {
         functionBody += `
           try {
-            result['${mapping.destination_field}'] = ${mapping.transformation_rule};
+            result['${mapping.destinationField}'] = ${mapping.transform};
           } catch (e) {
-            result['${mapping.destination_field}'] = sourceRecord['${mapping.source_field}'];
+            result['${mapping.destinationField}'] = sourceRecord['${mapping.sourceField}'];
           }
         `;
       } else {
-        functionBody += `result['${mapping.destination_field}'] = sourceRecord['${mapping.source_field}'];\n`;
+        functionBody += `result['${mapping.destinationField}'] = sourceRecord['${mapping.sourceField}'];\n`;
       }
     });
     
@@ -132,26 +167,26 @@ export class SchemaMappingCache {
     return new Function('sourceRecord', functionBody);
   }
 
-  private compileValidationFunction(mappings: any[]): Function {
+  private compileValidationFunction(mappings: SchemaMapping[]): Function {
     let functionBody = 'const errors = [];\n';
     
     mappings.forEach(mapping => {
-      if (mapping.is_required) {
+      if (mapping.isRequired) {
         functionBody += `
-          if (!record['${mapping.destination_field}']) {
-            errors.push('${mapping.destination_field} is required');
+          if (!record['${mapping.destinationField}']) {
+            errors.push('${mapping.destinationField} is required');
           }
         `;
       }
       
-      if (mapping.validation_rule) {
+      if (mapping.validation) {
         functionBody += `
           try {
-            if (!(${mapping.validation_rule})) {
-              errors.push('${mapping.destination_field} validation failed');
+            if (!(${mapping.validation})) {
+              errors.push('${mapping.destinationField} validation failed');
             }
           } catch (e) {
-            errors.push('${mapping.destination_field} validation error: ' + e.message);
+            errors.push('${mapping.destinationField} validation error: ' + e.message);
           }
         `;
       }
@@ -164,18 +199,22 @@ export class SchemaMappingCache {
 
   private async persistCompiledMapping(cacheKey: string, compiled: CompiledMapping): Promise<void> {
     try {
-      await supabase
-        .from('optimization_cache')
-        .upsert({
-          cache_key: cacheKey,
-          cache_type: 'compiled_mapping',
-          cache_data: JSON.stringify({
+      const { error } = await supabase
+        .rpc('upsert_optimization_cache', {
+          p_cache_key: cacheKey,
+          p_project_id: null,
+          p_object_type: null,
+          p_cache_type: 'compiled_mapping',
+          p_cache_data: {
             mappings: compiled.mappings,
             cacheVersion: compiled.cacheVersion,
             compiledAt: compiled.compiledAt
-          }),
-          updated_at: new Date().toISOString()
+          }
         });
+
+      if (error) {
+        console.error('Error persisting compiled mapping:', error);
+      }
     } catch (error) {
       console.error('Error persisting compiled mapping:', error);
     }

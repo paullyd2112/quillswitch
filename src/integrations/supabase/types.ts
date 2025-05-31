@@ -596,6 +596,51 @@ export type Database = {
         }
         Relationships: []
       }
+      migration_records: {
+        Row: {
+          created_at: string
+          data: Json | null
+          destination_system: string
+          external_id: string
+          id: string
+          last_modified: string
+          object_type: string
+          project_id: string
+          source_system: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          destination_system: string
+          external_id: string
+          id?: string
+          last_modified?: string
+          object_type: string
+          project_id: string
+          source_system: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          destination_system?: string
+          external_id?: string
+          id?: string
+          last_modified?: string
+          object_type?: string
+          project_id?: string
+          source_system?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       migration_stages: {
         Row: {
           completed_at: string | null
@@ -677,6 +722,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      optimization_cache: {
+        Row: {
+          cache_data: Json
+          cache_key: string
+          cache_type: string
+          created_at: string
+          id: string
+          object_type: string | null
+          project_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          cache_data: Json
+          cache_key: string
+          cache_type: string
+          created_at?: string
+          id?: string
+          object_type?: string | null
+          project_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          cache_data?: Json
+          cache_key?: string
+          cache_type?: string
+          created_at?: string
+          id?: string
+          object_type?: string | null
+          project_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       picklist_value_mappings: {
         Row: {
