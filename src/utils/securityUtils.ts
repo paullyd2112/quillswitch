@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
 
@@ -86,7 +87,7 @@ export function validateInput<T>(
 class RateLimiter {
   private requests: Map<string, number[]> = new Map();
   private windowMs: number;
-  private maxRequests: number;
+  protected maxRequests: number; // Changed to protected so subclasses can access
 
   constructor(windowMs: number = 60000, maxRequests: number = 100) {
     this.windowMs = windowMs;
@@ -277,7 +278,7 @@ export class AdaptiveRateLimiter extends RateLimiter {
   }
 
   public isAllowedAdaptive(identifier: string, operation: string): boolean {
-    const baseLimit = this.maxRequests;
+    const baseLimit = this.maxRequests; // Now accessible as protected
     const adaptiveLimit = this.adaptiveThresholds.get(identifier) || baseLimit;
     
     // Temporarily override maxRequests for this check

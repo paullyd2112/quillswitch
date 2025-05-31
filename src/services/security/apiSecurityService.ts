@@ -1,7 +1,7 @@
-
 import { rateLimiters, checkRateLimit, validateInput, securitySchemas } from '@/utils/securityUtils';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
 import { supabase } from '@/integrations/supabase/client';
+import { safeTable } from '@/services/utils/supabaseUtils';
 
 /**
  * API Security Service for comprehensive request protection
@@ -93,7 +93,7 @@ export class ApiSecurityService {
   }
 
   /**
-   * Log security events for monitoring
+   * Log security events for monitoring - using credential_access_log table
    */
   public async logSecurityEvent(event: {
     type: 'blocked_request' | 'rate_limit_exceeded' | 'suspicious_activity' | 'auth_failure';
@@ -103,15 +103,12 @@ export class ApiSecurityService {
     details: Record<string, any>;
   }): Promise<void> {
     try {
+      // Use credential_access_log table as a general security log since it exists
       const { error } = await supabase
-        .from('security_logs')
+        .from('credential_access_log')
         .insert({
-          event_type: event.type,
           user_id: event.userId,
-          ip_address: event.ip,
-          user_agent: event.userAgent,
-          event_details: event.details,
-          created_at: new Date().toISOString()
+          action: `${event.type}: ${JSON.stringify(event.details)}`
         });
 
       if (error) {
@@ -129,8 +126,7 @@ export class ApiSecurityService {
     this.ipBlocklist.add(ip);
     this.logSecurityEvent({
       type: 'blocked_request',
-      ip,
-      details: { reason, action: 'ip_blocked' }
+      details: { reason, action: 'ip_blocked', ip }
     });
   }
 

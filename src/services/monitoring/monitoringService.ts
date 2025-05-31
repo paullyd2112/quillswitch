@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
 
@@ -15,7 +14,8 @@ export interface UserActivity {
   activity_type: string;
   activity_description: string;
   user_id?: string;
-  metadata?: Record<string, any>;
+  project_id?: string;
+  activity_details?: Record<string, any>;
 }
 
 export interface AuditLog {
@@ -46,7 +46,7 @@ export class MonitoringService {
   }
 
   /**
-   * Track performance metrics
+   * Track performance metrics - store in memory buffer for now
    */
   public trackMetric(metric: Omit<PerformanceMetric, 'timestamp'>): void {
     const fullMetric: PerformanceMetric = {
@@ -55,11 +55,7 @@ export class MonitoringService {
     };
 
     this.metricsBuffer.push(fullMetric);
-
-    // Flush immediately for critical metrics
-    if (['error_rate', 'response_time'].includes(metric.metric_name) && metric.value > 1000) {
-      this.flushMetrics();
-    }
+    console.log(`📊 Metric tracked: ${metric.metric_name} = ${metric.value}${metric.unit}`);
   }
 
   /**
@@ -70,21 +66,19 @@ export class MonitoringService {
   }
 
   /**
-   * Log audit events
+   * Log audit events using existing migration_notifications table
    */
   public async logAudit(auditData: AuditLog): Promise<void> {
     try {
+      // Use migration_notifications table as a general audit log
       const { error } = await supabase
-        .from('audit_logs')
+        .from('migration_notifications')
         .insert({
-          action: auditData.action,
-          resource_type: auditData.resource_type,
-          resource_id: auditData.resource_id,
           user_id: auditData.user_id,
-          ip_address: auditData.ip_address,
-          user_agent: auditData.user_agent,
-          details: auditData.details,
-          created_at: new Date().toISOString()
+          project_id: auditData.resource_id, // Use resource_id as project_id
+          title: auditData.action,
+          message: `${auditData.resource_type}: ${JSON.stringify(auditData.details)}`,
+          notification_type: 'audit'
         });
 
       if (error) {
@@ -208,7 +202,9 @@ export class MonitoringService {
     this.trackActivity({
       activity_type: 'engagement',
       activity_description: event,
-      metadata: {
+      user_id: metadata?.user_id,
+      project_id: 'default-project',
+      activity_details: {
         timestamp: new Date().toISOString(),
         ...metadata
       }
@@ -216,7 +212,7 @@ export class MonitoringService {
   }
 
   /**
-   * Get monitoring dashboard data
+   * Get monitoring dashboard data - using existing tables
    */
   public async getDashboardData(timeframe: string = '24h'): Promise<{
     metrics: any[];
@@ -227,29 +223,23 @@ export class MonitoringService {
       const hours = timeframe === '1h' ? 1 : timeframe === '7d' ? 168 : 24;
       const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
-      const [metricsResult, activitiesResult, errorsResult] = await Promise.all([
-        supabase
-          .from('performance_metrics')
-          .select('*')
-          .gte('timestamp', since)
-          .order('timestamp', { ascending: false }),
-        
-        supabase
-          .from('user_activities')
-          .select('*')
-          .gte('created_at', since)
-          .order('created_at', { ascending: false }),
-        
-        supabase
-          .from('audit_logs')
-          .select('*')
-          .eq('action', 'error')
-          .gte('created_at', since)
-          .order('created_at', { ascending: false })
-      ]);
+      // Use user_activities table for activities
+      const activitiesResult = await supabase
+        .from('user_activities')
+        .select('*')
+        .gte('created_at', since)
+        .order('created_at', { ascending: false });
+      
+      // Use migration_notifications for errors
+      const errorsResult = await supabase
+        .from('migration_notifications')
+        .select('*')
+        .eq('notification_type', 'error')
+        .gte('created_at', since)
+        .order('created_at', { ascending: false });
 
       return {
-        metrics: metricsResult.data || [],
+        metrics: this.metricsBuffer, // Return buffered metrics
         activities: activitiesResult.data || [],
         errors: errorsResult.data || []
       };
@@ -260,33 +250,26 @@ export class MonitoringService {
   }
 
   /**
-   * Flush buffered data to database
+   * Flush buffered data to database using existing tables
    */
   private async flushMetrics(): Promise<void> {
-    if (this.metricsBuffer.length === 0 && this.activityBuffer.length === 0) return;
+    if (this.activityBuffer.length === 0) return;
 
     try {
-      // Flush metrics
-      if (this.metricsBuffer.length > 0) {
-        const { error: metricsError } = await supabase
-          .from('performance_metrics')
-          .insert(this.metricsBuffer);
-
-        if (metricsError) {
-          console.error('Failed to flush metrics:', metricsError);
-        } else {
-          this.metricsBuffer = [];
-        }
-      }
-
-      // Flush activities
+      // Flush activities to user_activities table
       if (this.activityBuffer.length > 0) {
+        const activitiesForDb = this.activityBuffer.map(activity => ({
+          activity_type: activity.activity_type,
+          activity_description: activity.activity_description,
+          user_id: activity.user_id,
+          project_id: activity.project_id || 'default-project', // Required field
+          activity_details: activity.activity_details,
+          created_at: new Date().toISOString()
+        }));
+
         const { error: activitiesError } = await supabase
           .from('user_activities')
-          .insert(this.activityBuffer.map(activity => ({
-            ...activity,
-            created_at: new Date().toISOString()
-          })));
+          .insert(activitiesForDb);
 
         if (activitiesError) {
           console.error('Failed to flush activities:', activitiesError);
@@ -294,6 +277,9 @@ export class MonitoringService {
           this.activityBuffer = [];
         }
       }
+
+      // Keep metrics in memory buffer since we don't have a metrics table
+      console.log(`📈 Metrics buffer size: ${this.metricsBuffer.length}`);
     } catch (error) {
       console.error('Buffer flush error:', error);
     }
