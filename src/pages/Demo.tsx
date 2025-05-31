@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +38,16 @@ const Demo = () => {
     // In a real app, this would trigger a PDF download
     console.log("Demo: PDF download triggered");
   };
+
+  const handleViewMigrationReport = () => {
+    toast({
+      title: "View Migration Report",
+      description: "This would open a detailed migration report with full analytics and insights.",
+    });
+    // In a real app, this could navigate to a specific migration report page
+    // navigate("/app/migration-report");
+    console.log("Demo: View Migration Report clicked");
+  };
   
   return (
     <>
@@ -59,8 +68,10 @@ const Demo = () => {
             {/* Interactive Demo Section */}
             <section>
               <h2 className="text-2xl font-bold mb-6">Interactive Migration Visualizer</h2>
-              <MigrationDemoSection />
+              <MigrationDemoSection onViewReport={handleViewMigrationReport} />
             </section>
+            
+            
             
             <Separator />
             
