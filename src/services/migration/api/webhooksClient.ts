@@ -6,12 +6,19 @@ import { BaseApiClient } from "./baseClient";
  */
 export class WebhooksApiClient extends BaseApiClient {
   /**
+   * Get all registered webhooks
+   */
+  async getWebhooks() {
+    return this.request<{success: boolean, data: { data: Array<{id: string, url: string}> }}>('webhooks/webhooks');
+  }
+  
+  /**
    * Register a new webhook
    */
-  async registerWebhook(params: {
+  async createWebhook(params: {
     url: string;
     events: string[];
-    secret?: string;
+    description?: string;
   }) {
     return this.request<{success: boolean, data: any}>(
       'webhooks/webhooks',
@@ -21,11 +28,18 @@ export class WebhooksApiClient extends BaseApiClient {
   }
   
   /**
-   * List registered webhooks
+   * Update an existing webhook
    */
-  async getWebhooks() {
+  async updateWebhook(webhookId: string, params: {
+    url?: string;
+    events?: string[];
+    description?: string;
+    active?: boolean;
+  }) {
     return this.request<{success: boolean, data: any}>(
-      'webhooks/webhooks'
+      `webhooks/webhooks/${webhookId}`,
+      'PUT',
+      params
     );
   }
   
@@ -33,8 +47,8 @@ export class WebhooksApiClient extends BaseApiClient {
    * Delete a webhook
    */
   async deleteWebhook(webhookId: string) {
-    return this.request<{success: boolean, data: any}>(
-      `webhooks/${webhookId}`,
+    return this.request<{success: boolean}>(
+      `webhooks/webhooks/${webhookId}`,
       'DELETE'
     );
   }
@@ -44,9 +58,8 @@ export class WebhooksApiClient extends BaseApiClient {
    */
   async testWebhook(webhookId: string) {
     return this.request<{success: boolean, data: any}>(
-      'webhooks/test',
-      'POST',
-      { webhookId }
+      `webhooks/webhooks/${webhookId}/test`,
+      'POST'
     );
   }
 }
