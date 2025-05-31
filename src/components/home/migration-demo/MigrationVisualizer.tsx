@@ -15,6 +15,7 @@ type MigrationVisualizerProps = {
   onClick: () => void;
   errorMessage?: string;
   performanceMetrics?: Partial<PerformanceMetrics>;
+  onViewReport?: () => void;
 }
 
 const MigrationVisualizer = ({ 
@@ -24,7 +25,8 @@ const MigrationVisualizer = ({
   activeStep,
   onClick,
   errorMessage,
-  performanceMetrics
+  performanceMetrics,
+  onViewReport
 }: MigrationVisualizerProps) => {
   return (
     <GlassPanel 
@@ -66,7 +68,7 @@ const MigrationVisualizer = ({
         />
       </div>
       
-      <MigrationFooter status={migrationStatus} />
+      <MigrationFooter status={migrationStatus} onViewReport={onViewReport} />
     </GlassPanel>
   );
 };

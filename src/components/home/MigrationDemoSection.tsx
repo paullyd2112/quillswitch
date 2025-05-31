@@ -4,7 +4,11 @@ import MigrationVisualizer from "./migration-demo/MigrationVisualizer";
 import MigrationInfo from "./migration-demo/MigrationInfo";
 import { useMigrationDemo } from "@/hooks/use-migration-demo";
 
-const MigrationDemoSection = () => {
+interface MigrationDemoSectionProps {
+  onViewReport?: () => void;
+}
+
+const MigrationDemoSection = ({ onViewReport }: MigrationDemoSectionProps) => {
   const {
     migrationStatus,
     steps,
@@ -33,6 +37,7 @@ const MigrationDemoSection = () => {
               onClick={handleMigrationDemo}
               errorMessage={errorMessage}
               performanceMetrics={performanceMetrics}
+              onViewReport={onViewReport}
             />
           </div>
         </div>
