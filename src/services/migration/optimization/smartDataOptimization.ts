@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -126,7 +125,7 @@ export class SmartDataOptimizer {
     try {
       // Load existing records from the new migration_records table
       const { data: existingRecords, error } = await supabase
-        .rpc('get_migration_records', {
+        .rpc('get_migration_records' as any, {
           p_project_id: projectId,
           p_object_type: objectType
         });
@@ -137,13 +136,15 @@ export class SmartDataOptimizer {
       }
 
       this.bloomFilter.clear();
-      existingRecords?.forEach((record: any) => {
-        if (record.external_id) {
-          this.bloomFilter.add(record.external_id);
-        }
-      });
+      if (Array.isArray(existingRecords)) {
+        existingRecords.forEach((record: any) => {
+          if (record.external_id) {
+            this.bloomFilter.add(record.external_id);
+          }
+        });
+      }
 
-      console.log(`Bloom filter initialized with ${existingRecords?.length || 0} existing records`);
+      console.log(`Bloom filter initialized with ${Array.isArray(existingRecords) ? existingRecords.length : 0} existing records`);
     } catch (error) {
       console.error('Error initializing bloom filter:', error);
       // Don't throw error, just proceed without bloom filter optimization
@@ -234,7 +235,7 @@ export class SmartDataOptimizer {
     try {
       // Use RPC function to check for existing records
       const { data: existingRecord, error } = await supabase
-        .rpc('get_migration_record_by_external_id', {
+        .rpc('get_migration_record_by_external_id' as any, {
           p_project_id: projectId,
           p_object_type: objectType,
           p_external_id: record.id || record.external_id
@@ -249,11 +250,14 @@ export class SmartDataOptimizer {
         return { status: 'new' };
       }
 
+      // Get the first record if it's an array
+      const recordData = Array.isArray(existingRecord) ? existingRecord[0] : existingRecord;
+
       // Check if record was modified
-      const recordModified = this.isRecordModified(record, existingRecord);
+      const recordModified = this.isRecordModified(record, recordData);
       return {
         status: recordModified ? 'modified' : 'existing',
-        existingRecord
+        existingRecord: recordData
       };
     } catch (error) {
       console.error('Error in traditional delta check:', error);
@@ -383,7 +387,7 @@ export class SmartDataOptimizer {
       const cacheKey = `bloom_filter_${projectId}_${objectType}`;
       
       const { error } = await supabase
-        .rpc('upsert_optimization_cache', {
+        .rpc('upsert_optimization_cache' as any, {
           p_cache_key: cacheKey,
           p_project_id: projectId,
           p_object_type: objectType,
@@ -407,17 +411,22 @@ export class SmartDataOptimizer {
       const cacheKey = `bloom_filter_${projectId}_${objectType}`;
       
       const { data, error } = await supabase
-        .rpc('get_optimization_cache', {
+        .rpc('get_optimization_cache' as any, {
           p_cache_key: cacheKey,
           p_cache_type: 'bloom_filter'
         });
 
-      if (error || !data || data.length === 0) {
+      if (error || !data || (Array.isArray(data) && data.length === 0)) {
         return false;
       }
 
-      this.bloomFilter = BloomFilter.deserialize(JSON.stringify(data[0].cache_data));
-      return true;
+      const cacheData = Array.isArray(data) ? data[0] : data;
+      if (cacheData && typeof cacheData === 'object' && 'cache_data' in cacheData) {
+        this.bloomFilter = BloomFilter.deserialize(JSON.stringify(cacheData.cache_data));
+        return true;
+      }
+      
+      return false;
     } catch (error) {
       console.error('Error loading bloom filter state:', error);
       return false;

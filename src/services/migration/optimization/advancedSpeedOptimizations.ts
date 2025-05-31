@@ -200,7 +200,7 @@ export class SchemaMappingCache {
   private async persistCompiledMapping(cacheKey: string, compiled: CompiledMapping): Promise<void> {
     try {
       const { error } = await supabase
-        .rpc('upsert_optimization_cache', {
+        .rpc('upsert_optimization_cache' as any, {
           p_cache_key: cacheKey,
           p_project_id: null,
           p_object_type: null,
