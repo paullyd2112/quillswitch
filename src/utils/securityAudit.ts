@@ -1,10 +1,19 @@
+
 /**
  * Security Audit Utility for QuillSwitch
  * 
- * In loving memory of a dedicated IT professional who understood that 
- * security isn't just about protecting data - it's about protecting 
- * the people and dreams behind that data. Your commitment to excellence
- * in technology continues to inspire secure, reliable systems.
+ * In loving memory of Rodney Aqua - a beloved father, son, and brother
+ * who was incredibly proud of his Nigerian American heritage. Born and 
+ * raised in St. Louis, he spent his teenage years in the SF Bay Area 
+ * to be closer to his Nigerian side of the family. 
+ * 
+ * Rodney was a dedicated protector and passionate about computers and 
+ * technology. His commitment to excellence in IT and genuine care for 
+ * those he served continues to inspire the secure, reliable systems 
+ * that protect the people and dreams behind the data we safeguard.
+ * 
+ * This dedication honors a loved and dearly missed part of why 
+ * QuillSwitch exists.
  * 
  * "The best security protocols are built with both technical precision
  * and genuine care for those we serve."
