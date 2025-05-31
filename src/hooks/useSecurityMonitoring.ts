@@ -19,7 +19,7 @@ export const useSecurityMonitoring = () => {
       activity_type: 'page_view',
       activity_description: `Visited ${currentPath}`,
       user_id: user?.id,
-      metadata: {
+      activity_details: {
         path: currentPath,
         referrer: document.referrer,
         timestamp: new Date().toISOString()
@@ -57,7 +57,7 @@ export const useSecurityMonitoring = () => {
         activity_type: 'form_submission',
         activity_description: `Submitted ${formName} form`,
         user_id: user?.id,
-        metadata: {
+        activity_details: {
           form_name: formName,
           validation_result: validation.isValid,
           errors: validation.errors
@@ -116,7 +116,7 @@ export const useSecurityMonitoring = () => {
       activity_type: 'file_upload',
       activity_description: `Uploaded file: ${file.name}`,
       user_id: user?.id,
-      metadata: {
+      activity_details: {
         file_name: file.name,
         file_size: file.size,
         file_type: file.type,
