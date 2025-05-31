@@ -65,7 +65,7 @@ export const userNav: NavLink[] = [
   ...convertToNavLink(appNavItems, "Workspace"),
   {
     label: "Support",
-    href: "/app/support",
+    href: "/support",
     icon: <LifeBuoy size={20} />,
     category: "Account",
   }
