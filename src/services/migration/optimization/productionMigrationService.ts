@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 import { createSmartDataOptimizer, DeltaDetectionResult, OptimizationConfig } from "./smartDataOptimization";
 import { 
@@ -9,6 +8,7 @@ import {
   StreamingConfig,
   ConcurrencyPattern
 } from "./advancedSpeedOptimizations";
+import { migrationErrorHandler, MigrationError } from "./migrationErrorHandler";
 import { TransferProgress, BatchConfig } from "../types/transferTypes";
 import { logUserActivity } from "../activityService";
 
@@ -60,7 +60,7 @@ export class ProductionMigrationService {
   }
 
   /**
-   * Execute high-performance production migration
+   * Execute high-performance production migration with enhanced error handling
    */
   async executeMigration(params: {
     projectId: string;
@@ -70,11 +70,15 @@ export class ProductionMigrationService {
     sourceRecords: any[];
     fieldMapping?: Record<string, string>;
     progressCallback: (progress: TransferProgress) => void;
+    errorCallback?: (error: MigrationError) => void;
   }): Promise<ProductionMigrationResult> {
     const startTime = Date.now();
     let processedRecords = 0;
     let skippedRecords = 0;
     let errorCount = 0;
+
+    // Clear previous errors
+    migrationErrorHandler.clearErrors();
 
     try {
       // Log migration start
@@ -91,16 +95,29 @@ export class ProductionMigrationService {
       // Step 1: Pre-compile schema mappings if enabled
       let compiledMapping: CompiledMapping | null = null;
       if (this.config.enableSchemaCache) {
-        compiledMapping = await this.schemaCache.compileMapping(
-          params.projectId,
-          params.sourceSystem,
-          params.destinationSystem,
-          params.objectType
-        );
-        toast({
-          title: "Schema Optimized",
-          description: "Field mappings pre-compiled for maximum speed"
-        });
+        try {
+          compiledMapping = await this.schemaCache.compileMapping(
+            params.projectId,
+            params.sourceSystem,
+            params.destinationSystem,
+            params.objectType
+          );
+          toast({
+            title: "Schema Optimized",
+            description: "Field mappings pre-compiled for maximum speed"
+          });
+        } catch (error) {
+          const errorResult = await migrationErrorHandler.handleError(
+            error,
+            'schema_compilation',
+            undefined,
+            params.projectId
+          );
+          if (!errorResult.shouldRetry) {
+            // Continue without schema cache
+            console.warn('Schema compilation failed, continuing without cache');
+          }
+        }
       }
 
       // Step 2: Smart delta detection if enabled
@@ -108,62 +125,90 @@ export class ProductionMigrationService {
       let recordsToProcess = params.sourceRecords;
 
       if (this.config.enableSmartDelta) {
-        // Initialize bloom filter
-        await this.smartOptimizer.initializeBloomFilter(
-          params.projectId,
-          params.objectType
-        );
+        try {
+          // Initialize bloom filter
+          await this.smartOptimizer.initializeBloomFilter(
+            params.projectId,
+            params.objectType
+          );
 
-        // Perform smart delta detection
-        deltaResult = await this.smartOptimizer.performDeltaDetection(
-          params.sourceRecords,
-          params.projectId,
-          params.objectType
-        );
+          // Perform smart delta detection
+          deltaResult = await this.smartOptimizer.performDeltaDetection(
+            params.sourceRecords,
+            params.projectId,
+            params.objectType
+          );
 
-        recordsToProcess = [
-          ...deltaResult.newRecords,
-          ...deltaResult.modifiedRecords
-        ];
-        skippedRecords = deltaResult.skippedRecords.length;
+          recordsToProcess = [
+            ...deltaResult.newRecords,
+            ...deltaResult.modifiedRecords
+          ];
+          skippedRecords = deltaResult.skippedRecords.length;
 
-        toast({
-          title: "Smart Filtering Complete",
-          description: `${recordsToProcess.length} records need processing, ${skippedRecords} skipped`
-        });
+          toast({
+            title: "Smart Filtering Complete",
+            description: `${recordsToProcess.length} records need processing, ${skippedRecords} skipped`
+          });
+        } catch (error) {
+          const errorResult = await migrationErrorHandler.handleError(
+            error,
+            'delta_detection',
+            undefined,
+            params.projectId
+          );
+          if (!errorResult.shouldRetry) {
+            // Continue with all records
+            recordsToProcess = params.sourceRecords;
+          }
+        }
       }
 
       // Step 3: Process records with selected optimization strategy
-      if (this.config.enableStreaming && recordsToProcess.length > 1000) {
-        // Use streaming for large datasets
-        processedRecords = await this.executeStreamingMigration(
-          recordsToProcess,
-          compiledMapping,
-          params
+      try {
+        if (this.config.enableStreaming && recordsToProcess.length > 1000) {
+          // Use streaming for large datasets
+          processedRecords = await this.executeStreamingMigrationWithErrorHandling(
+            recordsToProcess,
+            compiledMapping,
+            params
+          );
+        } else if (this.config.enableAdvancedConcurrency) {
+          // Use advanced concurrency patterns
+          processedRecords = await this.executeAdvancedConcurrencyMigrationWithErrorHandling(
+            recordsToProcess,
+            compiledMapping,
+            params
+          );
+        } else {
+          // Use traditional batch processing with optimizations
+          processedRecords = await this.executeOptimizedBatchMigrationWithErrorHandling(
+            recordsToProcess,
+            compiledMapping,
+            params
+          );
+        }
+      } catch (error) {
+        await migrationErrorHandler.handleError(
+          error,
+          'migration_execution',
+          undefined,
+          params.projectId
         );
-      } else if (this.config.enableAdvancedConcurrency) {
-        // Use advanced concurrency patterns
-        processedRecords = await this.executeAdvancedConcurrencyMigration(
-          recordsToProcess,
-          compiledMapping,
-          params
-        );
-      } else {
-        // Use traditional batch processing with optimizations
-        processedRecords = await this.executeOptimizedBatchMigration(
-          recordsToProcess,
-          compiledMapping,
-          params
-        );
+        throw error;
       }
 
       // Step 4: Update bloom filter with processed records
       if (this.config.enableSmartDelta && deltaResult) {
-        this.smartOptimizer.updateBloomFilter(recordsToProcess);
-        await this.smartOptimizer.saveBloomFilterState(
-          params.projectId,
-          params.objectType
-        );
+        try {
+          this.smartOptimizer.updateBloomFilter(recordsToProcess);
+          await this.smartOptimizer.saveBloomFilterState(
+            params.projectId,
+            params.objectType
+          );
+        } catch (error) {
+          // Non-critical error, just log
+          console.warn('Failed to save bloom filter state:', error);
+        }
       }
 
       const processingTime = Date.now() - startTime;
@@ -175,14 +220,19 @@ export class ProductionMigrationService {
         deltaResult
       );
 
+      // Get error statistics
+      const errorStats = migrationErrorHandler.getErrorStatistics();
+      errorCount = errorStats.totalErrors;
+
       // Log completion
       await logUserActivity({
         project_id: params.projectId,
         activity_type: 'production_migration_completed',
-        activity_description: `Completed production migration: ${processedRecords} processed, ${skippedRecords} skipped`,
+        activity_description: `Completed production migration: ${processedRecords} processed, ${skippedRecords} skipped, ${errorCount} errors`,
         activity_details: { 
           performanceMetrics,
-          processingTimeMs: processingTime
+          processingTimeMs: processingTime,
+          errorStats
         }
       });
 
@@ -192,7 +242,7 @@ export class ProductionMigrationService {
       });
 
       return {
-        success: true,
+        success: errorCount === 0 || (errorCount / params.sourceRecords.length) < 0.1, // Success if < 10% errors
         totalProcessed: processedRecords,
         totalSkipped: skippedRecords,
         totalErrors: errorCount,
@@ -221,7 +271,7 @@ export class ProductionMigrationService {
         success: false,
         totalProcessed: processedRecords,
         totalSkipped: skippedRecords,
-        totalErrors: 1,
+        totalErrors: migrationErrorHandler.getErrorStatistics().totalErrors || 1,
         processingTime: Date.now() - startTime,
         optimizationStats: null,
         performanceMetrics: {
@@ -237,9 +287,9 @@ export class ProductionMigrationService {
   }
 
   /**
-   * Execute streaming migration for large datasets
+   * Execute streaming migration with error handling
    */
-  private async executeStreamingMigration(
+  private async executeStreamingMigrationWithErrorHandling(
     records: any[],
     compiledMapping: CompiledMapping | null,
     params: any
@@ -249,24 +299,25 @@ export class ProductionMigrationService {
     const stream = await this.streamingProcessor.createDataStream(
       records,
       async (record) => {
-        // Transform record using compiled mapping if available
-        const transformedRecord = compiledMapping 
-          ? this.schemaCache.transformRecord(record, compiledMapping)
-          : record;
-
-        // Validate record if mapping available
-        if (compiledMapping) {
-          const errors = this.schemaCache.validateRecord(transformedRecord, compiledMapping);
-          if (errors.length > 0) {
-            console.warn('Validation errors:', errors);
+        try {
+          const result = await this.processRecordWithErrorHandling(
+            record,
+            compiledMapping,
+            params
+          );
+          if (result.success) {
+            processedCount++;
           }
+          return result.data;
+        } catch (error) {
+          await migrationErrorHandler.handleError(
+            error,
+            'streaming_record_processing',
+            record.id || record.external_id,
+            params.projectId
+          );
+          throw error;
         }
-
-        // Simulate API call to destination system
-        await this.simulateDestinationApiCall(transformedRecord, params.destinationSystem);
-        
-        processedCount++;
-        return transformedRecord;
       }
     );
 
@@ -282,7 +333,7 @@ export class ProductionMigrationService {
         params.progressCallback({
           totalRecords: records.length,
           processedRecords: processedCount,
-          failedRecords: 0,
+          failedRecords: migrationErrorHandler.getErrorStatistics().totalErrors,
           percentage: (processedCount / records.length) * 100,
           status: 'running',
           currentBatch: Math.ceil(processedCount / this.config.streaming.chunkSize),
@@ -299,9 +350,9 @@ export class ProductionMigrationService {
   }
 
   /**
-   * Execute migration with advanced concurrency patterns
+   * Execute migration with advanced concurrency patterns and error handling
    */
-  private async executeAdvancedConcurrencyMigration(
+  private async executeAdvancedConcurrencyMigrationWithErrorHandling(
     records: any[],
     compiledMapping: CompiledMapping | null,
     params: any
@@ -310,21 +361,22 @@ export class ProductionMigrationService {
     const results = await this.concurrencyManager.adaptiveProcess(
       records,
       async (record) => {
-        // Transform and validate record
-        const transformedRecord = compiledMapping 
-          ? this.schemaCache.transformRecord(record, compiledMapping)
-          : record;
-
-        if (compiledMapping) {
-          const errors = this.schemaCache.validateRecord(transformedRecord, compiledMapping);
-          if (errors.length > 0) {
-            console.warn('Validation errors:', errors);
-          }
+        try {
+          const result = await this.processRecordWithErrorHandling(
+            record,
+            compiledMapping,
+            params
+          );
+          return result.data;
+        } catch (error) {
+          await migrationErrorHandler.handleError(
+            error,
+            'concurrency_record_processing',
+            record.id || record.external_id,
+            params.projectId
+          );
+          throw error;
         }
-
-        // Process record
-        await this.simulateDestinationApiCall(transformedRecord, params.destinationSystem);
-        return transformedRecord;
       }
     );
 
@@ -332,9 +384,9 @@ export class ProductionMigrationService {
   }
 
   /**
-   * Execute optimized batch migration
+   * Execute optimized batch migration with error handling
    */
-  private async executeOptimizedBatchMigration(
+  private async executeOptimizedBatchMigrationWithErrorHandling(
     records: any[],
     compiledMapping: CompiledMapping | null,
     params: any
@@ -346,31 +398,40 @@ export class ProductionMigrationService {
       const batch = records.slice(i, i + batchSize);
       
       const batchPromises = batch.map(async (record) => {
-        // Transform and validate record
-        const transformedRecord = compiledMapping 
-          ? this.schemaCache.transformRecord(record, compiledMapping)
-          : record;
-
-        if (compiledMapping) {
-          const errors = this.schemaCache.validateRecord(transformedRecord, compiledMapping);
-          if (errors.length > 0) {
-            console.warn('Validation errors:', errors);
+        try {
+          const result = await this.processRecordWithErrorHandling(
+            record,
+            compiledMapping,
+            params
+          );
+          if (result.success) {
+            processedCount++;
           }
+          return result.data;
+        } catch (error) {
+          await migrationErrorHandler.handleError(
+            error,
+            'batch_record_processing',
+            record.id || record.external_id,
+            params.projectId
+          );
+          // Decide whether to rethrow or continue based on error type
+          throw error;
         }
-
-        // Process record
-        await this.simulateDestinationApiCall(transformedRecord, params.destinationSystem);
-        return transformedRecord;
       });
 
-      await Promise.all(batchPromises);
-      processedCount += batch.length;
+      try {
+        await Promise.all(batchPromises);
+      } catch (error) {
+        // Handle batch-level error if needed
+        console.error('Batch processing failed:', error);
+      }
 
       // Update progress
       params.progressCallback({
         totalRecords: records.length,
         processedRecords: processedCount,
-        failedRecords: 0,
+        failedRecords: migrationErrorHandler.getErrorStatistics().totalErrors,
         percentage: (processedCount / records.length) * 100,
         status: 'running',
         currentBatch: Math.ceil(i / batchSize) + 1,
@@ -381,6 +442,50 @@ export class ProductionMigrationService {
     }
 
     return processedCount;
+  }
+
+  /**
+   * Process individual record with error handling
+   */
+  private async processRecordWithErrorHandling(
+    record: any,
+    compiledMapping: CompiledMapping | null,
+    params: any
+  ): Promise<{ success: boolean; data: any }> {
+    try {
+      // Transform record using compiled mapping if available
+      const transformedRecord = compiledMapping 
+        ? this.schemaCache.transformRecord(record, compiledMapping)
+        : record;
+
+      // Validate record if mapping available
+      if (compiledMapping) {
+        const errors = this.schemaCache.validateRecord(transformedRecord, compiledMapping);
+        if (errors.length > 0) {
+          throw new Error(`Validation failed: ${errors.join(', ')}`);
+        }
+      }
+
+      // Simulate API call to destination system
+      await this.simulateDestinationApiCall(transformedRecord, params.destinationSystem);
+      
+      return { success: true, data: transformedRecord };
+    } catch (error) {
+      const errorResult = await migrationErrorHandler.handleError(
+        error,
+        'record_processing',
+        record.id || record.external_id,
+        params.projectId
+      );
+
+      if (errorResult.shouldRetry) {
+        // Wait for the specified delay and retry
+        await new Promise(resolve => setTimeout(resolve, errorResult.delayMs));
+        return this.processRecordWithErrorHandling(record, compiledMapping, params);
+      }
+
+      return { success: false, data: null };
+    }
   }
 
   /**
@@ -427,6 +532,27 @@ export class ProductionMigrationService {
     if (this.config.enableAdvancedConcurrency) optimizations.push('Advanced Concurrency Patterns');
     
     return optimizations;
+  }
+
+  /**
+   * Get migration errors for monitoring
+   */
+  getMigrationErrors(): MigrationError[] {
+    return migrationErrorHandler.getRecentErrors();
+  }
+
+  /**
+   * Get error statistics
+   */
+  getErrorStatistics() {
+    return migrationErrorHandler.getErrorStatistics();
+  }
+
+  /**
+   * Clear migration errors
+   */
+  clearErrors(): void {
+    migrationErrorHandler.clearErrors();
   }
 }
 
