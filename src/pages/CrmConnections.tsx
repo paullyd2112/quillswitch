@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,7 +41,6 @@ interface ConnectedCredential {
   credential_name: string;
   credential_type: string;
   created_at: string;
-  expires_at: string;
   expires_at?: string;
 }
 
