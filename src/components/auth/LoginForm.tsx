@@ -25,6 +25,7 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,13 +35,15 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
       const result = await signIn(loginEmail, loginPassword);
 
       if (result?.error) {
-        toast.error(result.error.message);
+        console.error('Sign in error:', result.error);
+        toast.error(result.error.message || "Failed to sign in");
         return;
       }
 
       toast.success("Signed in successfully!");
       navigate("/");
     } catch (error: any) {
+      console.error('Unexpected sign in error:', error);
       toast.error(error.message || "Something went wrong");
     } finally {
       setIsLoading(false);
@@ -49,13 +52,38 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
 
   const handleGoogleSignIn = async () => {
     try {
+      setIsGoogleLoading(true);
+      console.log('Attempting Google sign in...');
+      
       const result = await signInWithGoogle();
       
       if (result?.error) {
-        toast.error(result.error.message);
+        console.error('Google sign in error:', result.error);
+        
+        // Provide more specific error messages for common Google OAuth issues
+        let errorMessage = result.error.message;
+        
+        if (errorMessage.includes('provider is not enabled')) {
+          errorMessage = "Google sign-in is not configured. Please contact support or use email/password login.";
+        } else if (errorMessage.includes('redirect_uri_mismatch')) {
+          errorMessage = "Google sign-in configuration error. Please contact support.";
+        } else if (errorMessage.includes('invalid_client')) {
+          errorMessage = "Google authentication service is temporarily unavailable.";
+        }
+        
+        toast.error(errorMessage);
+        return;
       }
+      
+      // Note: For OAuth flows, the actual redirect happens in the browser
+      // so we don't need to show a success message here
+      console.log('Google OAuth initiated successfully');
+      
     } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
+      console.error('Unexpected Google sign in error:', error);
+      toast.error("Failed to start Google sign-in. Please try again.");
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -115,11 +143,11 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
             variant="outline"
             type="button"
             onClick={handleGoogleSignIn}
-            disabled={isLoading}
+            disabled={isLoading || isGoogleLoading}
             className="w-full"
           >
             <Mail className="h-4 w-4 mr-2" />
-            Sign in with Google
+            {isGoogleLoading ? "Starting Google sign-in..." : "Sign in with Google"}
           </Button>
         </form>
       </CardContent>

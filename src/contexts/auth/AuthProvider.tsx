@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener FIRST to avoid missing events
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
+        console.log('Auth state change:', event, currentSession?.user?.email);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         setIsLoading(false);
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log('Initial session check:', currentSession?.user?.email);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setIsLoading(false);
@@ -91,7 +93,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   
   const signInWithGoogle = async (): Promise<AuthResponse> => {
     try {
-      setIsLoading(true);
+      console.log('Starting Google OAuth flow...');
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -103,11 +106,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       });
       
-      return { data, error };
+      console.log('Google OAuth response:', { data, error });
+      
+      if (error) {
+        console.error('Google OAuth error:', error);
+        return { error };
+      }
+      
+      return { data, error: null };
     } catch (error: any) {
+      console.error('Unexpected Google OAuth error:', error);
       return { error };
-    } finally {
-      setIsLoading(false);
     }
   };
 
