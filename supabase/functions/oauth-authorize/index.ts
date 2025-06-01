@@ -17,9 +17,11 @@ serve(async (req) => {
     const providerParam = url.searchParams.get("provider");
     
     console.log("OAuth authorize request received for provider:", providerParam);
+    console.log("Full URL:", req.url);
+    console.log("Search params:", Object.fromEntries(url.searchParams.entries()));
     
     if (!providerParam) {
-      console.error("No provider parameter provided");
+      console.error("No provider parameter provided in URL");
       return new Response(
         JSON.stringify({ error: "Provider parameter is required" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }

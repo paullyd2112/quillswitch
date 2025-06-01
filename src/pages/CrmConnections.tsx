@@ -40,6 +40,7 @@ interface ConnectedCredential {
   credential_name: string;
   credential_type: string;
   created_at: string;
+  expires_at: string;
   expires_at?: string;
 }
 
@@ -81,18 +82,36 @@ const CrmConnections: React.FC = () => {
     setConnectingProvider(provider);
     
     try {
-      // Call the OAuth authorization edge function
-      console.log('Calling oauth-authorize function...');
-      const { data, error } = await supabase.functions.invoke('oauth-authorize', {
-        body: JSON.stringify({ provider })
+      // Get the Supabase URL and project ID
+      const supabaseUrl = "https://kxjidapjtcxwzpwdomnm.supabase.co";
+      
+      // Construct the edge function URL with provider parameter
+      const functionUrl = `${supabaseUrl}/functions/v1/oauth-authorize?provider=${encodeURIComponent(provider)}`;
+      console.log('Calling function URL:', functionUrl);
+      
+      // Get the auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Make direct fetch request to edge function with provider in URL
+      const response = await fetch(functionUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4amlkYXBqdGN4d3pwd2RvbW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5NjUzNzUsImV4cCI6MjA1ODU0MTM3NX0.U1kLjAztYB-Jfye3dIkJ7gx9U7aNDYHrorkI1Bax_g8',
+          'Content-Type': 'application/json',
+        },
       });
       
-      console.log('OAuth authorize response:', { data, error });
+      console.log('Response status:', response.status);
       
-      if (error) {
-        console.error('Supabase function error:', error);
-        throw new Error(error.message || 'Failed to call OAuth authorization function');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Function response error:', errorText);
+        throw new Error(`Edge Function returned a ${response.status} status code: ${errorText}`);
       }
+      
+      const data = await response.json();
+      console.log('OAuth authorize response:', data);
       
       if (data?.url) {
         console.log('Redirecting to OAuth URL:', data.url);
