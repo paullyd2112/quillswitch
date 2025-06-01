@@ -42,22 +42,35 @@ export const useCrmConnections = () => {
     setConnectingProvider(provider);
     
     try {
-      // Use Supabase functions.invoke instead of direct fetch
-      console.log('Calling oauth-authorize function via Supabase client...');
-      const { data, error } = await supabase.functions.invoke('oauth-authorize', {
+      // Use direct URL construction to ensure provider parameter is passed correctly
+      console.log('Getting edge function URL...');
+      const supabaseUrl = "https://kxjidapjtcxwzpwdomnm.supabase.co";
+      const functionUrl = `${supabaseUrl}/functions/v1/oauth-authorize?provider=${encodeURIComponent(provider)}`;
+      
+      console.log('Making direct request to:', functionUrl);
+      
+      // Get auth session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await fetch(functionUrl, {
         method: 'GET',
         headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4amlkYXBqdGN4d3pwd2RvbW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5NjUzNzUsImV4cCI6MjA1ODU0MTM3NX0.U1kLjAztYB-Jfye3dIkJ7gx9U7aNDYHrorkI1Bax_g8',
           'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({ provider: provider })
       });
       
-      console.log('OAuth authorize response:', data);
-      console.log('OAuth authorize error:', error);
+      console.log('Response status:', response.status);
       
-      if (error) {
-        throw new Error(`Edge Function error: ${error.message}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Edge function error response:', errorText);
+        throw new Error(`Edge Function returned status ${response.status}: ${errorText}`);
       }
+      
+      const data = await response.json();
+      console.log('OAuth authorize response:', data);
       
       if (data?.url) {
         console.log('Redirecting to OAuth URL:', data.url);
