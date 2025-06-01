@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -41,69 +42,22 @@ export const useCrmConnections = () => {
     setConnectingProvider(provider);
     
     try {
-      // Get the Supabase URL and project ID
-      const supabaseUrl = "https://kxjidapjtcxwzpwdomnm.supabase.co";
-      
-      // Construct the edge function URL with provider parameter
-      const functionUrl = `${supabaseUrl}/functions/v1/oauth-authorize?provider=${encodeURIComponent(provider)}`;
-      console.log('Calling function URL:', functionUrl);
-      
-      // Get the auth token
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      console.log('Session exists:', !!session);
-      console.log('Session error:', sessionError);
-      
-      if (sessionError) {
-        throw new Error(`Session error: ${sessionError.message}`);
-      }
-      
-      // Make direct fetch request to edge function with provider in URL
-      console.log('Making fetch request...');
-      const response = await fetch(functionUrl, {
+      // Use Supabase functions.invoke instead of direct fetch
+      console.log('Calling oauth-authorize function via Supabase client...');
+      const { data, error } = await supabase.functions.invoke('oauth-authorize', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4amlkYXBqdGN4d3pwd2RvbW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5NjUzNzUsImV4cCI6MjA1ODU0MTM3NX0.U1kLjAztYB-Jfye3dIkJ7gx9U7aNDYHrorkI1Bax_g8',
           'Content-Type': 'application/json',
         },
+        body: new URLSearchParams({ provider: provider })
       });
       
-      console.log('Response received:');
-      console.log('- Status:', response.status);
-      console.log('- Status Text:', response.statusText);
-      console.log('- Headers:', Object.fromEntries(response.headers.entries()));
-      
-      if (!response.ok) {
-        let errorText;
-        try {
-          errorText = await response.text();
-          console.log('Error response body:', errorText);
-        } catch (parseError) {
-          console.error('Failed to parse error response:', parseError);
-          errorText = 'Unable to parse error response';
-        }
-        
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-        } catch {
-          errorData = { error: errorText };
-        }
-        
-        throw new Error(`Edge Function returned status ${response.status}: ${JSON.stringify(errorData, null, 2)}`);
-      }
-      
-      let data;
-      try {
-        const responseText = await response.text();
-        console.log('Success response body:', responseText);
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Failed to parse success response:', parseError);
-        throw new Error('Failed to parse response from OAuth service');
-      }
-      
       console.log('OAuth authorize response:', data);
+      console.log('OAuth authorize error:', error);
+      
+      if (error) {
+        throw new Error(`Edge Function error: ${error.message}`);
+      }
       
       if (data?.url) {
         console.log('Redirecting to OAuth URL:', data.url);
