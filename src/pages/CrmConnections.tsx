@@ -1,63 +1,145 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info, Key, Lock, ExternalLink } from "lucide-react";
+import { Info, Key, Lock, ExternalLink, CheckCircle, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const CRM_PROVIDERS = [
   {
     id: "salesforce",
     name: "Salesforce",
     description: "Connect your Salesforce account to import contacts, opportunities and more",
-    authUrl: "/app/oauth/authorize/salesforce"
+    icon: "🏢"
   },
   {
     id: "hubspot",
-    name: "HubSpot",
+    name: "HubSpot", 
     description: "Connect your HubSpot account to import contacts, deals and more",
-    authUrl: "/app/oauth/authorize/hubspot"
+    icon: "🟠"
   },
   {
     id: "zoho",
     name: "Zoho CRM",
-    description: "Connect your Zoho CRM to import contacts, deals and more",
-    authUrl: "/app/oauth/authorize/zoho"
+    description: "Connect your Zoho CRM to import contacts, deals and more", 
+    icon: "🔴"
   },
   {
-    id: "pipedrive", 
+    id: "pipedrive",
     name: "Pipedrive",
     description: "Connect your Pipedrive account to import leads, deals and more",
-    authUrl: "/app/oauth/authorize/pipedrive"
+    icon: "🟢"
   }
 ];
 
+interface ConnectedCredential {
+  id: string;
+  service_name: string;
+  credential_name: string;
+  credential_type: string;
+  created_at: string;
+  expires_at?: string;
+}
+
 const CrmConnections: React.FC = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const [connectingProvider, setConnectingProvider] = useState<string | null>(null);
+  const [connectedCredentials, setConnectedCredentials] = useState<ConnectedCredential[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const handleConnect = (provider: string, authUrl: string) => {
-    // In a real implementation, we would redirect to the authorization URL
-    // For now, we'll simulate this with a toast message
-    toast({
-      title: `Connecting to ${provider}...`,
-      description: "This would redirect to OAuth authorization page"
-    });
-    
-    // This would normally be a window.location.href = authUrl
-    // For demo purposes, simulate with a timeout and navigation
-    setTimeout(() => {
-      navigate("/app/oauth/callback", { 
-        state: { 
-          provider, 
-          success: true,
-          message: "Successfully connected (simulated)" 
-        } 
+  // Load connected credentials on component mount
+  useEffect(() => {
+    loadConnectedCredentials();
+  }, []);
+
+  const loadConnectedCredentials = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('service_credentials')
+        .select('id, service_name, credential_name, credential_type, created_at, expires_at')
+        .eq('credential_type', 'oauth_token');
+        
+      if (error) throw error;
+      
+      setConnectedCredentials(data || []);
+    } catch (error) {
+      console.error('Failed to load connected credentials:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load connected CRMs",
+        variant: "destructive"
       });
-    }, 2000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleConnect = async (provider: string) => {
+    setConnectingProvider(provider);
+    
+    try {
+      // Call the OAuth authorization edge function
+      const { data, error } = await supabase.functions.invoke('oauth-authorize', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: new URLSearchParams({ provider })
+      });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      if (data?.url) {
+        // Redirect to OAuth authorization URL
+        window.location.href = data.url;
+      } else {
+        throw new Error('No authorization URL received');
+      }
+      
+    } catch (error) {
+      console.error('OAuth initiation failed:', error);
+      toast({
+        title: "Connection Failed",
+        description: `Failed to start OAuth flow for ${provider}. Please try again.`,
+        variant: "destructive"
+      });
+      setConnectingProvider(null);
+    }
+  };
+
+  const handleDisconnect = async (credentialId: string, serviceName: string) => {
+    try {
+      const { error } = await supabase
+        .from('service_credentials')
+        .delete()
+        .eq('id', credentialId);
+        
+      if (error) throw error;
+      
+      // Refresh the list
+      await loadConnectedCredentials();
+      
+      toast({
+        title: "Disconnected",
+        description: `Successfully disconnected from ${serviceName}`
+      });
+    } catch (error) {
+      console.error('Failed to disconnect:', error);
+      toast({
+        title: "Error", 
+        description: "Failed to disconnect. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const isProviderConnected = (providerId: string) => {
+    return connectedCredentials.some(cred => cred.service_name === providerId);
   };
   
   return (
@@ -66,41 +148,74 @@ const CrmConnections: React.FC = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">CRM Connections</h1>
           <p className="text-muted-foreground">
-            Connect your CRM systems to enable data migration
+            Connect your CRM systems to enable secure data migration with OAuth authentication
           </p>
         </div>
         
         <Alert className="mb-6 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
           <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           <AlertDescription className="text-blue-700 dark:text-blue-300">
-            Connect your CRM platforms to start migrating data between them.
-            Your credentials are securely encrypted and stored.
+            We use WorkOS OAuth for secure, enterprise-grade authentication. Your credentials are encrypted and stored securely.
           </AlertDescription>
         </Alert>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {CRM_PROVIDERS.map((provider) => (
-            <Card key={provider.id} className="transition-all hover:shadow-md">
-              <CardHeader>
-                <CardTitle>{provider.name}</CardTitle>
-                <CardDescription>{provider.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Lock className="mr-1 h-3 w-3" />
-                    <span>Uses OAuth</span>
+          {CRM_PROVIDERS.map((provider) => {
+            const isConnected = isProviderConnected(provider.id);
+            const isConnecting = connectingProvider === provider.id;
+            
+            return (
+              <Card key={provider.id} className="transition-all hover:shadow-md">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <span className="text-2xl">{provider.icon}</span>
+                    {provider.name}
+                    {isConnected && <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />}
+                  </CardTitle>
+                  <CardDescription>{provider.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Lock className="mr-1 h-3 w-3" />
+                      <span>OAuth 2.0</span>
+                    </div>
+                    
+                    {isConnected ? (
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          const credential = connectedCredentials.find(c => c.service_name === provider.id);
+                          if (credential) handleDisconnect(credential.id, provider.name);
+                        }}
+                        className="gap-2"
+                      >
+                        Disconnect
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={() => handleConnect(provider.id)}
+                        disabled={isConnecting}
+                        className="gap-2"
+                      >
+                        {isConnecting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Connecting...
+                          </>
+                        ) : (
+                          <>
+                            <Key className="h-4 w-4" />
+                            Connect
+                          </>
+                        )}
+                      </Button>
+                    )}
                   </div>
-                  <Button 
-                    onClick={() => handleConnect(provider.name, provider.authUrl)}
-                    className="gap-2"
-                  >
-                    <Key className="h-4 w-4" /> Connect
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
         
         <Card className="mb-6">
@@ -111,9 +226,41 @@ const CrmConnections: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-6 text-muted-foreground">
-              No CRMs connected yet. Connect a CRM platform above to get started.
-            </div>
+            {isLoading ? (
+              <div className="text-center py-6">
+                <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2" />
+                <p className="text-muted-foreground">Loading connections...</p>
+              </div>
+            ) : connectedCredentials.length > 0 ? (
+              <div className="space-y-4">
+                {connectedCredentials.map((credential) => (
+                  <div key={credential.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <h4 className="font-medium capitalize">{credential.service_name}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Connected on {new Date(credential.created_at).toLocaleDateString()}
+                      </p>
+                      {credential.expires_at && (
+                        <p className="text-xs text-amber-600">
+                          Expires: {new Date(credential.expires_at).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleDisconnect(credential.id, credential.service_name)}
+                    >
+                      Disconnect
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-muted-foreground">
+                No CRMs connected yet. Connect a CRM platform above to get started.
+              </div>
+            )}
           </CardContent>
         </Card>
         

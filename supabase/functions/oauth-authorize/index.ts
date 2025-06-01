@@ -25,20 +25,39 @@ serve(async (req) => {
     
     const provider = providerParam.toLowerCase();
     
-    // This would be replaced with actual OAuth configuration for each provider
-    const oauthConfig: Record<string, { authUrl: string, clientId: string }> = {
+    // Get WorkOS credentials from environment
+    const workosClientId = Deno.env.get("WORKOS_CLIENT_ID");
+    const workosApiKey = Deno.env.get("WORKOS_API_KEY");
+    
+    if (!workosClientId || !workosApiKey) {
+      console.error("WorkOS credentials not configured");
+      return new Response(
+        JSON.stringify({ error: "OAuth service not configured" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
+    
+    // Map CRM providers to their OAuth configurations
+    const providerConfigs: Record<string, { domain: string; connection: string }> = {
       "salesforce": {
-        authUrl: "https://login.salesforce.com/services/oauth2/authorize",
-        clientId: "your_salesforce_client_id" // Would be retrieved from environment variables
+        domain: "login.salesforce.com",
+        connection: "salesforce"
       },
       "hubspot": {
-        authUrl: "https://app.hubspot.com/oauth/authorize",
-        clientId: "your_hubspot_client_id"
+        domain: "app.hubspot.com",
+        connection: "hubspot"
       },
-      // Add other providers as needed
+      "zoho": {
+        domain: "accounts.zoho.com",
+        connection: "zoho"
+      },
+      "pipedrive": {
+        domain: "oauth.pipedrive.com",
+        connection: "pipedrive"
+      }
     };
     
-    const config = oauthConfig[provider];
+    const config = providerConfigs[provider];
     if (!config) {
       return new Response(
         JSON.stringify({ error: `Unsupported provider: ${provider}` }),
@@ -46,23 +65,34 @@ serve(async (req) => {
       );
     }
     
-    // In a real implementation, we would generate a state parameter for CSRF protection
+    // Generate state parameter for CSRF protection
     const state = crypto.randomUUID();
     
-    // In a real implementation, this would be a URL to your OAuth callback endpoint
-    const redirectUri = `${url.origin}/oauth/callback`;
+    // Use WorkOS User Management for OAuth
+    const redirectUri = `${url.origin}/app/oauth/callback`;
     
-    // Build the authorization URL
-    const authorizationUrl = `${config.authUrl}?client_id=${config.clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&state=${state}`;
+    // Build WorkOS authorization URL
+    const authorizationUrl = new URL("https://api.workos.com/user_management/authorize");
+    authorizationUrl.searchParams.set("client_id", workosClientId);
+    authorizationUrl.searchParams.set("redirect_uri", redirectUri);
+    authorizationUrl.searchParams.set("response_type", "code");
+    authorizationUrl.searchParams.set("state", JSON.stringify({ provider, csrfToken: state }));
+    authorizationUrl.searchParams.set("provider", config.connection);
+    
+    console.log(`Generated OAuth URL for ${provider}:`, authorizationUrl.toString());
     
     // Return the authorization URL
     return new Response(
-      JSON.stringify({ url: authorizationUrl }),
+      JSON.stringify({ 
+        url: authorizationUrl.toString(),
+        state: state,
+        provider: provider
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
     
   } catch (error) {
-    console.error("Error processing request:", error);
+    console.error("Error processing OAuth authorization request:", error);
     return new Response(
       JSON.stringify({ error: "Internal server error" }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
