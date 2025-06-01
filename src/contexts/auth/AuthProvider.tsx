@@ -95,10 +95,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log('Starting Google OAuth flow...');
       
+      // Get the current URL origin to ensure we redirect to the right place
+      const currentOrigin = window.location.origin;
+      console.log('Current origin:', currentOrigin);
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${currentOrigin}/auth`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -113,6 +117,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return { error };
       }
       
+      // The redirect will happen automatically, so we don't need to do anything else
       return { data, error: null };
     } catch (error: any) {
       console.error('Unexpected Google OAuth error:', error);

@@ -55,6 +55,10 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
       setIsGoogleLoading(true);
       console.log('Attempting Google sign in...');
       
+      // Check if we're in a development environment
+      const isDevelopment = window.location.hostname === 'localhost';
+      console.log('Environment:', isDevelopment ? 'development' : 'production');
+      
       const result = await signInWithGoogle();
       
       if (result?.error) {
@@ -66,9 +70,11 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
         if (errorMessage.includes('provider is not enabled')) {
           errorMessage = "Google sign-in is not configured. Please contact support or use email/password login.";
         } else if (errorMessage.includes('redirect_uri_mismatch')) {
-          errorMessage = "Google sign-in configuration error. Please contact support.";
+          errorMessage = "Google sign-in configuration error. Please verify the redirect URLs in your Google Cloud Console.";
         } else if (errorMessage.includes('invalid_client')) {
           errorMessage = "Google authentication service is temporarily unavailable.";
+        } else if (errorMessage.includes('refused to connect')) {
+          errorMessage = "Google sign-in blocked. This may be due to browser security settings or configuration issues.";
         }
         
         toast.error(errorMessage);
@@ -76,8 +82,8 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
       }
       
       // Note: For OAuth flows, the actual redirect happens in the browser
-      // so we don't need to show a success message here
-      console.log('Google OAuth initiated successfully');
+      // The user will be redirected to Google, then back to our app
+      console.log('Google OAuth redirect initiated successfully');
       
     } catch (error: any) {
       console.error('Unexpected Google sign in error:', error);
@@ -147,7 +153,7 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
             className="w-full"
           >
             <Mail className="h-4 w-4 mr-2" />
-            {isGoogleLoading ? "Starting Google sign-in..." : "Sign in with Google"}
+            {isGoogleLoading ? "Redirecting to Google..." : "Sign in with Google"}
           </Button>
         </form>
       </CardContent>
