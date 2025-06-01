@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,34 +77,38 @@ const CrmConnections: React.FC = () => {
   };
   
   const handleConnect = async (provider: string) => {
+    console.log(`Starting OAuth connection for ${provider}`);
     setConnectingProvider(provider);
     
     try {
       // Call the OAuth authorization edge function
+      console.log('Calling oauth-authorize function...');
       const { data, error } = await supabase.functions.invoke('oauth-authorize', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: new URLSearchParams({ provider })
+        body: JSON.stringify({ provider })
       });
       
+      console.log('OAuth authorize response:', { data, error });
+      
       if (error) {
-        throw new Error(error.message);
+        console.error('Supabase function error:', error);
+        throw new Error(error.message || 'Failed to call OAuth authorization function');
       }
       
       if (data?.url) {
+        console.log('Redirecting to OAuth URL:', data.url);
         // Redirect to OAuth authorization URL
         window.location.href = data.url;
       } else {
-        throw new Error('No authorization URL received');
+        console.error('No authorization URL received:', data);
+        throw new Error('No authorization URL received from OAuth service');
       }
       
     } catch (error) {
       console.error('OAuth initiation failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Connection Failed",
-        description: `Failed to start OAuth flow for ${provider}. Please try again.`,
+        description: `Failed to start OAuth flow for ${provider}. ${errorMessage}`,
         variant: "destructive"
       });
       setConnectingProvider(null);
