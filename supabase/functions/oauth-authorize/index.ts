@@ -16,32 +16,41 @@ serve(async (req) => {
     const url = new URL(req.url);
     const providerParam = url.searchParams.get("provider");
     
-    console.log("OAuth authorize request received for provider:", providerParam);
-    console.log("Full URL:", req.url);
-    console.log("Search params:", Object.fromEntries(url.searchParams.entries()));
+    console.log("=== OAuth Authorize Debug ===");
+    console.log("Method:", req.method);
+    console.log("URL:", req.url);
+    console.log("Provider param:", providerParam);
+    console.log("All search params:", Object.fromEntries(url.searchParams.entries()));
     
     if (!providerParam) {
-      console.error("No provider parameter provided in URL");
+      console.error("ERROR: No provider parameter provided");
       return new Response(
-        JSON.stringify({ error: "Provider parameter is required" }),
+        JSON.stringify({ error: "Provider parameter is required", debug: "No provider in URL params" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
       );
     }
     
     const provider = providerParam.toLowerCase();
-    console.log("Processing OAuth for provider:", provider);
+    console.log("Processing provider:", provider);
     
     // Get WorkOS credentials from environment
     const workosClientId = Deno.env.get("WORKOS_CLIENT_ID");
     const workosApiKey = Deno.env.get("WORKOS_API_KEY");
     
-    console.log("WorkOS Client ID present:", !!workosClientId);
-    console.log("WorkOS API Key present:", !!workosApiKey);
+    console.log("WorkOS Client ID exists:", !!workosClientId);
+    console.log("WorkOS API Key exists:", !!workosApiKey);
+    console.log("WorkOS Client ID value:", workosClientId ? `${workosClientId.substring(0, 10)}...` : "null");
     
     if (!workosClientId || !workosApiKey) {
-      console.error("WorkOS credentials not configured");
+      console.error("ERROR: WorkOS credentials missing");
       return new Response(
-        JSON.stringify({ error: "OAuth service not configured" }),
+        JSON.stringify({ 
+          error: "OAuth service not configured", 
+          debug: {
+            hasClientId: !!workosClientId,
+            hasApiKey: !!workosApiKey
+          }
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
       );
     }
@@ -49,26 +58,33 @@ serve(async (req) => {
     // Map CRM providers to their OAuth configurations
     const providerConfigs: Record<string, { connection: string }> = {
       "salesforce": {
-        connection: "SalesforceOAuth"
+        connection: "conn_salesforce"
       },
       "hubspot": {
-        connection: "HubSpotOAuth"
+        connection: "conn_hubspot"
       },
       "zoho": {
-        connection: "ZohoCrmOAuth"
+        connection: "conn_zoho"
       },
       "pipedrive": {
-        connection: "PipedriveOAuth"
+        connection: "conn_pipedrive"
       }
     };
     
     const config = providerConfigs[provider];
-    console.log("Provider config found:", !!config, config);
+    console.log("Provider config lookup result:", config);
+    console.log("Available providers:", Object.keys(providerConfigs));
     
     if (!config) {
-      console.error(`Unsupported provider: ${provider}`);
+      console.error(`ERROR: Unsupported provider: ${provider}`);
       return new Response(
-        JSON.stringify({ error: `Unsupported provider: ${provider}` }),
+        JSON.stringify({ 
+          error: `Unsupported provider: ${provider}`, 
+          debug: {
+            requestedProvider: provider,
+            availableProviders: Object.keys(providerConfigs)
+          }
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
       );
     }
@@ -90,21 +106,66 @@ serve(async (req) => {
     authorizationUrl.searchParams.set("connection", config.connection);
     
     console.log("Generated OAuth URL:", authorizationUrl.toString());
+    console.log("OAuth URL params:", Object.fromEntries(authorizationUrl.searchParams.entries()));
+    
+    // Test WorkOS API connectivity
+    console.log("Testing WorkOS API connectivity...");
+    try {
+      const testResponse = await fetch("https://api.workos.com/user_management/authenticate", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${workosApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          client_id: workosClientId,
+          code: "test",
+          grant_type: "authorization_code",
+        }),
+      });
+      
+      console.log("WorkOS API test response status:", testResponse.status);
+      const testData = await testResponse.text();
+      console.log("WorkOS API test response (first 200 chars):", testData.substring(0, 200));
+    } catch (testError) {
+      console.error("WorkOS API test failed:", testError);
+    }
     
     // Return the authorization URL
+    const response = {
+      success: true,
+      url: authorizationUrl.toString(),
+      state: state,
+      provider: provider,
+      debug: {
+        redirectUri,
+        connection: config.connection,
+        workosClientIdPrefix: workosClientId.substring(0, 10)
+      }
+    };
+    
+    console.log("Returning successful response:", JSON.stringify(response, null, 2));
+    
     return new Response(
-      JSON.stringify({ 
-        url: authorizationUrl.toString(),
-        state: state,
-        provider: provider
-      }),
+      JSON.stringify(response),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
     
   } catch (error) {
-    console.error("Error processing OAuth authorization request:", error);
+    console.error("=== OAuth Authorize Error ===");
+    console.error("Error type:", error.constructor.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    
     return new Response(
-      JSON.stringify({ error: "Internal server error", details: error.message }),
+      JSON.stringify({ 
+        error: "Internal server error", 
+        details: error.message,
+        debug: {
+          errorType: error.constructor.name,
+          timestamp: new Date().toISOString()
+        }
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }

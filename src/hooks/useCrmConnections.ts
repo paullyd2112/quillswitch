@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -38,7 +37,7 @@ export const useCrmConnections = () => {
   };
   
   const handleConnect = async (provider: string) => {
-    console.log(`Starting OAuth connection for ${provider}`);
+    console.log(`=== Starting OAuth for ${provider} ===`);
     setConnectingProvider(provider);
     
     try {
@@ -50,9 +49,16 @@ export const useCrmConnections = () => {
       console.log('Calling function URL:', functionUrl);
       
       // Get the auth token
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      console.log('Session exists:', !!session);
+      console.log('Session error:', sessionError);
+      
+      if (sessionError) {
+        throw new Error(`Session error: ${sessionError.message}`);
+      }
       
       // Make direct fetch request to edge function with provider in URL
+      console.log('Making fetch request...');
       const response = await fetch(functionUrl, {
         method: 'GET',
         headers: {
@@ -62,15 +68,41 @@ export const useCrmConnections = () => {
         },
       });
       
-      console.log('Response status:', response.status);
+      console.log('Response received:');
+      console.log('- Status:', response.status);
+      console.log('- Status Text:', response.statusText);
+      console.log('- Headers:', Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Function response error:', errorText);
-        throw new Error(`Edge Function returned a ${response.status} status code: ${errorText}`);
+        let errorText;
+        try {
+          errorText = await response.text();
+          console.log('Error response body:', errorText);
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+          errorText = 'Unable to parse error response';
+        }
+        
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
+        }
+        
+        throw new Error(`Edge Function returned status ${response.status}: ${JSON.stringify(errorData, null, 2)}`);
       }
       
-      const data = await response.json();
+      let data;
+      try {
+        const responseText = await response.text();
+        console.log('Success response body:', responseText);
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Failed to parse success response:', parseError);
+        throw new Error('Failed to parse response from OAuth service');
+      }
+      
       console.log('OAuth authorize response:', data);
       
       if (data?.url) {
@@ -79,11 +111,15 @@ export const useCrmConnections = () => {
         window.location.href = data.url;
       } else {
         console.error('No authorization URL received:', data);
-        throw new Error('No authorization URL received from OAuth service');
+        throw new Error(`No authorization URL received from OAuth service. Response: ${JSON.stringify(data)}`);
       }
       
     } catch (error) {
-      console.error('OAuth initiation failed:', error);
+      console.error('=== OAuth Error ===');
+      console.error('Error:', error);
+      console.error('Error type:', error.constructor.name);
+      console.error('Error message:', error.message);
+      
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Connection Failed",
