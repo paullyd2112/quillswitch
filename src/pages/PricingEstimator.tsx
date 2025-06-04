@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import FadeIn from "@/components/animations/FadeIn";
 import Navbar from "@/components/layout/Navbar";
@@ -12,6 +12,11 @@ import RecordDefinition from "@/components/pricing/RecordDefinition";
 import FeaturesIncluded from "@/components/pricing/FeaturesIncluded";
 
 const PricingEstimator: React.FC = () => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-950">
       <Navbar />
