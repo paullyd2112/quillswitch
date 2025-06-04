@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Clock, Users, ArrowRight } from "lucide-react";
@@ -13,6 +14,20 @@ interface SavingsResultsCardProps {
 }
 
 const SavingsResultsCard: React.FC<SavingsResultsCardProps> = ({ results }) => {
+  const navigate = useNavigate();
+
+  const handleStartEssentials = () => {
+    navigate("/auth?mode=register");
+  };
+
+  const handleLearnPro = () => {
+    navigate("/auth?mode=register");
+  };
+
+  const handleTalkToExpert = () => {
+    navigate("/auth?mode=register");
+  };
+
   const chartData = [
     {
       name: "Manual Migration",
@@ -99,15 +114,15 @@ const SavingsResultsCard: React.FC<SavingsResultsCardProps> = ({ results }) => {
 
         {/* CTAs */}
         <div className="space-y-3">
-          <Button className="w-full" size="lg">
+          <Button onClick={handleStartEssentials} className="w-full" size="lg">
             Start with QuillSwitch Essentials ({formatCurrency(1999)})
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" size="sm">
+            <Button onClick={handleLearnPro} variant="outline" size="sm">
               Learn About Pro ({formatCurrency(4999)})
             </Button>
-            <Button variant="outline" size="sm">
+            <Button onClick={handleTalkToExpert} variant="outline" size="sm">
               Talk to Expert
             </Button>
           </div>

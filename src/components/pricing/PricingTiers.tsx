@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Check, Sparkles, ArrowRight, Users, Building2 } from "lucide-react";
 import SlideUp from "@/components/animations/SlideUp";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
@@ -7,6 +8,16 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency, formatNumber } from "./pricingUtils";
 
 const PricingTiers: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate("/auth?mode=register");
+  };
+
+  const handleLearnMorePro = () => {
+    navigate("/auth?mode=register");
+  };
+
   return (
     <SlideUp className="grid gap-8 md:grid-cols-2 max-w-5xl mx-auto" staggerChildren={true} staggerDelay={100}>
       <GlassPanel className="p-8 text-center space-y-6 hover:scale-105 transition-transform duration-300 border-primary/20">
@@ -41,7 +52,7 @@ const PricingTiers: React.FC = () => {
             <span className="text-sm">Standard integrations</span>
           </div>
         </div>
-        <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+        <Button onClick={handleGetStarted} className="w-full bg-primary hover:bg-primary/90 text-white">
           Get Started <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
         <p className="text-xs text-muted-foreground">
@@ -87,7 +98,7 @@ const PricingTiers: React.FC = () => {
             <span className="text-sm">Complex transformation support</span>
           </div>
         </div>
-        <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+        <Button onClick={handleLearnMorePro} className="w-full bg-primary hover:bg-primary/90 text-white">
           Get Started <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
         <p className="text-xs text-muted-foreground">
