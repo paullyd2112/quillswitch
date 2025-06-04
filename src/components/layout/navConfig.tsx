@@ -1,5 +1,5 @@
 
-import { Home, FileText, HelpCircle, Settings, Database, Shield, Zap, Plus, LifeBuoy } from "lucide-react";
+import { Home, FileText, HelpCircle, Settings, Database, Shield, Zap, Plus, LifeBuoy, Globe } from "lucide-react";
 import type { NavItem, NavLink } from "./types";
 
 export const mainNavItems: NavItem[] = [
@@ -35,6 +35,11 @@ export const appNavItems: NavItem[] = [
     title: "CRM Connections", 
     href: "/app/crm-connections",
     icon: Shield,
+  },
+  {
+    title: "Integrations",
+    href: "/app/integrations",
+    icon: Globe,
   },
   {
     title: "Credentials Vault",

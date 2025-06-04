@@ -26,6 +26,7 @@ import OAuthCallback from './components/oauth/OAuthCallback'
 import PricingEstimator from './pages/PricingEstimator'
 import AppErrorBoundary from './components/error-handling/AppErrorBoundary'
 import Security from './pages/Security'
+import Integrations from './pages/Integrations'
 
 function App() {
   return (
@@ -70,6 +71,11 @@ function App() {
                       <Route path="crm-connections" element={
                         <AppErrorBoundary isolate>
                           <CrmConnections />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="integrations" element={
+                        <AppErrorBoundary isolate>
+                          <Integrations />
                         </AppErrorBoundary>
                       } />
                       <Route path="credentials-vault" element={
