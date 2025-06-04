@@ -7,12 +7,20 @@ import { useAuth } from "@/contexts/auth";
 import HeroBackground from "./hero/HeroBackground";
 import AnimatedHeadline from "./hero/AnimatedHeadline";
 import QuickStartCTA from "./hero/QuickStartCTA";
-import { useUserOnboarding } from "@/components/onboarding/UserOnboardingProvider";
 
 const HomeHero = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { showOnboardingTour } = useUserOnboarding();
+  
+  const handleLearnMore = () => {
+    if (user) {
+      // If user is logged in, navigate to migrations page where onboarding is available
+      navigate("/app/migrations");
+    } else {
+      // If user is not logged in, navigate to about page
+      navigate("/about");
+    }
+  };
   
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
