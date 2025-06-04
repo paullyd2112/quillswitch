@@ -10,7 +10,13 @@ const QuickStartCTA: React.FC = () => {
   const { user } = useAuth();
 
   const handleQuickStart = () => {
-    navigate("/quick-start");
+    if (user) {
+      // User is authenticated, go directly to the protected quick-start route
+      navigate("/app/quick-start");
+    } else {
+      // User is not authenticated, redirect to auth with return URL
+      navigate("/auth?mode=register&redirect=/app/quick-start");
+    }
   };
 
   return (

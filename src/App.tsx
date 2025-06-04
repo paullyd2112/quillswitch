@@ -53,11 +53,11 @@ function App() {
                     <Route path="/demo" element={<Demo />} />
                     <Route path="/pricing" element={<PricingEstimator />} />
                     <Route path="/support" element={<Support />} />
-                    <Route path="/quick-start" element={<QuickStart />} />
 
                     {/* Legacy routes - redirect to new structure */}
-                    <Route path="/migrations/*" element={<Navigate to="/quick-start" replace />} />
-                    <Route path="/connect/*" element={<Navigate to="/quick-start" replace />} />
+                    <Route path="/migrations/*" element={<Navigate to="/app/setup" replace />} />
+                    <Route path="/connect/*" element={<Navigate to="/app/setup" replace />} />
+                    <Route path="/quick-start" element={<Navigate to="/app/quick-start" replace />} />
 
                     {/* Protected routes with sidebar layout */}
                     <Route path="/app" element={
@@ -68,6 +68,11 @@ function App() {
                       <Route index element={<Navigate to="/app/setup" replace />} />
                       
                       {/* Main application routes */}
+                      <Route path="quick-start" element={
+                        <AppErrorBoundary isolate>
+                          <QuickStart />
+                        </AppErrorBoundary>
+                      } />
                       <Route path="setup" element={
                         <AppErrorBoundary isolate>
                           <MigrationSetup />
