@@ -15,6 +15,7 @@ import Demo from "@/pages/Demo";
 import About from "@/pages/About";
 import Auth from "@/pages/Auth";
 import ApiDocs from "@/pages/ApiDocs";
+import Security from "@/pages/Security";
 import SetupWizard from "@/pages/SetupWizard";
 import MigrationSetup from "@/pages/MigrationSetup";
 import MigrationChat from "@/pages/MigrationChat";
@@ -41,6 +42,7 @@ function App() {
                     <Route path="/about" element={<About />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/api-docs" element={<ApiDocs />} />
+                    <Route path="/app/security" element={<Security />} />
                     <Route path="/app/setup" element={<SetupWizard />} />
                     <Route path="/app/migration-setup" element={<MigrationSetup />} />
                     <Route path="/app/migration-chat" element={<MigrationChat />} />
