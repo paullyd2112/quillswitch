@@ -44,8 +44,29 @@ const ProductionMigrationPage: React.FC = () => {
         crmSystem: config.sourceSystem,
         widgets: [],
         filters: [],
-        layout: { rows: 3, columns: 4 },
-        permissions: { canEdit: true, canView: true, canShare: false },
+        layout: { 
+          type: 'grid' as const,
+          columns: 4,
+          rows: 3,
+          sections: [
+            {
+              id: `section_${i}`,
+              position: { x: 0, y: 0, width: 4, height: 3 },
+              widgetIds: []
+            }
+          ]
+        },
+        permissions: { 
+          owner: 'demo_user',
+          viewers: [],
+          editors: [],
+          isPublic: false,
+          shareSettings: {
+            allowCopy: true,
+            allowExport: true,
+            passwordProtected: false
+          }
+        },
         metadata: {
           description: `Demo dashboard ${i}`,
           tags: ['demo', 'test'],

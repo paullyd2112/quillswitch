@@ -275,13 +275,8 @@ export class ProductionMigrationService {
     };
 
     // Execute migration with standard service but optimized config
-    // Fixed method name: using migrateDashboards instead of migrateDashboard
-    const migrationResults = await dashboardMigrationService.migrateDashboards(
-      [transformedDashboard],
-      config.destinationSystem,
-      {}, // credentials would be retrieved from secure store
-      {} // field mappings already applied
-    );
+    // Using simplified approach since migrateDashboards expects just dashboards array
+    const migrationResults = await dashboardMigrationService.migrateDashboards([transformedDashboard]);
 
     // Return the first result or create a default one
     return migrationResults[0] || {
