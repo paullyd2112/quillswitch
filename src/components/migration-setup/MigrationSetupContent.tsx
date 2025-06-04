@@ -1,158 +1,288 @@
 
 import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
-import CrmConnectionSection from "@/components/connection-hub/CrmConnectionSection";
-import IntegratedToolsSection from "@/components/connection-hub/IntegratedToolsSection";
-import WizardContainer from "@/components/setup-wizard/WizardContainer";
-import ConnectionStatusCard from "@/components/setup-migration/ConnectionStatusCard";
-import { useConnection } from "@/contexts/ConnectionContext";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Zap } from "lucide-react";
-import GlassPanel from "@/components/ui-elements/GlassPanel";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Database, 
+  ArrowRight, 
+  CheckCircle, 
+  Globe,
+  Zap,
+  Shield,
+  Settings
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth";
 import FadeIn from "@/components/animations/FadeIn";
+import GlassPanel from "@/components/ui-elements/GlassPanel";
+import ConnectionSection from "@/components/connection-hub/ConnectionSection";
+import EcosystemAutoConnector from "./EcosystemAutoConnector";
 
 const MigrationSetupContent: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("connect");
-  const { connectedSystems } = useConnection();
-  
-  // Check for connected source and destination CRMs
-  const sourceCrms = connectedSystems.filter(system => system.type === "source");
-  const destinationCrms = connectedSystems.filter(system => system.type === "destination");
-  
-  const hasRequiredConnections = sourceCrms.length > 0 && destinationCrms.length > 0;
-  
-  // Navigate to the wizard tab when connections are ready
-  const handleContinueToWizard = () => {
-    setActiveTab("wizard");
+  const [setupProgress, setSetupProgress] = useState(0);
+  const [connectedEcosystemTools, setConnectedEcosystemTools] = useState<any[]>([]);
+
+  const handleStartMigration = () => {
+    if (setupProgress < 100) {
+      toast.error("Please complete all setup steps before starting migration.");
+      return;
+    }
+    
+    toast.success("Migration started successfully!");
+    navigate("/app/migrations/new");
   };
-  
-  // Navigate back to the connections tab
-  const handleBackToConnections = () => {
-    setActiveTab("connect");
+
+  const handleEcosystemToolsConnected = (tools: any[]) => {
+    setConnectedEcosystemTools(tools);
+    toast.success(`Connected ${tools.length} ecosystem tools for auto-reconnection.`);
+    updateSetupProgress();
   };
+
+  const updateSetupProgress = () => {
+    // Calculate progress based on completed steps
+    let progress = 0;
+    if (connectedEcosystemTools.length > 0) progress += 25;
+    // Add other progress indicators as needed
+    setSetupProgress(progress);
+  };
+
+  if (!user) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Authentication Required</CardTitle>
+            <CardDescription>
+              Please log in to access the migration setup.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => navigate("/auth")}>
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-950 relative overflow-hidden">
-      {/* Background elements matching home page */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container relative z-10 px-4 py-8 max-w-7xl mx-auto">
-        <FadeIn>
-          <div className="mb-8 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium rounded-full bg-primary/10 border border-primary/20 text-primary backdrop-blur-sm">
-              <Zap className="h-4 w-4" />
-              Migration Setup
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text">
-              CRM Migration Setup
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Connect your systems and configure your migration with enterprise-grade security and AI-powered precision
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <FadeIn>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <h1 className="text-3xl font-bold">Migration Setup</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Set up your CRM migration by connecting your systems and configuring the Ecosystem Auto-Connector 
+              to ensure all your integrated tools are seamlessly reconnected after migration.
             </p>
           </div>
-        </FadeIn>
-        
-        <FadeIn delay="200">
-          <GlassPanel className="mb-8 p-6">
-            <ProgressIndicator />
-          </GlassPanel>
-        </FadeIn>
-        
-        <FadeIn delay="300">
+
+          {/* Progress Overview */}
           <GlassPanel className="p-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="w-full sm:w-auto grid grid-cols-2 gap-1 bg-slate-900/50 border border-slate-700">
-                <TabsTrigger 
-                  value="connect" 
-                  disabled={activeTab === "wizard" && !hasRequiredConnections}
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  1. Connect Systems
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="wizard" 
-                  disabled={!hasRequiredConnections}
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  2. Configure Migration
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="connect" className="space-y-8">
-                <div className="grid gap-8">
-                  {/* Step 1: Connect Old CRM */}
-                  <GlassPanel className="p-6">
-                    <CrmConnectionSection 
-                      step="1" 
-                      title="Connect Old CRM" 
-                      description="Select and connect your current CRM system that you want to migrate from"
-                      type="source"
-                    />
-                  </GlassPanel>
-                  
-                  {/* Step 2: Connect New CRM */}
-                  <GlassPanel className="p-6">
-                    <CrmConnectionSection 
-                      step="2" 
-                      title="Connect New CRM" 
-                      description="Select and connect your target CRM system where your data will be migrated to"
-                      type="destination"
-                    />
-                  </GlassPanel>
-                  
-                  {/* Step 3: Connect Other Tools */}
-                  <GlassPanel className="p-6">
-                    <IntegratedToolsSection 
-                      step="3" 
-                      title="Connect Your Other Tools" 
-                      description="Select and connect additional tools and applications you use with your CRM"
-                    />
-                  </GlassPanel>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Setup Progress</h2>
+                <span className="text-sm text-muted-foreground">{setupProgress}% Complete</span>
+              </div>
+              <Progress value={setupProgress} className="w-full" />
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className={`h-4 w-4 ${setupProgress >= 25 ? 'text-green-500' : 'text-muted-foreground'}`} />
+                  <span className="text-sm">Ecosystem Scan</span>
                 </div>
-              
-                <div className="flex justify-end pt-6">
-                  <Button 
-                    onClick={handleContinueToWizard} 
-                    disabled={!hasRequiredConnections}
-                    size="lg"
-                    className="px-8 py-6 text-lg bg-primary hover:bg-primary/90 text-white transition-all duration-300 hover:scale-105 shadow-lg"
-                  >
-                    {hasRequiredConnections ? (
-                      <>Continue to Configuration <ArrowRight size={20} className="ml-2" /></>
-                    ) : (
-                      <>Connect Source & Destination CRMs First</>
-                    )}
-                  </Button>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className={`h-4 w-4 ${setupProgress >= 50 ? 'text-green-500' : 'text-muted-foreground'}`} />
+                  <span className="text-sm">CRM Connection</span>
                 </div>
-              </TabsContent>
-              
-              <TabsContent value="wizard" className="space-y-6">
-                <div className="mb-6 flex items-center">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleBackToConnections}
-                    size="sm"
-                    className="mr-4 gap-2 bg-slate-900/50 border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
-                  >
-                    <ArrowLeft size={16} /> Back to Connections
-                  </Button>
-                  
-                  <GlassPanel className="p-4">
-                    <ConnectionStatusCard inline={true} />
-                  </GlassPanel>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className={`h-4 w-4 ${setupProgress >= 75 ? 'text-green-500' : 'text-muted-foreground'}`} />
+                  <span className="text-sm">Data Mapping</span>
                 </div>
-                
-                <WizardContainer />
-              </TabsContent>
-            </Tabs>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className={`h-4 w-4 ${setupProgress >= 100 ? 'text-green-500' : 'text-muted-foreground'}`} />
+                  <span className="text-sm">Ready to Migrate</span>
+                </div>
+              </div>
+            </div>
           </GlassPanel>
-        </FadeIn>
-      </div>
+
+          {/* Main Setup Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="ecosystem" className="gap-2">
+                <Globe className="h-4 w-4" />
+                Ecosystem
+              </TabsTrigger>
+              <TabsTrigger value="connect" className="gap-2">
+                <Database className="h-4 w-4" />
+                Connect CRMs
+              </TabsTrigger>
+              <TabsTrigger value="configure" className="gap-2">
+                <Settings className="h-4 w-4" />
+                Configure
+              </TabsTrigger>
+              <TabsTrigger value="review" className="gap-2">
+                <CheckCircle className="h-4 w-4" />
+                Review
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="ecosystem" className="space-y-6">
+              <EcosystemAutoConnector 
+                projectId="setup-project"
+                onToolsConnected={handleEcosystemToolsConnected}
+              />
+              
+              <div className="flex justify-end">
+                <Button 
+                  onClick={() => setActiveTab("connect")}
+                  className="gap-2"
+                >
+                  Continue to CRM Setup
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="connect" className="space-y-6">
+              <div className="grid gap-6">
+                <ConnectionSection 
+                  title="Source CRM"
+                  description="Connect your current CRM system to extract data"
+                  type="source"
+                />
+                
+                <ConnectionSection 
+                  title="Destination CRM"
+                  description="Connect your target CRM system to receive migrated data"
+                  type="destination"
+                />
+              </div>
+              
+              <div className="flex justify-between">
+                <Button 
+                  variant="outline"
+                  onClick={() => setActiveTab("ecosystem")}
+                  className="gap-2"
+                >
+                  Back to Ecosystem
+                </Button>
+                <Button 
+                  onClick={() => setActiveTab("configure")}
+                  className="gap-2"
+                >
+                  Continue to Configuration
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="configure" className="space-y-6">
+              <div className="grid gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5" />
+                      Migration Configuration
+                    </CardTitle>
+                    <CardDescription>
+                      Configure your migration settings and data mapping preferences.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="p-6 bg-muted/30 rounded-lg text-center">
+                      <Settings className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+                      <h3 className="font-medium mb-2">Advanced Configuration</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Detailed migration configuration options will be available here.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="flex justify-between">
+                <Button 
+                  variant="outline"
+                  onClick={() => setActiveTab("connect")}
+                  className="gap-2"
+                >
+                  Back to Connections
+                </Button>
+                <Button 
+                  onClick={() => setActiveTab("review")}
+                  className="gap-2"
+                >
+                  Review Setup
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="review" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    Setup Review
+                  </CardTitle>
+                  <CardDescription>
+                    Review your migration setup before starting the process.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-4">
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="font-medium mb-2">Ecosystem Auto-Connector</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {connectedEcosystemTools.length > 0 
+                          ? `${connectedEcosystemTools.length} tools configured for auto-reconnection`
+                          : "No ecosystem tools configured"}
+                      </p>
+                    </div>
+                    
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="font-medium mb-2">CRM Connections</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Source and destination CRM configuration
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Button 
+                      onClick={handleStartMigration}
+                      className="w-full gap-2"
+                      size="lg"
+                    >
+                      <Zap className="h-4 w-4" />
+                      Start Migration
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <div className="flex justify-start">
+                <Button 
+                  variant="outline"
+                  onClick={() => setActiveTab("configure")}
+                  className="gap-2"
+                >
+                  Back to Configuration
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </FadeIn>
     </div>
   );
 };

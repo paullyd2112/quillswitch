@@ -2,43 +2,33 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface GlassPanelProps extends React.HTMLAttributes<HTMLDivElement> {
+interface GlassPanelProps {
   children: React.ReactNode;
   className?: string;
   intensity?: "light" | "medium" | "heavy";
-  border?: boolean;
   hover?: boolean;
 }
 
-export const GlassPanel: React.FC<GlassPanelProps> = ({
-  children,
-  className,
+const GlassPanel: React.FC<GlassPanelProps> = ({ 
+  children, 
+  className, 
   intensity = "medium",
-  border = true,
-  hover = false,
-  ...props
+  hover = true
 }) => {
-  const getIntensityClass = () => {
-    switch (intensity) {
-      case "light":
-        return "bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm";
-      case "heavy":
-        return "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl";
-      default:
-        return "bg-white/60 dark:bg-slate-900/60 backdrop-blur-md";
-    }
+  const intensityClasses = {
+    light: "bg-white/5 backdrop-blur-sm border-white/10",
+    medium: "bg-white/10 backdrop-blur-md border-white/20",
+    heavy: "bg-white/20 backdrop-blur-lg border-white/30"
   };
 
   return (
-    <div
+    <div 
       className={cn(
-        getIntensityClass(),
-        border && "border border-white/20 dark:border-slate-700/20",
-        hover && "transition-all duration-300 hover:shadow-lg hover:scale-[1.02]",
-        "rounded-xl shadow-md",
+        "rounded-lg border transition-all duration-300",
+        intensityClasses[intensity],
+        hover && "hover:bg-white/15 hover:border-white/30",
         className
       )}
-      {...props}
     >
       {children}
     </div>
