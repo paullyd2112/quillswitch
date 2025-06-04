@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SendIcon, MessageSquare, Loader2, ArrowRight, CheckCircle } from "lucide-react";
 import { ChatMessage, sendMessageToGemini } from "@/services/gemini/geminiService";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
@@ -38,7 +38,9 @@ Key areas to explore:
 
 Be conversational and helpful. When you have enough information, suggest they're ready to start the setup wizard. Format any structured information clearly.
 
-Keep responses concise and actionable. Ask one or two questions at a time to avoid overwhelming the user.`;
+Keep responses concise and actionable. Ask one or two questions at a time to avoid overwhelming the user.
+
+When you determine the user has provided enough information to proceed (source CRM, destination CRM, and data types), inform them that you have enough information and ask if they're ready to begin the setup wizard.`;
 
 const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: MigrationChatInterfaceProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -74,13 +76,13 @@ const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: Mi
     const text = fullConversation.toLowerCase();
     
     // Extract CRM mentions
-    const crmSystems = ['salesforce', 'hubspot', 'pipedrive', 'zoho', 'freshworks', 'monday', 'airtable'];
+    const crmSystems = ['salesforce', 'hubspot', 'pipedrive', 'zoho', 'freshworks', 'monday', 'airtable', 'copper'];
     for (const crm of crmSystems) {
       if (text.includes(crm)) {
-        if (text.includes(`from ${crm}`) || text.includes(`currently ${crm}`) || text.includes(`using ${crm}`)) {
+        if (text.includes(`from ${crm}`) || text.includes(`currently ${crm}`) || text.includes(`using ${crm}`) || text.includes(`migrate from ${crm}`)) {
           info.sourceCrm = crm;
         }
-        if (text.includes(`to ${crm}`) || text.includes(`switch to ${crm}`) || text.includes(`move to ${crm}`)) {
+        if (text.includes(`to ${crm}`) || text.includes(`switch to ${crm}`) || text.includes(`move to ${crm}`) || text.includes(`migrate to ${crm}`)) {
           info.destinationCrm = crm;
         }
       }
@@ -98,7 +100,7 @@ const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: Mi
       info.dataTypes = dataTypes;
     }
     
-    // Check if ready for setup
+    // Check if ready for setup - need source, destination, and at least one data type
     info.readyForSetup = !!(info.sourceCrm && info.destinationCrm && info.dataTypes?.length);
     
     return info;
@@ -159,6 +161,7 @@ const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: Mi
   };
 
   const handleStartSetup = () => {
+    toast.success("Starting setup wizard...");
     navigate('/app/setup');
   };
 
@@ -174,17 +177,17 @@ const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: Mi
         {(extractedInfo.sourceCrm || extractedInfo.destinationCrm || extractedInfo.dataTypes?.length) && (
           <div className="flex flex-wrap gap-2 mt-2">
             {extractedInfo.sourceCrm && (
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300">
                 From: {extractedInfo.sourceCrm}
               </Badge>
             )}
             {extractedInfo.destinationCrm && (
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300">
                 To: {extractedInfo.destinationCrm}
               </Badge>
             )}
             {extractedInfo.dataTypes?.map(type => (
-              <Badge key={type} variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+              <Badge key={type} variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300">
                 {type}
               </Badge>
             ))}

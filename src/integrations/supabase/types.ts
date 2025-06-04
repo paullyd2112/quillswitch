@@ -1104,6 +1104,31 @@ export type Database = {
           days_until_expiry: number
         }[]
       }
+      get_performance_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          metric_name: string
+          metric_value: number
+          metric_unit: string
+        }[]
+      }
+      get_rate_limit_violations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          violation_count: number
+          last_violation: string
+        }[]
+      }
+      get_system_health_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          metric_name: string
+          metric_value: number
+          metric_description: string
+          last_updated: string
+        }[]
+      }
     }
     Enums: {
       crm_data_type:
