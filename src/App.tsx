@@ -5,10 +5,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
-import { ThemeProvider } from "@/components/ui/theme-provider";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/auth";
 import Index from "./pages/Index";
-import ConnectionHub from "./pages/ConnectionHub";
+import ConnectionHubPage from "./pages/ConnectionHubPage";
 import PlatformOverview from "./pages/PlatformOverview";
 import ProductionMigrationPage from "./pages/ProductionMigrationPage";
 import AutoConnectorPage from "./pages/AutoConnectorPage";
@@ -27,7 +27,7 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/connections" element={<ConnectionHub />} />
+                <Route path="/connections" element={<ConnectionHubPage />} />
                 <Route path="/platform" element={<PlatformOverview />} />
                 <Route path="/production-migration" element={<ProductionMigrationPage />} />
                 <Route path="/auto-connector" element={<AutoConnectorPage />} />
