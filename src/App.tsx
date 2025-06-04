@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Resources from './pages/Resources'
 import Auth from './pages/Auth'
+import Welcome from './pages/Welcome'
 import KnowledgeArticle from './pages/KnowledgeArticle'
 import NotFound from './pages/NotFound'
 import { Toaster } from 'sonner'
@@ -44,6 +45,7 @@ function App() {
                     <Route path="/features" element={<Navigate to="/" replace />} />
                     <Route path="/resources" element={<Resources />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/welcome" element={<Welcome />} />
                     <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
                     <Route path="/privacy" element={<PrivacyPolicy />} />
                     <Route path="/terms" element={<TermsOfService />} />
