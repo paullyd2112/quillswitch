@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { 
   DashboardConfig, 
@@ -24,6 +23,42 @@ export interface ProductionMigrationConfig {
   enableCompression: boolean;
   streamingThreshold: number; // Records count threshold for streaming
   maxMemoryUsage: number; // MB
+  
+  // New properties that components expect
+  enableSchemaCache: boolean;
+  enableSmartDelta: boolean;
+  enableStreaming: boolean;
+  enableAdvancedConcurrency: boolean;
+  
+  optimization: {
+    enableBloomFilter: boolean;
+    bloomFilterSize: number;
+    hashFunctions: number;
+    safetyLevel: 'conservative' | 'balanced' | 'aggressive';
+    auditTrail: boolean;
+    fallbackThreshold: number;
+  };
+  
+  streaming: {
+    chunkSize: number;
+    maxConcurrentStreams: number;
+    backpressureThreshold: number;
+    bufferSize: number;
+  };
+  
+  concurrency: {
+    type: 'pipeline' | 'fanout' | 'adaptive' | 'circuit-breaker';
+    maxWorkers: number;
+    queueSize: number;
+    timeoutMs: number;
+    retryPolicy: {
+      maxAttempts: number;
+      baseDelayMs: number;
+      maxDelayMs: number;
+      backoffMultiplier: number;
+      jitterMs: number;
+    };
+  };
 }
 
 export interface ProductionPerformanceMetrics {
@@ -342,5 +377,10 @@ export class ProductionMigrationService {
     };
   }
 }
+
+// Add the missing export function
+export const createProductionMigrationService = (config: ProductionMigrationConfig): ProductionMigrationService => {
+  return ProductionMigrationService.getInstance();
+};
 
 export const productionMigrationService = ProductionMigrationService.getInstance();

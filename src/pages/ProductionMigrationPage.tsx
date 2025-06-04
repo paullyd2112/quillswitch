@@ -9,7 +9,7 @@ import { Rocket, Settings, BarChart3, BookOpen } from 'lucide-react';
 import ProductionMigrationControls from '@/components/migration/production/ProductionMigrationControls';
 import ProductionPerformanceMetrics from '@/components/migration/production/ProductionPerformanceMetrics';
 import { 
-  createProductionMigrationService, 
+  productionMigrationService, 
   ProductionMigrationConfig,
   ProductionMigrationResult
 } from '@/services/migration/optimization/productionMigrationService';
@@ -29,8 +29,6 @@ const ProductionMigrationPage: React.FC = () => {
     setProgress(null);
 
     try {
-      const migrationService = createProductionMigrationService(config);
-      
       // Mock data for demonstration
       const mockRecords = Array.from({ length: 5000 }, (_, i) => ({
         id: `record_${i}`,
@@ -39,23 +37,34 @@ const ProductionMigrationPage: React.FC = () => {
         last_modified: new Date(Date.now() - Math.random() * 86400000).toISOString()
       }));
 
-      const result = await migrationService.executeMigration({
-        projectId: 'demo_project',
-        sourceSystem: 'salesforce',
-        destinationSystem: 'hubspot',
-        objectType: 'contacts',
-        sourceRecords: mockRecords,
-        progressCallback: (progressUpdate) => {
-          setProgress(progressUpdate);
-        }
-      });
+      // Create mock dashboards for the demo
+      const mockDashboards = Array.from({ length: 10 }, (_, i) => ({
+        id: `dashboard_${i}`,
+        name: `Dashboard ${i}`,
+        crmSystem: config.sourceSystem,
+        widgets: [],
+        filters: []
+      }));
 
-      setMigrationResult(result);
-      
-      if (result.success) {
+      const results = await productionMigrationService.executeProductionMigration(
+        mockDashboards,
+        config,
+        (progressValue, currentMetrics) => {
+          setProgress({
+            processedRecords: Math.floor((progressValue / 100) * 5000),
+            totalRecords: 5000,
+            percentage: progressValue,
+            processingRate: currentMetrics.recordsPerSecond,
+            estimatedTimeRemaining: Math.max(0, (100 - progressValue) / 10)
+          });
+        }
+      );
+
+      if (results.length > 0) {
+        setMigrationResult(results[0]);
         toast({
           title: "Migration Completed Successfully",
-          description: `Processed ${result.totalProcessed} records in ${(result.processingTime / 1000).toFixed(1)} seconds`
+          description: `Processed ${results[0].totalProcessed} records in ${(results[0].processingTime / 1000).toFixed(1)} seconds`
         });
       }
     } catch (error) {

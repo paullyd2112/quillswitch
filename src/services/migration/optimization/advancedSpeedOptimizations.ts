@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -182,11 +181,11 @@ export class SchemaMappingCache {
         .upsert({
           cache_key: cacheKey,
           cache_type: 'compiled_mapping',
-          cache_data: {
+          cache_data: JSON.parse(JSON.stringify({
             mappings: compiled.mappings,
             cacheVersion: compiled.cacheVersion,
             compiledAt: compiled.compiledAt
-          }
+          }))
         });
 
       if (error) {
