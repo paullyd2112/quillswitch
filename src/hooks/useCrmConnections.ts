@@ -42,50 +42,18 @@ export const useCrmConnections = () => {
     setConnectingProvider(provider);
     
     try {
-      // Use direct URL construction to ensure provider parameter is passed correctly
-      console.log('Getting edge function URL...');
-      const supabaseUrl = "https://kxjidapjtcxwzpwdomnm.supabase.co";
-      const functionUrl = `${supabaseUrl}/functions/v1/oauth-authorize?provider=${encodeURIComponent(provider)}`;
-      
-      console.log('Making direct request to:', functionUrl);
-      
-      // Get auth session for authorization
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      const response = await fetch(functionUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4amlkYXBqdGN4d3pwd2RvbW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5NjUzNzUsImV4cCI6MjA1ODU0MTM3NX0.U1kLjAztYB-Jfye3dIkJ7gx9U7aNDYHrorkI1Bax_g8',
-          'Content-Type': 'application/json',
-        },
+      // Show a message that OAuth service needs to be configured
+      toast({
+        title: "OAuth Service Not Configured",
+        description: "Please configure your unified API service before connecting to CRMs.",
+        variant: "destructive"
       });
       
-      console.log('Response status:', response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Edge function error response:', errorText);
-        throw new Error(`Edge Function returned status ${response.status}: ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log('OAuth authorize response:', data);
-      
-      if (data?.url) {
-        console.log('Redirecting to OAuth URL:', data.url);
-        // Redirect to OAuth authorization URL
-        window.location.href = data.url;
-      } else {
-        console.error('No authorization URL received:', data);
-        throw new Error(`No authorization URL received from OAuth service. Response: ${JSON.stringify(data)}`);
-      }
+      setConnectingProvider(null);
       
     } catch (error) {
       console.error('=== OAuth Error ===');
       console.error('Error:', error);
-      console.error('Error type:', error.constructor.name);
-      console.error('Error message:', error.message);
       
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
