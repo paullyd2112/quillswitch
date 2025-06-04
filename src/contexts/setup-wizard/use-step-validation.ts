@@ -44,15 +44,18 @@ export const useStepValidation = (
                  connectedDestinationCrms.some(system => system.id === formData.destinationCrm);
         }
       
-      case 3: // Data types
-        if (showPerCrmDataSelection) {
-          return formData.crmDataSelections.length > 0 && 
-                 formData.crmDataSelections.every(selection => selection.dataTypes.length > 0);
-        }
-        return formData.dataTypes.length > 0;
-      
-      case 4: // Migration strategy
-        return formData.migrationStrategy !== "";
+      case 3: // Review step - all previous steps must be valid
+        const step0Valid = formData.companyName.trim() !== "";
+        
+        const step1Valid = multiCrmEnabled 
+          ? selectedSourceCrms.some(crmId => connectedSourceCrms.some(system => system.id === crmId))
+          : formData.sourceCrm !== "" && connectedSourceCrms.some(system => system.id === formData.sourceCrm);
+        
+        const step2Valid = multiDestinationEnabled
+          ? selectedDestinationCrms.some(crmId => connectedDestinationCrms.some(system => system.id === crmId))
+          : formData.destinationCrm !== "" && connectedDestinationCrms.some(system => system.id === formData.destinationCrm);
+        
+        return step0Valid && step1Valid && step2Valid;
       
       default:
         return true;

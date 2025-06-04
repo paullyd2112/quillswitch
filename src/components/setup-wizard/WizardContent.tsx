@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useSetupWizard } from "@/contexts/SetupWizardContext";
 import { Button } from "@/components/ui/button";
@@ -5,8 +6,6 @@ import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
 import CompanyInfoStep from "./CompanyInfoStep";
 import SourceCrmStep from "./SourceCrmStep";
 import DestinationCrmStep from "./DestinationCrmStep";
-import UnifiedDataSelectionStep from "./UnifiedDataSelectionStep";
-import MigrationStrategyStep from "./MigrationStrategyStep";
 import ReviewStep from "./ReviewStep";
 import { sourceCrmOptions, destinationCrmOptions } from "@/config/crmSystems";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -73,8 +72,6 @@ const WizardContent: React.FC = () => {
       case 2:
         return <DestinationCrmStep {...stepProps} />;
       case 3:
-        return <UnifiedDataSelectionStep {...stepProps} />;
-      case 4:
         return <ReviewStep {...stepProps} />;
       default:
         return null;
