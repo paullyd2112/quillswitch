@@ -19,6 +19,7 @@ import SetupWizard from "@/pages/SetupWizard";
 import MigrationSetup from "@/pages/MigrationSetup";
 import MigrationChat from "@/pages/MigrationChat";
 import MigrationDashboard from "@/pages/MigrationDashboard";
+import Security from "@/pages/Security";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
 import { UserOnboardingProvider } from "@/components/onboarding/UserOnboardingProvider";
 import { LoadingFallback } from "@/components/pages/migration";
@@ -45,6 +46,7 @@ function App() {
                     <Route path="/app/migration-setup" element={<MigrationSetup />} />
                     <Route path="/app/migration-chat" element={<MigrationChat />} />
                     <Route path="/app/migrations/:id" element={<MigrationDashboard />} />
+                    <Route path="/app/security" element={<Security />} />
                     <Route path="/app/migrations" element={
                       <ConnectionProvider>
                         <UserOnboardingProvider>
