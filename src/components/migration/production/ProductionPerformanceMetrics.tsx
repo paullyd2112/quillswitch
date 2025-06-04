@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +12,10 @@ import {
   Cpu,
   MemoryStick
 } from 'lucide-react';
-import { ProductionPerformanceMetrics, ProductionMigrationResult } from '@/services/migration/optimization/productionMigrationService';
+import { 
+  ProductionPerformanceMetrics, 
+  ProductionMigrationResult 
+} from '@/services/migration/optimization';
 
 interface ProductionPerformanceMetricsProps {
   metrics: ProductionPerformanceMetrics;

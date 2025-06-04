@@ -1,11 +1,12 @@
-
 import { useState, useCallback } from 'react';
 import { 
-  productionMigrationService,
+  productionMigrationService
+} from '@/services/migration/optimization';
+import { 
   ProductionMigrationConfig,
   ProductionMigrationResult,
   ProductionPerformanceMetrics
-} from '@/services/migration/optimization/productionMigrationService';
+} from '@/services/migration/optimization';
 import { DashboardConfig } from '@/services/migration/dashboard';
 import { toast } from 'sonner';
 

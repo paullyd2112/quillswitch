@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { AlertTriangle, Zap, Shield, Activity, Database } from 'lucide-react';
-import { ProductionMigrationConfig } from '@/services/migration/optimization/productionMigrationService';
+import { ProductionMigrationConfig } from '@/services/migration/optimization';
 
 interface ProductionMigrationControlsProps {
   onStartMigration: (config: ProductionMigrationConfig) => void;

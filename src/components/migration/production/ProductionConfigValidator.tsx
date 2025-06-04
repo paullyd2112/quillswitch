@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle, AlertTriangle, XCircle, Info } from 'lucide-react';
-import { ProductionMigrationConfig } from '@/services/migration/optimization/productionMigrationService';
+import { ProductionMigrationConfig } from '@/services/migration/optimization';
 
 interface ValidationResult {
   isValid: boolean;

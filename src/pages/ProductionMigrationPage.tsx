@@ -9,10 +9,12 @@ import { Rocket, Settings, BarChart3, BookOpen } from 'lucide-react';
 import ProductionMigrationControls from '@/components/migration/production/ProductionMigrationControls';
 import ProductionPerformanceMetrics from '@/components/migration/production/ProductionPerformanceMetrics';
 import { 
-  productionMigrationService, 
+  productionMigrationService
+} from '@/services/migration/optimization';
+import { 
   ProductionMigrationConfig,
   ProductionMigrationResult
-} from '@/services/migration/optimization/productionMigrationService';
+} from '@/services/migration/optimization';
 import { toast } from '@/hooks/use-toast';
 
 // Create a proper TransferProgress interface for this component
