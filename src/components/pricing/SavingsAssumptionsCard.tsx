@@ -26,12 +26,13 @@ const SavingsAssumptionsCard: React.FC = () => {
             <Info className="h-4 w-4" />
             <AlertDescription>
               <div className="space-y-2 text-sm">
-                <p><strong>QuillSwitch Timeline:</strong> 1 day to complete migration</p>
+                <p><strong>QuillSwitch Timeline:</strong> 2-3 days (0.5 weeks) to complete migration</p>
                 <p><strong>Internal Staff Cost:</strong> Configurable hourly rate (fully-loaded with benefits and overhead)</p>
-                <p><strong>QuillSwitch Staff Time:</strong> 8 total hours for setup and review</p>
+                <p><strong>QuillSwitch Staff Time:</strong> 16 total hours for setup, monitoring, and review</p>
                 <p><strong>Manual Migration:</strong> 10 hours/week per internal staff member</p>
-                <p><strong>CRM Costs:</strong> Both old and new CRM subscription costs during migration timeline</p>
+                <p><strong>CRM Costs During Migration:</strong> Both old and new CRM subscriptions during the entire migration period</p>
                 <p><strong>QuillSwitch Plan:</strong> Essentials plan at {formatCurrency(1999)}</p>
+                <p><strong>Monthly Conversion:</strong> 4.33 weeks per month for accurate calculations</p>
               </div>
             </AlertDescription>
           </Alert>
