@@ -1,8 +1,7 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -17,6 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth";
+import { useCrmConnections } from "@/hooks/useCrmConnections";
 
 interface FlowStep {
   id: string;
@@ -66,49 +66,72 @@ const flowSteps: FlowStep[] = [
 
 const StreamlinedMigrationFlow: React.FC = () => {
   const navigate = useNavigate();
-  const { user, signUp, signIn } = useAuth();
+  const { user } = useAuth();
+  const { connectedCredentials, isLoading: crmLoading } = useCrmConnections();
   const [currentStep, setCurrentStep] = useState(0);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+
+  // Check if user has connected CRMs
+  const hasConnectedCrms = connectedCredentials.length >= 2; // Need at least source and destination
+  const hasSourceCrm = connectedCredentials.some(cred => cred.service_name);
+  const hasDestinationCrm = connectedCredentials.length >= 1; // Simplified check for demo
 
   const totalSteps = flowSteps.length + 1; // +1 for auth step
-  const progress = ((currentStep + (isAuthenticated ? 1 : 0)) / totalSteps) * 100;
-
-  const handleAuthentication = async () => {
-    if (!email || !password) {
-      toast.error("Please enter both email and password");
-      return;
+  
+  // Calculate actual progress based on real completion status
+  const getActualProgress = () => {
+    let completedSteps = 0;
+    
+    // Step 1: Authentication
+    if (user) completedSteps += 1;
+    
+    // Step 2-3: CRM connections (source + destination)
+    if (hasConnectedCrms) {
+      completedSteps += 2; // Both source and destination
+    } else if (hasSourceCrm) {
+      completedSteps += 1; // Just source
     }
+    
+    // Additional steps would be checked here when implemented
+    
+    return (completedSteps / totalSteps) * 100;
+  };
 
-    setIsLoading(true);
-    try {
-      if (isSignUp) {
-        await signUp(email, password);
-        toast.success("Account created! Let's start your migration.");
-      } else {
-        await signIn(email, password);
-        toast.success("Welcome back! Let's continue your migration.");
-      }
-      setIsAuthenticated(true);
-    } catch (error: any) {
-      toast.error(error.message || "Authentication failed");
-    } finally {
-      setIsLoading(false);
-    }
+  const progress = getActualProgress();
+
+  const handleAuthRedirect = () => {
+    // Redirect to existing auth page with return URL
+    navigate("/auth?mode=register&redirect=/quick-start");
+  };
+
+  const handleSignIn = () => {
+    // Redirect to existing auth page for sign in
+    navigate("/auth?mode=login&redirect=/quick-start");
+  };
+
+  const handleConnectCrms = () => {
+    toast.info("Redirecting to CRM connections...");
+    navigate("/app/crm-connections");
   };
 
   const handleStartMigration = () => {
-    toast.success("Starting your streamlined migration process...");
+    // Validate that we have the minimum requirements
+    if (!user) {
+      toast.error("Please sign in to continue");
+      return;
+    }
+    
+    if (!hasConnectedCrms) {
+      toast.error("Please connect both source and destination CRMs before starting migration");
+      return;
+    }
+    
+    toast.success("Starting your migration process...");
     navigate("/app/setup");
   };
 
   const handleStepComplete = () => {
     if (currentStep < flowSteps.length - 1) {
       setCurrentStep(currentStep + 1);
-      toast.success(`${flowSteps[currentStep].title} completed!`);
     } else {
       handleStartMigration();
     }
@@ -132,6 +155,18 @@ const StreamlinedMigrationFlow: React.FC = () => {
     );
   };
 
+  const getCurrentStepTitle = () => {
+    if (!user) return "Get Started - Create Your Account";
+    if (!hasConnectedCrms) return "Connect Your CRM Systems";
+    return flowSteps[currentStep]?.title || "Complete Setup";
+  };
+
+  const getCurrentStepNumber = () => {
+    if (!user) return 1;
+    if (!hasConnectedCrms) return 2;
+    return currentStep + 3;
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="space-y-6">
@@ -151,35 +186,48 @@ const StreamlinedMigrationFlow: React.FC = () => {
               <CardTitle className="text-xl">Migration Progress</CardTitle>
               <Badge variant="outline" className="gap-1">
                 <CheckCircle className="h-3 w-3" />
-                Step {isAuthenticated ? currentStep + 2 : 1} of {totalSteps}
+                Step {getCurrentStepNumber()} of {totalSteps}
               </Badge>
             </div>
           </CardHeader>
           <CardContent>
             <Progress value={progress} className="mb-4" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {flowSteps.slice(0, 3).map((step, index) => (
-                <div 
-                  key={step.id}
-                  className={`p-3 rounded-lg border ${
-                    index <= currentStep && isAuthenticated
-                      ? 'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800'
-                      : 'bg-muted/30'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    {step.icon}
-                    <span className="font-medium text-sm">{step.title}</span>
+              {flowSteps.slice(0, 3).map((step, index) => {
+                let isCompleted = false;
+                
+                // Check actual completion status
+                if (index === 0) { // Source CRM
+                  isCompleted = hasSourceCrm;
+                } else if (index === 1) { // Destination CRM  
+                  isCompleted = hasConnectedCrms;
+                } else { // Future steps
+                  isCompleted = false;
+                }
+                
+                return (
+                  <div 
+                    key={step.id}
+                    className={`p-3 rounded-lg border ${
+                      isCompleted
+                        ? 'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800'
+                        : 'bg-muted/30'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      {step.icon}
+                      <span className="font-medium text-sm">{step.title}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{step.description}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">{step.description}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
 
         {/* Authentication Step */}
-        {!isAuthenticated && (
+        {!user && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -190,56 +238,92 @@ const StreamlinedMigrationFlow: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Email</label>
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Password</label>
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Create a secure password"
-                  />
-                </div>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4 items-center">
-                <Button 
-                  onClick={handleAuthentication}
-                  disabled={isLoading}
-                  className="w-full sm:w-auto gap-2"
-                >
-                  {isLoading ? "Setting up..." : isSignUp ? "Create Account & Start Migration" : "Sign In & Continue"}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+              <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                <p className="text-sm mb-4">
+                  Create a secure account to start your CRM migration. We'll keep your data safe throughout the entire process.
+                </p>
                 
-                <Button
-                  variant="ghost"
-                  onClick={() => setIsSignUp(!isSignUp)}
-                  className="text-sm"
-                >
-                  {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                  <Button 
+                    onClick={handleAuthRedirect}
+                    className="w-full sm:w-auto gap-2"
+                    size="lg"
+                  >
+                    Create Account & Start Migration
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    onClick={handleSignIn}
+                    className="text-sm"
+                  >
+                    Already have an account? Sign in
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Migration Steps */}
-        {isAuthenticated && (
+        {/* CRM Connection Step */}
+        {user && !hasConnectedCrms && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <div className="h-6 w-6 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center">
-                  <span className="text-sm font-bold">{currentStep + 2}</span>
+                  <span className="text-sm font-bold">2</span>
+                </div>
+                Connect Your CRM Systems
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                <div className="flex items-center gap-3 mb-3">
+                  <Database className="h-5 w-5" />
+                  <div>
+                    <p className="font-medium">Connect Source & Destination CRMs</p>
+                    <p className="text-sm text-muted-foreground">
+                      Securely connect both your current CRM and target CRM using OAuth
+                    </p>
+                  </div>
+                </div>
+                
+                {crmLoading ? (
+                  <div className="text-sm text-muted-foreground">Loading connection status...</div>
+                ) : (
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className={`h-2 w-2 rounded-full ${hasSourceCrm ? 'bg-green-500' : 'bg-gray-300'}`} />
+                      <span>Source CRM: {hasSourceCrm ? 'Connected' : 'Not connected'}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className={`h-2 w-2 rounded-full ${hasConnectedCrms ? 'bg-green-500' : 'bg-gray-300'}`} />
+                      <span>Destination CRM: {hasConnectedCrms ? 'Connected' : 'Not connected'}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <Button 
+                onClick={handleConnectCrms}
+                className="w-full gap-2"
+                size="lg"
+              >
+                Connect CRM Systems
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Migration Steps - Only show when CRMs are connected */}
+        {user && hasConnectedCrms && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <div className="h-6 w-6 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center">
+                  <span className="text-sm font-bold">{currentStep + 3}</span>
                 </div>
                 {flowSteps[currentStep].title}
               </CardTitle>
