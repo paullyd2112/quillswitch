@@ -128,7 +128,8 @@ export class DashboardMappingEngine {
       },
       bar: { alternatives: ['line'], notes: 'Bar chart as line chart' },
       line: { alternatives: ['bar'], notes: 'Line chart as bar chart' },
-      pie: { alternatives: ['bar'], notes: 'Pie chart as bar chart' }
+      pie: { alternatives: ['bar'], notes: 'Pie chart as bar chart' },
+      table: { alternatives: ['bar', 'line'], notes: 'Table data as chart visualization' }
     };
 
     const mapping = chartMappings[sourceChart];
