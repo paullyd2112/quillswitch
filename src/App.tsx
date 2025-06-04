@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -5,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/contexts/auth";
 import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
-import { AppErrorBoundary } from "@/components/error-handling/AppErrorBoundary";
+import AppErrorBoundary from "@/components/error-handling/AppErrorBoundary";
 import CookieConsentBanner from "@/components/gdpr/CookieConsentBanner";
 
 // Page imports
@@ -20,7 +21,6 @@ import MigrationChat from "@/pages/MigrationChat";
 import MigrationDashboard from "@/pages/MigrationDashboard";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
 import { UserOnboardingProvider } from "@/components/onboarding/UserOnboardingProvider";
-import { DashboardProvider } from "@/components/migration/dashboard/context";
 import { LoadingFallback } from "@/components/pages/migration";
 import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 
@@ -48,15 +48,13 @@ function App() {
                     <Route path="/app/migrations" element={
                       <ConnectionProvider>
                         <UserOnboardingProvider>
-                          <DashboardProvider>
-                            <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
-                              <div className="container px-4 pt-8 pb-20">
-                                <h1 className="text-3xl font-bold mb-6">Migrations</h1>
-                                <ProgressIndicator />
-                                <LoadingFallback />
-                              </div>
+                          <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
+                            <div className="container px-4 pt-8 pb-20">
+                              <h1 className="text-3xl font-bold mb-6">Migrations</h1>
+                              <ProgressIndicator />
+                              <LoadingFallback />
                             </div>
-                          </DashboardProvider>
+                          </div>
                         </UserOnboardingProvider>
                       </ConnectionProvider>
                     } />
