@@ -1,8 +1,7 @@
-
 import React from "react";
 import { useSetupWizard } from "@/contexts/SetupWizardContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
 import CompanyInfoStep from "./CompanyInfoStep";
 import SourceCrmStep from "./SourceCrmStep";
 import DestinationCrmStep from "./DestinationCrmStep";
@@ -43,119 +42,104 @@ const WizardContent: React.FC = () => {
   } = useSetupWizard();
 
   const renderStepContent = () => {
+    const stepProps = {
+      formData,
+      handleChange,
+      handleApiKeyChange,
+      handleCustomCrmNameChange,
+      handleRadioChange,
+      handleCheckboxChange,
+      handleCrmDataSelectionChange,
+      handlePerCrmCustomMappingChange,
+      multiCrmEnabled,
+      setMultiCrmEnabled,
+      multiDestinationEnabled,
+      setMultiDestinationEnabled,
+      selectedSourceCrms,
+      selectedDestinationCrms,
+      handleSourceCrmToggle,
+      handleDestinationCrmToggle,
+      customCrmNames,
+      sourceCrmOptions,
+      destinationCrmOptions,
+      showPerCrmDataSelection
+    };
+
     switch (currentStep) {
       case 0:
-        return (
-          <CompanyInfoStep
-            formData={formData}
-            handleChange={handleChange}
-          />
-        );
+        return <CompanyInfoStep formData={formData} handleChange={handleChange} />;
       case 1:
-        return (
-          <SourceCrmStep
-            formData={formData}
-            multiCrmEnabled={multiCrmEnabled}
-            setMultiCrmEnabled={setMultiCrmEnabled}
-            selectedSourceCrms={selectedSourceCrms}
-            handleSourceCrmToggle={handleSourceCrmToggle}
-            handleApiKeyChange={handleApiKeyChange}
-            handleCustomCrmNameChange={handleCustomCrmNameChange}
-            customCrmNames={customCrmNames}
-            sourceCrmOptions={sourceCrmOptions}
-          />
-        );
+        return <SourceCrmStep {...stepProps} />;
       case 2:
-        return (
-          <DestinationCrmStep
-            formData={formData}
-            multiDestinationEnabled={multiDestinationEnabled}
-            setMultiDestinationEnabled={setMultiDestinationEnabled}
-            selectedDestinationCrms={selectedDestinationCrms}
-            handleDestinationCrmToggle={handleDestinationCrmToggle}
-            handleApiKeyChange={handleApiKeyChange}
-            handleCustomCrmNameChange={handleCustomCrmNameChange}
-            customCrmNames={customCrmNames}
-            destinationCrmOptions={destinationCrmOptions}
-          />
-        );
+        return <DestinationCrmStep {...stepProps} />;
       case 3:
-        return (
-          <UnifiedDataSelectionStep
-            formData={formData}
-            handleCheckboxChange={handleCheckboxChange}
-            handleCrmDataSelectionChange={handleCrmDataSelectionChange}
-            handlePerCrmCustomMappingChange={handlePerCrmCustomMappingChange}
-            handleChange={handleChange}
-            handleRadioChange={handleRadioChange}
-            showPerCrmDataSelection={showPerCrmDataSelection}
-            selectedSourceCrms={selectedSourceCrms}
-            sourceCrmOptions={sourceCrmOptions}
-            customCrmNames={customCrmNames}
-          />
-        );
+        return <UnifiedDataSelectionStep {...stepProps} />;
       case 4:
-        return (
-          <ReviewStep
-            formData={formData}
-            selectedSourceCrms={selectedSourceCrms}
-            selectedDestinationCrms={selectedDestinationCrms}
-            multiCrmEnabled={multiCrmEnabled}
-            multiDestinationEnabled={multiDestinationEnabled}
-            customCrmNames={customCrmNames}
-            sourceCrmOptions={sourceCrmOptions}
-            destinationCrmOptions={destinationCrmOptions}
-          />
-        );
+        return <ReviewStep {...stepProps} />;
       default:
         return null;
     }
   };
 
   const currentStepValid = isStepValid();
+  const isLastStep = currentStep === steps.length - 1;
 
   return (
     <div className="space-y-8">
-      <div className="min-h-[400px]">
-        {renderStepContent()}
+      {/* Step Content */}
+      <div className="min-h-[500px]">
+        <div className="animate-fade-in">
+          {renderStepContent()}
+        </div>
       </div>
       
-      <div className="flex justify-between items-center pt-6 border-t border-slate-700">
+      {/* Navigation */}
+      <div className="flex justify-between items-center pt-8 border-t border-slate-700/50">
         <Button
           variant="outline"
           onClick={handlePrevious}
-          disabled={currentStep === 0}
-          className="gap-2"
+          disabled={currentStep === 0 || isSubmitting}
+          className="gap-2 bg-slate-800/50 border-slate-600 hover:bg-slate-700/50 text-slate-300"
         >
           <ArrowLeft className="h-4 w-4" />
           Previous
         </Button>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           {!currentStepValid && (
-            <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-800 max-w-md">
-              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
+            <Alert className="border-amber-500/30 bg-amber-500/10 max-w-sm">
+              <AlertCircle className="h-4 w-4 text-amber-400" />
+              <AlertDescription className="text-amber-300 text-sm">
                 {currentStep === 1 || currentStep === 2 
-                  ? "Please connect and select your CRM systems to continue."
-                  : "Please complete all required fields to continue."}
+                  ? "Please connect and configure your CRM systems to continue."
+                  : "Please complete all required fields to proceed."}
               </AlertDescription>
             </Alert>
           )}
           
-          {currentStep === steps.length - 1 ? (
+          {isLastStep ? (
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !currentStepValid}
-              className="gap-2 bg-primary hover:bg-primary/90"
+              className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white shadow-lg shadow-primary/25 min-w-[160px]"
             >
-              {isSubmitting ? "Creating Migration..." : "Complete Setup"}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="h-4 w-4" />
+                  Complete Setup
+                </>
+              )}
             </Button>
           ) : (
             <Button
               onClick={handleNext}
-              disabled={!currentStepValid}
-              className="gap-2 bg-primary hover:bg-primary/90"
+              disabled={!currentStepValid || isSubmitting}
+              className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white shadow-lg shadow-primary/25 min-w-[120px]"
             >
               Next
               <ArrowRight className="h-4 w-4" />
