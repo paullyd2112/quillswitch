@@ -89,7 +89,8 @@ export type ChartType =
   | 'gauge' 
   | 'funnel' 
   | 'heatmap' 
-  | 'treemap';
+  | 'treemap'
+  | 'table';
 
 export interface AxisConfig {
   field: string;
