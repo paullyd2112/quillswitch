@@ -8,7 +8,7 @@ const QuickStartCTA: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
       <Button 
         size="lg" 
         onClick={() => navigate("/app/migration-chat")}
