@@ -178,70 +178,66 @@ const renderValue = (value: boolean | string) => {
     }
   } else if (value === "Limited") {
     return (
-      <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 mx-auto py-0 h-5">
+      <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 text-xs px-2 py-1">
         Limited
       </Badge>
     );
   } else if (value === "Varies") {
     return (
-      <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 mx-auto py-0 h-5">
+      <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 text-xs px-2 py-1">
         Varies
       </Badge>
     );
   } else {
-    return <span className="text-sm text-center">{value}</span>;
+    return <span className="text-sm text-center font-medium">{value}</span>;
   }
 };
 
 const ProductComparison: React.FC = () => {
   const renderCategory = (category: string) => {
     const categoryFeatures = features.filter(f => f.category === category);
+    const categoryTitle = 
+      category === "experience" ? "Migration Experience" :
+      category === "technical" ? "Technical Features" :
+      category === "security" ? "Security & Reliability" :
+      "Business Impact";
     
     return (
-      <div>
-        <h3 className="font-medium mb-4 text-center py-2 bg-slate-100 dark:bg-slate-800/80 rounded-md">
-          {category === "experience" ? "Migration Experience" :
-           category === "technical" ? "Technical Features" :
-           category === "security" ? "Security & Reliability" :
-           "Business Impact"}
-        </h3>
+      <div className="mb-8">
+        <div className="bg-slate-100 dark:bg-slate-800/80 rounded-lg p-4 mb-4">
+          <h3 className="font-semibold text-lg text-center">{categoryTitle}</h3>
+        </div>
         
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <tbody>
-              {categoryFeatures.map((feature) => (
-                <tr 
-                  key={feature.id}
-                  className="border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                >
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-1">
-                      {feature.name}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-xs">
-                            {feature.description}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    {renderValue(feature.quillswitch)}
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    {renderValue(feature.manual)}
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    {renderValue(feature.consultants)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-1">
+          {categoryFeatures.map((feature) => (
+            <div 
+              key={feature.id}
+              className="grid grid-cols-4 gap-4 py-4 px-4 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-md transition-colors"
+            >
+              <div className="flex items-center gap-2 min-h-[2.5rem]">
+                <span className="font-medium text-sm">{feature.name}</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help flex-shrink-0" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      {feature.description}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="flex items-center justify-center min-h-[2.5rem]">
+                {renderValue(feature.quillswitch)}
+              </div>
+              <div className="flex items-center justify-center min-h-[2.5rem]">
+                {renderValue(feature.manual)}
+              </div>
+              <div className="flex items-center justify-center min-h-[2.5rem]">
+                {renderValue(feature.consultants)}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -261,54 +257,53 @@ const ProductComparison: React.FC = () => {
       
       <CardContent>
         <div className="space-y-8">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-slate-100 dark:bg-slate-800/80 border-b-2 border-slate-200 dark:border-slate-700">
-                  <th className="py-3 px-4 text-left">Feature / Approach</th>
-                  <th className="py-3 px-4 text-center">
-                    <div className="font-medium text-primary">QuillSwitch</div>
-                    <div className="text-xs font-normal text-muted-foreground">Automated Migration</div>
-                  </th>
-                  <th className="py-3 px-4 text-center">
-                    <div className="font-medium">DIY</div>
-                    <div className="text-xs font-normal text-muted-foreground">Manual Export/Import</div>
-                  </th>
-                  <th className="py-3 px-4 text-center">
-                    <div className="font-medium">Consultants</div>
-                    <div className="text-xs font-normal text-muted-foreground">Professional Services</div>
-                  </th>
-                </tr>
-              </thead>
-            </table>
+          {/* Header Row */}
+          <div className="bg-slate-100 dark:bg-slate-800/80 rounded-lg p-4">
+            <div className="grid grid-cols-4 gap-4">
+              <div className="font-semibold text-left">Feature / Approach</div>
+              <div className="text-center">
+                <div className="font-semibold text-primary">QuillSwitch</div>
+                <div className="text-xs text-muted-foreground mt-1">Automated Migration</div>
+              </div>
+              <div className="text-center">
+                <div className="font-semibold">DIY</div>
+                <div className="text-xs text-muted-foreground mt-1">Manual Export/Import</div>
+              </div>
+              <div className="text-center">
+                <div className="font-semibold">Consultants</div>
+                <div className="text-xs text-muted-foreground mt-1">Professional Services</div>
+              </div>
+            </div>
           </div>
           
-          <div className="space-y-8">
+          {/* Category Sections */}
+          <div className="space-y-6">
             {renderCategory("experience")}
             {renderCategory("technical")}
             {renderCategory("security")}
             {renderCategory("impact")}
           </div>
           
+          {/* Summary Section */}
           <div className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                <h4 className="font-medium text-lg text-primary mb-2 text-center">QuillSwitch</h4>
-                <p className="text-sm">
+                <h4 className="font-semibold text-lg text-primary mb-3 text-center">QuillSwitch</h4>
+                <p className="text-sm leading-relaxed">
                   Offers the best of both worlds - the speed and cost-effectiveness of automated solutions with the reliability and customization typically only found in consultant-led migrations. Ideal for businesses that want predictable results without expensive services.
                 </p>
               </div>
               
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-                <h4 className="font-medium text-lg mb-2 text-center">DIY Manual Approach</h4>
-                <p className="text-sm">
+                <h4 className="font-semibold text-lg mb-3 text-center">DIY Manual Approach</h4>
+                <p className="text-sm leading-relaxed">
                   While appearing cost-effective initially, manual migrations typically consume extensive internal resources, introduce significant business disruption, and carry high risks of data loss or corruption. Best only for the smallest, simplest migrations.
                 </p>
               </div>
               
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-                <h4 className="font-medium text-lg mb-2 text-center">Migration Consultants</h4>
-                <p className="text-sm">
+                <h4 className="font-semibold text-lg mb-3 text-center">Migration Consultants</h4>
+                <p className="text-sm leading-relaxed">
                   Traditional consulting offers expertise but at premium prices ($10,000-$50,000+) and typically requires weeks or months to complete. While reliable for complex enterprise migrations, they're often unnecessary and cost-prohibitive for most businesses.
                 </p>
               </div>
