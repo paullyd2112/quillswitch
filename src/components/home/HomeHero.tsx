@@ -1,24 +1,18 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Play } from "lucide-react";
+import { CheckCircle2, Play, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import HeroBackground from "./hero/HeroBackground";
 import AnimatedHeadline from "./hero/AnimatedHeadline";
-import GlowingCTA from "./hero/GlowingCTA";
+import QuickStartCTA from "./hero/QuickStartCTA";
+import { useUserOnboarding } from "@/components/onboarding/UserOnboardingProvider";
 
 const HomeHero = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  
-  const handleGetStarted = () => {
-    if (user) {
-      navigate("/app/setup");
-    } else {
-      navigate("/auth");
-    }
-  };
+  const { showOnboardingTour } = useUserOnboarding();
   
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
@@ -40,7 +34,7 @@ const HomeHero = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
-            Trusted by 500+ businesses for seamless CRM migrations
+            Complete migration in just 5 steps • Takes 10-15 minutes
           </div>
           
           {/* Animated headline with shimmer effect */}
@@ -53,9 +47,7 @@ const HomeHero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
-            <GlowingCTA onClick={handleGetStarted}>
-              {user ? "Start New Migration" : "Start Free Migration Analysis"}
-            </GlowingCTA>
+            <QuickStartCTA />
             
             <Button 
               variant="outline" 

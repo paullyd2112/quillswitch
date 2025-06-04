@@ -27,6 +27,7 @@ import PricingEstimator from './pages/PricingEstimator'
 import AppErrorBoundary from './components/error-handling/AppErrorBoundary'
 import Security from './pages/Security'
 import Integrations from './pages/Integrations'
+import QuickStart from './pages/QuickStart'
 
 function App() {
   return (
@@ -49,10 +50,11 @@ function App() {
                     <Route path="/demo" element={<Demo />} />
                     <Route path="/pricing" element={<PricingEstimator />} />
                     <Route path="/support" element={<Support />} />
+                    <Route path="/quick-start" element={<QuickStart />} />
 
                     {/* Legacy routes - redirect to new structure */}
-                    <Route path="/migrations/*" element={<Navigate to="/app/setup" replace />} />
-                    <Route path="/connect/*" element={<Navigate to="/app/setup" replace />} />
+                    <Route path="/migrations/*" element={<Navigate to="/quick-start" replace />} />
+                    <Route path="/connect/*" element={<Navigate to="/quick-start" replace />} />
 
                     {/* Protected routes with sidebar layout */}
                     <Route path="/app" element={
