@@ -13,13 +13,21 @@ import {
   ProductionMigrationConfig,
   ProductionMigrationResult
 } from '@/services/migration/optimization/productionMigrationService';
-import { TransferProgress } from '@/services/migration/types/transferTypes';
 import { toast } from '@/hooks/use-toast';
+
+// Create a proper TransferProgress interface for this component
+interface MigrationProgress {
+  processedRecords: number;
+  totalRecords: number;
+  percentage: number;
+  processingRate: number;
+  estimatedTimeRemaining: number;
+}
 
 const ProductionMigrationPage: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [migrationResult, setMigrationResult] = useState<ProductionMigrationResult | null>(null);
-  const [progress, setProgress] = useState<TransferProgress | null>(null);
+  const [progress, setProgress] = useState<MigrationProgress | null>(null);
   const [currentConfig, setCurrentConfig] = useState<ProductionMigrationConfig | null>(null);
 
   const handleStartMigration = async (config: ProductionMigrationConfig) => {
@@ -29,21 +37,22 @@ const ProductionMigrationPage: React.FC = () => {
     setProgress(null);
 
     try {
-      // Mock data for demonstration
-      const mockRecords = Array.from({ length: 5000 }, (_, i) => ({
-        id: `record_${i}`,
-        name: `Contact ${i}`,
-        email: `contact${i}@example.com`,
-        last_modified: new Date(Date.now() - Math.random() * 86400000).toISOString()
-      }));
-
-      // Create mock dashboards for the demo
+      // Create mock dashboards with all required DashboardConfig properties
       const mockDashboards = Array.from({ length: 10 }, (_, i) => ({
         id: `dashboard_${i}`,
         name: `Dashboard ${i}`,
         crmSystem: config.sourceSystem,
         widgets: [],
-        filters: []
+        filters: [],
+        layout: { rows: 3, columns: 4 },
+        permissions: { canEdit: true, canView: true, canShare: false },
+        metadata: {
+          description: `Demo dashboard ${i}`,
+          tags: ['demo', 'test'],
+          category: 'sales'
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }));
 
       const results = await productionMigrationService.executeProductionMigration(

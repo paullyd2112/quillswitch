@@ -20,6 +20,24 @@ const ProductionMigrationControls: React.FC<ProductionMigrationControlsProps> = 
   isRunning
 }) => {
   const [config, setConfig] = useState<ProductionMigrationConfig>({
+    // Required base properties
+    projectId: 'demo_project',
+    sourceSystem: 'salesforce',
+    destinationSystem: 'hubspot',
+    batchSize: 100,
+    concurrentBatches: 4,
+    enableCaching: true,
+    enableBloomFilter: true,
+    enableCompression: true,
+    streamingThreshold: 1000,
+    maxMemoryUsage: 512,
+    
+    // Feature flags
+    enableSchemaCache: true,
+    enableSmartDelta: true,
+    enableStreaming: true,
+    enableAdvancedConcurrency: true,
+    
     optimization: {
       enableBloomFilter: true,
       bloomFilterSize: 1000000,
@@ -46,11 +64,7 @@ const ProductionMigrationControls: React.FC<ProductionMigrationControlsProps> = 
         backoffMultiplier: 2,
         jitterMs: 500
       }
-    },
-    enableSchemaCache: true,
-    enableSmartDelta: true,
-    enableStreaming: true,
-    enableAdvancedConcurrency: true
+    }
   });
 
   const updateConfig = (updates: Partial<ProductionMigrationConfig>) => {

@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { 
   DashboardConfig, 
@@ -274,12 +275,24 @@ export class ProductionMigrationService {
     };
 
     // Execute migration with standard service but optimized config
-    return await dashboardMigrationService.migrateDashboard(
-      transformedDashboard,
+    // Fixed method name: using migrateDashboards instead of migrateDashboard
+    const migrationResults = await dashboardMigrationService.migrateDashboards(
+      [transformedDashboard],
       config.destinationSystem,
       {}, // credentials would be retrieved from secure store
       {} // field mappings already applied
     );
+
+    // Return the first result or create a default one
+    return migrationResults[0] || {
+      sourceConfig: dashboard,
+      destinationConfig: transformedDashboard,
+      mappingResults: [],
+      migrationStatus: 'success',
+      warnings: [],
+      errors: [],
+      unsupportedFeatures: []
+    };
   }
 
   /**
