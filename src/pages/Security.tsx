@@ -5,7 +5,8 @@ import SecurityDashboard from '@/components/security/SecurityDashboard';
 import SecurityMonitor from '@/components/security/SecurityMonitor';
 import ComprehensiveSecurityAudit from '@/components/security/ComprehensiveSecurityAudit';
 import CredentialSecurityInfo from '@/components/vault/CredentialSecurityInfo';
-import { Shield, Activity, FileSearch, Info } from 'lucide-react';
+import CredentialMigrationHelper from '@/components/security/CredentialMigrationHelper';
+import { Shield, Activity, FileSearch, Info, Upload } from 'lucide-react';
 
 const Security = () => {
   return (
@@ -23,6 +24,10 @@ const Security = () => {
             <FileSearch className="h-4 w-4" />
             Security Audit
           </TabsTrigger>
+          <TabsTrigger value="migration" className="flex items-center gap-2">
+            <Upload className="h-4 w-4" />
+            Credential Migration
+          </TabsTrigger>
           <TabsTrigger value="dashboard" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             Dashboard
@@ -39,6 +44,10 @@ const Security = () => {
 
         <TabsContent value="audit" className="space-y-6">
           <ComprehensiveSecurityAudit />
+        </TabsContent>
+
+        <TabsContent value="migration" className="space-y-6">
+          <CredentialMigrationHelper />
         </TabsContent>
 
         <TabsContent value="dashboard" className="space-y-6">
