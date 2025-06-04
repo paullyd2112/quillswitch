@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { sanitizeForLogging } from '@/utils/encryptionUtils';
+import type { Json } from '@/integrations/supabase/types';
 
 export interface SecureCredentialData {
   id?: string;
@@ -14,6 +15,20 @@ export interface SecureCredentialData {
   metadata?: Record<string, any>;
   tags?: string[];
 }
+
+// Helper function to safely convert Json to Record<string, any>
+const jsonToRecord = (json: Json | null): Record<string, any> => {
+  if (!json || typeof json !== 'object' || Array.isArray(json)) {
+    return {};
+  }
+  return json as Record<string, any>;
+};
+
+// Helper function to safely convert Record<string, any> to Json
+const recordToJson = (record: Record<string, any> | undefined): Json => {
+  if (!record) return null;
+  return record as Json;
+};
 
 export class SecureCredentialService {
   private static instance: SecureCredentialService;
@@ -39,7 +54,7 @@ export class SecureCredentialService {
         p_credential_value: credential.credentialValue,
         p_environment: credential.environment || null,
         p_expires_at: credential.expiresAt || null,
-        p_metadata: credential.metadata || {},
+        p_metadata: recordToJson(credential.metadata),
         p_tags: credential.tags || []
       });
 
@@ -82,7 +97,7 @@ export class SecureCredentialService {
         credentialValue: record.credential_value,
         environment: record.environment as SecureCredentialData['environment'],
         expiresAt: record.expires_at,
-        metadata: record.metadata,
+        metadata: jsonToRecord(record.metadata),
         tags: record.tags
       };
 
@@ -114,7 +129,7 @@ export class SecureCredentialService {
         credentialType: record.credential_type as SecureCredentialData['credentialType'],
         environment: record.environment as SecureCredentialData['environment'],
         expiresAt: record.expires_at,
-        metadata: record.metadata,
+        metadata: jsonToRecord(record.metadata),
         tags: record.tags
       })) || [];
 
