@@ -31,7 +31,14 @@ const MigrationsList = () => {
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      setProjects(data || []);
+      
+      // Type cast the data to match our MigrationProject type
+      const typedProjects: MigrationProject[] = (data || []).map(project => ({
+        ...project,
+        status: project.status as MigrationProject['status']
+      }));
+      
+      setProjects(typedProjects);
     } catch (error) {
       console.error('Error loading migration projects:', error);
       toast.error('Failed to load migration projects');
