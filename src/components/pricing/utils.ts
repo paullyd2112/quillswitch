@@ -2,7 +2,6 @@
 import { CalculatorInputs, SavingsResults } from "./types";
 
 export const calculateSavings = (inputs: CalculatorInputs): SavingsResults => {
-  const INTERNAL_HOURLY_RATE = 75;
   const HOURS_PER_WEEK_PER_PERSON = 10;
   const QUILLSWITCH_PLAN_COST = 1999;
   const QUILLSWITCH_INTERNAL_HOURS = 8;
@@ -14,7 +13,7 @@ export const calculateSavings = (inputs: CalculatorInputs): SavingsResults => {
     : 0;
 
   const manualInternalStaffTotalHours = inputs.internalStaff * (inputs.migrationWeeks * HOURS_PER_WEEK_PER_PERSON);
-  const manualInternalStaffCost = manualInternalStaffTotalHours * INTERNAL_HOURLY_RATE;
+  const manualInternalStaffCost = manualInternalStaffTotalHours * inputs.internalStaffRate; // Use manual rate
 
   // Old CRM costs during the entire migration period
   const wastedOldCrmCost = (inputs.oldCrmCost / WEEKS_PER_MONTH) * inputs.migrationWeeks;
@@ -24,7 +23,7 @@ export const calculateSavings = (inputs: CalculatorInputs): SavingsResults => {
 
   const totalManualCost = manualConsultantCost + manualInternalStaffCost + wastedOldCrmCost + newCrmCostDuringMigration;
 
-  const quillSwitchInternalCost = QUILLSWITCH_INTERNAL_HOURS * INTERNAL_HOURLY_RATE;
+  const quillSwitchInternalCost = QUILLSWITCH_INTERNAL_HOURS * inputs.internalStaffRate; // Use manual rate for QuillSwitch too
   const quillSwitchOldCrmCost = (inputs.oldCrmCost / WEEKS_PER_MONTH) * QUILLSWITCH_TIMELINE_WEEKS;
   const quillSwitchNewCrmCost = (inputs.newCrmCost / WEEKS_PER_MONTH) * QUILLSWITCH_TIMELINE_WEEKS;
   const quillSwitchCost = QUILLSWITCH_PLAN_COST + quillSwitchInternalCost + quillSwitchOldCrmCost + quillSwitchNewCrmCost;

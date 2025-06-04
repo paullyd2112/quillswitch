@@ -14,6 +14,7 @@ const SavingsCalculator: React.FC = () => {
     consultantRate: 125,
     consultantHours: 100,
     internalStaff: 2,
+    internalStaffRate: 75, // Default value for internal staff rate
     oldCrmCost: 1000,
     newCrmCost: 400,
   });
