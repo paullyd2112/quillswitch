@@ -29,6 +29,7 @@ import AppErrorBoundary from './components/error-handling/AppErrorBoundary'
 import Security from './pages/Security'
 import Integrations from './pages/Integrations'
 import QuickStart from './pages/QuickStart'
+import Reports from './pages/Reports'
 
 function App() {
   return (
@@ -90,6 +91,11 @@ function App() {
                       <Route path="security" element={
                         <AppErrorBoundary isolate>
                           <Security />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="reports" element={
+                        <AppErrorBoundary isolate>
+                          <Reports />
                         </AppErrorBoundary>
                       } />
                       <Route path="settings" element={
