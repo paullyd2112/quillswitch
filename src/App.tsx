@@ -44,6 +44,7 @@ function App() {
                     <Route path="/api-docs" element={<ApiDocs />} />
                     <Route path="/app/security" element={<Security />} />
                     <Route path="/app/setup" element={<SetupWizard />} />
+                    <Route path="/setup-wizard" element={<SetupWizard />} />
                     <Route path="/app/migration-setup" element={<MigrationSetup />} />
                     <Route path="/app/migration-chat" element={<MigrationChat />} />
                     <Route path="/app/migrations/:id" element={<MigrationDashboard />} />
