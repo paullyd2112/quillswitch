@@ -19,7 +19,6 @@ import Security from "@/pages/Security";
 import SetupWizard from "@/pages/SetupWizard";
 import MigrationSetup from "@/pages/MigrationSetup";
 import MigrationChat from "@/pages/MigrationChat";
-import MigrationDashboard from "@/pages/MigrationDashboard";
 
 const queryClient = new QueryClient();
 
@@ -43,7 +42,6 @@ function App() {
                     <Route path="/setup-wizard" element={<SetupWizard />} />
                     <Route path="/app/migration-setup" element={<MigrationSetup />} />
                     <Route path="/app/migration-chat" element={<MigrationChat />} />
-                    <Route path="/app/migrations/:id" element={<MigrationDashboard />} />
                   </Routes>
                   <CookieConsentBanner />
                 </div>
