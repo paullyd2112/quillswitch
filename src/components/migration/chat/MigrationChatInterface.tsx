@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SendIcon, MessageSquare, Loader2, ArrowRight, CheckCircle } from "lucide-react";
+import { SendIcon, MessageSquare, Loader2, ArrowRight, CheckCircle, Sparkles, Bot, User } from "lucide-react";
 import { ChatMessage, sendMessageToGemini } from "@/services/gemini/geminiService";
 import { useAuth } from "@/contexts/auth";
 import { toast } from "sonner";
@@ -56,7 +56,7 @@ const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: Mi
     if (messages.length === 0) {
       const welcomeMessage: ChatMessage = {
         role: "assistant",
-        content: "Hi! I'm your QuillSwitch migration assistant. I'll help you plan your CRM migration by understanding your current setup and goals.\n\nLet's start with: What CRM system are you currently using?"
+        content: "Hello! I'm your QuillSwitch AI migration assistant. I'll help you plan your CRM migration by understanding your current setup and goals.\n\nTo get started, could you tell me:\n• What CRM system are you currently using?\n• What's prompting you to consider a migration?"
       };
       setMessages([welcomeMessage]);
     }
@@ -166,28 +166,33 @@ const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: Mi
   };
 
   return (
-    <Card className={`flex flex-col h-full ${className}`}>
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          Migration Planning Chat
+    <Card className={`flex flex-col h-full bg-slate-900/95 border-slate-700/50 backdrop-blur-xl shadow-2xl ${className}`}>
+      <CardHeader className="pb-4 border-b border-slate-700/50">
+        <CardTitle className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-r from-primary to-blue-500 rounded-lg shadow-lg">
+            <Sparkles className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold text-white">AI Migration Planner</h3>
+            <p className="text-sm text-slate-400 font-normal">Powered by advanced AI technology</p>
+          </div>
         </CardTitle>
         
-        {/* Show extracted info */}
+        {/* Enhanced extracted info display */}
         {(extractedInfo.sourceCrm || extractedInfo.destinationCrm || extractedInfo.dataTypes?.length) && (
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
             {extractedInfo.sourceCrm && (
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300">
+              <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 hover:bg-blue-500/30">
                 From: {extractedInfo.sourceCrm}
               </Badge>
             )}
             {extractedInfo.destinationCrm && (
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300">
+              <Badge className="bg-green-500/20 text-green-300 border-green-500/30 hover:bg-green-500/30">
                 To: {extractedInfo.destinationCrm}
               </Badge>
             )}
             {extractedInfo.dataTypes?.map(type => (
-              <Badge key={type} variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300">
+              <Badge key={type} className="bg-purple-500/20 text-purple-300 border-purple-500/30 hover:bg-purple-500/30">
                 {type}
               </Badge>
             ))}
@@ -196,29 +201,50 @@ const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: Mi
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col p-0">
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-96">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 max-h-96 custom-scrollbar">
           {messages.map((message, index) => (
             <div 
               key={index} 
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex items-start gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
             >
+              {/* Avatar */}
+              <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                message.role === "user" 
+                  ? "bg-gradient-to-r from-primary to-blue-500 shadow-lg" 
+                  : "bg-gradient-to-r from-slate-700 to-slate-600 shadow-lg"
+              }`}>
+                {message.role === "user" ? (
+                  <User className="h-4 w-4 text-white" />
+                ) : (
+                  <Bot className="h-4 w-4 text-white" />
+                )}
+              </div>
+              
+              {/* Message bubble */}
               <div 
-                className={`max-w-[80%] p-3 rounded-lg ${
+                className={`max-w-[85%] p-4 rounded-2xl shadow-lg ${
                   message.role === "user" 
-                    ? "bg-primary text-primary-foreground rounded-tr-none" 
-                    : "bg-muted text-muted-foreground rounded-tl-none"
+                    ? "bg-gradient-to-r from-primary to-blue-500 text-white rounded-tr-md" 
+                    : "bg-slate-800/80 text-slate-100 border border-slate-700/50 rounded-tl-md"
                 }`}
               >
-                <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
               </div>
             </div>
           ))}
           
           {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-muted p-3 rounded-lg rounded-tl-none flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-sm text-muted-foreground">AI is thinking...</span>
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-slate-700 to-slate-600 flex items-center justify-center shadow-lg">
+                <Bot className="h-4 w-4 text-white" />
+              </div>
+              <div className="bg-slate-800/80 border border-slate-700/50 p-4 rounded-2xl rounded-tl-md flex items-center gap-3 shadow-lg">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200"></div>
+                </div>
+                <span className="text-sm text-slate-300">AI is analyzing your requirements...</span>
               </div>
             </div>
           )}
@@ -228,41 +254,56 @@ const MigrationChatInterface = ({ onMigrationInfoExtracted, className = "" }: Mi
 
         {/* Ready for setup indicator */}
         {extractedInfo.readyForSetup && (
-          <div className="p-4 bg-green-50 dark:bg-green-950/20 border-t border-green-200 dark:border-green-800">
+          <div className="mx-6 mb-4 p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-400" />
+                </div>
                 <div>
-                  <p className="font-medium text-green-800 dark:text-green-300">Ready to Start Setup</p>
-                  <p className="text-sm text-green-600 dark:text-green-400">
-                    I have enough information to begin your migration setup
+                  <p className="font-semibold text-green-300">Ready to Start Migration</p>
+                  <p className="text-sm text-green-400">
+                    I have all the information needed to configure your migration
                   </p>
                 </div>
               </div>
-              <Button onClick={handleStartSetup} className="gap-2">
+              <Button 
+                onClick={handleStartSetup} 
+                className="gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg"
+              >
                 Start Setup <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
         )}
 
-        <div className="p-4 border-t">
-          <div className="flex gap-2">
-            <Textarea
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Describe your migration needs or ask any questions..."
-              className="min-h-[60px] resize-none"
-              disabled={isLoading}
-            />
+        {/* Enhanced input area */}
+        <div className="p-6 border-t border-slate-700/50 bg-slate-900/50">
+          <div className="flex gap-3">
+            <div className="flex-1 relative">
+              <Textarea
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Describe your migration needs, current CRM, or ask any questions..."
+                className="min-h-[60px] resize-none bg-slate-800/80 border-slate-700/50 focus:border-primary/50 focus:ring-primary/20 text-slate-100 placeholder:text-slate-400 rounded-xl"
+                disabled={isLoading}
+              />
+              <div className="absolute bottom-3 right-3 text-xs text-slate-500">
+                Press Enter to send
+              </div>
+            </div>
             <Button 
               onClick={handleSendMessage} 
               disabled={!inputMessage.trim() || isLoading}
               size="icon"
-              className="mt-auto mb-0 h-[60px] w-[60px]"
+              className="h-[60px] w-[60px] bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-500/90 text-white shadow-lg transition-all duration-200"
             >
-              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <SendIcon className="h-4 w-4" />}
+              {isLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <SendIcon className="h-5 w-5" />
+              )}
             </Button>
           </div>
         </div>
