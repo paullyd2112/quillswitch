@@ -6,7 +6,7 @@ export const connectors: Connector[] = [
     id: "salesforce",
     name: "Salesforce",
     description: "Connect and sync data with Salesforce CRM platform",
-    logoUrl: "/placeholder.svg",
+    logoUrl: "",
     category: "crm",
     popular: true,
     features: [
@@ -23,7 +23,7 @@ export const connectors: Connector[] = [
     id: "hubspot",
     name: "HubSpot",
     description: "Integrate with HubSpot's marketing, sales, and service tools",
-    logoUrl: "/placeholder.svg",
+    logoUrl: "",
     category: "marketing",
     popular: true,
     features: [
@@ -39,7 +39,7 @@ export const connectors: Connector[] = [
     id: "slack",
     name: "Slack",
     description: "Send notifications and updates to Slack channels",
-    logoUrl: "/placeholder.svg",
+    logoUrl: "",
     category: "communication",
     popular: true,
     features: [
@@ -55,7 +55,7 @@ export const connectors: Connector[] = [
     id: "google-analytics",
     name: "Google Analytics",
     description: "Track and visualize user behavior data",
-    logoUrl: "/placeholder.svg",
+    logoUrl: "",
     category: "analytics",
     popular: false,
     features: [
@@ -71,7 +71,7 @@ export const connectors: Connector[] = [
     id: "stripe",
     name: "Stripe",
     description: "Process payments and manage subscriptions",
-    logoUrl: "/placeholder.svg",
+    logoUrl: "",
     category: "payment",
     popular: true,
     features: [
@@ -87,7 +87,7 @@ export const connectors: Connector[] = [
     id: "microsoft-dynamics",
     name: "Microsoft Dynamics 365",
     description: "Enterprise-level CRM and ERP integration",
-    logoUrl: "/placeholder.svg",
+    logoUrl: "",
     category: "crm",
     popular: false,
     features: [
@@ -103,7 +103,7 @@ export const connectors: Connector[] = [
     id: "zapier",
     name: "Zapier",
     description: "Connect with 3,000+ apps through the Zapier platform",
-    logoUrl: "/placeholder.svg",
+    logoUrl: "",
     category: "productivity",
     popular: true,
     features: [
@@ -118,7 +118,7 @@ export const connectors: Connector[] = [
     id: "aws-s3",
     name: "AWS S3",
     description: "Store and retrieve files on Amazon S3",
-    logoUrl: "/placeholder.svg",
+    logoUrl: "",
     category: "storage",
     popular: false,
     features: [

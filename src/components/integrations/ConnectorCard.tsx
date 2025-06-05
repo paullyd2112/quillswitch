@@ -11,20 +11,27 @@ interface ConnectorCardProps {
 }
 
 const ConnectorCard: React.FC<ConnectorCardProps> = ({ connector }) => {
-  const { name, description, logoUrl, category, popular, features, setupComplexity } = connector;
+  const { name, description, category, popular, features, setupComplexity } = connector;
+
+  // Create a colored icon based on the connector name
+  const getConnectorIcon = (name: string) => {
+    const initials = name.split(' ').map(word => word[0]).join('').toUpperCase();
+    const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500', 'bg-red-500', 'bg-cyan-500'];
+    const colorIndex = name.length % colors.length;
+    
+    return (
+      <div className={`h-12 w-12 rounded ${colors[colorIndex]} flex items-center justify-center text-white font-bold text-sm`}>
+        {initials}
+      </div>
+    );
+  };
 
   return (
     <Card className="h-full flex flex-col overflow-hidden transition-all hover:shadow-md">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div className="flex items-center space-x-4">
-            <div className="h-12 w-12 rounded bg-slate-100 flex items-center justify-center overflow-hidden">
-              {logoUrl ? (
-                <img src={logoUrl} alt={`${name} logo`} className="h-full w-full object-contain" />
-              ) : (
-                <Database className="h-6 w-6 text-slate-400" />
-              )}
-            </div>
+            {getConnectorIcon(name)}
             <div>
               <CardTitle className="text-lg">{name}</CardTitle>
               <div className="flex items-center gap-2 mt-1">

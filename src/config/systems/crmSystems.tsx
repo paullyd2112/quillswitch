@@ -42,7 +42,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'hubspot',
     name: 'HubSpot',
     description: 'Connect to HubSpot CRM',
-    icon: <SystemIcon initial="HS" color="orange-600" />,
+    icon: <SystemIcon initial="HS" color="orange-500" />,
     authType: 'oauth',
     connectionType: 'source',
     popular: true,
@@ -57,7 +57,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'hubspot',
     name: 'HubSpot',
     description: 'Connect to HubSpot CRM',
-    icon: <SystemIcon initial="HS" color="orange-600" />,
+    icon: <SystemIcon initial="HS" color="orange-500" />,
     authType: 'oauth',
     connectionType: 'destination',
     popular: true,
@@ -72,7 +72,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'dynamics',
     name: 'Microsoft Dynamics 365',
     description: 'Connect to Microsoft Dynamics 365',
-    icon: <SystemIcon initial="MD" color="cyan-600" />,
+    icon: <SystemIcon initial="D365" color="blue-500" />,
     authType: 'oauth',
     connectionType: 'source',
     popular: true,
@@ -86,7 +86,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'dynamics',
     name: 'Microsoft Dynamics 365',
     description: 'Connect to Microsoft Dynamics 365',
-    icon: <SystemIcon initial="MD" color="cyan-600" />,
+    icon: <SystemIcon initial="D365" color="blue-500" />,
     authType: 'oauth',
     connectionType: 'destination',
     popular: true,
@@ -144,7 +144,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'monday',
     name: 'Monday Sales CRM',
     description: 'Connect to Monday Sales CRM',
-    icon: <SystemIcon initial="MO" color="blue-500" />,
+    icon: <SystemIcon initial="MON" color="blue-500" />,
     authType: 'api',
     connectionType: 'source',
     popular: false,
@@ -154,7 +154,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'monday',
     name: 'Monday Sales CRM',
     description: 'Connect to Monday Sales CRM',
-    icon: <SystemIcon initial="MO" color="blue-500" />,
+    icon: <SystemIcon initial="MON" color="blue-500" />,
     authType: 'api',
     connectionType: 'destination',
     popular: false,
@@ -178,8 +178,6 @@ export const crmSystems: SystemConfig[] = [
     connectionType: 'destination',
     apiKeyHelp: 'You can find your Freshsales API key in Administration > API Settings.'
   },
-  
-  // Adding additional CRM systems
   {
     id: 'activecampaign',
     name: 'ActiveCampaign',
@@ -228,7 +226,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'copper',
     name: 'Copper',
     description: 'Connect to Copper CRM',
-    icon: <SystemIcon initial="CP" color="orange-500" />,
+    icon: <SystemIcon initial="CU" color="orange-500" />,
     authType: 'api',
     connectionType: 'source',
     apiKeyHelp: 'You can find your Copper API key in Settings > Integrations > API Keys'
@@ -237,7 +235,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'copper',
     name: 'Copper',
     description: 'Connect to Copper CRM',
-    icon: <SystemIcon initial="CP" color="orange-500" />,
+    icon: <SystemIcon initial="CU" color="orange-500" />,
     authType: 'api',
     connectionType: 'destination',
     apiKeyHelp: 'You can find your Copper API key in Settings > Integrations > API Keys'
@@ -290,7 +288,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'sugarcrm',
     name: 'SugarCRM',
     description: 'Connect to SugarCRM',
-    icon: <SystemIcon initial="SU" color="purple-500" />,
+    icon: <SystemIcon initial="SGR" color="purple-500" />,
     authType: 'oauth',
     connectionType: 'source',
     permissions: [
@@ -303,7 +301,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'sugarcrm',
     name: 'SugarCRM',
     description: 'Connect to SugarCRM',
-    icon: <SystemIcon initial="SU" color="purple-500" />,
+    icon: <SystemIcon initial="SGR" color="purple-500" />,
     authType: 'oauth',
     connectionType: 'destination',
     permissions: [
@@ -352,7 +350,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'capsule',
     name: 'Capsule CRM',
     description: 'Connect to Capsule CRM',
-    icon: <SystemIcon initial="CP" color="red-500" />,
+    icon: <SystemIcon initial="CAP" color="red-500" />,
     authType: 'api',
     connectionType: 'source',
     apiKeyHelp: 'You can find your Capsule API key in My Preferences > API Authentication Tokens'
@@ -361,7 +359,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'capsule',
     name: 'Capsule CRM',
     description: 'Connect to Capsule CRM',
-    icon: <SystemIcon initial="CP" color="red-500" />,
+    icon: <SystemIcon initial="CAP" color="red-500" />,
     authType: 'api',
     connectionType: 'destination',
     apiKeyHelp: 'You can find your Capsule API key in My Preferences > API Authentication Tokens'
@@ -370,7 +368,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'nutshell',
     name: 'Nutshell',
     description: 'Connect to Nutshell CRM',
-    icon: <SystemIcon initial="NU" color="orange-600" />,
+    icon: <SystemIcon initial="NUT" color="orange-600" />,
     authType: 'api',
     connectionType: 'source',
     apiKeyHelp: 'You can find your Nutshell API key in Settings > API'
@@ -379,7 +377,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'nutshell',
     name: 'Nutshell',
     description: 'Connect to Nutshell CRM',
-    icon: <SystemIcon initial="NU" color="orange-600" />,
+    icon: <SystemIcon initial="NUT" color="orange-600" />,
     authType: 'api',
     connectionType: 'destination',
     apiKeyHelp: 'You can find your Nutshell API key in Settings > API'
@@ -388,7 +386,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'bitrix24',
     name: 'Bitrix24',
     description: 'Connect to Bitrix24 CRM',
-    icon: <SystemIcon initial="BX" color="blue-500" />,
+    icon: <SystemIcon initial="B24" color="blue-500" />,
     authType: 'oauth',
     connectionType: 'source',
     permissions: [
@@ -401,7 +399,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'bitrix24',
     name: 'Bitrix24',
     description: 'Connect to Bitrix24 CRM',
-    icon: <SystemIcon initial="BX" color="blue-500" />,
+    icon: <SystemIcon initial="B24" color="blue-500" />,
     authType: 'oauth',
     connectionType: 'destination',
     permissions: [
@@ -450,7 +448,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'odoo',
     name: 'Odoo',
     description: 'Connect to Odoo CRM',
-    icon: <SystemIcon initial="OD" color="green-500" />,
+    icon: <SystemIcon initial="ODO" color="green-500" />,
     authType: 'api',
     connectionType: 'source',
     apiKeyHelp: 'Contact your Odoo administrator for API credentials'
@@ -459,7 +457,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'odoo',
     name: 'Odoo',
     description: 'Connect to Odoo CRM',
-    icon: <SystemIcon initial="OD" color="green-500" />,
+    icon: <SystemIcon initial="ODO" color="green-500" />,
     authType: 'api',
     connectionType: 'destination',
     apiKeyHelp: 'Contact your Odoo administrator for API credentials'
@@ -468,7 +466,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'salesflare',
     name: 'Salesflare',
     description: 'Connect to Salesflare CRM',
-    icon: <SystemIcon initial="SF" color="blue-500" />,
+    icon: <SystemIcon initial="SFL" color="blue-500" />,
     authType: 'api',
     connectionType: 'source',
     apiKeyHelp: 'You can find your Salesflare API key in Settings > API'
@@ -477,7 +475,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'salesflare',
     name: 'Salesflare',
     description: 'Connect to Salesflare CRM',
-    icon: <SystemIcon initial="SF" color="blue-500" />,
+    icon: <SystemIcon initial="SFL" color="blue-500" />,
     authType: 'api',
     connectionType: 'destination',
     apiKeyHelp: 'You can find your Salesflare API key in Settings > API'
@@ -486,7 +484,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'apptivo',
     name: 'Apptivo',
     description: 'Connect to Apptivo CRM',
-    icon: <SystemIcon initial="AP" color="cyan-600" />,
+    icon: <SystemIcon initial="APT" color="cyan-600" />,
     authType: 'api',
     connectionType: 'source',
     apiKeyHelp: 'Contact Apptivo support to obtain your API credentials'
@@ -495,7 +493,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'apptivo',
     name: 'Apptivo',
     description: 'Connect to Apptivo CRM',
-    icon: <SystemIcon initial="AP" color="cyan-600" />,
+    icon: <SystemIcon initial="APT" color="cyan-600" />,
     authType: 'api',
     connectionType: 'destination',
     apiKeyHelp: 'Contact Apptivo support to obtain your API credentials'
@@ -504,7 +502,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'agilecrm',
     name: 'Agile CRM',
     description: 'Connect to Agile CRM',
-    icon: <SystemIcon initial="AG" color="blue-500" />,
+    icon: <SystemIcon initial="AGL" color="blue-500" />,
     authType: 'api',
     connectionType: 'source',
     apiKeyHelp: 'You can find your Agile CRM API key in Admin Settings > API'
@@ -513,7 +511,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'agilecrm',
     name: 'Agile CRM',
     description: 'Connect to Agile CRM',
-    icon: <SystemIcon initial="AG" color="blue-500" />,
+    icon: <SystemIcon initial="AGL" color="blue-500" />,
     authType: 'api',
     connectionType: 'destination',
     apiKeyHelp: 'You can find your Agile CRM API key in Admin Settings > API'
@@ -522,7 +520,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'planfix',
     name: 'Planfix',
     description: 'Connect to Planfix CRM',
-    icon: <SystemIcon initial="PF" color="green-500" />,
+    icon: <SystemIcon initial="PFX" color="green-500" />,
     authType: 'api',
     connectionType: 'source',
     apiKeyHelp: 'You can find your Planfix API key in Account > API access'
@@ -531,7 +529,7 @@ export const crmSystems: SystemConfig[] = [
     id: 'planfix',
     name: 'Planfix',
     description: 'Connect to Planfix CRM',
-    icon: <SystemIcon initial="PF" color="green-500" />,
+    icon: <SystemIcon initial="PFX" color="green-500" />,
     authType: 'api',
     connectionType: 'destination',
     apiKeyHelp: 'You can find your Planfix API key in Account > API access'
