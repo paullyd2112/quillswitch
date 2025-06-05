@@ -19,6 +19,9 @@ import Security from "@/pages/Security";
 import SetupWizard from "@/pages/SetupWizard";
 import MigrationSetup from "@/pages/MigrationSetup";
 import MigrationChat from "@/pages/MigrationChat";
+import ConnectionHub from "@/pages/ConnectionHub";
+import CrmConnections from "@/pages/CrmConnections";
+import Integrations from "@/pages/Integrations";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +45,9 @@ function App() {
                     <Route path="/setup-wizard" element={<SetupWizard />} />
                     <Route path="/app/migration-setup" element={<MigrationSetup />} />
                     <Route path="/app/migration-chat" element={<MigrationChat />} />
+                    <Route path="/app/connect" element={<ConnectionHub />} />
+                    <Route path="/app/crm-connections" element={<CrmConnections />} />
+                    <Route path="/app/integrations" element={<Integrations />} />
                   </Routes>
                   <CookieConsentBanner />
                 </div>
