@@ -5,7 +5,6 @@ export interface CalculatorInputs {
   consultantRate: number;
   consultantHours: number;
   internalStaff: number;
-  internalStaffRate: number; // New field for manual internal staff rate
   oldCrmCost: number;
   newCrmCost: number;
 }

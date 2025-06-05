@@ -99,42 +99,20 @@ const SavingsInputsCard: React.FC<SavingsInputsCardProps> = ({
         <Separator />
 
         {/* Internal Staff */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="internalStaff" className="text-sm font-medium">
-              Internal team members involved
-            </Label>
-            <Input
-              id="internalStaff"
-              type="number"
-              value={inputs.internalStaff}
-              onChange={(e) => updateInputs({ internalStaff: Number(e.target.value) })}
-              min={1}
-            />
-            <p className="text-xs text-muted-foreground">
-              Assumes 10 hours/week per person during migration
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="internalStaffRate" className="text-sm font-medium">
-              Internal staff hourly rate (fully-loaded)
-            </Label>
-            <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="internalStaffRate"
-                type="number"
-                value={inputs.internalStaffRate}
-                onChange={(e) => updateInputs({ internalStaffRate: Number(e.target.value) })}
-                className="pl-9"
-                min={1}
-              />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Include salary, benefits, and overhead costs
-            </p>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="internalStaff" className="text-sm font-medium">
+            Internal team members involved
+          </Label>
+          <Input
+            id="internalStaff"
+            type="number"
+            value={inputs.internalStaff}
+            onChange={(e) => updateInputs({ internalStaff: Number(e.target.value) })}
+            min={1}
+          />
+          <p className="text-xs text-muted-foreground">
+            Assumes 10 hours/week per person during migration
+          </p>
         </div>
 
         <Separator />

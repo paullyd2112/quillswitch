@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,13 +19,9 @@ import {
   Database,
   Globe,
   Code,
-  Users,
-  Trash2,
-  Upload
+  Users
 } from 'lucide-react';
 import { securityAuditor, SecurityAuditResult } from '@/utils/securityAudit';
-import { enhancedSecurityAuditor } from '@/utils/security/enhancedSecurityAuditor';
-import { secureCredentialService } from '@/services/security/secureCredentialService';
 import { checkSecurityHeaders, isConnectionSecure } from '@/utils/encryptionUtils';
 import { toast } from 'sonner';
 
@@ -32,8 +29,6 @@ const ComprehensiveSecurityAudit = () => {
   const [auditResult, setAuditResult] = useState<SecurityAuditResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [lastAuditTime, setLastAuditTime] = useState<Date | null>(null);
-  const [isCleaningDemo, setIsCleaningDemo] = useState(false);
-  const [isMigrating, setIsMigrating] = useState(false);
 
   const performFullAudit = async () => {
     setIsLoading(true);
@@ -43,25 +38,14 @@ const ComprehensiveSecurityAudit = () => {
       // Perform the main security audit
       const result = await securityAuditor.performComprehensiveAudit();
       
-      // Add enhanced localStorage security checks
-      const enhancedLocalStorageResults = await enhancedSecurityAuditor.auditLocalStorageSecurityEnhanced();
-      
       // Add additional security checks
       const additionalChecks = await performAdditionalSecurityChecks();
       
       // Merge results
       const enhancedResult = {
         ...result,
-        issues: [
-          ...result.issues, 
-          ...enhancedLocalStorageResults.issues,
-          ...additionalChecks.issues
-        ],
-        recommendations: [
-          ...result.recommendations, 
-          ...enhancedLocalStorageResults.recommendations,
-          ...additionalChecks.recommendations
-        ]
+        issues: [...result.issues, ...additionalChecks.issues],
+        recommendations: [...result.recommendations, ...additionalChecks.recommendations]
       };
       
       // Recalculate score with additional checks
@@ -110,14 +94,56 @@ const ComprehensiveSecurityAudit = () => {
       });
     }
 
-    // Add recommendations for enhanced security
+    // Check for sensitive data in localStorage
+    const sensitiveKeys = ['password', 'token', 'api_key', 'secret'];
+    const localStorageKeys = Object.keys(localStorage);
+    const exposedSensitiveData = localStorageKeys.filter(key => 
+      sensitiveKeys.some(sensitive => key.toLowerCase().includes(sensitive))
+    );
+
+    if (exposedSensitiveData.length > 0) {
+      issues.push({
+        id: 'sensitive-data-in-localstorage',
+        severity: 'high' as const,
+        category: 'Data Security',
+        title: 'Sensitive Data in Local Storage',
+        description: `Found ${exposedSensitiveData.length} potentially sensitive items in localStorage`,
+        remediation: 'Move sensitive data to secure server-side storage or use proper encryption',
+        affectedResources: exposedSensitiveData
+      });
+    }
+
+    // Check for console logs in production
+    if (process.env.NODE_ENV === 'production') {
+      // This would need to be checked during build time
+      recommendations.push({
+        id: 'remove-console-logs',
+        priority: 'medium' as const,
+        title: 'Remove Console Logs in Production',
+        description: 'Console logs may expose sensitive information in production',
+        implementation: 'Use build tools to remove console.log statements in production builds',
+        estimatedEffort: '1 hour'
+      });
+    }
+
+    // Check for proper error handling
     recommendations.push({
-      id: 'implement-credential-migration',
+      id: 'error-handling-review',
       priority: 'high' as const,
-      title: 'Migrate to Secure Credential Storage',
-      description: 'Move any remaining localStorage credentials to encrypted server-side storage',
-      implementation: 'Use the credential migration tool to securely transfer existing credentials',
-      estimatedEffort: '30 minutes'
+      title: 'Review Error Handling',
+      description: 'Ensure errors don\'t expose sensitive information to users',
+      implementation: 'Implement proper error sanitization and logging',
+      estimatedEffort: '2-4 hours'
+    });
+
+    // Check authentication implementation
+    recommendations.push({
+      id: 'auth-security-review',
+      priority: 'high' as const,
+      title: 'Authentication Security Review',
+      description: 'Review authentication flows for security best practices',
+      implementation: 'Implement session timeouts, secure password policies, and rate limiting',
+      estimatedEffort: '4-6 hours'
     });
 
     return { issues, recommendations };
@@ -144,51 +170,6 @@ const ComprehensiveSecurityAudit = () => {
     }
 
     return Math.max(0, score);
-  };
-
-  const handleCleanupDemoData = async () => {
-    setIsCleaningDemo(true);
-    try {
-      enhancedSecurityAuditor.cleanupDemoData();
-      toast.success('Demo data cleaned up successfully');
-      // Re-run audit to reflect changes
-      setTimeout(() => performFullAudit(), 1000);
-    } catch (error) {
-      console.error('Failed to cleanup demo data:', error);
-      toast.error('Failed to cleanup demo data');
-    } finally {
-      setIsCleaningDemo(false);
-    }
-  };
-
-  const handleMigrateCredentials = async () => {
-    setIsMigrating(true);
-    try {
-      const result = await secureCredentialService.migrateLocalStorageCredentials();
-      
-      if (result.success) {
-        if (result.migrated > 0) {
-          toast.success(`Successfully migrated ${result.migrated} credentials to secure storage`);
-        } else {
-          toast.info('No credentials found to migrate');
-        }
-        
-        if (result.errors.length > 0) {
-          console.warn('Migration errors:', result.errors);
-          toast.warning(`Migration completed with ${result.errors.length} warnings`);
-        }
-        
-        // Re-run audit to reflect changes
-        setTimeout(() => performFullAudit(), 1000);
-      } else {
-        toast.error('Failed to migrate credentials');
-      }
-    } catch (error) {
-      console.error('Failed to migrate credentials:', error);
-      toast.error('Failed to migrate credentials');
-    } finally {
-      setIsMigrating(false);
-    }
   };
 
   const getSeverityColor = (severity: string) => {
@@ -264,38 +245,18 @@ const ComprehensiveSecurityAudit = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Action Buttons */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Comprehensive Security Audit</h2>
           <p className="text-muted-foreground">
-            Complete security assessment with enhanced localStorage protection
+            Complete security assessment of your QuillSwitch application
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button 
-            onClick={handleCleanupDemoData} 
-            disabled={isCleaningDemo}
-            variant="outline"
-            size="sm"
-          >
-            <Trash2 className={`h-4 w-4 mr-2 ${isCleaningDemo ? 'animate-spin' : ''}`} />
-            Cleanup Demo Data
-          </Button>
-          <Button 
-            onClick={handleMigrateCredentials} 
-            disabled={isMigrating}
-            variant="outline"
-            size="sm"
-          >
-            <Upload className={`h-4 w-4 mr-2 ${isMigrating ? 'animate-spin' : ''}`} />
-            Migrate Credentials
-          </Button>
-          <Button onClick={performFullAudit} disabled={isLoading} variant="outline">
-            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Re-run Audit
-          </Button>
-        </div>
+        <Button onClick={performFullAudit} disabled={isLoading} variant="outline">
+          <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          Re-run Audit
+        </Button>
       </div>
 
       {/* Overall Score */}

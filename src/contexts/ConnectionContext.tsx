@@ -1,6 +1,7 @@
+
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { toast } from "sonner";
-import { secureCredentialService } from "@/services/security/secureCredentialService";
+import { storeSecureData, getSecureData, encryptData } from "@/utils/encryptionUtils";
 
 interface ConnectedSystem {
   id: string;
@@ -11,7 +12,6 @@ interface ConnectedSystem {
   errorMessage?: string;
   connectionDate?: Date;
   authMethod?: "oauth" | "api_key";
-  credentialId?: string; // Reference to secure credential
 }
 
 interface ConnectionContextType {
@@ -42,39 +42,16 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   // Load connected systems from secure storage on initialization
   useEffect(() => {
-    const loadConnectedSystems = async () => {
-      try {
-        // Load from secure credential service instead of localStorage
-        const result = await secureCredentialService.listCredentials();
-        if (result.success && result.credentials) {
-          const systems: ConnectedSystem[] = result.credentials
-            .filter(cred => cred.metadata?.connectionType)
-            .map(cred => ({
-              id: cred.serviceName,
-              name: cred.serviceName.charAt(0).toUpperCase() + cred.serviceName.slice(1),
-              type: cred.metadata?.connectionType as "source" | "destination" | "related",
-              status: "connected" as const,
-              connectionDate: new Date(),
-              authMethod: cred.credentialType === 'oauth_token' ? 'oauth' : 'api_key',
-              credentialId: cred.id
-            }));
-          setConnectedSystems(systems);
-        }
-      } catch (error) {
-        console.error("Failed to load connected systems", error);
-        // Fallback to localStorage for existing users during transition
-        const storedSystems = localStorage.getItem("connected_systems");
-        if (storedSystems) {
-          try {
-            const parsedSystems = JSON.parse(storedSystems);
-            if (Array.isArray(parsedSystems)) {
-              setConnectedSystems(parsedSystems);
-              // Schedule migration of these systems
-              setTimeout(() => migrateLegacyConnections(parsedSystems), 1000);
-            }
-          } catch (parseError) {
-            console.error("Failed to parse stored connected systems", parseError);
+    const loadConnectedSystems = () => {
+      const storedSystems = getSecureData("connected_systems");
+      if (storedSystems) {
+        try {
+          const parsedSystems = JSON.parse(storedSystems);
+          if (Array.isArray(parsedSystems)) {
+            setConnectedSystems(parsedSystems);
           }
+        } catch (error) {
+          console.error("Failed to parse stored connected systems", error);
         }
       }
     };
@@ -82,39 +59,12 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     loadConnectedSystems();
   }, []);
 
-  // Migration function for legacy localStorage connections
-  const migrateLegacyConnections = async (legacySystems: ConnectedSystem[]) => {
-    console.log("Migrating legacy connections to secure storage...");
-    for (const system of legacySystems) {
-      try {
-        // Get the API key from localStorage if it exists
-        const apiKey = localStorage.getItem(`secure_api_key_${system.id}`);
-        if (apiKey) {
-          await secureCredentialService.storeCredential({
-            serviceName: system.id,
-            credentialName: `${system.name} Connection`,
-            credentialType: system.authMethod === 'oauth' ? 'oauth_token' : 'api_key',
-            credentialValue: apiKey,
-            environment: 'production',
-            metadata: {
-              connectionType: system.type,
-              migrated: true,
-              originalConnectionDate: system.connectionDate?.toISOString()
-            }
-          });
-          
-          // Clean up localStorage
-          localStorage.removeItem(`secure_api_key_${system.id}`);
-        }
-      } catch (error) {
-        console.error(`Failed to migrate connection for ${system.id}:`, error);
-      }
+  // Save connected systems to secure storage whenever they change
+  useEffect(() => {
+    if (connectedSystems.length > 0) {
+      storeSecureData("connected_systems", JSON.stringify(connectedSystems));
     }
-    
-    // Clean up legacy storage
-    localStorage.removeItem("connected_systems");
-    toast.success("Legacy connections migrated to secure storage");
-  };
+  }, [connectedSystems]);
 
   const connectWithOAuth = async (
     systemId: string, 
@@ -128,48 +78,29 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       toast.info(`Starting OAuth flow for ${systemId}...`);
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      // For demo purposes, we'll simulate a successful OAuth connection
+      // In a real app, you would handle the OAuth callback and token exchange
+      
       // Check if system is already connected
       if (connectedSystems.some(system => system.id === systemId)) {
         toast.info(`${systemId} is already connected`);
         return;
       }
       
-      // For demo purposes, simulate a successful OAuth token
-      const oauthToken = `oauth_${systemId}_${Date.now()}_demo_token`;
-      
-      // Store OAuth token securely
-      const result = await secureCredentialService.storeCredential({
-        serviceName: systemId,
-        credentialName: `${systemId} OAuth Connection`,
-        credentialType: 'oauth_token',
-        credentialValue: oauthToken,
-        environment: 'production',
-        metadata: {
-          connectionType: type,
-          oauthProvider: systemId,
-          connectedAt: new Date().toISOString()
+      // Add the new connected system
+      setConnectedSystems(prev => [
+        ...prev,
+        {
+          id: systemId,
+          name: systemId.charAt(0).toUpperCase() + systemId.slice(1),
+          type,
+          status: "connected",
+          connectionDate: new Date(),
+          authMethod: "oauth"
         }
-      });
+      ]);
       
-      if (result.success) {
-        // Add the new connected system
-        setConnectedSystems(prev => [
-          ...prev,
-          {
-            id: systemId,
-            name: systemId.charAt(0).toUpperCase() + systemId.slice(1),
-            type,
-            status: "connected",
-            connectionDate: new Date(),
-            authMethod: "oauth",
-            credentialId: result.id
-          }
-        ]);
-        
-        toast.success(`Successfully connected to ${systemId} using OAuth`);
-      } else {
-        throw new Error(result.error || 'Failed to store OAuth token');
-      }
+      toast.success(`Successfully connected to ${systemId} using OAuth`);
     } catch (error) {
       toast.error(`Failed to connect to ${systemId} with OAuth`);
       console.error("OAuth connection error:", error);
@@ -194,47 +125,34 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         return;
       }
 
-      // Store the API key securely using the secure credential service
-      const result = await secureCredentialService.storeCredential({
-        serviceName: systemId,
-        credentialName: `${systemId} API Connection`,
-        credentialType: 'api_key',
-        credentialValue: apiKey,
-        environment: 'production',
-        metadata: {
-          connectionType: type,
-          connectedAt: new Date().toISOString()
-        }
-      });
+      // Store the API key securely
+      const secureKeyId = `api_key_${systemId}`;
+      const encryptedApiKey = encryptData(apiKey);
+      storeSecureData(secureKeyId, encryptedApiKey);
       
-      if (result.success) {
-        // Simulate connection process
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Check if system is already connected
-        if (connectedSystems.some(system => system.id === systemId)) {
-          toast.info(`${systemId} is already connected`);
-          return;
-        }
-        
-        // Add the new connected system
-        setConnectedSystems(prev => [
-          ...prev,
-          {
-            id: systemId,
-            name: systemId.charAt(0).toUpperCase() + systemId.slice(1),
-            type,
-            status: "connected",
-            connectionDate: new Date(),
-            authMethod: "api_key",
-            credentialId: result.id
-          }
-        ]);
-        
-        toast.success(`Successfully connected to ${systemId}`);
-      } else {
-        throw new Error(result.error || 'Failed to store API key securely');
+      // Simulate connection process
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Check if system is already connected
+      if (connectedSystems.some(system => system.id === systemId)) {
+        toast.info(`${systemId} is already connected`);
+        return;
       }
+      
+      // Add the new connected system
+      setConnectedSystems(prev => [
+        ...prev,
+        {
+          id: systemId,
+          name: systemId.charAt(0).toUpperCase() + systemId.slice(1),
+          type,
+          status: "connected",
+          connectionDate: new Date(),
+          authMethod: "api_key"
+        }
+      ]);
+      
+      toast.success(`Successfully connected to ${systemId}`);
     } catch (error) {
       toast.error(`Failed to connect to ${systemId}`);
       console.error("Connection error:", error);
@@ -244,21 +162,13 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
-  const disconnectSystem = async (systemId: string) => {
-    try {
-      const system = connectedSystems.find(s => s.id === systemId);
-      if (system?.credentialId) {
-        // Delete the credential from secure storage
-        await secureCredentialService.deleteCredential(system.credentialId);
-      }
-      
-      // Remove from local state
-      setConnectedSystems(prev => prev.filter(system => system.id !== systemId));
-      toast.success(`Disconnected from ${systemId}`);
-    } catch (error) {
-      console.error("Error disconnecting system:", error);
-      toast.error(`Failed to disconnect from ${systemId}`);
-    }
+  const disconnectSystem = (systemId: string) => {
+    // Remove the stored API key when disconnecting
+    const secureKeyId = `api_key_${systemId}`;
+    localStorage.removeItem(`secure_${secureKeyId}`);
+    
+    setConnectedSystems(prev => prev.filter(system => system.id !== systemId));
+    toast.success(`Disconnected from ${systemId}`);
   };
 
   const validateConnection = async (systemId: string, apiKey: string): Promise<{ valid: boolean; message?: string }> => {

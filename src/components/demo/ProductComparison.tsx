@@ -1,12 +1,252 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { features } from "./comparison/data";
-import ComparisonHeaderRow from "./comparison/ComparisonHeaderRow";
-import ComparisonCategorySection from "./comparison/ComparisonCategorySection";
-import ComparisonSummarySection from "./comparison/ComparisonSummarySection";
+import { Check, X, Info, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+
+interface ComparisonFeature {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  quillswitch: boolean | string;
+  manual: boolean | string;
+  consultants: boolean | string;
+}
+
+const features: ComparisonFeature[] = [
+  // Migration Experience
+  {
+    id: "user-friendly",
+    name: "User-Friendly Interface",
+    description: "Can be operated by non-technical users without specialized training",
+    category: "experience",
+    quillswitch: true,
+    manual: false,
+    consultants: "Limited"
+  },
+  {
+    id: "guided-flow",
+    name: "Guided Migration Flow",
+    description: "Step-by-step process with clear instructions at each stage",
+    category: "experience",
+    quillswitch: true,
+    manual: false,
+    consultants: true
+  },
+  {
+    id: "time-to-completion",
+    name: "Time to Completion",
+    description: "Total time required from start to finish",
+    category: "experience",
+    quillswitch: "Hours to Days",
+    manual: "Weeks to Months",
+    consultants: "Weeks"
+  },
+  
+  // Technical Features
+  {
+    id: "ai-mapping",
+    name: "AI-Powered Field Mapping",
+    description: "Automatic prediction of field mapping between CRMs",
+    category: "technical",
+    quillswitch: true,
+    manual: false,
+    consultants: false
+  },
+  {
+    id: "data-cleaning",
+    name: "Data Cleansing & Enrichment",
+    description: "Identify and fix data quality issues during migration",
+    category: "technical",
+    quillswitch: true,
+    manual: "Limited",
+    consultants: "Limited"
+  },
+  {
+    id: "test-migration",
+    name: "Test Migration & Validation",
+    description: "Run test migrations to validate configuration",
+    category: "technical",
+    quillswitch: true,
+    manual: "Limited",
+    consultants: true
+  },
+  {
+    id: "incremental",
+    name: "Incremental Migration",
+    description: "Migrate data in phases with delta syncing",
+    category: "technical",
+    quillswitch: true,
+    manual: false,
+    consultants: "Limited"
+  },
+  {
+    id: "custom-objects",
+    name: "Custom Object Support",
+    description: "Support for migrating custom CRM objects and fields",
+    category: "technical",
+    quillswitch: true,
+    manual: "Limited",
+    consultants: true
+  },
+  
+  // Security & Reliability
+  {
+    id: "oauth",
+    name: "OAuth Security",
+    description: "Secure API access without storing credentials",
+    category: "security",
+    quillswitch: true,
+    manual: false,
+    consultants: "Varies"
+  },
+  {
+    id: "encryption",
+    name: "End-to-End Encryption",
+    description: "Data encrypted during transfer and processing",
+    category: "security",
+    quillswitch: true,
+    manual: false,
+    consultants: "Varies"
+  },
+  {
+    id: "error-recovery",
+    name: "Automatic Error Recovery",
+    description: "System handles errors and retries without manual intervention",
+    category: "security",
+    quillswitch: true,
+    manual: false,
+    consultants: "Limited"
+  },
+  {
+    id: "audit-logs",
+    name: "Comprehensive Audit Logs",
+    description: "Detailed tracking of all migration actions",
+    category: "security",
+    quillswitch: true,
+    manual: false,
+    consultants: "Limited"
+  },
+  
+  // Business Impact
+  {
+    id: "downtime",
+    name: "Business Disruption",
+    description: "Impact on normal business operations during migration",
+    category: "impact",
+    quillswitch: "Minimal",
+    manual: "Significant",
+    consultants: "Moderate"
+  },
+  {
+    id: "reconnect",
+    name: "Integration Reconnection",
+    description: "Support for reconnecting integrations post-migration",
+    category: "impact",
+    quillswitch: true,
+    manual: false,
+    consultants: "Limited"
+  },
+  {
+    id: "cost",
+    name: "Total Cost",
+    description: "Overall financial investment required",
+    category: "impact",
+    quillswitch: "Predictable",
+    manual: "Low Direct / High Indirect",
+    consultants: "High"
+  },
+  {
+    id: "predictability",
+    name: "Outcome Predictability",
+    description: "Confidence in migration success and timeline",
+    category: "impact",
+    quillswitch: "High",
+    manual: "Low",
+    consultants: "Moderate"
+  }
+];
+
+const renderValue = (value: boolean | string) => {
+  if (typeof value === "boolean") {
+    if (value) {
+      return <Check className="h-5 w-5 text-green-500 mx-auto" />;
+    } else {
+      return <X className="h-5 w-5 text-red-500 mx-auto" />;
+    }
+  } else if (value === "Limited") {
+    return (
+      <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 mx-auto py-0 h-5">
+        Limited
+      </Badge>
+    );
+  } else if (value === "Varies") {
+    return (
+      <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 mx-auto py-0 h-5">
+        Varies
+      </Badge>
+    );
+  } else {
+    return <span className="text-sm text-center">{value}</span>;
+  }
+};
 
 const ProductComparison: React.FC = () => {
+  const renderCategory = (category: string) => {
+    const categoryFeatures = features.filter(f => f.category === category);
+    
+    return (
+      <div>
+        <h3 className="font-medium mb-4 text-center py-2 bg-slate-100 dark:bg-slate-800/80 rounded-md">
+          {category === "experience" ? "Migration Experience" :
+           category === "technical" ? "Technical Features" :
+           category === "security" ? "Security & Reliability" :
+           "Business Impact"}
+        </h3>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <tbody>
+              {categoryFeatures.map((feature) => (
+                <tr 
+                  key={feature.id}
+                  className="border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                >
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-1">
+                      {feature.name}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            {feature.description}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {renderValue(feature.quillswitch)}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {renderValue(feature.manual)}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {renderValue(feature.consultants)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Card className="border border-slate-200 dark:border-slate-800">
       <CardHeader>
@@ -21,19 +261,59 @@ const ProductComparison: React.FC = () => {
       
       <CardContent>
         <div className="space-y-8">
-          {/* Header Row */}
-          <ComparisonHeaderRow />
-          
-          {/* Category Sections */}
-          <div className="space-y-6">
-            <ComparisonCategorySection category="experience" features={features} />
-            <ComparisonCategorySection category="technical" features={features} />
-            <ComparisonCategorySection category="security" features={features} />
-            <ComparisonCategorySection category="impact" features={features} />
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-slate-100 dark:bg-slate-800/80 border-b-2 border-slate-200 dark:border-slate-700">
+                  <th className="py-3 px-4 text-left">Feature / Approach</th>
+                  <th className="py-3 px-4 text-center">
+                    <div className="font-medium text-primary">QuillSwitch</div>
+                    <div className="text-xs font-normal text-muted-foreground">Automated Migration</div>
+                  </th>
+                  <th className="py-3 px-4 text-center">
+                    <div className="font-medium">DIY</div>
+                    <div className="text-xs font-normal text-muted-foreground">Manual Export/Import</div>
+                  </th>
+                  <th className="py-3 px-4 text-center">
+                    <div className="font-medium">Consultants</div>
+                    <div className="text-xs font-normal text-muted-foreground">Professional Services</div>
+                  </th>
+                </tr>
+              </thead>
+            </table>
           </div>
           
-          {/* Summary Section */}
-          <ComparisonSummarySection />
+          <div className="space-y-8">
+            {renderCategory("experience")}
+            {renderCategory("technical")}
+            {renderCategory("security")}
+            {renderCategory("impact")}
+          </div>
+          
+          <div className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                <h4 className="font-medium text-lg text-primary mb-2 text-center">QuillSwitch</h4>
+                <p className="text-sm">
+                  Offers the best of both worlds - the speed and cost-effectiveness of automated solutions with the reliability and customization typically only found in consultant-led migrations. Ideal for businesses that want predictable results without expensive services.
+                </p>
+              </div>
+              
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                <h4 className="font-medium text-lg mb-2 text-center">DIY Manual Approach</h4>
+                <p className="text-sm">
+                  While appearing cost-effective initially, manual migrations typically consume extensive internal resources, introduce significant business disruption, and carry high risks of data loss or corruption. Best only for the smallest, simplest migrations.
+                </p>
+              </div>
+              
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                <h4 className="font-medium text-lg mb-2 text-center">Migration Consultants</h4>
+                <p className="text-sm">
+                  Traditional consulting offers expertise but at premium prices ($10,000-$50,000+) and typically requires weeks or months to complete. While reliable for complex enterprise migrations, they're often unnecessary and cost-prohibitive for most businesses.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

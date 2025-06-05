@@ -11,66 +11,56 @@ interface ProgressStepsProps {
 
 const ProgressSteps: React.FC<ProgressStepsProps> = ({ steps, currentStep, setCurrentStep }) => {
   return (
-    <div className="relative">
-      {/* Progress Line */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-slate-700 rounded-full" />
-      <div
-        className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500 ease-out"
-        style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-      />
-      
-      {/* Step Indicators */}
-      <div className="relative flex justify-between">
-        {steps.map((step, index) => {
-          const IconComponent = step.icon.component;
-          const iconProps = step.icon.props;
-          const isCompleted = index < currentStep;
-          const isCurrent = index === currentStep;
-          const isClickable = index <= currentStep;
-          
-          return (
-            <div 
-              key={step.id} 
-              className="flex flex-col items-center group"
-              onClick={() => isClickable && setCurrentStep(index)}
-            >
-              {/* Step Circle */}
+    <div className="mt-8">
+      <div className="relative">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
+        <div
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-brand-500 dark:bg-brand-400 rounded-full transition-all duration-300"
+          style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+        />
+        
+        <div className="relative flex justify-between">
+          {steps.map((step, index) => {
+            const IconComponent = step.icon.component;
+            const iconProps = step.icon.props;
+            
+            return (
               <div 
-                className={`w-12 h-12 rounded-full flex items-center justify-center z-10 transition-all duration-300 ${
-                  isCompleted
-                    ? "bg-gradient-to-br from-primary to-primary/80 text-white shadow-lg shadow-primary/25 cursor-pointer hover:scale-105"
-                    : isCurrent
-                    ? "bg-gradient-to-br from-primary to-primary/80 text-white ring-4 ring-primary/20 shadow-lg shadow-primary/25 scale-105"
-                    : "bg-slate-800 border-2 border-slate-600 text-slate-400"
-                } ${isClickable ? 'cursor-pointer' : ''}`}
+                key={step.id} 
+                className="flex flex-col items-center"
+                onClick={() => index < currentStep && setCurrentStep(index)} // Allow going back to previous steps
               >
-                {isCompleted ? (
-                  <CheckCircle className="h-6 w-6" />
-                ) : (
-                  <IconComponent {...iconProps} className="h-5 w-5" />
-                )}
+                <div 
+                  className={`w-10 h-10 rounded-full flex items-center justify-center z-10 transition-colors ${
+                    index < currentStep
+                      ? "bg-brand-500 text-white cursor-pointer"
+                      : index === currentStep
+                      ? "bg-brand-500 text-white ring-4 ring-brand-100 dark:ring-brand-900/50"
+                      : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                  }`}
+                >
+                  {index < currentStep ? (
+                    <CheckCircle size={20} />
+                  ) : (
+                    <IconComponent {...iconProps} />
+                  )}
+                </div>
+                <div className="mt-2 hidden md:block">
+                  <p className={`text-sm font-medium ${
+                    index <= currentStep
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}>
+                    {step.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground hidden lg:block">
+                    {step.description}
+                  </p>
+                </div>
               </div>
-              
-              {/* Step Info */}
-              <div className="mt-3 text-center max-w-[120px]">
-                <p className={`text-sm font-medium transition-colors ${
-                  index <= currentStep
-                    ? "text-white"
-                    : "text-slate-500"
-                }`}>
-                  {step.title}
-                </p>
-                <p className={`text-xs mt-1 transition-colors hidden sm:block ${
-                  index <= currentStep
-                    ? "text-slate-300"
-                    : "text-slate-600"
-                }`}>
-                  {step.description}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

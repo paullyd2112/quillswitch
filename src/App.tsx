@@ -1,64 +1,134 @@
 
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/components/ui/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "@/contexts/auth";
-import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
-import AppErrorBoundary from "@/components/error-handling/AppErrorBoundary";
-import CookieConsentBanner from "@/components/gdpr/CookieConsentBanner";
-
-// Page imports
-import Home from "@/pages/Home";
-import Demo from "@/pages/Demo";
-import About from "@/pages/About";
-import Auth from "@/pages/Auth";
-import ApiDocs from "@/pages/ApiDocs";
-import Security from "@/pages/Security";
-import SetupWizard from "@/pages/SetupWizard";
-import MigrationSetup from "@/pages/MigrationSetup";
-import MigrationChat from "@/pages/MigrationChat";
-import ConnectionHub from "@/pages/ConnectionHub";
-import CrmConnections from "@/pages/CrmConnections";
-import Integrations from "@/pages/Integrations";
-
-const queryClient = new QueryClient();
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Home from './pages/Home'
+import Resources from './pages/Resources'
+import Auth from './pages/Auth'
+import KnowledgeArticle from './pages/KnowledgeArticle'
+import NotFound from './pages/NotFound'
+import { Toaster } from 'sonner'
+import { AuthProvider } from './contexts/auth'
+import { ThemeProvider } from './components/ui/theme-provider'
+import { UserOnboardingProvider } from './components/onboarding/UserOnboardingProvider'
+import { CookieConsentProvider } from './contexts/CookieConsentContext'
+import CookieConsentBanner from './components/gdpr/CookieConsentBanner'
+import Settings from './pages/Settings'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
+import MigrationDashboard from './pages/MigrationDashboard'
+import { TooltipProvider } from './components/ui/tooltip'
+import CredentialsVault from './pages/CredentialsVault'
+import Support from './pages/Support'
+import Demo from './pages/Demo'
+import BaseLayout from './components/layout/BaseLayout'
+import MigrationSetup from './pages/MigrationSetup'
+import CrmConnections from './pages/CrmConnections'
+import OAuthCallback from './components/oauth/OAuthCallback'
+import PricingEstimator from './pages/PricingEstimator'
+import AppErrorBoundary from './components/error-handling/AppErrorBoundary'
+import Security from './pages/Security'
+import Integrations from './pages/Integrations'
 
 function App() {
   return (
     <AppErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="dark" storageKey="quillswitch-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="quill-theme-mode">
+        <TooltipProvider>
           <CookieConsentProvider>
-            <AuthProvider>
-              <Router>
-                <div className="min-h-screen bg-background text-foreground">
+            <BrowserRouter>
+              <AuthProvider>
+                <UserOnboardingProvider>
                   <Routes>
+                    {/* Public pages */}
                     <Route path="/" element={<Home />} />
-                    <Route path="/demo" element={<Demo />} />
-                    <Route path="/about" element={<About />} />
+                    <Route path="/features" element={<Navigate to="/" replace />} />
+                    <Route path="/resources" element={<Resources />} />
                     <Route path="/auth" element={<Auth />} />
-                    <Route path="/api-docs" element={<ApiDocs />} />
-                    <Route path="/app/security" element={<Security />} />
-                    <Route path="/app/setup" element={<SetupWizard />} />
-                    <Route path="/setup-wizard" element={<SetupWizard />} />
-                    <Route path="/app/migration-setup" element={<MigrationSetup />} />
-                    <Route path="/app/migration-chat" element={<MigrationChat />} />
-                    <Route path="/app/connect" element={<ConnectionHub />} />
-                    <Route path="/app/crm-connections" element={<CrmConnections />} />
-                    <Route path="/app/integrations" element={<Integrations />} />
+                    <Route path="/knowledge/:id" element={<KnowledgeArticle />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/terms" element={<TermsOfService />} />
+                    <Route path="/demo" element={<Demo />} />
+                    <Route path="/pricing" element={<PricingEstimator />} />
+                    <Route path="/support" element={<Support />} />
+
+                    {/* Legacy routes - redirect to new structure */}
+                    <Route path="/migrations/*" element={<Navigate to="/app/setup" replace />} />
+                    <Route path="/connect/*" element={<Navigate to="/app/setup" replace />} />
+
+                    {/* Protected routes with sidebar layout */}
+                    <Route path="/app" element={
+                      <AppErrorBoundary isolate>
+                        <BaseLayout />
+                      </AppErrorBoundary>
+                    }>
+                      <Route index element={<Navigate to="/app/setup" replace />} />
+                      
+                      {/* Main application routes */}
+                      <Route path="setup" element={
+                        <AppErrorBoundary isolate>
+                          <MigrationSetup />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="crm-connections" element={
+                        <AppErrorBoundary isolate>
+                          <CrmConnections />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="integrations" element={
+                        <AppErrorBoundary isolate>
+                          <Integrations />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="credentials-vault" element={
+                        <AppErrorBoundary isolate>
+                          <CredentialsVault />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="security" element={
+                        <AppErrorBoundary isolate>
+                          <Security />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="settings" element={
+                        <AppErrorBoundary isolate>
+                          <Settings />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="support" element={
+                        <AppErrorBoundary isolate>
+                          <Support />
+                        </AppErrorBoundary>
+                      } />
+                      
+                      {/* Migration-specific routes */}
+                      <Route path="migrations" element={<Navigate to="/app/setup" replace />} />
+                      <Route path="migrations/:id" element={
+                        <AppErrorBoundary isolate>
+                          <MigrationDashboard />
+                        </AppErrorBoundary>
+                      } />
+                      <Route path="connect" element={<Navigate to="/app/setup" replace />} />
+                      
+                      {/* OAuth callback route */}
+                      <Route path="oauth/callback" element={
+                        <AppErrorBoundary isolate>
+                          <OAuthCallback />
+                        </AppErrorBoundary>
+                      } />
+                    </Route>
+                    
+                    {/* Catch-all route for 404 errors */}
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
-                  <CookieConsentBanner />
-                </div>
-              </Router>
-            </AuthProvider>
+                </UserOnboardingProvider>
+              </AuthProvider>
+            </BrowserRouter>
+            <CookieConsentBanner />
+            <Toaster position="top-right" />
           </CookieConsentProvider>
-        </ThemeProvider>
-        <Toaster />
-      </QueryClientProvider>
+        </TooltipProvider>
+      </ThemeProvider>
     </AppErrorBoundary>
-  );
+  )
 }
 
-export default App;
+export default App
