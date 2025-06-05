@@ -20,10 +20,6 @@ import SetupWizard from "@/pages/SetupWizard";
 import MigrationSetup from "@/pages/MigrationSetup";
 import MigrationChat from "@/pages/MigrationChat";
 import MigrationDashboard from "@/pages/MigrationDashboard";
-import { ConnectionProvider } from "@/contexts/ConnectionContext";
-import { UserOnboardingProvider } from "@/components/onboarding/UserOnboardingProvider";
-import { LoadingFallback } from "@/components/pages/migration";
-import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 
 const queryClient = new QueryClient();
 
@@ -48,19 +44,6 @@ function App() {
                     <Route path="/app/migration-setup" element={<MigrationSetup />} />
                     <Route path="/app/migration-chat" element={<MigrationChat />} />
                     <Route path="/app/migrations/:id" element={<MigrationDashboard />} />
-                    <Route path="/app/migrations" element={
-                      <ConnectionProvider>
-                        <UserOnboardingProvider>
-                          <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
-                            <div className="container px-4 pt-8 pb-20">
-                              <h1 className="text-3xl font-bold mb-6">Migrations</h1>
-                              <ProgressIndicator />
-                              <LoadingFallback />
-                            </div>
-                          </div>
-                        </UserOnboardingProvider>
-                      </ConnectionProvider>
-                    } />
                   </Routes>
                   <CookieConsentBanner />
                 </div>
