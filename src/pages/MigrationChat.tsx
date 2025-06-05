@@ -80,7 +80,7 @@ const MigrationChat: React.FC = () => {
             />
           </div>
 
-          {/* Enhanced Sidebar */}
+          {/* Sidebar */}
           <div className="space-y-6">
             {/* How It Works Card */}
             <Card className="bg-slate-900/80 border-slate-700/50 backdrop-blur-sm shadow-xl">
@@ -149,27 +149,29 @@ const MigrationChat: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Alternative Setup Card */}
-            <Card className="bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-slate-700/50 backdrop-blur-sm shadow-xl">
-              <CardHeader>
-                <CardTitle className="text-white">Prefer Step-by-Step?</CardTitle>
-                <CardDescription className="text-slate-400">
-                  Use our guided setup wizard for a structured approach
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  variant="outline" 
-                  onClick={handleStartTraditionalSetup}
-                  className="w-full gap-2 bg-slate-800/50 border-slate-600 hover:bg-slate-700/50 text-slate-200 hover:text-white transition-all duration-200"
-                >
-                  Launch Setup Wizard 
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
           </div>
+        </div>
+
+        {/* Alternative Setup Card - Moved underneath and made wider */}
+        <div className="max-w-7xl mx-auto mt-8">
+          <Card className="bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-slate-700/50 backdrop-blur-sm shadow-xl">
+            <CardHeader className="text-center">
+              <CardTitle className="text-white text-xl">Prefer Step-by-Step?</CardTitle>
+              <CardDescription className="text-slate-400 text-lg">
+                Use our guided setup wizard for a structured approach to migration planning
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              <Button 
+                variant="outline" 
+                onClick={handleStartTraditionalSetup}
+                className="gap-2 bg-slate-800/50 border-slate-600 hover:bg-slate-700/50 text-slate-200 hover:text-white transition-all duration-200 px-8 py-3 text-lg"
+              >
+                Launch Setup Wizard 
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
