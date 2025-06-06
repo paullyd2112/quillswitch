@@ -28,16 +28,9 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ system, type }) => {
         isConnected ? "border-brand-200 dark:border-brand-800" : ""
       }`}>
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center">
-            {system.icon && (
-              <div className="w-8 h-8 bg-muted rounded-md mr-3 flex items-center justify-center text-muted-foreground">
-                {system.icon}
-              </div>
-            )}
-            <div>
-              <h3 className="font-medium">{system.name}</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">{system.description}</p>
-            </div>
+          <div className="flex-1">
+            <h3 className="font-medium">{system.name}</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">{system.description}</p>
           </div>
           {isConnected && (
             <div className="flex items-center gap-1 ml-2">

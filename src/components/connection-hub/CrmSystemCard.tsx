@@ -27,10 +27,9 @@ const CrmSystemCard: React.FC<CrmSystemCardProps> = ({ system, type }) => {
       }`}>
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <div className="w-9 h-9 bg-muted rounded-md flex items-center justify-center text-muted-foreground mr-3">
-                {system.icon}
-              </div>
+            <div className="flex-1">
+              <h3 className="font-medium">{system.name}</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">{system.description}</p>
             </div>
             {system.popular && !isConnected && (
               <Badge variant="secondary" className="text-xs">Popular</Badge>
@@ -42,9 +41,6 @@ const CrmSystemCard: React.FC<CrmSystemCardProps> = ({ system, type }) => {
               </Badge>
             )}
           </div>
-          
-          <h3 className="font-medium">{system.name}</h3>
-          <p className="text-xs text-muted-foreground mb-4">{system.description}</p>
           
           <div className="mt-auto pt-3">
             <div className="flex justify-between items-center">
