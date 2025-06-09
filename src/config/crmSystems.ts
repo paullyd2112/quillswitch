@@ -15,40 +15,28 @@ export const sourceCrmOptions: CrmSystem[] = [
     popular: true
   },
   {
+    id: "dynamics",
+    name: "Microsoft Dynamics 365",
+    description: "Enterprise-level CRM and ERP platform",
+    popular: true
+  },
+  {
+    id: "zendesk-sell",
+    name: "Zendesk Sell",
+    description: "Sales CRM and pipeline management",
+    popular: true
+  },
+  {
+    id: "monday",
+    name: "Monday Sales CRM",
+    description: "Work operating system with CRM capabilities",
+    popular: true
+  },
+  {
     id: "pipedrive",
     name: "Pipedrive",
     description: "Sales CRM for small teams",
     popular: true
-  },
-  {
-    id: "zoho",
-    name: "Zoho CRM",
-    description: "Customer relationship management software",
-    popular: false
-  },
-  {
-    id: "monday",
-    name: "Monday.com",
-    description: "Work operating system",
-    popular: false
-  },
-  {
-    id: "airtable",
-    name: "Airtable",
-    description: "Database and spreadsheet hybrid",
-    popular: false
-  },
-  {
-    id: "notion",
-    name: "Notion",
-    description: "All-in-one workspace",
-    popular: false
-  },
-  {
-    id: "custom",
-    name: "Other CRM",
-    description: "Custom or other CRM system",
-    popular: false
   }
 ];
 
@@ -66,39 +54,27 @@ export const destinationCrmOptions: CrmSystem[] = [
     popular: true
   },
   {
+    id: "dynamics",
+    name: "Microsoft Dynamics 365",
+    description: "Enterprise-level CRM and ERP platform",
+    popular: true
+  },
+  {
+    id: "zendesk-sell",
+    name: "Zendesk Sell",
+    description: "Sales CRM and pipeline management",
+    popular: true
+  },
+  {
+    id: "monday",
+    name: "Monday Sales CRM",
+    description: "Work operating system with CRM capabilities",
+    popular: true
+  },
+  {
     id: "pipedrive",
     name: "Pipedrive",
     description: "Sales CRM for small teams",
     popular: true
-  },
-  {
-    id: "zoho",
-    name: "Zoho CRM",
-    description: "Customer relationship management software",
-    popular: false
-  },
-  {
-    id: "monday",
-    name: "Monday.com",
-    description: "Work operating system",
-    popular: false
-  },
-  {
-    id: "airtable",
-    name: "Airtable",
-    description: "Database and spreadsheet hybrid",
-    popular: false
-  },
-  {
-    id: "notion",
-    name: "Notion",
-    description: "All-in-one workspace",
-    popular: false
-  },
-  {
-    id: "custom",
-    name: "Other CRM",
-    description: "Custom or other CRM system",
-    popular: false
   }
 ];
