@@ -1,7 +1,7 @@
 
 import { SystemCategory } from "@/config/types/connectionTypes";
 
-export type ReconnectionCapability = "full" | "partial" | "basic" | "manual";
+export type ReconnectionCapability = "full" | "partial";
 
 export interface ReconnectionInfo {
   capability: ReconnectionCapability;
@@ -14,31 +14,17 @@ export interface ReconnectionInfo {
 const reconnectionInfoMap: Record<ReconnectionCapability, ReconnectionInfo> = {
   full: {
     capability: "full",
-    label: "Full Auto-Reconnection",
+    label: "Full Auto-Reconnect",
     icon: "check",
-    description: "This tool can be completely auto-reconnected after migration",
+    description: "This tool will be automatically reconnected to your new CRM with no manual setup required",
     color: "text-green-600 dark:text-green-400"
   },
   partial: {
     capability: "partial",
-    label: "Partial Auto-Reconnection",
+    label: "Assisted Reconnect",
     icon: "alert-circle",
-    description: "Some configuration may need manual review after migration",
+    description: "QuillSwitch will handle the reconnection with some guided configuration steps",
     color: "text-amber-600 dark:text-amber-400"
-  },
-  basic: {
-    capability: "basic",
-    label: "Basic Reconnection",
-    icon: "info",
-    description: "Credentials will be transferred, but manual configuration is needed",
-    color: "text-blue-600 dark:text-blue-400"
-  },
-  manual: {
-    capability: "manual",
-    label: "Manual Reconnection Required",
-    icon: "alert-circle",
-    description: "This tool requires manual reconnection after migration",
-    color: "text-red-600 dark:text-red-400"
   }
 };
 
@@ -46,46 +32,53 @@ export { reconnectionInfoMap };
 
 // Map specific tools to their reconnection capabilities
 const specificToolMap: Record<string, ReconnectionCapability> = {
-  // CRM systems with known capabilities
+  // Tools with excellent API support - Full Auto-Reconnect
   salesforce: "full",
   hubspot: "full",
+  pipedrive: "full",
+  zapier: "full",
+  slack: "full",
+  stripe: "full",
+  
+  // Tools with good API support but need some configuration - Assisted Reconnect
   dynamics: "partial",
   zoho: "partial",
-  pipedrive: "full",
-  monday: "basic",
   freshsales: "partial",
-  activecampaign: "basic",
-  netsuite: "partial",
-  copper: "basic",
-  keap: "basic",
   "zendesk-sell": "partial",
+  activecampaign: "partial",
+  netsuite: "partial",
   sugarcrm: "partial",
-  creatio: "manual",
-  "less-annoying": "basic",
-  capsule: "basic",
-  nutshell: "basic",
+  creatio: "partial",
   bitrix24: "partial",
-  engagebay: "basic",
-  clickup: "manual",
-  odoo: "manual",
-  salesflare: "basic",
-  apptivo: "manual",
-  agilecrm: "basic",
-  planfix: "manual"
+  
+  // Tools with basic API support - Assisted Reconnect
+  monday: "partial",
+  copper: "partial",
+  keap: "partial",
+  "less-annoying": "partial",
+  capsule: "partial",
+  nutshell: "partial",
+  engagebay: "partial",
+  clickup: "partial",
+  odoo: "partial",
+  salesflare: "partial",
+  apptivo: "partial",
+  agilecrm: "partial",
+  planfix: "partial"
 };
 
-// Category-based default capabilities based on detailed analysis
+// Category-based default capabilities - simplified to two tiers
 const categoryCapabilityMap: Record<SystemCategory, ReconnectionCapability> = {
-  crm: "partial", // Most CRMs have good API capabilities
-  "sales-engagement": "basic", // Sales tools typically need more manual config
-  "marketing-automation": "basic", // Marketing tools often need field mapping
-  support: "basic", // Support tools can be reconnected at basic level
-  productivity: "manual", // Productivity often requires manual steps
-  analytics: "manual", // BI tools almost always need manual reconnection
-  finance: "manual", // Finance/accounting needs careful manual setup
-  "data-enrichment": "basic", // Data tools often just need API key updates
-  "e-signature": "basic", // E-signature often just needs API key updates
-  connectivity: "manual" // iPaaS platforms need manual workflow updates
+  crm: "full", // Most modern CRMs have excellent API capabilities
+  "sales-engagement": "partial", // Sales tools often need guided configuration
+  "marketing-automation": "partial", // Marketing tools need field mapping assistance
+  support: "partial", // Support tools can be reconnected with guidance
+  productivity: "partial", // Productivity tools need configuration assistance
+  analytics: "partial", // BI tools need guided reconnection
+  finance: "partial", // Finance/accounting needs careful guided setup
+  "data-enrichment": "full", // Data tools often just need API key updates
+  "e-signature": "full", // E-signature often just needs API key updates
+  connectivity: "partial" // iPaaS platforms need guided workflow updates
 };
 
 /**
@@ -102,6 +95,6 @@ export const getReconnectionCapability = (toolId: string, category?: SystemCateg
     return categoryCapabilityMap[category];
   }
   
-  // Default to manual if we don't have specific information
-  return "manual";
+  // Default to assisted reconnect if we don't have specific information
+  return "partial";
 };

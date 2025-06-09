@@ -23,7 +23,7 @@ interface ConnectedTool {
   id: string;
   name: string;
   status: "connected" | "pending" | "disconnected";
-  reconnectionStatus: "auto" | "manual" | "partial";
+  reconnectionStatus: "full" | "partial";
   category: string;
   icon: React.ReactNode;
 }
@@ -47,7 +47,7 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
       id: "salesforce",
       name: "Salesforce",
       status: "connected",
-      reconnectionStatus: "auto",
+      reconnectionStatus: "full",
       category: "CRM",
       icon: <Shield className="h-4 w-4" />
     },
@@ -63,7 +63,7 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
       id: "salesloft",
       name: "SalesLoft",
       status: "pending",
-      reconnectionStatus: "manual",
+      reconnectionStatus: "partial",
       category: "Sales Engagement",
       icon: <Users className="h-4 w-4" />
     },
@@ -71,7 +71,7 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
       id: "zapier",
       name: "Zapier",
       status: "connected",
-      reconnectionStatus: "auto",
+      reconnectionStatus: "full",
       category: "Automation",
       icon: <Zap className="h-4 w-4" />
     }
@@ -128,9 +128,8 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
 
   const getReconnectionColor = (type: string) => {
     switch (type) {
-      case "auto": return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
+      case "full": return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
       case "partial": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
-      case "manual": return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
       default: return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
     }
   };
@@ -238,21 +237,17 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
                                 {tool.status}
                               </Badge>
                               <Badge className={`text-xs ${getReconnectionColor(tool.reconnectionStatus)}`}>
-                                {tool.reconnectionStatus === "auto" ? "Auto Reconnect" :
-                                 tool.reconnectionStatus === "partial" ? "Partial Auto" : "Manual Setup"}
+                                {tool.reconnectionStatus === "full" ? "Full Auto-Reconnect" : "Assisted Reconnect"}
                               </Badge>
                             </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          {tool.reconnectionStatus === "auto" && (
+                          {tool.reconnectionStatus === "full" && (
                             <CheckCircle className="h-5 w-5 text-green-500" />
                           )}
                           {tool.reconnectionStatus === "partial" && (
                             <AlertCircle className="h-5 w-5 text-yellow-500" />
-                          )}
-                          {tool.reconnectionStatus === "manual" && (
-                            <Settings className="h-5 w-5 text-red-500" />
                           )}
                         </div>
                       </div>

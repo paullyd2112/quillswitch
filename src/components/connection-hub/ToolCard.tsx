@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, ExternalLink, AlertCircle, Info } from "lucide-react";
+import { Check, ExternalLink, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SystemConfig } from "@/config/connectionSystems";
@@ -21,16 +21,14 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool }) => {
   const isConnected = connectedSystems.some(s => s.id === tool.id);
   const isConnecting = currentSystem === tool.id;
   
-  // Get reconnection capability using our new utility function
+  // Get reconnection capability using our simplified two-tier system
   const reconnectionCapability = getReconnectionCapability(tool.id, tool.category);
   const reconnectionInfo = reconnectionInfoMap[reconnectionCapability];
   
   // Enhanced descriptions for tooltips
   const enhancedDescriptions = {
-    full: "Automatically reconnects to your new CRM after migration. No action needed.",
-    partial: "Some features reconnect automatically. Manual configuration of certain settings needed post-migration.",
-    basic: "Credentials transfer. Manual reconfiguration of integration settings needed post-migration.",
-    manual: "Requires complete setup in the tool after migration. Document current settings beforehand."
+    full: "Automatically reconnects to your new CRM after migration. No manual setup required - QuillSwitch handles everything.",
+    partial: "QuillSwitch will guide you through the reconnection process with step-by-step instructions and automated assistance where possible."
   };
   
   // Helper function to render the appropriate icon
@@ -40,12 +38,8 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool }) => {
         return <Check className="h-4 w-4" />;
       case "partial":
         return <AlertCircle className="h-4 w-4" />;
-      case "basic":
-        return <Info className="h-4 w-4" />;
-      case "manual":
-        return <AlertCircle className="h-4 w-4" />;
       default:
-        return <Info className="h-4 w-4" />;
+        return <AlertCircle className="h-4 w-4" />;
     }
   };
   
@@ -78,11 +72,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool }) => {
                 <div className={`flex items-center mt-2 px-2 py-1 rounded-full text-xs w-fit ${
                   reconnectionCapability === "full"
                     ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800"
-                    : reconnectionCapability === "partial"
-                      ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800"
-                      : reconnectionCapability === "basic"
-                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
-                        : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800"
+                    : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800"
                 }`}>
                   {renderIcon(reconnectionCapability)}
                   <span className="ml-1">{reconnectionInfo.label}</span>
