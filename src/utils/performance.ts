@@ -1,117 +1,55 @@
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-
 /**
- * Debounce a function call
- */
-export const debounce = <T extends (...args: any[]) => any>(
-  func: T,
-  waitFor: number
-): ((...args: Parameters<T>) => void) => {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-  
-  return (...args: Parameters<T>): void => {
-    if (timeout !== null) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => func(...args), waitFor);
-  };
-};
-
-/**
- * Throttle a function call
+ * Throttle function to limit how often a function can be called
+ * @param func Function to throttle
+ * @param delay Delay in milliseconds
+ * @returns Throttled function
  */
 export const throttle = <T extends (...args: any[]) => any>(
   func: T,
-  waitFor: number
+  delay: number
 ): ((...args: Parameters<T>) => void) => {
-  let lastTime = 0;
+  let timeoutId: NodeJS.Timeout | null = null;
+  let lastExecTime = 0;
   
-  return (...args: Parameters<T>): void => {
-    const now = Date.now();
-    if (now - lastTime >= waitFor) {
+  return (...args: Parameters<T>) => {
+    const currentTime = Date.now();
+    
+    if (currentTime - lastExecTime > delay) {
       func(...args);
-      lastTime = now;
+      lastExecTime = currentTime;
+    } else {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      
+      timeoutId = setTimeout(() => {
+        func(...args);
+        lastExecTime = Date.now();
+      }, delay - (currentTime - lastExecTime));
     }
   };
 };
 
 /**
- * Custom hook for lazy loading components
+ * Debounce function to delay execution until after wait time has elapsed
+ * @param func Function to debounce
+ * @param wait Wait time in milliseconds
+ * @returns Debounced function
  */
-export const useLazyLoading = (threshold = 0.1) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+export const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): ((...args: Parameters<T>) => void) => {
+  let timeoutId: NodeJS.Timeout | null = null;
   
-  useEffect(() => {
-    const currentRef = ref.current;
-    if (!currentRef) return;
-    
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold }
-    );
-    
-    observer.observe(currentRef);
-    
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [threshold]);
-  
-  return { ref, isVisible };
-};
-
-/**
- * Custom hook for resource prefetching
- */
-export const usePrefetch = (urls: string[]) => {
-  useEffect(() => {
-    // Only prefetch in production and if supported
-    if (process.env.NODE_ENV !== 'production' || !('IntersectionObserver' in window)) {
-      return;
+  return (...args: Parameters<T>) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
     }
     
-    const prefetchResource = (url: string) => {
-      const link = document.createElement('link');
-      link.rel = 'prefetch';
-      link.href = url;
-      document.head.appendChild(link);
-    };
-    
-    // Prefetch after idle
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(() => {
-        urls.forEach(prefetchResource);
-      });
-    } else {
-      // Fallback for browsers that don't support requestIdleCallback
-      setTimeout(() => urls.forEach(prefetchResource), 2000);
-    }
-  }, [urls]);
-};
-
-/**
- * Measures component render time (development only)
- */
-export const useRenderTime = (componentName: string) => {
-  const startTime = useRef(performance.now());
-  
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      const endTime = performance.now();
-      console.log(`[Performance] ${componentName} rendered in ${(endTime - startTime.current).toFixed(2)}ms`);
-    }
-    
-    return () => {
-      startTime.current = performance.now();
-    };
-  }, [componentName]);
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, wait);
+  };
 };

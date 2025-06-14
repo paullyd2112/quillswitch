@@ -21,6 +21,16 @@ import "./App.css";
 
 const queryClient = new QueryClient();
 
+// Create a simple Support page component
+const Support = () => (
+  <div className="min-h-screen bg-background p-6">
+    <div className="container mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Support</h1>
+      <p className="text-muted-foreground">Support page content coming soon.</p>
+    </div>
+  </div>
+);
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -40,6 +50,7 @@ function App() {
                     <Route path="/demo" element={<Demo />} />
                     <Route path="/resources" element={<Resources />} />
                     <Route path="/api-docs" element={<ApiDocs />} />
+                    <Route path="/support" element={<Support />} />
                     <Route path="/app/*" element={<AppRoutes />} />
                     <Route path="/oauth/callback" element={<OAuthCallback />} />
                   </Routes>
