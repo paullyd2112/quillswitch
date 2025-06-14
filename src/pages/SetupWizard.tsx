@@ -3,6 +3,7 @@ import React from "react";
 import WizardHeader from "@/components/setup-wizard/WizardHeader";
 import WizardContainer from "@/components/setup-wizard/WizardContainer";
 import { SetupWizardProvider } from "@/contexts/SetupWizardContext";
+import { ConnectionProvider } from "@/contexts/ConnectionContext"; // Import ConnectionProvider
 import FadeIn from "@/components/animations/FadeIn";
 
 const SetupWizard: React.FC = () => {
@@ -20,9 +21,11 @@ const SetupWizard: React.FC = () => {
         
         <div className="container mx-auto px-4 py-12 pb-32">
           <FadeIn>
-            <SetupWizardProvider>
-              <WizardContainer />
-            </SetupWizardProvider>
+            <ConnectionProvider> {/* Add ConnectionProvider here */}
+              <SetupWizardProvider>
+                <WizardContainer />
+              </SetupWizardProvider>
+            </ConnectionProvider>
           </FadeIn>
         </div>
       </div>
@@ -31,3 +34,4 @@ const SetupWizard: React.FC = () => {
 };
 
 export default SetupWizard;
+
