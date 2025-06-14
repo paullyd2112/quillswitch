@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, X, Info, HelpCircle } from "lucide-react";
+import { Check, X, HelpCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 
@@ -20,152 +20,116 @@ const features: ComparisonFeature[] = [
   {
     id: "user-friendly",
     name: "User-Friendly Interface",
-    description: "Can be operated by non-technical users without specialized training",
+    description: "Intuitive, guided interface operable by non-technical users without specialized training.",
     category: "experience",
-    quillswitch: true,
-    manual: false,
-    consultants: "Limited"
+    quillswitch: "✅ Intuitive & Guided",
+    manual: "❌ Complex & Error-Prone",
+    consultants: "Limited (Tool-Dependent)"
   },
   {
     id: "guided-flow",
     name: "Guided Migration Flow",
-    description: "Step-by-step process with clear instructions at each stage",
+    description: "Step-by-step process with clear instructions at each stage to ensure a smooth migration.",
     category: "experience",
-    quillswitch: true,
-    manual: false,
-    consultants: true
+    quillswitch: "✅ Step-by-Step Guidance",
+    manual: "❌ No Guidance / Ad-Hoc",
+    consultants: "✅ Expert-Led"
   },
   {
     id: "time-to-completion",
     name: "Time to Completion",
-    description: "Total time required from start to finish",
+    description: "Total time required from start to finish for the migration project.",
     category: "experience",
     quillswitch: "Hours to Days",
-    manual: "Weeks to Months",
-    consultants: "Weeks"
+    manual: "Weeks to Months (High Risk)",
+    consultants: "Weeks (Can Vary)"
+  },
+  
+  // Data Security & Integrity
+  {
+    id: "data-encryption",
+    name: "Data Encryption",
+    description: "End-to-end encryption for data both in-transit and at-rest, using industry standards like AES-256.",
+    category: "security",
+    quillswitch: "✅ End-to-End Encryption",
+    manual: "❌ User-Dependent",
+    consultants: "Varies by Provider"
+  },
+  {
+    id: "compliance-ready",
+    name: "Compliance Ready",
+    description: "Built to be compliant with regulations like GDPR & CCPA, with available SOC 2 certification.",
+    category: "security",
+    quillswitch: "✅ SOC 2, GDPR/CCPA Ready",
+    manual: "❌ User's Responsibility",
+    consultants: "Varies by Consultant"
+  },
+  {
+    id: "access-control",
+    name: "Secure Access & Audit Trails",
+    description: "Granular control over who can access data, with detailed and immutable logs of all actions.",
+    category: "security",
+    quillswitch: "✅ Granular Control & Logs",
+    manual: "❌ Manual & Limited",
+    consultants: "Limited to Tools Used"
   },
   
   // Technical Features
   {
     id: "ai-mapping",
     name: "AI-Powered Field Mapping",
-    description: "Automatic prediction of field mapping between CRMs",
+    description: "Intelligent, AI-driven mapping dramatically reduces manual configuration and human error.",
     category: "technical",
-    quillswitch: true,
-    manual: false,
-    consultants: false
+    quillswitch: "✅ Intelligent AI-Driven",
+    manual: "❌ Fully Manual",
+    consultants: "Manual/Expert-Driven"
   },
   {
     id: "data-cleaning",
     name: "Data Cleansing & Enrichment",
-    description: "Identify and fix data quality issues during migration",
+    description: "Automated data quality checks to identify and fix issues, ensuring data integrity.",
     category: "technical",
-    quillswitch: true,
-    manual: "Limited",
-    consultants: "Limited"
+    quillswitch: "✅ Automated Quality Checks",
+    manual: "Manual & Tedious",
+    consultants: "Add-on Service"
   },
   {
     id: "test-migration",
     name: "Test Migration & Validation",
-    description: "Run test migrations to validate configuration",
+    description: "Conduct unlimited pre-migration tests to validate configuration and ensure a predictable outcome.",
     category: "technical",
-    quillswitch: true,
-    manual: "Limited",
-    consultants: true
+    quillswitch: "✅ Pre-Migration Testing",
+    manual: "Limited & Risky",
+    consultants: "✅ Thorough Testing"
+  },
+
+  // Cost-Effectiveness & Value
+  {
+    id: "predictable-pricing",
+    name: "Predictable Pricing",
+    description: "Transparent, upfront pricing with no hidden fees or escalating costs.",
+    category: "cost",
+    quillswitch: "✅ Transparent & Upfront",
+    manual: "❌ Hidden Costs (Time, Errors)",
+    consultants: "Project-Based (Can Escalate)"
   },
   {
-    id: "incremental",
-    name: "Incremental Migration",
-    description: "Migrate data in phases with delta syncing",
-    category: "technical",
-    quillswitch: true,
-    manual: false,
-    consultants: "Limited"
+    id: "reduced-manual-effort",
+    name: "Reduced Manual Effort",
+    description: "Automation drastically reduces the time and internal resources required from your team.",
+    category: "cost",
+    quillswitch: "✅ Significant Time Savings",
+    manual: "❌ High Manual Labor",
+    consultants: "Requires Client Oversight"
   },
   {
-    id: "custom-objects",
-    name: "Custom Object Support",
-    description: "Support for migrating custom CRM objects and fields",
-    category: "technical",
-    quillswitch: true,
-    manual: "Limited",
-    consultants: true
-  },
-  
-  // Security & Reliability
-  {
-    id: "oauth",
-    name: "OAuth Security",
-    description: "Secure API access without storing credentials",
-    category: "security",
-    quillswitch: true,
-    manual: false,
-    consultants: "Varies"
-  },
-  {
-    id: "encryption",
-    name: "End-to-End Encryption",
-    description: "Data encrypted during transfer and processing",
-    category: "security",
-    quillswitch: true,
-    manual: false,
-    consultants: "Varies"
-  },
-  {
-    id: "error-recovery",
-    name: "Automatic Error Recovery",
-    description: "System handles errors and retries without manual intervention",
-    category: "security",
-    quillswitch: true,
-    manual: false,
-    consultants: "Limited"
-  },
-  {
-    id: "audit-logs",
-    name: "Comprehensive Audit Logs",
-    description: "Detailed tracking of all migration actions",
-    category: "security",
-    quillswitch: true,
-    manual: false,
-    consultants: "Limited"
-  },
-  
-  // Business Impact
-  {
-    id: "downtime",
-    name: "Business Disruption",
-    description: "Impact on normal business operations during migration",
-    category: "impact",
-    quillswitch: "Minimal",
-    manual: "Significant",
-    consultants: "Moderate"
-  },
-  {
-    id: "reconnect",
-    name: "Integration Reconnection",
-    description: "Support for reconnecting integrations post-migration",
-    category: "impact",
-    quillswitch: true,
-    manual: false,
-    consultants: "Limited"
-  },
-  {
-    id: "cost",
-    name: "Total Cost",
-    description: "Overall financial investment required",
-    category: "impact",
-    quillswitch: "Predictable",
-    manual: "Low Direct / High Indirect",
-    consultants: "High"
-  },
-  {
-    id: "predictability",
-    name: "Outcome Predictability",
-    description: "Confidence in migration success and timeline",
-    category: "impact",
-    quillswitch: "High",
-    manual: "Low",
-    consultants: "Moderate"
+    id: "ongoing-support",
+    name: "Ongoing Support",
+    description: "Access to dedicated technical support throughout the entire migration process.",
+    category: "cost",
+    quillswitch: "✅ Dedicated Support Included",
+    manual: "❌ Self-Service Only",
+    consultants: "Post-Project Retainer"
   }
 ];
 
@@ -176,20 +140,24 @@ const renderValue = (value: boolean | string) => {
     } else {
       return <X className="h-5 w-5 text-red-500 mx-auto" />;
     }
-  } else if (value === "Limited") {
+  }
+
+  const strValue = String(value);
+
+  if (strValue.startsWith('Limited')) {
     return (
-      <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 mx-auto py-0 h-5">
-        Limited
+      <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 mx-auto py-0 px-2 h-5 whitespace-nowrap">
+        {strValue}
       </Badge>
     );
-  } else if (value === "Varies") {
+  } else if (strValue.startsWith('Varies')) {
     return (
-      <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 mx-auto py-0 h-5">
-        Varies
+      <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 mx-auto py-0 px-2 h-5 whitespace-nowrap">
+        {strValue}
       </Badge>
     );
   } else {
-    return <span className="text-sm text-center">{value}</span>;
+    return <span className="text-sm text-center">{strValue}</span>;
   }
 };
 
@@ -201,9 +169,9 @@ const ProductComparison: React.FC = () => {
       <div>
         <h3 className="font-medium mb-4 text-center py-2 bg-slate-100 dark:bg-slate-800/80 rounded-md">
           {category === "experience" ? "Migration Experience" :
+           category === "security" ? "Data Security & Integrity" :
            category === "technical" ? "Technical Features" :
-           category === "security" ? "Security & Reliability" :
-           "Business Impact"}
+           "Cost-Effectiveness & Value"}
         </h3>
         
         <div className="overflow-x-auto">
@@ -265,17 +233,17 @@ const ProductComparison: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-100 dark:bg-slate-800/80 border-b-2 border-slate-200 dark:border-slate-700">
-                  <th className="py-3 px-4 text-left">Feature / Approach</th>
+                  <th className="py-3 px-4 text-left">Key Differentiator</th>
                   <th className="py-3 px-4 text-center">
-                    <div className="font-medium text-primary">QuillSwitch</div>
+                    <div className="font-medium text-primary">QuillSwitch: Automated & Secure</div>
                     <div className="text-xs font-normal text-muted-foreground">Automated Migration</div>
                   </th>
                   <th className="py-3 px-4 text-center">
-                    <div className="font-medium">DIY</div>
+                    <div className="font-medium">Manual Export/Import (DIY)</div>
                     <div className="text-xs font-normal text-muted-foreground">Manual Export/Import</div>
                   </th>
                   <th className="py-3 px-4 text-center">
-                    <div className="font-medium">Consultants</div>
+                    <div className="font-medium">Consulting Services</div>
                     <div className="text-xs font-normal text-muted-foreground">Professional Services</div>
                   </th>
                 </tr>
@@ -285,9 +253,9 @@ const ProductComparison: React.FC = () => {
           
           <div className="space-y-8">
             {renderCategory("experience")}
-            {renderCategory("technical")}
             {renderCategory("security")}
-            {renderCategory("impact")}
+            {renderCategory("technical")}
+            {renderCategory("cost")}
           </div>
           
           <div className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-6">
