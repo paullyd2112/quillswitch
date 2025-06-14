@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  Sidebar, 
+import { Sidebar } from "@/components/ui/sidebar/sidebar"; // Changed: Explicitly import Sidebar from its modular file
+import { // Assuming these are correctly resolved from the modular system's index.ts
   SidebarContent, 
   SidebarFooter, 
   SidebarGroup, 

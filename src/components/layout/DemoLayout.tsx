@@ -1,6 +1,6 @@
 
 import React from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar/context"; // Changed import path
 import DemoSidebar from "./DemoSidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar/sidebar-trigger";
 
@@ -33,3 +33,4 @@ const DemoLayout = ({ children, className = "" }: DemoLayoutProps) => {
 };
 
 export default DemoLayout;
+
