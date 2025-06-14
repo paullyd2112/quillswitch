@@ -13,7 +13,7 @@ const AuthButtons = () => {
     return (
       <div className="flex items-center gap-2">
         <Button 
-          onClick={() => navigate("/app/migrations")}
+          onClick={() => navigate("/app/dashboard")} // Changed to /app/dashboard
           variant="outline"
           className="hidden md:flex border-slate-700 hover:bg-slate-800 text-white"
         >
@@ -37,14 +37,14 @@ const AuthButtons = () => {
         asChild 
         className="hidden md:flex text-slate-300 hover:text-white hover:bg-slate-800"
       >
-        <Link to="/auth">Login</Link>
+        <Link to="/auth?mode=login">Login</Link> {/* Changed to /auth?mode=login */}
       </Button>
       
       <Button 
         asChild 
         className="bg-primary text-white hover:bg-primary/90"
       >
-        <Link to="/auth">Get Started</Link>
+        <Link to="/auth?mode=register">Get Started</Link> {/* Changed to /auth?mode=register */}
       </Button>
     </div>
   );

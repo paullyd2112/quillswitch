@@ -11,6 +11,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode");
+  const tier = searchParams.get("tier"); // Preserve tier for RegisterForm if needed
   const { user, isLoading } = useAuth();
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("login");
@@ -18,9 +19,9 @@ const Auth = () => {
   // Check if user is already logged in
   useEffect(() => {
     if (user && !isLoading) {
-      // User is logged in, redirect to setup wizard or migrations based on 'redirect' param
-      const redirectPath = searchParams.get("redirect") || "/setup-wizard";
-      navigate(redirectPath);
+      // User is logged in, redirect to dashboard or specified redirect
+      const redirectPath = searchParams.get("redirect") || "/app/dashboard"; // Default to dashboard
+      navigate(redirectPath, { replace: true });
     }
   }, [user, isLoading, navigate, searchParams]);
   
@@ -41,7 +42,7 @@ const Auth = () => {
     );
   }
 
-  // Don't show auth page if user is already logged in
+  // Don't show auth page if user is already logged in (should be caught by useEffect above)
   if (user) {
     return null;
   }
@@ -51,7 +52,10 @@ const Auth = () => {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight">Welcome to QuillSwitch</h1>
-          <p className="mt-2 text-muted-foreground">Sign in to your account or create a new one</p>
+          <p className="mt-2 text-muted-foreground">
+            {activeTab === "login" ? "Sign in to your account" : "Create a new account"}
+            {tier && activeTab === "register" && ` for the ${tier} plan`}
+          </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

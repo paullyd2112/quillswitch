@@ -10,6 +10,7 @@ import { ProcessingProvider } from "@/contexts/ProcessingContext";
 import NavigationOverlay from "@/components/layout/NavigationOverlay";
 import Home from "@/pages/Home";
 import Auth from "@/pages/Auth";
+import Welcome from "@/pages/Welcome"; // Added import for Welcome page
 import PricingEstimator from "@/pages/PricingEstimator";
 import Demo from "@/pages/Demo";
 import Resources from "@/pages/Resources";
@@ -46,6 +47,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/welcome" element={<Welcome />} /> {/* Added route for Welcome page */}
                     <Route path="/pricing" element={<PricingEstimator />} />
                     <Route path="/demo" element={<Demo />} />
                     <Route path="/resources" element={<Resources />} />
