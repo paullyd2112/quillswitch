@@ -34,12 +34,12 @@ const HomeHero = () => {
 
       <div className="container relative z-10 max-w-6xl mx-auto px-4 text-center">
         <div className="mb-12">
-          {/* Data Protection Guarantee with enhanced security messaging */}
-          <div className="inline-flex items-center gap-3 px-6 py-3 mb-8 text-sm font-medium rounded-full bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 text-green-400 backdrop-blur-sm">
-            <Shield className="h-5 w-5 text-green-400" />
+          {/* Data Protection Guarantee with brand-consistent blue styling */}
+          <div className="inline-flex items-center gap-3 px-6 py-3 mb-8 text-sm font-medium rounded-full bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20 text-blue-400 backdrop-blur-sm">
+            <Shield className="h-5 w-5 text-blue-400" />
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
             <span className="font-semibold">100% Data Protection Guarantee</span>
             <span className="text-slate-300">•</span>
