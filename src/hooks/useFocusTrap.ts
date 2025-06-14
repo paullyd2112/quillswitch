@@ -8,7 +8,7 @@ interface FocusTrapOptions {
 }
 
 export const useFocusTrap = ({ enabled, autoFocus = true, restoreFocus = true }: FocusTrapOptions) => {
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
