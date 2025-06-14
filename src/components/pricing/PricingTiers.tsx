@@ -1,12 +1,18 @@
-
 import React from "react";
 import { Check, Sparkles, ArrowRight, Users, Building2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import SlideUp from "@/components/animations/SlideUp";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatNumber } from "./pricingUtils";
 
 const PricingTiers: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = (tier: 'essentials' | 'pro') => {
+    navigate(`/signup?tier=${tier}`);
+  };
+
   return (
     <SlideUp className="grid gap-8 md:grid-cols-2 max-w-5xl mx-auto" staggerChildren={true} staggerDelay={100}>
       {/* Essentials Tier Card */}
@@ -48,7 +54,10 @@ const PricingTiers: React.FC = () => {
 
         {/* Action Section */}
         <div className="mt-auto">
-          <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+          <Button 
+            className="w-full bg-primary hover:bg-primary/90 text-white"
+            onClick={() => handleGetStarted('essentials')}
+          >
             Get Started <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
           <p className="text-xs text-muted-foreground mt-3">
@@ -102,7 +111,10 @@ const PricingTiers: React.FC = () => {
         
         {/* Action Section */}
         <div className="mt-auto">
-          <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+          <Button 
+            className="w-full bg-primary hover:bg-primary/90 text-white"
+            onClick={() => handleGetStarted('pro')}
+          >
             Get Started <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
           <p className="text-xs text-muted-foreground mt-3">
@@ -115,4 +127,3 @@ const PricingTiers: React.FC = () => {
 };
 
 export default PricingTiers;
-
