@@ -134,31 +134,35 @@ const features: ComparisonFeature[] = [
 ];
 
 const renderValue = (value: boolean | string) => {
+  let content;
+
   if (typeof value === "boolean") {
     if (value) {
-      return <Check className="h-5 w-5 text-green-500 mx-auto" />;
+      content = <Check className="h-5 w-5 text-green-500" />;
     } else {
-      return <X className="h-5 w-5 text-red-500 mx-auto" />;
+      content = <X className="h-5 w-5 text-red-500" />;
+    }
+  } else {
+    const strValue = String(value);
+
+    if (strValue.startsWith('Limited')) {
+      content = (
+        <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 py-0 px-2 h-5 whitespace-nowrap">
+          {strValue}
+        </Badge>
+      );
+    } else if (strValue.startsWith('Varies')) {
+      content = (
+        <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 py-0 px-2 h-5 whitespace-nowrap">
+          {strValue}
+        </Badge>
+      );
+    } else {
+      content = <span className="text-sm">{strValue}</span>;
     }
   }
 
-  const strValue = String(value);
-
-  if (strValue.startsWith('Limited')) {
-    return (
-      <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 mx-auto py-0 px-2 h-5 whitespace-nowrap">
-        {strValue}
-      </Badge>
-    );
-  } else if (strValue.startsWith('Varies')) {
-    return (
-      <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 mx-auto py-0 px-2 h-5 whitespace-nowrap">
-        {strValue}
-      </Badge>
-    );
-  } else {
-    return <span className="text-sm text-center">{strValue}</span>;
-  }
+  return <div className="flex items-center justify-center min-h-[40px]">{content}</div>;
 };
 
 const ProductComparison: React.FC = () => {
@@ -197,13 +201,13 @@ const ProductComparison: React.FC = () => {
                       </TooltipProvider>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-center">
+                  <td className="py-3 px-4 text-center align-middle">
                     {renderValue(feature.quillswitch)}
                   </td>
-                  <td className="py-3 px-4 text-center">
+                  <td className="py-3 px-4 text-center align-middle">
                     {renderValue(feature.manual)}
                   </td>
-                  <td className="py-3 px-4 text-center">
+                  <td className="py-3 px-4 text-center align-middle">
                     {renderValue(feature.consultants)}
                   </td>
                 </tr>
