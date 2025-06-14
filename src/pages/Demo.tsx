@@ -2,7 +2,7 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
-import BaseLayout from "@/components/layout/BaseLayout";
+import DemoLayout from "@/components/layout/DemoLayout";
 import ProductComparison from "@/components/demo/ProductComparison";
 import TryItExperience from "@/components/demo/TryItExperience";
 import MigrationDemoSection from "@/components/home/MigrationDemoSection";
@@ -46,7 +46,7 @@ const Demo = () => {
         <meta name="description" content="Experience QuillSwitch's CRM migration capabilities with our interactive demo. See how our platform simplifies the migration process." />
       </Helmet>
       
-      <BaseLayout>
+      <DemoLayout>
         <div className="container px-4 py-16 max-w-7xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 text-center">Experience QuillSwitch in Action</h1>
           <p className="text-lg text-center text-muted-foreground mb-12 max-w-3xl mx-auto">
@@ -56,7 +56,7 @@ const Demo = () => {
 
           <div className="space-y-16">
             {/* Interactive Demo Section */}
-            <section>
+            <section id="migration-visualizer">
               <h2 className="text-2xl font-bold mb-6">Interactive Migration Visualizer</h2>
               <MigrationDemoSection />
             </section>
@@ -64,7 +64,7 @@ const Demo = () => {
             <Separator />
             
             {/* Try It Yourself */}
-            <section>
+            <section id="try-it-experience">
               <h2 className="text-2xl font-bold mb-6">Try It Yourself</h2>
               <TryItExperience />
             </section>
@@ -72,7 +72,7 @@ const Demo = () => {
             <Separator />
             
             {/* Migration Reports Section */}
-            <section>
+            <section id="migration-reports">
               <h2 className="text-2xl font-bold mb-6">Detailed Migration Reports</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -134,7 +134,7 @@ const Demo = () => {
             <Separator />
             
             {/* Product Comparison */}
-            <section>
+            <section id="product-comparison">
               <h2 className="text-2xl font-bold mb-6">How QuillSwitch Compares</h2>
               <ProductComparison />
             </section>
@@ -142,7 +142,7 @@ const Demo = () => {
             <Separator />
             
             {/* Common Migration Challenges */}
-            <section>
+            <section id="common-challenges">
               <h2 className="text-2xl font-bold mb-6">Common Migration Challenges</h2>
               <CommonChallenges />
             </section>
@@ -150,7 +150,7 @@ const Demo = () => {
             <Separator />
             
             {/* Expert Knowledge Base */}
-            <section>
+            <section id="expert-knowledge">
               <h2 className="text-2xl font-bold mb-6">Expert Knowledge Base</h2>
               <ExpertKnowledgeBase />
             </section>
@@ -161,7 +161,7 @@ const Demo = () => {
             </section>
           </div>
         </div>
-      </BaseLayout>
+      </DemoLayout>
     </>
   );
 };
