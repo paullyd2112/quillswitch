@@ -1,4 +1,3 @@
-
 import React, { useCallback } from "react";
 import { Sidebar } from "@/components/ui/sidebar/sidebar";
 import { SidebarContent } from "@/components/ui/sidebar/sidebar-content";
@@ -52,7 +51,7 @@ export function DemoSidebar() {
         <DemoControlsMenu onResetDemo={handleResetDemo} />
       </SidebarContent>
       
-      <DemoSidebarFooter demoState={demoState} />
+      <DemoSidebarFooter />
     </Sidebar>
   );
 }

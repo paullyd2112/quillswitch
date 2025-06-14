@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -67,9 +66,6 @@ export function PricingSidebar() {
       <SidebarFooter>
         <div className="px-3 py-2 space-y-2 group-data-[collapsible=icon]:hidden">
           <div className="text-xs text-sidebar-foreground/70">
-            Session time: {Math.round((Date.now() - pricingState.sessionStartTime) / 60000)}m
-          </div>
-          <div className="text-xs text-sidebar-foreground/70">
             &copy; {new Date().getFullYear()} QuillSwitch
           </div>
         </div>
@@ -79,4 +75,3 @@ export function PricingSidebar() {
 }
 
 export default PricingSidebar;
-
