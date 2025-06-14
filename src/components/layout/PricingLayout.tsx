@@ -1,8 +1,7 @@
 
 import React from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import PricingSidebar from "./PricingSidebar";
-import { SidebarTrigger } from "@/components/ui/sidebar/sidebar-trigger";
 
 interface PricingLayoutProps {
   children?: React.ReactNode;
