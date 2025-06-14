@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, X, HelpCircle } from "lucide-react";
@@ -134,35 +133,31 @@ const features: ComparisonFeature[] = [
 ];
 
 const renderValue = (value: boolean | string) => {
-  let content;
-
   if (typeof value === "boolean") {
-    if (value) {
-      content = <Check className="h-5 w-5 text-green-500" />;
-    } else {
-      content = <X className="h-5 w-5 text-red-500" />;
-    }
-  } else {
-    const strValue = String(value);
-
-    if (strValue.startsWith('Limited')) {
-      content = (
-        <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 py-0 px-2 h-5 whitespace-nowrap">
-          {strValue}
-        </Badge>
-      );
-    } else if (strValue.startsWith('Varies')) {
-      content = (
-        <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 py-0 px-2 h-5 whitespace-nowrap">
-          {strValue}
-        </Badge>
-      );
-    } else {
-      content = <span className="text-sm">{strValue}</span>;
-    }
+    return value ? (
+      <Check className="h-5 w-5 text-green-500 mx-auto" />
+    ) : (
+      <X className="h-5 w-5 text-red-500 mx-auto" />
+    );
   }
 
-  return <div className="flex items-center justify-center min-h-[40px]">{content}</div>;
+  const strValue = String(value);
+
+  if (strValue.startsWith('Limited')) {
+    return (
+      <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 hover:bg-amber-50 border-amber-200 dark:border-amber-700 py-0 px-2 h-5 whitespace-nowrap mx-auto">
+        {strValue}
+      </Badge>
+    );
+  } else if (strValue.startsWith('Varies')) {
+    return (
+      <Badge variant="outline" className="bg-slate-50 text-slate-700 dark:bg-slate-900/20 dark:text-slate-400 hover:bg-slate-50 border-slate-200 dark:border-slate-700 py-0 px-2 h-5 whitespace-nowrap mx-auto">
+        {strValue}
+      </Badge>
+    );
+  }
+
+  return <span className="text-sm">{strValue}</span>;
 };
 
 const ProductComparison: React.FC = () => {
@@ -186,7 +181,7 @@ const ProductComparison: React.FC = () => {
                   key={feature.id}
                   className="border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 >
-                  <td className="py-3 px-4">
+                  <td className="py-3 px-4 align-middle">
                     <div className="flex items-center gap-1">
                       {feature.name}
                       <TooltipProvider>
@@ -201,13 +196,13 @@ const ProductComparison: React.FC = () => {
                       </TooltipProvider>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-center align-middle">
+                  <td className="py-3 px-4 text-center align-middle h-16">
                     {renderValue(feature.quillswitch)}
                   </td>
-                  <td className="py-3 px-4 text-center align-middle">
+                  <td className="py-3 px-4 text-center align-middle h-16">
                     {renderValue(feature.manual)}
                   </td>
-                  <td className="py-3 px-4 text-center align-middle">
+                  <td className="py-3 px-4 text-center align-middle h-16">
                     {renderValue(feature.consultants)}
                   </td>
                 </tr>
@@ -237,16 +232,16 @@ const ProductComparison: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-100 dark:bg-slate-800/80 border-b-2 border-slate-200 dark:border-slate-700">
-                  <th className="py-3 px-4 text-left">Key Differentiator</th>
-                  <th className="py-3 px-4 text-center">
+                  <th className="py-3 px-4 text-left align-middle">Key Differentiator</th>
+                  <th className="py-3 px-4 text-center align-middle">
                     <div className="font-medium text-primary">QuillSwitch: Automated & Secure</div>
                     <div className="text-xs font-normal text-muted-foreground">Automated Migration</div>
                   </th>
-                  <th className="py-3 px-4 text-center">
+                  <th className="py-3 px-4 text-center align-middle">
                     <div className="font-medium">Manual Export/Import (DIY)</div>
                     <div className="text-xs font-normal text-muted-foreground">Manual Export/Import</div>
                   </th>
-                  <th className="py-3 px-4 text-center">
+                  <th className="py-3 px-4 text-center align-middle">
                     <div className="font-medium">Consulting Services</div>
                     <div className="text-xs font-normal text-muted-foreground">Professional Services</div>
                   </th>
