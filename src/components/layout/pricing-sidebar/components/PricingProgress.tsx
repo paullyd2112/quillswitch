@@ -14,21 +14,27 @@ export const PricingProgress: React.FC<PricingProgressProps> = ({ pricingState }
     <SidebarGroup>
       <SidebarGroupLabel>Progress</SidebarGroupLabel>
       <SidebarGroupContent>
-        <div className="px-2 py-2 space-y-2">
+        {/* Container for text elements that will be hidden */}
+        <div className="px-2 pt-2 pb-1 space-y-1 group-data-[collapsible=icon]:hidden">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Pricing Progress</span>
             <span>{Math.round(pricingState.totalProgress)}%</span>
           </div>
+        </div>
+        {/* Progress bar always visible, or adjust styling if needed in collapsed mode */}
+        <div className="px-2 pb-2 pt-0 group-data-[collapsible=icon]:pt-2">
           <Progress 
             value={pricingState.totalProgress} 
             className="h-2" 
             aria-label={`Pricing progress: ${Math.round(pricingState.totalProgress)}%`}
           />
-          <div className="text-xs text-muted-foreground">
-            {pricingState.completedSections.size} of {pricingSections.length} sections completed
-          </div>
+        </div>
+        {/* Container for the "sections completed" text */}
+        <div className="px-2 pb-2 pt-0 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+          {pricingState.completedSections.size} of {pricingSections.length} sections completed
         </div>
       </SidebarGroupContent>
     </SidebarGroup>
   );
 };
+

@@ -30,7 +30,7 @@ export function PricingSidebar() {
         <div className="flex items-center px-2">
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-primary/70 flex items-center justify-center text-white font-bold">Q</div>
-            <span className="font-bold text-lg text-foreground">Pricing</span>
+            <span className="font-bold text-lg text-foreground group-data-[collapsible=icon]:hidden">Pricing</span>
           </Link>
         </div>
       </SidebarHeader>
@@ -65,7 +65,7 @@ export function PricingSidebar() {
       </SidebarContent>
       
       <SidebarFooter>
-        <div className="px-3 py-2 space-y-2">
+        <div className="px-3 py-2 space-y-2 group-data-[collapsible=icon]:hidden">
           <div className="text-xs text-sidebar-foreground/70">
             Session time: {Math.round((Date.now() - pricingState.sessionStartTime) / 60000)}m
           </div>
@@ -79,3 +79,4 @@ export function PricingSidebar() {
 }
 
 export default PricingSidebar;
+
