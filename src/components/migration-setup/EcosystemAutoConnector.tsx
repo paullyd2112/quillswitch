@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import { toast } from "sonner";
+import { useProcessing } from "@/contexts/ProcessingContext";
 
 interface ConnectedTool {
   id: string;
@@ -41,6 +41,7 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [discoveredTools, setDiscoveredTools] = useState<ConnectedTool[]>([]);
+  const { setProcessing } = useProcessing();
 
   const mockTools: ConnectedTool[] = [
     {
@@ -80,6 +81,7 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
   const handleScanEcosystem = async () => {
     setIsScanning(true);
     setScanProgress(0);
+    setProcessing(true, "Scanning ecosystem for connected tools...");
     
     // Simulate scanning process
     const interval = setInterval(() => {
@@ -87,6 +89,7 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
         if (prev >= 100) {
           clearInterval(interval);
           setIsScanning(false);
+          setProcessing(false);
           setDiscoveredTools(mockTools);
           toast.success("Ecosystem scan completed! Found 4 connected tools.");
           return 100;
@@ -104,17 +107,23 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
     );
   };
 
-  const handleAutoConnectSelected = () => {
+  const handleAutoConnectSelected = async () => {
     if (selectedTools.length === 0) {
       toast.error("Please select at least one tool to connect.");
       return;
     }
     
-    toast.success(`Initiated auto-reconnection for ${selectedTools.length} tool(s).`);
-    if (onToolsConnected) {
-      const connectedTools = discoveredTools.filter(tool => selectedTools.includes(tool.id));
-      onToolsConnected(connectedTools);
-    }
+    setProcessing(true, `Auto-connecting ${selectedTools.length} tool(s)...`);
+    
+    // Simulate connection process
+    setTimeout(() => {
+      setProcessing(false);
+      toast.success(`Initiated auto-reconnection for ${selectedTools.length} tool(s).`);
+      if (onToolsConnected) {
+        const connectedTools = discoveredTools.filter(tool => selectedTools.includes(tool.id));
+        onToolsConnected(connectedTools);
+      }
+    }, 2000);
   };
 
   const getStatusColor = (status: string) => {
@@ -159,7 +168,7 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
       <CardContent className="space-y-6">
         <Tabs defaultValue="scan" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="scan">Scan & Discover</TabsTrigger>
+            <TabsTrigger value="scan" disabled={isScanning}>Scan & Discover</TabsTrigger>
             <TabsTrigger value="manage">Manage Tools</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
@@ -200,7 +209,7 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
                   <h3 className="font-medium">Discovered Tools ({discoveredTools.length})</h3>
                   <Button 
                     onClick={handleAutoConnectSelected}
-                    disabled={selectedTools.length === 0}
+                    disabled={selectedTools.length === 0 || isScanning}
                     size="sm"
                     className="gap-2"
                   >

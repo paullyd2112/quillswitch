@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,7 @@ import { Check, Info, Key, Lock, Shield, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { maskSensitiveData } from "@/utils/encryptionUtils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import EnhancedModal from "@/components/ui/enhanced-modal";
 
 interface ConnectionModalProps {
   system: SystemConfig;
@@ -132,6 +133,12 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
     setErrorMessage("");
     setErrorDetails(null);
     onClose();
+  };
+
+  const getProcessingMessage = () => {
+    if (isValidating) return "Validating connection...";
+    if (step === 'connect' && authMethod === 'oauth') return "Connecting via OAuth...";
+    return undefined;
   };
 
   const renderStepContent = () => {
@@ -291,7 +298,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
               </Tabs>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setStep('intro')}>Back</Button>
+              <Button variant="outline" onClick={() => setStep('intro')} disabled={isValidating}>Back</Button>
               {authMethod === 'api_key' ? (
                 <Button 
                   onClick={handleApiKeySubmit} 
@@ -302,6 +309,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
               ) : (
                 <Button 
                   onClick={handleOAuthConnect}
+                  disabled={isValidating}
                 >
                   Connect with OAuth
                 </Button>
@@ -377,13 +385,15 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
   };
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
-          {renderStepContent()}
-        </DialogContent>
-      </Dialog>
-    </>
+    <EnhancedModal
+      isOpen={isOpen}
+      onClose={handleClose}
+      className="sm:max-w-md"
+      preventBackgroundInteraction={true}
+      processingMessage={getProcessingMessage()}
+    >
+      {renderStepContent()}
+    </EnhancedModal>
   );
 };
 
