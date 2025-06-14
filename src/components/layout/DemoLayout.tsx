@@ -18,9 +18,9 @@ const DemoLayout = ({ children, className = "" }: DemoLayoutProps) => {
         
         {/* Main content area */}
         <div className="flex-1 flex flex-col bg-slate-950">
-          {/* Floating sidebar trigger */}
+          {/* Floating sidebar trigger with improved positioning */}
           <div className="fixed top-4 left-4 z-50">
-            <SidebarTrigger />
+            <SidebarTrigger className="bg-background/90 backdrop-blur-sm border shadow-lg hover:bg-background/95 transition-all duration-200" />
           </div>
           
           <div className="flex-1 p-6 pt-16">
