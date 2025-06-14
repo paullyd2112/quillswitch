@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Sidebar } from "@/components/ui/sidebar/sidebar"; // Changed: Explicitly import Sidebar from its modular file
-import { // Assuming these are correctly resolved from the modular system's index.ts
-  SidebarContent, 
-  SidebarFooter, 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarGroupLabel, 
-  SidebarHeader, 
-  SidebarMenu, 
-  SidebarMenuButton, 
-  SidebarMenuItem
-} from "@/components/ui/sidebar";
+import { Sidebar } from "@/components/ui/sidebar/sidebar";
+// Import modular sidebar components individually
+import { SidebarContent } from "@/components/ui/sidebar/sidebar-content";
+import { SidebarFooter } from "@/components/ui/sidebar/sidebar-footer";
+import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from "@/components/ui/sidebar/sidebar-group";
+import { SidebarHeader } from "@/components/ui/sidebar/sidebar-header";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar/sidebar-menu";
+
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
@@ -34,7 +30,7 @@ import { toast } from "@/hooks/use-toast";
 interface DemoSection {
   id: string;
   title: string;
-  icon: typeof Play;
+  icon: typeof Play; // Lucide icons are components, typeof Play is React.FC<LucideProps> or similar
   completed?: boolean;
   viewTime?: number;
   action: () => void;
