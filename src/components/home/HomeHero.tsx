@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Play } from "lucide-react";
+import { CheckCircle2, Play, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 import HeroBackground from "./hero/HeroBackground";
@@ -34,13 +34,16 @@ const HomeHero = () => {
 
       <div className="container relative z-10 max-w-6xl mx-auto px-4 text-center">
         <div className="mb-12">
-          {/* Trust badge with pulsing animation */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-sm font-medium rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 backdrop-blur-sm">
+          {/* Data Protection Guarantee with enhanced security messaging */}
+          <div className="inline-flex items-center gap-3 px-6 py-3 mb-8 text-sm font-medium rounded-full bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 text-green-400 backdrop-blur-sm">
+            <Shield className="h-5 w-5 text-green-400" />
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
-            Trusted by 500+ businesses for seamless CRM migrations
+            <span className="font-semibold">100% Data Protection Guarantee</span>
+            <span className="text-slate-300">•</span>
+            <span>Zero Data Loss • Enterprise Security • GDPR Compliant</span>
           </div>
           
           {/* Animated headline with shimmer effect */}
