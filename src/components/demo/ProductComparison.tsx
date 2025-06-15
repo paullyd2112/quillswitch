@@ -42,13 +42,12 @@ const ProductComparison: React.FC = () => {
                   </th>
                 </tr>
               </thead>
+              <tbody>
+                {categories.map((category) => (
+                  <CategorySection key={category} category={category} features={features} />
+                ))}
+              </tbody>
             </table>
-          </div>
-          
-          <div className="space-y-8">
-            {categories.map((category) => (
-              <CategorySection key={category} category={category} features={features} />
-            ))}
           </div>
           
           <ComparisonSummary />
