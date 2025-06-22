@@ -1,16 +1,53 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Check, Sparkles, ArrowRight, Users, Building2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import SlideUp from "@/components/animations/SlideUp";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatNumber } from "./pricingUtils";
+import { useAuth } from "@/contexts/auth";
+import { supabase } from "@/integrations/supabase/client";
 
 const PricingTiers: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
-  const handleGetStarted = (tier: 'essentials' | 'pro') => {
-    navigate(`/signup?tier=${tier}`);
+  const handleGetStarted = async (tier: 'essentials' | 'pro') => {
+    if (!user) {
+      // Redirect to auth page with the selected tier
+      navigate(`/auth?mode=register&tier=${tier}`);
+      return;
+    }
+
+    try {
+      setLoadingTier(tier);
+      
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: { tier },
+      });
+
+      if (error) {
+        console.error('Payment creation error:', error);
+        toast.error('Failed to create payment session. Please try again.');
+        return;
+      }
+
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+        toast.success('Redirecting to payment...');
+      } else {
+        toast.error('Invalid payment session response');
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setLoadingTier(null);
+    }
   };
 
   return (
@@ -23,7 +60,7 @@ const PricingTiers: React.FC = () => {
             <Users className="h-6 w-6 text-primary" />
             <h3 className="text-2xl font-bold">Essentials</h3>
           </div>
-          <div className="text-4xl font-bold text-primary">{formatCurrency(1999)}</div>
+          <div className="text-4xl font-bold text-primary">{formatCurrency(999)}</div>
           <p className="text-muted-foreground">Up to {formatNumber(250000)} records</p>
           <p className="text-sm text-muted-foreground/80">Perfect for Small Businesses</p>
         </div>
@@ -57,8 +94,10 @@ const PricingTiers: React.FC = () => {
           <Button 
             className="w-full bg-primary hover:bg-primary/90 text-white"
             onClick={() => handleGetStarted('essentials')}
+            disabled={loadingTier === 'essentials'}
           >
-            Get Started <ArrowRight className="ml-2 h-4 w-4" />
+            {loadingTier === 'essentials' ? 'Processing...' : 'Get Started'} 
+            {loadingTier !== 'essentials' && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
           <p className="text-xs text-muted-foreground mt-3">
             Ideal for small businesses migrating contacts, companies, deals, and their associated activities & notes
@@ -80,7 +119,7 @@ const PricingTiers: React.FC = () => {
             <h3 className="text-2xl font-bold">Pro</h3>
             <Sparkles className="h-5 w-5 text-primary" />
           </div>
-          <div className="text-4xl font-bold text-primary">{formatCurrency(4999)}</div>
+          <div className="text-4xl font-bold text-primary">{formatCurrency(2499)}</div>
           <p className="text-muted-foreground">Up to {formatNumber(500000)} records</p>
           <p className="text-sm text-muted-foreground/80">Built for SMB & Mid-Market</p>
         </div>
@@ -114,8 +153,10 @@ const PricingTiers: React.FC = () => {
           <Button 
             className="w-full bg-primary hover:bg-primary/90 text-white"
             onClick={() => handleGetStarted('pro')}
+            disabled={loadingTier === 'pro'}
           >
-            Get Started <ArrowRight className="ml-2 h-4 w-4" />
+            {loadingTier === 'pro' ? 'Processing...' : 'Get Started'} 
+            {loadingTier !== 'pro' && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
           <p className="text-xs text-muted-foreground mt-3">
             Perfect for larger SMBs and Mid-Market companies with extensive CRM history and complex data relationships

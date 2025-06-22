@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -16,6 +17,7 @@ import Resources from "@/pages/Resources";
 import ApiDocs from "@/pages/ApiDocs";
 import AppRoutes from "@/pages/app/AppRoutes";
 import OAuthCallback from "@/pages/OAuthCallback";
+import PaymentSuccess from "@/pages/PaymentSuccess";
 import PricingLayout from "@/components/layout/PricingLayout"; // Import PricingLayout
 
 import "./App.css";
@@ -61,6 +63,7 @@ function App() {
                     <Route path="/support" element={<Support />} />
                     <Route path="/app/*" element={<AppRoutes />} />
                     <Route path="/oauth/callback" element={<OAuthCallback />} />
+                    <Route path="/payment-success" element={<PaymentSuccess />} />
                   </Routes>
                 </div>
                 <Toaster />
