@@ -17,8 +17,10 @@ import Demo from "@/pages/Demo";
 import Resources from "@/pages/Resources";
 import ApiDocs from "@/pages/ApiDocs";
 import AppRoutes from "@/pages/app/AppRoutes";
+import ConnectionHub from "@/pages/ConnectionHub";
 import OAuthCallback from "@/pages/OAuthCallback";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import NotFound from "@/pages/NotFound";
 
 import "./App.css";
 
@@ -55,9 +57,11 @@ function App() {
                       <Route path="/resources" element={<Resources />} />
                       <Route path="/api-docs" element={<ApiDocs />} />
                       <Route path="/support" element={<Support />} />
+                      <Route path="/connections" element={<ConnectionHub />} />
                       <Route path="/app/*" element={<AppRoutes />} />
                       <Route path="/oauth/callback" element={<OAuthCallback />} />
                       <Route path="/payment-success" element={<PaymentSuccess />} />
+                      <Route path="*" element={<NotFound />} />
                     </Routes>
                     
                     <Toaster />
