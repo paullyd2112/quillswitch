@@ -6,6 +6,7 @@ import Dashboard from "./Dashboard";
 import ConnectionHub from "./ConnectionHub";
 import Migrations from "./Migrations";
 import CredentialsVault from "../CredentialsVault";
+import SetupWizard from "../SetupWizard";
 
 const AppRoutes = () => {
   return (
@@ -15,6 +16,7 @@ const AppRoutes = () => {
         <Route path="connections" element={<ConnectionHub />} />
         <Route path="migrations" element={<Migrations />} />
         <Route path="vault" element={<CredentialsVault />} />
+        <Route path="setup" element={<SetupWizard />} />
         <Route path="*" element={<Dashboard />} />
       </Routes>
     </BaseLayout>
