@@ -40,9 +40,9 @@ function App() {
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
         <TooltipProvider>
           <AuthProvider>
-            <UserOnboardingProvider>
-              <ProcessingProvider>
-                <Router>
+            <ProcessingProvider>
+              <Router>
+                <UserOnboardingProvider>
                   <div className="min-h-screen bg-background font-sans antialiased">
                     <NavigationOverlay />
                     
@@ -61,9 +61,9 @@ function App() {
                     </Routes>
                   </div>
                   <Toaster />
-                </Router>
-              </ProcessingProvider>
-            </UserOnboardingProvider>
+                </UserOnboardingProvider>
+              </Router>
+            </ProcessingProvider>
           </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>

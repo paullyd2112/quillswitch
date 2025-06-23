@@ -12,14 +12,14 @@ const PricingLayout: React.FC<PricingLayoutProps> = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <SidebarProvider>
-        <div className="flex flex-1 pt-20">
+      <div className="flex flex-1 pt-20">
+        <SidebarProvider>
           <PricingSidebar />
           <main className="flex-1 p-6 overflow-auto">
             {children}
           </main>
-        </div>
-      </SidebarProvider>
+        </SidebarProvider>
+      </div>
     </div>
   );
 };
