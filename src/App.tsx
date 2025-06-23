@@ -18,7 +18,6 @@ import ApiDocs from "@/pages/ApiDocs";
 import AppRoutes from "@/pages/app/AppRoutes";
 import OAuthCallback from "@/pages/OAuthCallback";
 import PaymentSuccess from "@/pages/PaymentSuccess";
-import PricingLayout from "@/components/layout/PricingLayout"; // Import PricingLayout
 
 import "./App.css";
 
@@ -49,14 +48,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/welcome" element={<Welcome />} />
-                    <Route 
-                      path="/pricing" 
-                      element={
-                        <PricingLayout>
-                          <PricingEstimator />
-                        </PricingLayout>
-                      } 
-                    />
+                    <Route path="/pricing" element={<PricingEstimator />} />
                     <Route path="/demo" element={<Demo />} />
                     <Route path="/resources" element={<Resources />} />
                     <Route path="/api-docs" element={<ApiDocs />} />
