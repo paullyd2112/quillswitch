@@ -1,21 +1,27 @@
 
 import React from "react";
-import ContentSection from "@/components/layout/ContentSection";
+import { Helmet } from "react-helmet";
+import EnhancedContentSection from "@/components/layout/enhanced-content-section";
 import ServiceCredentialVault from "@/components/vault/ServiceCredentialVault";
 
 const CredentialsVault = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="pt-8 pb-16">
-        <ContentSection 
+    <>
+      <Helmet>
+        <title>Credentials Vault | QuillSwitch</title>
+        <meta name="description" content="Securely store and manage your API keys, tokens, and service credentials" />
+      </Helmet>
+      
+      <div className="min-h-screen bg-background">
+        <EnhancedContentSection 
           title="Credentials Vault"
-          description="Securely store and manage your API keys, tokens, and service credentials."
-          centered={false}
+          description="Securely store and manage your API keys, tokens, and service credentials with enterprise-grade encryption."
+          maxWidth="full"
         >
           <ServiceCredentialVault />
-        </ContentSection>
+        </EnhancedContentSection>
       </div>
-    </div>
+    </>
   );
 };
 

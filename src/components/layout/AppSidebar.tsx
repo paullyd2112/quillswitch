@@ -1,94 +1,171 @@
 
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
 import { 
-  Sidebar, 
-  SidebarContent, 
-  SidebarFooter, 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarGroupLabel, 
-  SidebarHeader, 
-  SidebarMenu, 
-  SidebarMenuButton, 
-  SidebarMenuItem
+  Database, 
+  Link, 
+  Activity, 
+  Shield, 
+  BarChart3, 
+  Settings,
+  Home,
+  ChevronRight
+} from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
 } from "@/components/ui/sidebar";
-import { mainNav, userNav, getNavLinksByCategory } from "./navConfig";
-import { useAuth } from "@/contexts/auth";
 import { Button } from "@/components/ui/button";
-import { LogIn, UserPlus } from "lucide-react";
 
-export function AppSidebar() {
-  const { user } = useAuth();
+const AppSidebar = () => {
   const location = useLocation();
-  
-  // Combine navigation links based on authentication
-  const navLinks = user ? [...mainNav, ...userNav] : mainNav;
-  
-  // Group links by category
-  const categorizedLinks = getNavLinksByCategory(navLinks);
-  const categories = Object.keys(categorizedLinks);
+  const navigate = useNavigate();
+
+  const navigationItems = [
+    {
+      title: "Dashboard",
+      icon: Home,
+      url: "/app/dashboard",
+      description: "Overview and metrics"
+    },
+    {
+      title: "Connections",
+      icon: Link,
+      url: "/app/connections", 
+      description: "Manage CRM connections"
+    },
+    {
+      title: "Migrations",
+      icon: Database,
+      url: "/app/migrations",
+      description: "Track migration progress"
+    },
+    {
+      title: "Credentials Vault",
+      icon: Shield,
+      url: "/app/vault",
+      description: "Secure credential storage"
+    }
+  ];
+
+  const toolsItems = [
+    {
+      title: "Reports",
+      icon: BarChart3,
+      url: "/app/reports",
+      description: "Migration analytics"
+    },
+    {
+      title: "Activity Log",
+      icon: Activity,
+      url: "/app/activity",
+      description: "System activity"
+    },
+    {
+      title: "Settings",
+      icon: Settings,
+      url: "/app/settings",
+      description: "Account preferences"
+    }
+  ];
+
+  const handleNavigation = (url: string) => {
+    navigate(url);
+  };
+
+  const isActive = (url: string) => {
+    return location.pathname === url || location.pathname.startsWith(url + '/');
+  };
 
   return (
-    <Sidebar variant="floating" collapsible="icon">
-      <SidebarHeader>
-        <div className="flex items-center px-2">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-primary/70 flex items-center justify-center text-white font-bold">Q</div>
-            <span className="font-bold text-lg text-foreground">QuillSwitch</span>
-          </Link>
+    <Sidebar variant="inset" className="border-r border-border">
+      <SidebarHeader className="border-b border-border p-6">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+            <Database className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">QuillSwitch</h2>
+            <p className="text-xs text-muted-foreground">Migration Platform</p>
+          </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        {categories.map((category) => (
-          <SidebarGroup key={category}>
-            <SidebarGroupLabel>{category}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {categorizedLinks[category].map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton 
-                      asChild 
-                      isActive={location.pathname === item.href}
-                      tooltip={item.label}
-                    >
-                      <Link to={item.href}>
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+
+      <SidebarContent className="px-4 py-6">
+        {/* Main Navigation */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.map((item) => (
+                <SidebarMenuItem key={item.url}>
+                  <SidebarMenuButton
+                    onClick={() => handleNavigation(item.url)}
+                    isActive={isActive(item.url)}
+                    className="w-full"
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium">{item.title}</span>
+                      <span className="text-xs text-muted-foreground">{item.description}</span>
+                    </div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Tools & Settings */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Tools & Settings</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {toolsItems.map((item) => (
+                <SidebarMenuItem key={item.url}>
+                  <SidebarMenuButton
+                    onClick={() => handleNavigation(item.url)}
+                    isActive={isActive(item.url)}
+                    className="w-full"
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium">{item.title}</span>
+                      <span className="text-xs text-muted-foreground">{item.description}</span>
+                    </div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        {!user && (
-          <div className="px-2 py-2 space-y-2">
-            <Link to="/auth?mode=login" className="w-full">
-              <Button variant="outline" className="w-full justify-start">
-                <LogIn className="mr-2 h-4 w-4" />
-                <span>Sign In</span>
-              </Button>
-            </Link>
-            <Link to="/auth?mode=register" className="w-full">
-              <Button className="w-full justify-start">
-                <UserPlus className="mr-2 h-4 w-4" />
-                <span>Sign Up</span>
-              </Button>
-            </Link>
-          </div>
-        )}
-        <div className="px-3 py-2">
-          <div className="text-xs text-sidebar-foreground/70">
-            &copy; {new Date().getFullYear()} QuillSwitch
+
+      <SidebarFooter className="border-t border-border p-4">
+        <div className="space-y-2">
+          <Button 
+            variant="outline" 
+            className="w-full justify-between"
+            onClick={() => navigate("/")}
+          >
+            Back to Home
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <div className="text-xs text-muted-foreground text-center">
+            Version 1.0.0
           </div>
         </div>
       </SidebarFooter>
     </Sidebar>
   );
-}
+};
 
 export default AppSidebar;
