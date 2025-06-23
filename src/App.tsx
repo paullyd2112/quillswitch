@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/auth";
 import { ProcessingProvider } from "@/contexts/ProcessingContext";
+import { UserOnboardingProvider } from "@/components/onboarding/UserOnboardingProvider";
 import NavigationOverlay from "@/components/layout/NavigationOverlay";
 import Home from "@/pages/Home";
 import Auth from "@/pages/Auth";
@@ -39,28 +40,30 @@ function App() {
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
         <TooltipProvider>
           <AuthProvider>
-            <ProcessingProvider>
-              <Router>
-                <div className="min-h-screen bg-background font-sans antialiased">
-                  <NavigationOverlay />
-                  
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/welcome" element={<Welcome />} />
-                    <Route path="/pricing" element={<PricingEstimator />} />
-                    <Route path="/demo" element={<Demo />} />
-                    <Route path="/resources" element={<Resources />} />
-                    <Route path="/api-docs" element={<ApiDocs />} />
-                    <Route path="/support" element={<Support />} />
-                    <Route path="/app/*" element={<AppRoutes />} />
-                    <Route path="/oauth/callback" element={<OAuthCallback />} />
-                    <Route path="/payment-success" element={<PaymentSuccess />} />
-                  </Routes>
-                </div>
-                <Toaster />
-              </Router>
-            </ProcessingProvider>
+            <UserOnboardingProvider>
+              <ProcessingProvider>
+                <Router>
+                  <div className="min-h-screen bg-background font-sans antialiased">
+                    <NavigationOverlay />
+                    
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/welcome" element={<Welcome />} />
+                      <Route path="/pricing" element={<PricingEstimator />} />
+                      <Route path="/demo" element={<Demo />} />
+                      <Route path="/resources" element={<Resources />} />
+                      <Route path="/api-docs" element={<ApiDocs />} />
+                      <Route path="/support" element={<Support />} />
+                      <Route path="/app/*" element={<AppRoutes />} />
+                      <Route path="/oauth/callback" element={<OAuthCallback />} />
+                      <Route path="/payment-success" element={<PaymentSuccess />} />
+                    </Routes>
+                  </div>
+                  <Toaster />
+                </Router>
+              </ProcessingProvider>
+            </UserOnboardingProvider>
           </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>
