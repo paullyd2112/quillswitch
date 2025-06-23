@@ -59,8 +59,9 @@ function App() {
                       <Route path="/oauth/callback" element={<OAuthCallback />} />
                       <Route path="/payment-success" element={<PaymentSuccess />} />
                     </Routes>
+                    
+                    <Toaster />
                   </div>
-                  <Toaster />
                 </UserOnboardingProvider>
               </Router>
             </ProcessingProvider>

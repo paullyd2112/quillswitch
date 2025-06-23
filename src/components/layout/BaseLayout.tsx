@@ -13,10 +13,7 @@ const BaseLayout = ({ children, className = "" }: BaseLayoutProps) => {
   return (
     <SidebarProvider>
       <div className={`min-h-screen bg-slate-950 w-full flex ${className}`}>
-        {/* Sidebar navigation */}
         <AppSidebar />
-        
-        {/* Main content area */}
         <div className="flex-1 flex flex-col bg-slate-950">
           <div className="flex-1 p-6">
             {children || <Outlet />}
