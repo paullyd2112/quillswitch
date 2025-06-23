@@ -7,6 +7,9 @@ import ConnectionHub from "./ConnectionHub";
 import Migrations from "./Migrations";
 import CredentialsVault from "../CredentialsVault";
 import SetupWizard from "../SetupWizard";
+import Reports from "./Reports";
+import Activity from "./Activity";
+import Settings from "../Settings";
 
 const AppRoutes = () => {
   return (
@@ -17,6 +20,9 @@ const AppRoutes = () => {
         <Route path="migrations" element={<Migrations />} />
         <Route path="vault" element={<CredentialsVault />} />
         <Route path="setup" element={<SetupWizard />} />
+        <Route path="reports" element={<Reports />} />
+        <Route path="activity" element={<Activity />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="*" element={<Dashboard />} />
       </Routes>
     </BaseLayout>
