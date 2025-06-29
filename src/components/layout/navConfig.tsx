@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Home, Zap, Calculator, Monitor, BookOpen, FileText, HelpCircle, Scale, Settings, BarChart3, Database, Activity } from "lucide-react";
 
