@@ -1,12 +1,19 @@
 
 import React from "react";
-import { Home, Zap, Calculator, Monitor, BookOpen, FileText, HelpCircle, Scale } from "lucide-react";
+import { Home, Zap, Calculator, Monitor, BookOpen, FileText, HelpCircle, Scale, Settings, BarChart3, Database, Activity } from "lucide-react";
 
 export interface NavItem {
   name: string;
   path: string;
   icon?: React.ComponentType<any>;
   description?: string;
+}
+
+export interface NavLink {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  category?: string;
 }
 
 export interface NavSection {
@@ -21,6 +28,36 @@ export const mainNavItems: NavItem[] = [
   { name: "Pricing", path: "/pricing", icon: Calculator },
   { name: "Resources", path: "/resources", icon: BookOpen },
 ];
+
+// Main navigation for public pages
+export const mainNav: NavLink[] = [
+  { href: "/", label: "Home", icon: <Home className="h-4 w-4" />, category: "Product" },
+  { href: "/demo", label: "Demo", icon: <Monitor className="h-4 w-4" />, category: "Product" },
+  { href: "/comparison", label: "Comparison", icon: <Scale className="h-4 w-4" />, category: "Product" },
+  { href: "/pricing", label: "Pricing", icon: <Calculator className="h-4 w-4" />, category: "Product" },
+  { href: "/resources", label: "Resources", icon: <BookOpen className="h-4 w-4" />, category: "Resources" },
+];
+
+// User navigation for authenticated users
+export const userNav: NavLink[] = [
+  { href: "/app/dashboard", label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, category: "App" },
+  { href: "/app/connections", label: "Connections", icon: <Zap className="h-4 w-4" />, category: "App" },
+  { href: "/app/migrations", label: "Migrations", icon: <Database className="h-4 w-4" />, category: "App" },
+  { href: "/app/activity", label: "Activity", icon: <Activity className="h-4 w-4" />, category: "App" },
+  { href: "/app/settings", label: "Settings", icon: <Settings className="h-4 w-4" />, category: "App" },
+];
+
+// Utility function to group nav links by category
+export const getNavLinksByCategory = (navLinks: NavLink[]): Record<string, NavLink[]> => {
+  return navLinks.reduce((acc, link) => {
+    const category = link.category || "Other";
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(link);
+    return acc;
+  }, {} as Record<string, NavLink[]>);
+};
 
 export const navSections: NavSection[] = [
   {
