@@ -33,8 +33,8 @@ export const mainNavItems: NavItem[] = [
 export const mainNav: NavLink[] = [
   { href: "/", label: "Home", icon: <Home className="h-4 w-4" />, category: "Product" },
   { href: "/demo", label: "Demo", icon: <Monitor className="h-4 w-4" />, category: "Product" },
-  { href: "/comparison", label: "Comparison", icon: <Scale className="h-4 w-4" />, category: "Product" },
   { href: "/pricing", label: "Pricing", icon: <Calculator className="h-4 w-4" />, category: "Product" },
+  { href: "/comparison", label: "Comparison", icon: <Scale className="h-4 w-4" />, category: "Resources" },
   { href: "/resources", label: "Resources", icon: <BookOpen className="h-4 w-4" />, category: "Resources" },
 ];
 
@@ -65,13 +65,13 @@ export const navSections: NavSection[] = [
     items: [
       { name: "Home", path: "/", description: "Overview of QuillSwitch" },
       { name: "Demo", path: "/demo", description: "Interactive product demo" },
-      { name: "Comparison", path: "/comparison", description: "How QuillSwitch compares" },
       { name: "Pricing", path: "/pricing", description: "Transparent pricing calculator" },
     ]
   },
   {
     title: "Resources",
     items: [
+      { name: "Comparison", path: "/comparison", description: "How QuillSwitch compares" },
       { name: "Resources", path: "/resources", description: "Guides and tutorials" },
       { name: "API Docs", path: "/api-docs", description: "Developer documentation" },
       { name: "Support", path: "/support", description: "Get help and support" },
@@ -85,16 +85,16 @@ export const footerNavSections = [
     items: [
       { name: "Home", path: "/" },
       { name: "Demo", path: "/demo" },
-      { name: "Comparison", path: "/comparison" },
       { name: "Pricing", path: "/pricing" },
     ]
   },
   {
     title: "Resources", 
     items: [
+      { name: "Comparison", path: "/comparison" },
       { name: "Resources", path: "/resources" },
       { name: "API Documentation", path: "/api-docs" },
-      { name: "Support", path: "/support" },
+      { name: "Support Center", path: "/support" },
     ]
   },
   {
