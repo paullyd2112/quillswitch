@@ -1,5 +1,6 @@
 
 import React from "react";
+import Navbar from "@/components/layout/Navbar";
 import HomeHero from "@/components/home/HomeHero";
 import ProblemSolutionSection from "@/components/home/sections/ProblemSolutionSection";
 import EnhancedFeaturesSection from "@/components/home/sections/EnhancedFeaturesSection";
@@ -12,6 +13,7 @@ import FeaturesSection from "@/components/home/FeaturesSection";
 const Home = () => {
   return (
     <div className="min-h-screen bg-slate-950">
+      <Navbar />
       <main>
         <HomeHero />
         <ProblemSolutionSection />

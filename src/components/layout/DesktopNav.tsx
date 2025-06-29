@@ -17,7 +17,7 @@ const DesktopNav = ({ navLinks }: DesktopNavProps) => {
           className={({ isActive }) => 
             `px-4 py-2 rounded-sm text-sm transition-colors duration-200 ${
               isActive
-                ? "text-friendly-accent bg-friendly-accent/10 font-medium"
+                ? "text-blue-400 bg-blue-400/10 font-medium"
                 : "text-slate-300 hover:text-white hover:bg-slate-800/50"
             }`
           }

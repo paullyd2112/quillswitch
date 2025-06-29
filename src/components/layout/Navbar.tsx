@@ -71,7 +71,7 @@ const Navbar = () => {
               <span className="font-bold text-lg text-white">QuillSwitch</span>
             </Link>
             
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - Make sure it's visible */}
             <DesktopNav navLinks={mainNav} />
           </div>
           
