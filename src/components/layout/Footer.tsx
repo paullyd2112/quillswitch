@@ -44,6 +44,7 @@ const Footer = () => {
               <li><Link to="/migrations/setup" className="text-slate-400 hover:text-primary transition-colors">Start Migration</Link></li>
               <li><Link to="/demo" className="text-slate-400 hover:text-primary transition-colors">Demo</Link></li>
               <li><Link to="/pricing" className="text-slate-400 hover:text-primary transition-colors">Pricing</Link></li>
+              <li><Link to="/comparison" className="text-slate-400 hover:text-primary transition-colors">Comparison</Link></li>
             </ul>
           </div>
           
