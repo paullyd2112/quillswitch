@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Home, Zap, Calculator, Monitor, BookOpen, FileText, HelpCircle, Scale, Settings, BarChart3, Database, Activity } from "lucide-react";
 
@@ -13,7 +12,7 @@ export interface NavLink {
   href: string;
   label: string;
   icon: React.ReactNode;
-  category?: string;
+  category: string;
 }
 
 export interface NavSection {
