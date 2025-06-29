@@ -14,6 +14,7 @@ import Auth from "@/pages/Auth";
 import Welcome from "@/pages/Welcome";
 import PricingEstimator from "@/pages/PricingEstimator";
 import Demo from "@/pages/Demo";
+import Comparison from "@/pages/Comparison";
 import Resources from "@/pages/Resources";
 import ApiDocs from "@/pages/ApiDocs";
 import AppRoutes from "@/pages/app/AppRoutes";
@@ -54,6 +55,7 @@ function App() {
                       <Route path="/welcome" element={<Welcome />} />
                       <Route path="/pricing" element={<PricingEstimator />} />
                       <Route path="/demo" element={<Demo />} />
+                      <Route path="/comparison" element={<Comparison />} />
                       <Route path="/resources" element={<Resources />} />
                       <Route path="/api-docs" element={<ApiDocs />} />
                       <Route path="/support" element={<Support />} />
