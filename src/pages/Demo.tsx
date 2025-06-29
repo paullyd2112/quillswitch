@@ -5,13 +5,12 @@ import { useNavigate } from "react-router-dom";
 import DemoLayout from "@/components/layout/DemoLayout";
 import TryItExperience from "@/components/demo/TryItExperience";
 import MigrationDemoSection from "@/components/home/MigrationDemoSection";
-import CommonChallenges from "@/components/demo/CommonChallenges";
 import ExpertKnowledgeBase from "@/components/demo/ExpertKnowledgeBase";
 import DemoFooterCta from "@/components/demo/DemoFooterCta";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileBarChart, FileText, ArrowRight } from "lucide-react";
+import { FileBarChart, FileText } from "lucide-react";
 import MigrationPerformanceChart from "@/components/home/migration-demo/MigrationPerformanceChart";
 import { useDemoReports } from "@/hooks/migration-demo/use-demo-reports";
 import { toast } from "@/hooks/use-toast";
@@ -128,42 +127,6 @@ const Demo = () => {
                   </Card>
                 </div>
               </div>
-            </section>
-            
-            <Separator />
-            
-            {/* Link to Comparison Page */}
-            <section id="product-comparison">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold mb-6">How QuillSwitch Compares</h2>
-                <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                  Discover why businesses choose QuillSwitch over traditional migration methods and expensive consultants.
-                </p>
-                <Card className="max-w-2xl mx-auto bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border-blue-500/30">
-                  <CardContent className="p-8">
-                    <h3 className="text-xl font-semibold mb-4">See the Complete Comparison</h3>
-                    <p className="text-muted-foreground mb-6">
-                      View detailed feature comparisons, cost analysis, and see how QuillSwitch 
-                      stacks up against manual migrations and consulting services.
-                    </p>
-                    <Button 
-                      onClick={() => navigate('/comparison')}
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      View Full Comparison
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </section>
-            
-            <Separator />
-            
-            {/* Common Migration Challenges */}
-            <section id="common-challenges">
-              <h2 className="text-2xl font-bold mb-6">Common Migration Challenges</h2>
-              <CommonChallenges />
             </section>
             
             <Separator />
