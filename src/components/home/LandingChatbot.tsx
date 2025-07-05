@@ -48,9 +48,10 @@ const QUILLSWITCH_KNOWLEDGE = {
 
   technical: {
     supported_crms: ["Salesforce", "HubSpot", "Pipedrive", "Zoho", "Microsoft Dynamics", "Sugar CRM", "Insightly", "Copper"],
-    data_types: ["Contacts", "Accounts", "Opportunities", "Activities", "Tasks", "Notes", "Documents", "Custom Fields"],
+    data_types: ["Contacts", "Accounts", "Opportunities", "Activities", "Tasks", "Notes", "Documents", "Custom Fields", "Dashboards", "Reports"],
     integrations: "Unified API integration for secure, standardized CRM connections",
-    architecture: "Cloud-based platform with redundant security, real-time monitoring, and enterprise-grade infrastructure"
+    architecture: "Cloud-based platform with redundant security, real-time monitoring, and enterprise-grade infrastructure",
+    dashboard_recreation: "AI-powered dashboard recreation with chart conversion, layout adaptation, and filter translation"
   },
 
   pricing: {
@@ -131,7 +132,9 @@ What makes us different:
 - Complete migrations in hours, days, or a week instead of months (lightning fast compared to traditional methods)
 - Saves most businesses 60-80% on costs compared to hiring consultants (who usually charge $15k-50k+)
 
-We work with all the major CRMs: Salesforce, HubSpot, Pipedrive, Zoho, Microsoft Dynamics, Sugar CRM, Insightly, Copper. We migrate contacts, accounts, opportunities, activities, tasks, notes, documents, custom fields - basically everything.
+We work with all the major CRMs: Salesforce, HubSpot, Pipedrive, Zoho, Microsoft Dynamics, Sugar CRM, Insightly, Copper. We migrate contacts, accounts, opportunities, activities, tasks, notes, documents, custom fields, dashboards, and reports - basically everything.
+
+One thing that sets us apart is dashboard recreation. With our Unified API and AI-powered schema mapping, we can actually recreate your dashboards in the new CRM. The system converts chart types, adapts layouts, and translates filters to work in your destination platform. So you don't lose all those important reports and visualizations you've built up over time.
 
 Pricing is straightforward:
 - Essential Package is $999 (up to 250,000 records, AI-powered data mapping, standard support, complete data migration)  
