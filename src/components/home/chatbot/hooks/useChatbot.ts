@@ -205,8 +205,7 @@ export const useChatbot = () => {
       case "Talk to a Migration Expert":
       case "Connect Me With an Expert":
       case "Talk to Someone About Costs":
-        // Replace with your actual Calendly link
-        window.open("https://calendly.com/your-calendly-link", "_blank");
+        window.open("https://calendly.com/paul-aqua-quillswitch/30min", "_blank");
         break;
       case "Get the Migration Playbook":
         navigate("/resources");
