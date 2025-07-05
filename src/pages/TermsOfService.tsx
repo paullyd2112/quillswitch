@@ -25,212 +25,184 @@ const TermsOfServicePage: React.FC = () => {
               <ScrollArea className="h-[600px] rounded-md border p-4">
                 <div className="space-y-6">
                   <section>
-                    <h3 className="text-lg font-medium">1. Acceptance of Terms</h3>
+                    <h3 className="text-lg font-medium">Welcome to QuillSwitch!</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      By accessing or using QuillSwitch's CRM migration services ("Services"), you ("Customer" or "you") 
-                      acknowledge that you have read, understood, and agree to be bound by these Terms of Service ("Terms"). 
-                      If you do not agree with any part of these terms, you may not use our Services. These Terms constitute 
-                      a legally binding agreement between you and QuillSwitch, Inc. ("we," "us," or "QuillSwitch").
+                      This Terms of Service ("Terms") is a binding contract between you ("Customer," "you," or "your") 
+                      and QuillSwitch Inc. ("QuillSwitch," "we," or "us"). This Agreement governs your access to and use 
+                      of the QuillSwitch data migration services, our website, and any associated software (collectively, the "Service").
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      <strong>By purchasing a plan or using the Service, you agree to be bound by these Terms.</strong>
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">2. Service Description</h3>
-                    <p className="mt-2 text-sm text-muted-foreground mb-2">
-                      QuillSwitch provides AI-powered CRM data migration services for Small-to-Medium Businesses (SMBs) 
-                      and Mid-Market companies. Our Services include:
+                    <h3 className="text-lg font-medium">1. Description of Service</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      QuillSwitch provides a cloud-based, self-service platform that enables customers to migrate data 
+                      between various third-party Customer Relationship Management (CRM) systems. The Service utilizes 
+                      a Unified API Integration and AI-powered schema mapping to facilitate the transfer of Customer Data 
+                      from a source CRM to a destination CRM.
                     </p>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li><strong>CRM Data Migration:</strong> Secure transfer of data between CRM systems</li>
-                      <li><strong>AI-Powered Data Mapping:</strong> Automated field mapping with 99.9% accuracy using advanced AI</li>
-                      <li><strong>Dashboard Recreation:</strong> Recreation of dashboards, reports, and visualizations in destination systems</li>
-                      <li><strong>Data Validation:</strong> Comprehensive validation and error checking throughout the migration process</li>
-                      <li><strong>Migration Support:</strong> Expert guidance and technical support throughout the migration</li>
-                      <li><strong>Security & Compliance:</strong> Enterprise-grade security with encrypted data handling</li>
-                    </ul>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">3. Service Packages & Pricing</h3>
+                    <h3 className="text-lg font-medium">2. User Accounts & Responsibilities</h3>
                     
-                    <h4 className="text-base font-medium mt-4 mb-2">3.1 Essential Package - $999</h4>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li>Up to 250,000 records migration</li>
-                      <li>AI-powered data mapping and transformation</li>
-                      <li>Standard support and documentation</li>
-                      <li>Complete data migration including contacts, accounts, opportunities, activities, tasks, notes, and documents</li>
-                      <li>Dashboard recreation (standard configurations)</li>
-                    </ul>
-
-                    <h4 className="text-base font-medium mt-4 mb-2">3.2 Pro Package - Contact for Pricing</h4>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li>250,000+ records migration</li>
-                      <li>Priority processing and dedicated migration specialist</li>
-                      <li>Complex transformation support and custom mapping rules</li>
-                      <li>Advanced AI mapping with custom configurations</li>
-                      <li>White-glove service and expedited timeline</li>
-                    </ul>
-
-                    <p className="text-sm text-muted-foreground mt-3">
-                      All prices are in USD and exclude applicable taxes. Payment is processed securely through Stripe.
+                    <h4 className="text-base font-medium mt-4 mb-2">Account Creation</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      You must provide accurate and complete information to create an account. You are responsible for 
+                      maintaining the confidentiality of your account credentials.
                     </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">Authorized Users</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      You are responsible for all activity that occurs under your account, including that of any users you authorize.
+                    </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">Your Responsibilities</h4>
+                    <p className="text-sm text-muted-foreground mb-2">You agree to:</p>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li>Comply with all applicable laws and regulations in your use of the Service.</li>
+                      <li>Be solely responsible for the accuracy, quality, and legality of your Customer Data and the means by which you acquired it.</li>
+                      <li>Secure and maintain the necessary API keys, tokens, and permissions from your third-party CRM providers to allow the Service to function.</li>
+                    </ul>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">4. User Account & Responsibilities</h3>
+                    <h3 className="text-lg font-medium">3. Fees and Payment</h3>
                     
-                    <h4 className="text-base font-medium mt-4 mb-2">4.1 Account Requirements</h4>
+                    <h4 className="text-base font-medium mt-4 mb-2">Service Plans</h4>
                     <p className="text-sm text-muted-foreground mb-2">
-                      You must create an account to use our Services. You are responsible for maintaining the confidentiality 
-                      of your account credentials and for all activities under your account.
+                      The Service is offered via two distinct, one-time payment plans: the "Standard" plan at $999 and 
+                      the "Pro" plan at $2499. The features included in each plan are detailed on our website.
                     </p>
 
-                    <h4 className="text-base font-medium mt-4 mb-2">4.2 Customer Responsibilities</h4>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li><strong>Data Access:</strong> Provide necessary access credentials and permissions for source and destination CRM systems</li>
-                      <li><strong>Data Backup:</strong> Maintain current backups of all data before migration</li>
-                      <li><strong>Data Quality:</strong> Ensure source data is reasonably clean and well-structured</li>
-                      <li><strong>System Access:</strong> Maintain active subscriptions and access to both source and destination CRM systems during migration</li>
-                      <li><strong>Testing:</strong> Thoroughly test migrated data and report any issues within 30 days of migration completion</li>
-                      <li><strong>Compliance:</strong> Ensure you have legal authority to migrate the data and comply with all applicable laws</li>
-                    </ul>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">5. Payment Terms</h3>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li><strong>Payment Processing:</strong> All payments are processed securely through Stripe</li>
-                      <li><strong>Essential Package:</strong> Payment due in full before migration commencement</li>
-                      <li><strong>Pro Package:</strong> Custom payment terms as agreed in writing</li>
-                      <li><strong>Refund Policy:</strong> Refunds available within 14 days if migration has not commenced</li>
-                      <li><strong>Taxes:</strong> Customer responsible for all applicable taxes and fees</li>
-                      <li><strong>Currency:</strong> All prices quoted in US Dollars (USD)</li>
-                    </ul>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">6. Data Migration Disclaimers</h3>
-                    
-                    <h4 className="text-base font-medium mt-4 mb-2">6.1 Migration Accuracy</h4>
+                    <h4 className="text-base font-medium mt-4 mb-2">Payment</h4>
                     <p className="text-sm text-muted-foreground mb-2">
-                      While we strive for 99.9% accuracy in data mapping and migration, we cannot guarantee perfect accuracy 
-                      for all data types and configurations. Customer is responsible for validating migrated data.
+                      All fees are due upfront at the time of purchase. Payments are processed through a third-party 
+                      payment processor. All fees are quoted in U.S. Dollars.
                     </p>
 
-                    <h4 className="text-base font-medium mt-4 mb-2">6.2 Third-Party System Dependencies</h4>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Our Services depend on third-party CRM systems' APIs and availability. We are not responsible for 
-                      limitations, downtime, or changes to third-party systems that may affect migration.
-                    </p>
-
-                    <h4 className="text-base font-medium mt-4 mb-2">6.3 Data Limitations</h4>
+                    <h4 className="text-base font-medium mt-4 mb-2">No Refunds</h4>
                     <p className="text-sm text-muted-foreground">
-                      Some data types, custom configurations, or deprecated features may not be fully transferable between 
-                      different CRM systems due to platform limitations.
+                      All payments are final and non-refundable. As a self-service tool where value is delivered upon use, 
+                      we do not offer refunds once a migration has been initiated or after 14 days from the purchase date, 
+                      whichever comes first.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">7. AI Services Disclaimer</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Our AI-powered data mapping uses Google Gemini AI and proprietary algorithms. While highly accurate, 
-                      AI services may occasionally produce unexpected results. We recommend reviewing all AI-generated mappings 
-                      before proceeding with migration. Customer retains final responsibility for approving all data transformations.
+                    <h3 className="text-lg font-medium">4. Intellectual Property Rights</h3>
+                    
+                    <h4 className="text-base font-medium mt-4 mb-2">QuillSwitch IP</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      We retain all rights, title, and interest in and to the Service, including our website, branding, 
+                      AI-powered mapping algorithms, Unified API architecture, and all related software and technology. 
+                      This Agreement does not grant you any rights to our intellectual property except for the limited 
+                      right to use the Service as described.
+                    </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">Customer Data</h4>
+                    <p className="text-sm text-muted-foreground">
+                      You retain all rights, title, and interest in and to your data, including all contacts, accounts, 
+                      opportunities, and other information you migrate using the Service ("Customer Data"). You grant 
+                      QuillSwitch a limited, non-exclusive, worldwide, royalty-free license to access, use, copy, and 
+                      process your Customer Data solely for the purpose of providing and improving the Service.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">8. Data Security & Privacy</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We implement enterprise-grade security measures including pgsodium encryption, Row Level Security (RLS), 
-                      OAuth 2.0 authentication, and secure API connections. Our data handling practices are governed by our 
-                      Privacy Policy, incorporated herein by reference. We maintain SOC 2 compliance standards and undergo 
-                      regular security audits.
-                    </p>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">9. Service Availability</h3>
+                    <h3 className="text-lg font-medium">5. Acceptable Use Policy</h3>
+                    <p className="text-sm text-muted-foreground mb-2">You agree not to use the Service to:</p>
                     <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li><strong>Uptime:</strong> We strive for 99.9% platform availability but do not guarantee uninterrupted service</li>
-                      <li><strong>Maintenance:</strong> Scheduled maintenance will be communicated at least 48 hours in advance</li>
-                      <li><strong>Support:</strong> Customer support available during business hours with 24-hour response time</li>
-                      <li><strong>Migration Timeline:</strong> Typical migrations complete within hours to days, not months</li>
+                      <li>Migrate any data that is unlawful, harmful, or infringes on the intellectual property rights of others.</li>
+                      <li>Reverse-engineer, decompile, or otherwise attempt to discover the source code of the Service.</li>
+                      <li>Use any automated means (e.g., spiders, robots) to access the Service for any purpose other than as intended.</li>
+                      <li>Transmit any viruses, worms, or other malicious software.</li>
+                      <li>Overload or disrupt the integrity or performance of the Service or its underlying infrastructure.</li>
                     </ul>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">10. Limitation of Liability</h3>
-                    <p className="mt-2 text-sm text-muted-foreground mb-2">
-                      TO THE MAXIMUM EXTENT PERMITTED BY LAW:
+                    <h3 className="text-lg font-medium">6. Data Migration & Security</h3>
+                    
+                    <h4 className="text-base font-medium mt-4 mb-2">Your Responsibility</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      You acknowledge that you are the "Data Controller" of your Customer Data. You are solely responsible 
+                      for its content and for ensuring you have the legal right to migrate it.
                     </p>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li>QuillSwitch's total liability shall not exceed the amount paid for the specific Service</li>
-                      <li>We are not liable for indirect, incidental, special, consequential, or punitive damages</li>
-                      <li>We are not liable for loss of profits, revenue, data, or business opportunities</li>
-                      <li>Customer assumes responsibility for data validation and business continuity planning</li>
-                      <li>We are not liable for issues arising from third-party CRM system limitations or changes</li>
-                    </ul>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">11. Indemnification</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Customer agrees to defend, indemnify, and hold harmless QuillSwitch from claims arising from: 
-                      (a) Customer's use of the Services, (b) Customer's violation of these Terms, (c) Customer's violation 
-                      of any rights of third parties, or (d) any data provided by Customer for migration.
+
+                    <h4 className="text-base font-medium mt-4 mb-2">Our Role</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      QuillSwitch acts as a "Data Processor," processing data on your behalf and at your direction.
                     </p>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">12. Intellectual Property</h3>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li><strong>QuillSwitch IP:</strong> All platform technology, algorithms, and proprietary methods remain our exclusive property</li>
-                      <li><strong>Customer Data:</strong> Customer retains all rights to their data and CRM content</li>
-                      <li><strong>AI Training:</strong> We do not use Customer data to train AI models without explicit consent</li>
-                      <li><strong>License:</strong> We grant Customer a limited license to use our Services as described herein</li>
-                    </ul>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">13. Account Termination</h3>
-                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
-                      <li><strong>By Customer:</strong> Account may be terminated at any time with 30 days' notice</li>
-                      <li><strong>By QuillSwitch:</strong> We may terminate accounts for breach of Terms or illegal activity</li>
-                      <li><strong>Data Retention:</strong> Customer data deleted within 30 days of account termination</li>
-                      <li><strong>Service Completion:</strong> Ongoing migrations will be completed unless Customer requests termination</li>
-                    </ul>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">14. Changes to Terms</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We may modify these Terms with 30 days' notice for material changes. Continued use of Services after 
-                      changes constitutes acceptance. For non-material changes, we will update the "Last Updated" date. 
-                      Current Terms are always available on our platform.
+
+                    <h4 className="text-base font-medium mt-4 mb-2">No Permanent Storage</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      The Service is a conduit for data migration. We do not permanently store your Customer Data. Any 
+                      cached Customer Data necessary for the migration process is deleted from our servers within 30 days 
+                      of the completion or termination of your migration project. See our Privacy Policy for more details.
+                    </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">Security</h4>
+                    <p className="text-sm text-muted-foreground">
+                      We implement robust technical and organizational measures, such as end-to-end encryption, to protect 
+                      the security and integrity of your data during the migration process.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">15. Governing Law & Dispute Resolution</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      These Terms are governed by the laws of the State of California, USA, without regard to conflict of law 
-                      principles. Any disputes will be resolved through binding arbitration in California, except for claims 
-                      involving intellectual property which may be brought in federal court.
+                    <h3 className="text-lg font-medium">7. Limitation of Liability</h3>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL QUILLSWITCH, ITS AFFILIATES, OR THEIR 
+                      DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, PUNITIVE, INCIDENTAL, SPECIAL, OR 
+                      CONSEQUENTIAL DAMAGES, INCLUDING LOSS OF PROFITS, DATA, OR GOODWILL, ARISING OUT OF OR IN ANY WAY 
+                      CONNECTED WITH THE USE OF THE SERVICE.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      OUR TOTAL AGGREGATE LIABILITY IN ANY MATTER ARISING OUT OF OR RELATED TO THESE TERMS IS LIMITED TO 
+                      THE AMOUNT YOU PAID FOR THE SERVICE.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">16. Contact Information</h3>
-                    <p className="mt-2 text-sm text-muted-foreground mb-2">
-                      For questions about these Terms of Service:
+                    <h3 className="text-lg font-medium">8. Disclaimers</h3>
+                    <p className="text-sm text-muted-foreground">
+                      THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE." QUILLSWITCH MAKES NO WARRANTIES, WHETHER EXPRESS, 
+                      IMPLIED, OR STATUTORY, REGARDING THE SERVICE, INCLUDING ANY WARRANTY THAT THE SERVICE WILL BE 
+                      UNINTERRUPTED OR ERROR-FREE. WHILE OUR AI PROVIDES MAPPING SUGGESTIONS, YOU ARE ULTIMATELY RESPONSIBLE 
+                      FOR VALIDATING THE ACCURACY OF YOUR DATA MIGRATION.
+                    </p>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">9. Term and Termination</h3>
+                    
+                    <h4 className="text-base font-medium mt-4 mb-2">Term</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      This Agreement begins when you purchase a plan and continues until your one-time migration is complete or terminated.
+                    </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">Termination</h4>
+                    <p className="text-sm text-muted-foreground">
+                      We may terminate or suspend your access to the Service immediately, without prior notice, for any 
+                      material breach of these Terms, including failure to comply with the Acceptable Use Policy.
+                    </p>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">10. Governing Law & Contact</h3>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      This Agreement shall be governed by the laws of the State of California, without regard to its 
+                      conflict of law principles. Any questions about these Terms should be addressed to:
                     </p>
                     <div className="bg-slate-800 p-3 rounded-lg">
                       <p className="text-sm">
-                        <strong>Legal Team:</strong> legal@quillswitch.com<br/>
-                        <strong>Customer Support:</strong> support@quillswitch.com<br/>
-                        <strong>Sales Inquiries:</strong> sales@quillswitch.com<br/>
-                        <strong>Business Hours:</strong> Monday-Friday, 9 AM - 6 PM PST
+                        <strong>QuillSwitch Inc.</strong><br/>
+                        1889 Harrison Street, #552<br/>
+                        Oakland, CA 94612<br/>
+                        <strong>Email:</strong> paul.aqua@quillswitch.com
                       </p>
                     </div>
                   </section>

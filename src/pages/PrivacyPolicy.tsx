@@ -11,14 +11,14 @@ const PrivacyPolicyPage: React.FC = () => {
       <div className="min-h-screen pt-24 pb-16 bg-background">
         <ContentSection
           title="Privacy Policy"
-          description="Last updated: January 5, 2025"
+          description="Last updated: July 4, 2025"
           centered={true}
         >
           <Card className="w-full max-w-4xl mx-auto">
             <CardHeader>
               <CardTitle>Privacy Policy</CardTitle>
               <CardDescription>
-                Last updated: January 5, 2025
+                Last updated: July 4, 2025
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -197,16 +197,17 @@ const PrivacyPolicyPage: React.FC = () => {
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">13. Contact Information</h3>
+                    <h3 className="text-lg font-medium">13. Contact Us</h3>
                     <p className="text-sm text-muted-foreground mb-2">
-                      For privacy-related questions, concerns, or to exercise your rights:
+                      If you have any questions about this Privacy Policy or wish to exercise your data rights, please contact us at:
                     </p>
                     <div className="bg-slate-800 p-3 rounded-lg">
                       <p className="text-sm">
-                        <strong>Privacy Team:</strong> privacy@quillswitch.com<br/>
-                        <strong>Data Protection Officer:</strong> dpo@quillswitch.com<br/>
-                        <strong>Support:</strong> Available 24/7 through our platform<br/>
-                        <strong>Response Guarantee:</strong> Privacy inquiries answered within 72 hours
+                        <strong>QuillSwitch Inc.</strong><br/>
+                        Attn: Privacy Officer<br/>
+                        1889 Harrison Street, #552<br/>
+                        Oakland, CA 94612<br/>
+                        <strong>Email:</strong> paul.aqua@quillswitch.com
                       </p>
                     </div>
                   </section>
