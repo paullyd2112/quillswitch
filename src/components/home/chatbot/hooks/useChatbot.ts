@@ -85,8 +85,21 @@ export const useChatbot = () => {
     const input = userInput.toLowerCase();
     const recentMessages = conversationHistory.slice(-4); // Look at recent conversation context
     
-    // Don't show CTAs too early in conversation
+    // PRIORITY: Detect explicit requests for expert/specialist connection
+    const expertRequestIndicators = [
+      'talk to a specialist', 'migration specialist', 'talk to someone', 'speak to someone',
+      'connect me with', 'talk to a person', 'human help', 'live person', 'expert help',
+      'migration expert', 'talk to an expert', 'speak with expert', 'connect with specialist',
+      'want to talk', 'need to talk', 'let me talk', 'talk to your team'
+    ];
+    
+    const hasExpertRequest = expertRequestIndicators.some(indicator => input.includes(indicator));
+    
+    // If user explicitly asks for expert connection, show CTA immediately (after first message)
     const userMessageCount = conversationHistory.filter(msg => msg.type === 'user').length;
+    if (hasExpertRequest && userMessageCount >= 1) return true;
+    
+    // Don't show CTAs too early in normal conversation flow
     if (userMessageCount < 2) return false;
     
     // Show CTAs when user expresses clear intent or decision points
