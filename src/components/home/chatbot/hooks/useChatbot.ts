@@ -130,10 +130,13 @@ export const useChatbot = () => {
           : msg
       ));
       
-      // Add contextual CTAs after a delay
-      setTimeout(() => {
-        addContextualCTA(userMessage);
-      }, 1500);
+      // Only show CTAs after user has sent at least 3 messages (good conversation flow)
+      const userMessageCount = messages.filter(msg => msg.type === 'user').length + 1; // +1 for current message
+      if (userMessageCount >= 3) {
+        setTimeout(() => {
+          addContextualCTA(userMessage);
+        }, 1500);
+      }
       
     } catch (error) {
       // Replace loading message with error
