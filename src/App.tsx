@@ -21,6 +21,8 @@ import AppRoutes from "@/pages/app/AppRoutes";
 import ConnectionHub from "@/pages/ConnectionHub";
 import OAuthCallback from "@/pages/OAuthCallback";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
 import NotFound from "@/pages/NotFound";
 
 import "./App.css";
@@ -60,6 +62,8 @@ function App() {
                       <Route path="/api-docs" element={<ApiDocs />} />
                       <Route path="/support" element={<Support />} />
                       <Route path="/connections" element={<ConnectionHub />} />
+                      <Route path="/privacy" element={<PrivacyPolicy />} />
+                      <Route path="/terms" element={<TermsOfService />} />
                       <Route path="/app/*" element={<AppRoutes />} />
                       <Route path="/oauth/callback" element={<OAuthCallback />} />
                       <Route path="/payment-success" element={<PaymentSuccess />} />
