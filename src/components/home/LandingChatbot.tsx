@@ -33,8 +33,8 @@ const QUILLSWITCH_KNOWLEDGE = {
       details: "Automated data mapping with 99.9% accuracy, intelligent field matching, transformation rules, validation, and error handling."
     },
     speed: {
-      title: "5x Faster Migrations",
-      details: "Complete migrations in weeks instead of months. Automated processes eliminate manual work and reduce timeline by 80%."
+      title: "Lightning Fast Migrations",
+      details: "Complete migrations in hours, days, or a week instead of months. Automated processes eliminate manual work and reduce timeline by 80%."
     },
     accuracy: {
       title: "99.9% Data Accuracy",
@@ -68,7 +68,7 @@ const QUILLSWITCH_KNOWLEDGE = {
 
   savings: {
     typical_savings: "60-80% cost reduction vs traditional methods",
-    time_savings: "5x faster completion (weeks vs months)",
+    time_savings: "Complete in hours, days, or a week vs months",
     consultant_cost_avoided: "$15,000-$50,000+ in consulting fees",
     internal_resource_savings: "80% reduction in internal staff time"
   },
@@ -128,7 +128,7 @@ What makes us different:
 - We use AI to map your data automatically with 99.9% accuracy, so you don't have to figure out which field goes where
 - Everything connects through our Unified API Integration which is secure and standardized 
 - We encrypt everything and have enterprise-grade security
-- Takes weeks instead of months (about 5x faster than doing it manually or with consultants)
+- Complete migrations in hours, days, or a week instead of months (lightning fast compared to traditional methods)
 - Saves most businesses 60-80% on costs compared to hiring consultants (who usually charge $15k-50k+)
 
 We work with all the major CRMs: Salesforce, HubSpot, Pipedrive, Zoho, Microsoft Dynamics, Sugar CRM, Insightly, Copper. We migrate contacts, accounts, opportunities, activities, tasks, notes, documents, custom fields - basically everything.
