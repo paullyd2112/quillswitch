@@ -19,8 +19,8 @@ interface ChatMessage {
 const QUILLSWITCH_KNOWLEDGE = {
   overview: {
     mission: "QuillSwitch makes CRM data migration simple, secure, and fast for Small-to-Medium Businesses (SMBs) and Mid-Market companies.",
-    problem: "Current CRM migration methods are complex, time-consuming, risky (data loss/errors), require technical expertise or expensive consultants, and neglect the hidden pain of manually reconnecting integrated applications post-migration.",
-    solution: "Automated, secure CRM migration with AI-powered mapping, Unified API Integration security, and comprehensive ecosystem reconnection."
+    problem: "Current CRM migration methods are complex, time-consuming, risky (data loss/errors), require technical expertise or expensive consultants.",
+    solution: "Automated, secure CRM migration with AI-powered mapping and Unified API Integration security."
   },
   
   features: {
@@ -49,7 +49,7 @@ const QUILLSWITCH_KNOWLEDGE = {
   technical: {
     supported_crms: ["Salesforce", "HubSpot", "Pipedrive", "Zoho", "Microsoft Dynamics", "Sugar CRM", "Insightly", "Copper"],
     data_types: ["Contacts", "Accounts", "Opportunities", "Activities", "Tasks", "Notes", "Documents", "Custom Fields"],
-    integrations: "Unified API integration supporting 200+ business tools for seamless ecosystem reconnection",
+    integrations: "Unified API integration for secure, standardized CRM connections",
     architecture: "Cloud-based platform with redundant security, real-time monitoring, and enterprise-grade infrastructure"
   },
 
@@ -79,8 +79,7 @@ const QUILLSWITCH_KNOWLEDGE = {
       "2. AI analyzes and maps your data automatically", 
       "3. Review and approve the migration plan",
       "4. Execute secure data transfer with real-time monitoring",
-      "5. Validate data accuracy and completeness",
-      "6. Reconnect your integrated tools and applications"
+      "5. Validate data accuracy and completeness"
     ]
   }
 };
@@ -123,8 +122,8 @@ const LandingChatbot = () => {
 
 ABOUT QUILLSWITCH:
 - Mission: Make CRM data migration simple, secure, and fast for SMBs and Mid-Market companies
-- Core Problem Solved: Traditional CRM migrations are complex, time-consuming, risky, expensive, and require manual reconnection of integrated tools
-- Solution: Automated, AI-powered, secure CRM migration with comprehensive ecosystem reconnection via Unified API Integration
+- Core Problem Solved: Traditional CRM migrations are complex, time-consuming, risky, expensive, and require technical expertise or expensive consultants
+- Solution: Automated, AI-powered, secure CRM migration with Unified API Integration
 
 KEY FEATURES & BENEFITS:
 🔒 Enterprise-Grade Security:
@@ -153,7 +152,7 @@ KEY FEATURES & BENEFITS:
 TECHNICAL CAPABILITIES:
 - Supported CRMs: Salesforce, HubSpot, Pipedrive, Zoho, Microsoft Dynamics, Sugar CRM, Insightly, Copper
 - Data Types: Contacts, Accounts, Opportunities, Activities, Tasks, Notes, Documents, Custom Fields
-- Unified API Integration: 200+ business tools for seamless ecosystem reconnection
+- Unified API Integration: Secure, standardized CRM connections
 - Cloud-based platform with enterprise-grade infrastructure
 
 PRICING PLANS:
@@ -176,7 +175,6 @@ MIGRATION PROCESS:
 3. Review & Approve (custom adjustments available)
 4. Secure Transfer (real-time monitoring)
 5. Validation & Verification (comprehensive accuracy checks)
-6. Ecosystem Reconnection (automated tool reconnection via Unified API)
 
 PERSONALITY & TONE:
 - Be friendly, helpful, and enthusiastic about QuillSwitch
