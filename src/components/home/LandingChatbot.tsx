@@ -54,15 +54,15 @@ const QUILLSWITCH_KNOWLEDGE = {
   },
 
   pricing: {
-    standard: {
-      name: "Standard Plan",
-      features: ["Up to 50,000 records", "Basic data mapping", "Standard support", "30-day data retention"],
-      price: "Starting at $2,500"
+    essential: {
+      name: "Essential Package",
+      features: ["Up to 250,000 records", "AI-powered data mapping", "Standard support", "Complete data migration"],
+      price: "$999"
     },
     pro: {
-      name: "Pro Plan", 
-      features: ["Unlimited records", "Advanced AI mapping", "Priority support", "90-day data retention", "Custom integrations"],
-      price: "Custom pricing"
+      name: "Pro Package", 
+      features: ["250,000+ records", "Priority processing", "Dedicated migration specialist", "Complex transformation support", "Advanced AI mapping"],
+      price: "Contact for pricing"
     }
   },
 
@@ -134,8 +134,8 @@ What makes us different:
 We work with all the major CRMs: Salesforce, HubSpot, Pipedrive, Zoho, Microsoft Dynamics, Sugar CRM, Insightly, Copper. We migrate contacts, accounts, opportunities, activities, tasks, notes, documents, custom fields - basically everything.
 
 Pricing is straightforward:
-- Standard Plan is $2,500 (up to 50k records, basic mapping, standard support, 30-day retention)  
-- Pro Plan is custom pricing (unlimited records, advanced AI, priority support, 90-day retention, custom integrations)
+- Essential Package is $999 (up to 250,000 records, AI-powered data mapping, standard support, complete data migration)  
+- Pro Package is contact for pricing (250,000+ records, priority processing, dedicated migration specialist, complex transformation support, advanced AI mapping)
 
 The process is pretty simple: connect your CRMs securely, our AI analyzes and maps everything, you review and approve the plan, we transfer everything with real-time monitoring, then validate it all worked correctly.
 
