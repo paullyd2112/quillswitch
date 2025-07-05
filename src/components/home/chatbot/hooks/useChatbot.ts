@@ -81,6 +81,43 @@ export const useChatbot = () => {
     }
   };
 
+  const shouldShowCTA = useCallback((userInput: string, conversationHistory: ChatMessage[]): boolean => {
+    const input = userInput.toLowerCase();
+    const recentMessages = conversationHistory.slice(-4); // Look at recent conversation context
+    
+    // Don't show CTAs too early in conversation
+    const userMessageCount = conversationHistory.filter(msg => msg.type === 'user').length;
+    if (userMessageCount < 2) return false;
+    
+    // Show CTAs when user expresses clear intent or decision points
+    const actionIndicators = [
+      'ready', 'interested', 'sounds good', 'makes sense', 'convinced', 'sold',
+      'let\'s do', 'want to', 'need to', 'should we', 'next step', 'move forward',
+      'get started', 'sign up', 'try it', 'demo', 'setup'
+    ];
+    
+    const questionIndicators = [
+      'what if', 'but what about', 'concerned about', 'worried about', 'issue with',
+      'problem with', 'not sure', 'hesitant', 'doubt', 'risk'
+    ];
+    
+    // Check if user seems ready to act
+    const showsReadiness = actionIndicators.some(indicator => input.includes(indicator));
+    
+    // Check if user still has concerns (don't show CTAs yet)
+    const hasMoreQuestions = questionIndicators.some(indicator => input.includes(indicator)) ||
+                            input.includes('?') ||
+                            input.includes('what about') ||
+                            input.includes('tell me more');
+    
+    // Look at conversation flow - if user asked multiple questions, wait for natural pause
+    const recentlyAskedQuestions = recentMessages.filter(msg => 
+      msg.type === 'user' && msg.content.includes('?')
+    ).length;
+    
+    return showsReadiness || (!hasMoreQuestions && recentlyAskedQuestions === 0 && userMessageCount >= 3);
+  }, []);
+
   const addContextualCTA = useCallback((userInput: string) => {
     const input = userInput.toLowerCase();
     
@@ -130,9 +167,8 @@ export const useChatbot = () => {
           : msg
       ));
       
-      // Only show CTAs after user has sent at least 3 messages (good conversation flow)
-      const userMessageCount = messages.filter(msg => msg.type === 'user').length + 1; // +1 for current message
-      if (userMessageCount >= 3) {
+      // Only show CTAs when conversation flow indicates user is ready
+      if (shouldShowCTA(userMessage, messages)) {
         setTimeout(() => {
           addContextualCTA(userMessage);
         }, 1500);
