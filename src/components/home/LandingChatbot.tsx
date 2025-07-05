@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { MessageCircle, Calculator, TrendingUp, ArrowRight, X, Send, Bot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
+import { sendMessageToGemini, type ChatMessage as GeminiChatMessage } from "@/services/gemini/geminiService";
 
 interface ChatMessage {
   id: string;
@@ -87,11 +88,12 @@ const QUILLSWITCH_KNOWLEDGE = {
 const LandingChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       type: 'bot',
-      content: "👋 Hi! I'm your QuillSwitch AI assistant. I can help you with:\n\n• CRM migration planning & costs\n• Technical details & security\n• Feature explanations & comparisons\n• Pricing & plan recommendations\n• Migration process & timeline\n\nWhat would you like to know about QuillSwitch?",
+      content: "👋 Hello! I'm **Quilly**, your interactive QuillSwitch assistant!\n\nI'm here to help you with everything about CRM migrations:\n\n• Migration planning & cost analysis\n• Security & technical details\n• Feature comparisons & benefits\n• Pricing recommendations\n• Step-by-step guidance\n\n**Ask me anything** - I'm powered by AI and have comprehensive knowledge about QuillSwitch!",
     }
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -117,214 +119,150 @@ const LandingChatbot = () => {
     setMessages(prev => [...prev, { ...message, id: Date.now().toString() }]);
   };
 
-  const getIntelligentResponse = (userInput: string): string => {
-    const input = userInput.toLowerCase();
-    
-    // Cost & Savings related
-    if (input.includes('cost') || input.includes('price') || input.includes('saving') || input.includes('expensive') || input.includes('budget')) {
-      return `💰 **QuillSwitch Pricing & Savings:**
+  const QUILLSWITCH_SYSTEM_PROMPT = `You are Quilly, the friendly and knowledgeable AI assistant for QuillSwitch. You help users understand CRM migration services and provide comprehensive information about QuillSwitch.
 
-**Standard Plan:** Starting at $2,500
-• Up to 50,000 records
-• Basic data mapping  
-• Standard support
-• 30-day data retention
+ABOUT QUILLSWITCH:
+- Mission: Make CRM data migration simple, secure, and fast for SMBs and Mid-Market companies
+- Core Problem Solved: Traditional CRM migrations are complex, time-consuming, risky, expensive, and require manual reconnection of integrated tools
+- Solution: Automated, AI-powered, secure CRM migration with comprehensive ecosystem reconnection
 
-**Pro Plan:** Custom pricing
-• Unlimited records
-• Advanced AI mapping
-• Priority support  
-• 90-day data retention
-• Custom integrations
+KEY FEATURES & BENEFITS:
+🔒 Enterprise-Grade Security:
+- OAuth 2.0 authentication (no credential storage)
+- pgsodium encryption at rest
+- Row Level Security (RLS)
+- Data protection guarantee
+- Compliance-ready infrastructure
 
-**Typical Savings:** 60-80% vs traditional methods
-• Avoid $15,000-$50,000+ in consulting fees
-• 5x faster completion (weeks vs months)
-• 80% reduction in internal staff time
+🤖 AI-Powered Automation:
+- 99.9% data accuracy with intelligent mapping
+- Automated field matching and transformation
+- Smart error detection and resolution
+- Comprehensive validation
 
-Would you like a personalized savings calculation based on your specific situation?`;
+⚡ 5x Faster Migrations:
+- Complete in weeks vs months (80% time reduction)
+- Minimal business disruption
+- Real-time monitoring and progress tracking
+
+💰 Significant Cost Savings:
+- 60-80% cost reduction vs traditional methods
+- Avoid $15,000-$50,000+ in consulting fees
+- 80% reduction in internal staff time
+
+TECHNICAL CAPABILITIES:
+- Supported CRMs: Salesforce, HubSpot, Pipedrive, Zoho, Microsoft Dynamics, Sugar CRM, Insightly, Copper
+- Data Types: Contacts, Accounts, Opportunities, Activities, Tasks, Notes, Documents, Custom Fields
+- Unified API Integration: 200+ business tools for ecosystem reconnection
+- Cloud-based platform with enterprise-grade infrastructure
+
+PRICING PLANS:
+Standard Plan ($2,500):
+- Up to 50,000 records
+- Basic data mapping
+- Standard support
+- 30-day data retention
+
+Pro Plan (Custom pricing):
+- Unlimited records
+- Advanced AI mapping
+- Priority support
+- 90-day data retention
+- Custom integrations
+
+MIGRATION PROCESS:
+1. Secure Connection (OAuth - no credentials stored)
+2. AI Analysis & Mapping (intelligent field matching)
+3. Review & Approve (custom adjustments available)
+4. Secure Transfer (real-time monitoring)
+5. Validation & Verification (comprehensive accuracy checks)
+6. Ecosystem Reconnection (automated tool reconnection)
+
+PERSONALITY & TONE:
+- Be friendly, helpful, and enthusiastic about QuillSwitch
+- Use emojis and formatting to make responses engaging
+- Provide specific, actionable information
+- Always be ready to help with next steps
+- Focus on benefits and value proposition
+- Be concise but comprehensive
+
+If users ask about topics outside QuillSwitch/CRM migration, politely redirect them back to how you can help with their migration needs.
+
+Always end responses with a helpful question or suggestion for next steps to keep the conversation flowing.`;
+
+  const getGeminiResponse = async (userInput: string): Promise<string> => {
+    try {
+      setIsLoading(true);
+      
+      // Build conversation history for context
+      const conversationHistory: GeminiChatMessage[] = messages
+        .filter(msg => msg.type !== 'options')
+        .slice(-6) // Keep last 6 messages for context
+        .map(msg => ({
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        }));
+      
+      // Add current user message
+      conversationHistory.push({
+        role: 'user',
+        content: userInput
+      });
+
+      const response = await sendMessageToGemini(conversationHistory, QUILLSWITCH_SYSTEM_PROMPT);
+      
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      
+      return response.response || "I apologize, but I'm having trouble processing your request right now. Please try asking me about QuillSwitch features, pricing, or migration process!";
+      
+    } catch (error) {
+      console.error('Error getting Gemini response:', error);
+      return "I'm sorry, I'm experiencing some technical difficulties. However, I'd still love to help you with your CRM migration questions! Try asking me about our pricing plans, security features, or migration process.";
+    } finally {
+      setIsLoading(false);
     }
-
-    // Security related
-    if (input.includes('security') || input.includes('safe') || input.includes('secure') || input.includes('oauth') || input.includes('encryption')) {
-      return `🔒 **Enterprise-Grade Security:**
-
-• **OAuth 2.0 Authentication:** Secure API connections without exposing credentials
-• **Encryption at Rest:** All data encrypted using pgsodium
-• **Row Level Security (RLS):** Database-level access controls
-• **Data Protection Guarantee:** 99.9% accuracy with comprehensive validation
-• **Secure Infrastructure:** Cloud-based with redundant security measures
-• **Compliance Ready:** Built for enterprise security standards
-
-Your data is protected at every step of the migration process. We never store your actual CRM credentials - only secure OAuth tokens.`;
-    }
-
-    // Technical/Integration related  
-    if (input.includes('technical') || input.includes('api') || input.includes('integration') || input.includes('crm') || input.includes('system')) {
-      return `⚙️ **Technical Capabilities:**
-
-**Supported CRMs:** 
-Salesforce • HubSpot • Pipedrive • Zoho • Microsoft Dynamics • Sugar CRM • Insightly • Copper
-
-**Data Types Migrated:**
-• Contacts & Accounts
-• Opportunities & Deals  
-• Activities & Tasks
-• Notes & Documents
-• Custom Fields & Objects
-
-**Unified API Integration:** 200+ business tools for ecosystem reconnection
-
-**Architecture:** Cloud-based platform with real-time monitoring, automated scaling, and enterprise-grade infrastructure.
-
-Need specifics about your CRM compatibility?`;
-    }
-
-    // Process/How it works
-    if (input.includes('how') || input.includes('process') || input.includes('work') || input.includes('step') || input.includes('migration')) {
-      return `🚀 **QuillSwitch Migration Process:**
-
-**1. Secure Connection**
-Connect source & destination CRMs via OAuth (no credentials stored)
-
-**2. AI Analysis & Mapping** 
-Our AI analyzes your data and creates intelligent field mappings
-
-**3. Review & Approve**
-Review the migration plan and make any custom adjustments
-
-**4. Secure Transfer**
-Execute migration with real-time monitoring and progress tracking
-
-**5. Validation & Verification**
-Comprehensive data accuracy checks and validation
-
-**6. Ecosystem Reconnection**
-Reconnect your integrated tools and applications seamlessly
-
-**Timeline:** Weeks instead of months (5x faster than traditional methods)`;
-    }
-
-    // Features/Benefits
-    if (input.includes('feature') || input.includes('benefit') || input.includes('advantage') || input.includes('better') || input.includes('why')) {
-      return `✨ **Key QuillSwitch Features:**
-
-🤖 **AI-Powered Automation**
-• 99.9% data accuracy with intelligent mapping
-• Automated field matching and transformation
-• Smart error detection and resolution
-
-⚡ **5x Faster Migrations**  
-• Complete in weeks vs months
-• 80% reduction in timeline
-• Minimal business disruption
-
-🔒 **Enterprise Security**
-• OAuth 2.0 + encryption at rest
-• No credential storage
-• Data protection guarantee  
-
-🎯 **Comprehensive Migration**
-• All data types supported
-• Custom field handling
-• Document migration included
-
-🔗 **Ecosystem Reconnection**
-• 200+ tool integrations
-• Automated reconnection process
-• Minimal manual reconfiguration
-
-Ready to see how this applies to your specific migration?`;
-    }
-
-    // Comparison related
-    if (input.includes('compare') || input.includes('vs') || input.includes('versus') || input.includes('alternative') || input.includes('competitor')) {
-      return `📊 **QuillSwitch vs Traditional Methods:**
-
-**Manual Export/Import:**
-❌ Weeks of manual work
-❌ High error rates (10-30%)
-❌ No automated validation
-❌ Manual tool reconnection
-
-**Consulting Services:**
-❌ $15,000-$50,000+ costs
-❌ 3-6 month timelines  
-❌ Limited ongoing support
-❌ External dependency
-
-**QuillSwitch Automated:**
-✅ AI-powered automation
-✅ 99.9% accuracy guarantee
-✅ 5x faster completion
-✅ 60-80% cost savings
-✅ Comprehensive ecosystem reconnection
-✅ Ongoing support included
-
-Want to see specific savings for your migration?`;
-    }
-
-    // Support/Help related
-    if (input.includes('support') || input.includes('help') || input.includes('assistance') || input.includes('expert')) {
-      return `🤝 **QuillSwitch Support:**
-
-**Migration Specialists Available:**
-• Dedicated expert for your migration
-• Step-by-step guidance throughout
-• Custom mapping assistance
-• Post-migration validation
-
-**Comprehensive Resources:**
-• Detailed documentation
-• Video tutorials
-• Best practices guide
-• Migration checklists
-
-**Ongoing Support:**
-• Email & chat support
-• Phone consultation available
-• Expert consultation scheduling
-• Post-migration assistance
-
-**Response Times:**
-• Standard Plan: 24-48 hours
-• Pro Plan: Same-day priority support
-
-Ready to schedule a consultation with our migration experts?`;
-    }
-
-    // Default comprehensive response
-    return `I can help you with detailed information about QuillSwitch! Here are some popular topics:
-
-💰 **"pricing"** - Plans, costs, and savings calculations
-🔒 **"security"** - OAuth, encryption, and data protection  
-⚙️ **"technical"** - CRM compatibility and integrations
-🚀 **"process"** - Step-by-step migration workflow
-✨ **"features"** - AI automation and key benefits
-📊 **"compare"** - How we compare to alternatives
-🤝 **"support"** - Expert assistance and resources
-
-Just ask me about any specific aspect you'd like to know more about!`;
   };
 
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isLoading) return;
 
     const userMessage = inputValue.trim();
     addMessage({ type: 'user', content: userMessage });
+    setInputValue('');
     
-    // Simulate thinking delay
-    setTimeout(() => {
-      const response = getIntelligentResponse(userMessage);
-      addMessage({ type: 'bot', content: response });
+    // Add loading message
+    const loadingMessage: ChatMessage = { 
+      type: 'bot', 
+      content: "🤔 Thinking...",
+      id: Date.now().toString()
+    };
+    setMessages(prev => [...prev, loadingMessage]);
+    
+    try {
+      const response = await getGeminiResponse(userMessage);
       
-      // Add contextual CTAs based on the conversation
+      // Replace loading message with actual response
+      setMessages(prev => prev.map(msg => 
+        msg.id === loadingMessage.id 
+          ? { ...msg, content: response }
+          : msg
+      ));
+      
+      // Add contextual CTAs after a delay
       setTimeout(() => {
         addContextualCTA(userMessage);
-      }, 1000);
-    }, 500);
-
-    setInputValue('');
+      }, 1500);
+      
+    } catch (error) {
+      // Replace loading message with error
+      setMessages(prev => prev.map(msg => 
+        msg.id === loadingMessage.id 
+          ? { ...msg, content: "I'm sorry, I encountered an error. Please try asking me about QuillSwitch pricing, features, or migration process!" }
+          : msg
+      ));
+    }
   };
 
   const addContextualCTA = (userInput: string) => {
@@ -410,7 +348,7 @@ Just ask me about any specific aspect you'd like to know more about!`;
           <MessageCircle className="h-6 w-6 text-white group-hover:scale-110 transition-transform" />
         </Button>
         <div className="absolute -top-12 -left-8 bg-slate-900 text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-          Calculate Your Savings
+          Chat with Quilly
         </div>
       </div>
     );
@@ -422,8 +360,8 @@ Just ask me about any specific aspect you'd like to know more about!`;
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg">QuillSwitch Savings Calculator</CardTitle>
+              <Bot className="h-5 w-5 text-primary" />
+              <CardTitle className="text-lg">Quilly - Interactive QuillSwitch Assistant</CardTitle>
             </div>
             <Button
               variant="ghost"
@@ -436,8 +374,8 @@ Just ask me about any specific aspect you'd like to know more about!`;
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="text-xs">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              Live Savings Calculator
+              <Bot className="h-3 w-3 mr-1" />
+              AI-Powered Assistant
             </Badge>
           </div>
         </CardHeader>
