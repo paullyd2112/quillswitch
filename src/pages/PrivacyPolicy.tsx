@@ -11,14 +11,14 @@ const PrivacyPolicyPage: React.FC = () => {
       <div className="min-h-screen pt-24 pb-16 bg-background">
         <ContentSection
           title="Privacy Policy"
-          description="Last updated: May 1, 2025"
+          description="Last updated: January 5, 2025"
           centered={true}
         >
           <Card className="w-full max-w-4xl mx-auto">
             <CardHeader>
               <CardTitle>Privacy Policy</CardTitle>
               <CardDescription>
-                Last updated: May 1, 2025
+                Last updated: January 5, 2025
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -27,149 +27,188 @@ const PrivacyPolicyPage: React.FC = () => {
                   <section>
                     <h3 className="text-lg font-medium">1. Introduction</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      This Privacy Policy explains how we collect, use, store, protect, and share your personal data. 
-                      We are committed to ensuring the privacy and security of your data in compliance with the General 
-                      Data Protection Regulation (GDPR) and other applicable data protection laws.
+                      QuillSwitch ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy 
+                      explains how we collect, use, disclose, and safeguard your information when you use our CRM data 
+                      migration services and platform. We handle highly sensitive business data and maintain enterprise-grade 
+                      security standards throughout all our operations.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">2. Data Controller</h3>
+                    <h3 className="text-lg font-medium">2. Data Controller Information</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
                       The Data Controller responsible for your personal data is:
-                      <br />
-                      Company Name: QuillSwitch Inc.
-                      <br />
-                      Address: 123 Tech Avenue, San Francisco, CA 94105
-                      <br />
-                      Email: privacy@quillswitch.com
-                      <br />
-                      Our Data Protection Officer can be contacted at: dpo@quillswitch.com
                     </p>
+                    <div className="bg-slate-800 p-3 rounded-lg mt-2">
+                      <p className="text-sm">
+                        <strong>Company:</strong> QuillSwitch, Inc.<br/>
+                        <strong>Email:</strong> privacy@quillswitch.com<br/>
+                        <strong>Data Protection Officer:</strong> dpo@quillswitch.com<br/>
+                        <strong>Response Time:</strong> We respond to privacy inquiries within 72 hours
+                      </p>
+                    </div>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">3. Data We Collect</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We collect and process the following categories of personal data:
-                    </p>
-                    <ul className="list-disc pl-6 mt-2 space-y-1 text-sm text-muted-foreground">
-                      <li>Identity data (name, username)</li>
-                      <li>Contact data (email address, telephone number)</li>
-                      <li>Profile data (preferences, feedback, survey responses)</li>
-                      <li>Technical data (IP address, login data, browser type and version)</li>
-                      <li>Usage data (information about how you use our website and services)</li>
+                    <h3 className="text-lg font-medium">3. Information We Collect</h3>
+                    
+                    <h4 className="text-base font-medium mt-4 mb-2">3.1 Account & Contact Information</h4>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li>Name, email address, company name, and role</li>
+                      <li>Account credentials (encrypted and secured)</li>
+                      <li>Payment information (processed securely through Stripe)</li>
+                      <li>Communication preferences and support interactions</li>
+                    </ul>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">3.2 CRM & Business Data</h4>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li>CRM system credentials (encrypted using pgsodium enterprise-grade encryption)</li>
+                      <li>CRM data: contacts, accounts, opportunities, activities, tasks, notes, documents</li>
+                      <li>Custom fields, dashboards, reports, and workflow configurations</li>
+                      <li>Data mapping configurations and transformation rules</li>
+                      <li>Migration logs, error reports, and performance metrics</li>
+                    </ul>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">3.3 Technical & Usage Data</h4>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li>Platform usage analytics and interaction patterns</li>
+                      <li>AI mapping and transformation history</li>
+                      <li>System performance data and error diagnostics</li>
+                      <li>IP addresses, browser information, and device data</li>
+                      <li>Chatbot conversation data (for support improvement)</li>
                     </ul>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">4. How We Use Your Data</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We use your personal data for the following purposes:
-                    </p>
-                    <ul className="list-disc pl-6 mt-2 space-y-1 text-sm text-muted-foreground">
-                      <li>To provide and maintain our services</li>
-                      <li>To notify you about changes to our services</li>
-                      <li>To allow you to participate in interactive features of our services</li>
-                      <li>To provide customer support</li>
-                      <li>To gather analysis or valuable information to improve our services</li>
-                      <li>To monitor the usage of our services</li>
-                      <li>To detect, prevent and address technical issues</li>
+                    <h3 className="text-lg font-medium">4. How We Use Your Information</h3>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>CRM Migration Services:</strong> Process and migrate your data between CRM systems</li>
+                      <li><strong>AI-Powered Data Mapping:</strong> Use Google Gemini AI to automatically map and transform data with 99.9% accuracy</li>
+                      <li><strong>Dashboard Recreation:</strong> Recreate dashboards, reports, and visualizations in destination systems</li>
+                      <li><strong>Security & Monitoring:</strong> Detect unauthorized access, prevent data breaches, and maintain audit logs</li>
+                      <li><strong>Customer Support:</strong> Provide technical assistance and troubleshoot migration issues</li>
+                      <li><strong>Service Improvement:</strong> Analyze usage patterns to enhance platform performance and features</li>
+                      <li><strong>Billing & Account Management:</strong> Process payments and manage subscriptions</li>
+                      <li><strong>Legal Compliance:</strong> Meet regulatory requirements and enforce our terms</li>
                     </ul>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">5. Legal Basis for Processing</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We process your personal data based on the following legal grounds:
+                    <h3 className="text-lg font-medium">5. Data Security & Protection</h3>
+                    
+                    <h4 className="text-base font-medium mt-4 mb-2">5.1 Enterprise-Grade Encryption</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      We use pgsodium encryption to protect all sensitive data at rest. All CRM credentials and business data 
+                      are encrypted using advanced cryptographic methods before storage.
                     </p>
-                    <ul className="list-disc pl-6 mt-2 space-y-1 text-sm text-muted-foreground">
-                      <li>Your consent</li>
-                      <li>Performance of a contract with you</li>
-                      <li>Compliance with a legal obligation</li>
-                      <li>Protection of your vital interests</li>
-                      <li>Performance of a task carried out in the public interest</li>
-                      <li>Our legitimate interests, provided your interests and fundamental rights do not override those interests</li>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">5.2 Access Controls & Authentication</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      We implement Row Level Security (RLS) ensuring you can only access your own data. OAuth 2.0 is used 
+                      for secure CRM connections. Multi-factor authentication and session management protect account access.
+                    </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">5.3 Infrastructure Security</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Our platform runs on Supabase with enterprise-grade infrastructure, automated security monitoring, 
+                      regular security audits, and 24/7 threat detection systems.
+                    </p>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">6. Third-Party Services</h3>
+                    <p className="text-sm text-muted-foreground mb-2">We integrate with these third-party services:</p>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>Supabase:</strong> Database hosting, authentication, and infrastructure services</li>
+                      <li><strong>Google Gemini AI:</strong> AI-powered data mapping and intelligent chatbot functionality</li>
+                      <li><strong>Stripe:</strong> Secure payment processing (PCI DSS compliant)</li>
+                      <li><strong>CRM Providers:</strong> Direct API connections to your source and destination systems</li>
+                      <li><strong>Cloud Storage:</strong> Encrypted document storage and migration services</li>
                     </ul>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">6. Data Retention</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We will retain your personal data only for as long as is necessary for the purposes set out in this Privacy Policy. 
-                      We will retain and use your personal data to the extent necessary to comply with our legal obligations, resolve disputes, 
-                      and enforce our legal agreements and policies.
+                    <p className="text-sm text-muted-foreground mt-2">
+                      We maintain data processing agreements with all third-party providers to ensure your data protection 
+                      rights are preserved.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">7. Data Transfer</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Your personal data may be transferred to — and maintained on — computers located outside of your state, province, 
-                      country or other governmental jurisdiction where the data protection laws may differ from those of your jurisdiction. 
-                      If you are located outside the United States and choose to provide information to us, please note that we transfer 
-                      the data, including personal data, to the United States and process it there.
-                    </p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We ensure that any such transfer complies with applicable data protection laws and that your data is protected as 
-                      outlined in this Privacy Policy. When we transfer your data outside the European Economic Area (EEA), we use 
-                      standard contractual clauses approved by the European Commission.
-                    </p>
+                    <h3 className="text-lg font-medium">7. Data Retention Periods</h3>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>Account Data:</strong> Retained while your account is active and for 12 months after closure</li>
+                      <li><strong>CRM Migration Data:</strong> Processed during migration and securely deleted within 30 days after completion</li>
+                      <li><strong>Encrypted Credentials:</strong> Deleted immediately upon request or account termination</li>
+                      <li><strong>Migration Logs:</strong> Retained for 12 months for support and compliance purposes</li>
+                      <li><strong>Payment Records:</strong> Retained for 7 years for tax and regulatory compliance</li>
+                      <li><strong>Support Communications:</strong> Retained for 3 years for service improvement</li>
+                    </ul>
                   </section>
                   
                   <section>
                     <h3 className="text-lg font-medium">8. Your Data Protection Rights</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Under the GDPR, you have the following rights:
-                    </p>
-                    <ul className="list-disc pl-6 mt-2 space-y-1 text-sm text-muted-foreground">
-                      <li><strong>Right to access</strong> - You have the right to request copies of your personal data.</li>
-                      <li><strong>Right to rectification</strong> - You have the right to request that we correct any information you believe is inaccurate or incomplete.</li>
-                      <li><strong>Right to erasure</strong> - You have the right to request that we erase your personal data, under certain conditions.</li>
-                      <li><strong>Right to restrict processing</strong> - You have the right to request that we restrict the processing of your personal data, under certain conditions.</li>
-                      <li><strong>Right to object to processing</strong> - You have the right to object to our processing of your personal data, under certain conditions.</li>
-                      <li><strong>Right to data portability</strong> - You have the right to request that we transfer the data we have collected to another organization, or directly to you, under certain conditions.</li>
+                    <p className="text-sm text-muted-foreground mb-2">Under GDPR and other privacy laws, you have these rights:</p>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>Right to Access:</strong> Request copies of your personal data and migration history</li>
+                      <li><strong>Right to Rectification:</strong> Correct inaccurate or incomplete information</li>
+                      <li><strong>Right to Erasure:</strong> Request deletion of your data (with certain limitations)</li>
+                      <li><strong>Right to Restrict Processing:</strong> Limit how we process your data</li>
+                      <li><strong>Right to Data Portability:</strong> Export your data in a portable format</li>
+                      <li><strong>Right to Object:</strong> Object to processing based on legitimate interests</li>
+                      <li><strong>Right to Withdraw Consent:</strong> Withdraw consent for data processing</li>
                     </ul>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">9. Cookies</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We use cookies and similar tracking technologies to track activity on our service and hold certain information. 
-                      You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do 
-                      not accept cookies, you may not be able to use some portions of our service.
-                    </p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      For more information about the cookies we use, please see our Cookie Policy.
+                    <p className="text-sm text-muted-foreground mt-2">
+                      To exercise these rights, contact us at privacy@quillswitch.com. We will respond within 72 hours.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">10. Data Security</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      The security of your data is important to us, but remember that no method of transmission over the Internet, 
-                      or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect 
-                      your personal data, we cannot guarantee its absolute security.
+                    <h3 className="text-lg font-medium">9. International Data Transfers</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Your data may be processed in the United States and other countries where our service providers operate. 
+                      We ensure appropriate safeguards are in place for international transfers, including Standard Contractual 
+                      Clauses approved by the European Commission and adequacy decisions where applicable.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">11. Changes to This Privacy Policy</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy 
-                      Policy on this page and updating the "Last updated" date at the top of this Privacy Policy.
+                    <h3 className="text-lg font-medium">10. Business Transfers</h3>
+                    <p className="text-sm text-muted-foreground">
+                      In the event of a merger, acquisition, or sale of assets, your personal data may be transferred to the 
+                      acquiring entity. We will provide notice before your data is transferred and becomes subject to a 
+                      different Privacy Policy.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">12. Contact Us</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      If you have any questions about this Privacy Policy, please contact us:
-                      <br />
-                      By email: privacy@quillswitch.com
-                      <br />
-                      By mail: 123 Tech Avenue, San Francisco, CA 94105
+                    <h3 className="text-lg font-medium">11. Children's Privacy</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Our services are designed for businesses and not intended for individuals under 18. We do not knowingly 
+                      collect personal information from children under 18. If we discover we have collected such data, we will 
+                      delete it immediately.
                     </p>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">12. Changes to This Privacy Policy</h3>
+                    <p className="text-sm text-muted-foreground">
+                      We may update this Privacy Policy to reflect changes in our practices or legal requirements. Material 
+                      changes will be communicated via email or platform notification at least 30 days before taking effect. 
+                      Continued use of our services after changes constitutes acceptance.
+                    </p>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">13. Contact Information</h3>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      For privacy-related questions, concerns, or to exercise your rights:
+                    </p>
+                    <div className="bg-slate-800 p-3 rounded-lg">
+                      <p className="text-sm">
+                        <strong>Privacy Team:</strong> privacy@quillswitch.com<br/>
+                        <strong>Data Protection Officer:</strong> dpo@quillswitch.com<br/>
+                        <strong>Support:</strong> Available 24/7 through our platform<br/>
+                        <strong>Response Guarantee:</strong> Privacy inquiries answered within 72 hours
+                      </p>
+                    </div>
                   </section>
                 </div>
               </ScrollArea>

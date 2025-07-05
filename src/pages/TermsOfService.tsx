@@ -11,14 +11,14 @@ const TermsOfServicePage: React.FC = () => {
       <div className="min-h-screen pt-24 pb-16 bg-background">
         <ContentSection
           title="Terms of Service"
-          description="Last updated: May 1, 2025"
+          description="Last updated: January 5, 2025"
           centered={true}
         >
           <Card className="w-full max-w-4xl mx-auto">
             <CardHeader>
               <CardTitle>Terms of Service</CardTitle>
               <CardDescription>
-                Last updated: May 1, 2025
+                Last updated: January 5, 2025
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -27,131 +27,212 @@ const TermsOfServicePage: React.FC = () => {
                   <section>
                     <h3 className="text-lg font-medium">1. Acceptance of Terms</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      By accessing and using QuillSwitch's services, you acknowledge that you have read, 
-                      understood, and agree to be bound by these Terms of Service. If you do not agree with 
-                      any part of these terms, you may not use our services.
+                      By accessing or using QuillSwitch's CRM migration services ("Services"), you ("Customer" or "you") 
+                      acknowledge that you have read, understood, and agree to be bound by these Terms of Service ("Terms"). 
+                      If you do not agree with any part of these terms, you may not use our Services. These Terms constitute 
+                      a legally binding agreement between you and QuillSwitch, Inc. ("we," "us," or "QuillSwitch").
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">2. Description of Service</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      QuillSwitch provides data migration and integration services for businesses. Our services 
-                      include, but are not limited to, CRM data migration, data mapping, data validation, 
-                      and related consulting services.
+                    <h3 className="text-lg font-medium">2. Service Description</h3>
+                    <p className="mt-2 text-sm text-muted-foreground mb-2">
+                      QuillSwitch provides AI-powered CRM data migration services for Small-to-Medium Businesses (SMBs) 
+                      and Mid-Market companies. Our Services include:
                     </p>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">3. User Accounts</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      To use certain features of our services, you may be required to create an account. You are 
-                      responsible for maintaining the confidentiality of your account credentials and for all 
-                      activities that occur under your account. You agree to notify us immediately of any 
-                      unauthorized use of your account.
-                    </p>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">4. User Responsibilities</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      When using our services, you agree to:
-                    </p>
-                    <ul className="list-disc pl-6 mt-2 space-y-1 text-sm text-muted-foreground">
-                      <li>Provide accurate and complete information</li>
-                      <li>Use the services only for lawful purposes</li>
-                      <li>Not interfere with or disrupt the services or servers</li>
-                      <li>Not attempt to gain unauthorized access to any part of the services</li>
-                      <li>Comply with all applicable laws and regulations</li>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>CRM Data Migration:</strong> Secure transfer of data between CRM systems</li>
+                      <li><strong>AI-Powered Data Mapping:</strong> Automated field mapping with 99.9% accuracy using advanced AI</li>
+                      <li><strong>Dashboard Recreation:</strong> Recreation of dashboards, reports, and visualizations in destination systems</li>
+                      <li><strong>Data Validation:</strong> Comprehensive validation and error checking throughout the migration process</li>
+                      <li><strong>Migration Support:</strong> Expert guidance and technical support throughout the migration</li>
+                      <li><strong>Security & Compliance:</strong> Enterprise-grade security with encrypted data handling</li>
                     </ul>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">5. Intellectual Property</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      All content, features, and functionality of our services, including but not limited to 
-                      text, graphics, logos, icons, images, audio clips, digital downloads, data compilations, 
-                      and software, are the exclusive property of QuillSwitch or its licensors and are 
-                      protected by copyright, trademark, and other intellectual property laws.
+                    <h3 className="text-lg font-medium">3. Service Packages & Pricing</h3>
+                    
+                    <h4 className="text-base font-medium mt-4 mb-2">3.1 Essential Package - $999</h4>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li>Up to 250,000 records migration</li>
+                      <li>AI-powered data mapping and transformation</li>
+                      <li>Standard support and documentation</li>
+                      <li>Complete data migration including contacts, accounts, opportunities, activities, tasks, notes, and documents</li>
+                      <li>Dashboard recreation (standard configurations)</li>
+                    </ul>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">3.2 Pro Package - Contact for Pricing</h4>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li>250,000+ records migration</li>
+                      <li>Priority processing and dedicated migration specialist</li>
+                      <li>Complex transformation support and custom mapping rules</li>
+                      <li>Advanced AI mapping with custom configurations</li>
+                      <li>White-glove service and expedited timeline</li>
+                    </ul>
+
+                    <p className="text-sm text-muted-foreground mt-3">
+                      All prices are in USD and exclude applicable taxes. Payment is processed securely through Stripe.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">6. Payment and Subscription</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Some of our services require payment. By subscribing to a paid service, you agree to 
-                      pay all fees associated with the service. We may change our fees at any time, but will 
-                      give you advance notice of these changes. You are responsible for paying all taxes 
-                      associated with your use of our services.
+                    <h3 className="text-lg font-medium">4. User Account & Responsibilities</h3>
+                    
+                    <h4 className="text-base font-medium mt-4 mb-2">4.1 Account Requirements</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      You must create an account to use our Services. You are responsible for maintaining the confidentiality 
+                      of your account credentials and for all activities under your account.
+                    </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">4.2 Customer Responsibilities</h4>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>Data Access:</strong> Provide necessary access credentials and permissions for source and destination CRM systems</li>
+                      <li><strong>Data Backup:</strong> Maintain current backups of all data before migration</li>
+                      <li><strong>Data Quality:</strong> Ensure source data is reasonably clean and well-structured</li>
+                      <li><strong>System Access:</strong> Maintain active subscriptions and access to both source and destination CRM systems during migration</li>
+                      <li><strong>Testing:</strong> Thoroughly test migrated data and report any issues within 30 days of migration completion</li>
+                      <li><strong>Compliance:</strong> Ensure you have legal authority to migrate the data and comply with all applicable laws</li>
+                    </ul>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">5. Payment Terms</h3>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>Payment Processing:</strong> All payments are processed securely through Stripe</li>
+                      <li><strong>Essential Package:</strong> Payment due in full before migration commencement</li>
+                      <li><strong>Pro Package:</strong> Custom payment terms as agreed in writing</li>
+                      <li><strong>Refund Policy:</strong> Refunds available within 14 days if migration has not commenced</li>
+                      <li><strong>Taxes:</strong> Customer responsible for all applicable taxes and fees</li>
+                      <li><strong>Currency:</strong> All prices quoted in US Dollars (USD)</li>
+                    </ul>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">6. Data Migration Disclaimers</h3>
+                    
+                    <h4 className="text-base font-medium mt-4 mb-2">6.1 Migration Accuracy</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      While we strive for 99.9% accuracy in data mapping and migration, we cannot guarantee perfect accuracy 
+                      for all data types and configurations. Customer is responsible for validating migrated data.
+                    </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">6.2 Third-Party System Dependencies</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Our Services depend on third-party CRM systems' APIs and availability. We are not responsible for 
+                      limitations, downtime, or changes to third-party systems that may affect migration.
+                    </p>
+
+                    <h4 className="text-base font-medium mt-4 mb-2">6.3 Data Limitations</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Some data types, custom configurations, or deprecated features may not be fully transferable between 
+                      different CRM systems due to platform limitations.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">7. Data Privacy</h3>
+                    <h3 className="text-lg font-medium">7. AI Services Disclaimer</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      Our data privacy practices are governed by our Privacy Policy, which is incorporated 
-                      into these Terms of Service by reference. By using our services, you consent to our 
-                      collection, use, and sharing of information as described in our Privacy Policy.
+                      Our AI-powered data mapping uses Google Gemini AI and proprietary algorithms. While highly accurate, 
+                      AI services may occasionally produce unexpected results. We recommend reviewing all AI-generated mappings 
+                      before proceeding with migration. Customer retains final responsibility for approving all data transformations.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">8. Limitation of Liability</h3>
+                    <h3 className="text-lg font-medium">8. Data Security & Privacy</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      To the maximum extent permitted by law, QuillSwitch shall not be liable for any 
-                      indirect, incidental, special, consequential, or punitive damages, including but not 
-                      limited to, damages for loss of profits, goodwill, use, data, or other intangible losses, 
-                      resulting from your use of or inability to use the service.
+                      We implement enterprise-grade security measures including pgsodium encryption, Row Level Security (RLS), 
+                      OAuth 2.0 authentication, and secure API connections. Our data handling practices are governed by our 
+                      Privacy Policy, incorporated herein by reference. We maintain SOC 2 compliance standards and undergo 
+                      regular security audits.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">9. Indemnification</h3>
+                    <h3 className="text-lg font-medium">9. Service Availability</h3>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>Uptime:</strong> We strive for 99.9% platform availability but do not guarantee uninterrupted service</li>
+                      <li><strong>Maintenance:</strong> Scheduled maintenance will be communicated at least 48 hours in advance</li>
+                      <li><strong>Support:</strong> Customer support available during business hours with 24-hour response time</li>
+                      <li><strong>Migration Timeline:</strong> Typical migrations complete within hours to days, not months</li>
+                    </ul>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">10. Limitation of Liability</h3>
+                    <p className="mt-2 text-sm text-muted-foreground mb-2">
+                      TO THE MAXIMUM EXTENT PERMITTED BY LAW:
+                    </p>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li>QuillSwitch's total liability shall not exceed the amount paid for the specific Service</li>
+                      <li>We are not liable for indirect, incidental, special, consequential, or punitive damages</li>
+                      <li>We are not liable for loss of profits, revenue, data, or business opportunities</li>
+                      <li>Customer assumes responsibility for data validation and business continuity planning</li>
+                      <li>We are not liable for issues arising from third-party CRM system limitations or changes</li>
+                    </ul>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">11. Indemnification</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      You agree to defend, indemnify, and hold harmless QuillSwitch, its officers, directors, 
-                      employees, and agents, from and against any claims, liabilities, damages, losses, and 
-                      expenses, including without limitation reasonable attorney fees and costs, arising out of 
-                      or in any way connected with your access to or use of the services.
+                      Customer agrees to defend, indemnify, and hold harmless QuillSwitch from claims arising from: 
+                      (a) Customer's use of the Services, (b) Customer's violation of these Terms, (c) Customer's violation 
+                      of any rights of third parties, or (d) any data provided by Customer for migration.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">10. Termination</h3>
+                    <h3 className="text-lg font-medium">12. Intellectual Property</h3>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>QuillSwitch IP:</strong> All platform technology, algorithms, and proprietary methods remain our exclusive property</li>
+                      <li><strong>Customer Data:</strong> Customer retains all rights to their data and CRM content</li>
+                      <li><strong>AI Training:</strong> We do not use Customer data to train AI models without explicit consent</li>
+                      <li><strong>License:</strong> We grant Customer a limited license to use our Services as described herein</li>
+                    </ul>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">13. Account Termination</h3>
+                    <ul className="list-disc pl-6 space-y-1 text-sm text-muted-foreground">
+                      <li><strong>By Customer:</strong> Account may be terminated at any time with 30 days' notice</li>
+                      <li><strong>By QuillSwitch:</strong> We may terminate accounts for breach of Terms or illegal activity</li>
+                      <li><strong>Data Retention:</strong> Customer data deleted within 30 days of account termination</li>
+                      <li><strong>Service Completion:</strong> Ongoing migrations will be completed unless Customer requests termination</li>
+                    </ul>
+                  </section>
+                  
+                  <section>
+                    <h3 className="text-lg font-medium">14. Changes to Terms</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      We may terminate or suspend your account and access to our services immediately, 
-                      without prior notice or liability, for any reason, including but not limited to a breach 
-                      of these Terms of Service. Upon termination, your right to use the services will cease 
-                      immediately.
+                      We may modify these Terms with 30 days' notice for material changes. Continued use of Services after 
+                      changes constitutes acceptance. For non-material changes, we will update the "Last Updated" date. 
+                      Current Terms are always available on our platform.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">11. Changes to Terms</h3>
+                    <h3 className="text-lg font-medium">15. Governing Law & Dispute Resolution</h3>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      We reserve the right to modify or replace these Terms of Service at any time. If a 
-                      revision is material, we will provide at least 30 days' notice prior to any new terms 
-                      taking effect. What constitutes a material change will be determined at our sole discretion.
+                      These Terms are governed by the laws of the State of California, USA, without regard to conflict of law 
+                      principles. Any disputes will be resolved through binding arbitration in California, except for claims 
+                      involving intellectual property which may be brought in federal court.
                     </p>
                   </section>
                   
                   <section>
-                    <h3 className="text-lg font-medium">12. Governing Law</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      These Terms of Service shall be governed by and construed in accordance with the laws 
-                      of the United States and the State of California, without regard to its conflict of law 
-                      principles.
+                    <h3 className="text-lg font-medium">16. Contact Information</h3>
+                    <p className="mt-2 text-sm text-muted-foreground mb-2">
+                      For questions about these Terms of Service:
                     </p>
-                  </section>
-                  
-                  <section>
-                    <h3 className="text-lg font-medium">13. Contact Us</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      If you have any questions about these Terms of Service, please contact us:
-                      <br />
-                      By email: legal@quillswitch.com
-                      <br />
-                      By mail: 123 Tech Avenue, San Francisco, CA 94105
-                    </p>
+                    <div className="bg-slate-800 p-3 rounded-lg">
+                      <p className="text-sm">
+                        <strong>Legal Team:</strong> legal@quillswitch.com<br/>
+                        <strong>Customer Support:</strong> support@quillswitch.com<br/>
+                        <strong>Sales Inquiries:</strong> sales@quillswitch.com<br/>
+                        <strong>Business Hours:</strong> Monday-Friday, 9 AM - 6 PM PST
+                      </p>
+                    </div>
                   </section>
                 </div>
               </ScrollArea>
