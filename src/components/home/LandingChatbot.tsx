@@ -92,7 +92,7 @@ const LandingChatbot = () => {
     {
       id: '1',
       type: 'bot',
-      content: "👋 Hello! I'm **Quilly**, your interactive QuillSwitch assistant!\n\nI'm here to help you with everything about CRM migrations:\n\n• Migration planning & cost analysis\n• Security & technical details\n• Feature comparisons & benefits\n• Pricing recommendations\n• Step-by-step guidance\n\n**Ask me anything** - I'm powered by AI and have comprehensive knowledge about QuillSwitch!",
+      content: "Hey there! I'm Quilly, and I'm here to help with any questions you have about CRM migrations.\n\nI've helped tons of businesses move their data from one CRM to another, so whether you're just starting to think about it or you're deep in the weeds trying to figure something out, I'm here to help.\n\nWhat's on your mind?",
     }
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -118,75 +118,38 @@ const LandingChatbot = () => {
     setMessages(prev => [...prev, { ...message, id: Date.now().toString() }]);
   };
 
-  const QUILLSWITCH_SYSTEM_PROMPT = `You are Quilly, the friendly and knowledgeable AI assistant for QuillSwitch. You help users understand CRM migration services and provide comprehensive information about QuillSwitch.
+  const QUILLSWITCH_SYSTEM_PROMPT = `You are Quilly, a friendly and knowledgeable person who works at QuillSwitch helping businesses with CRM migrations. You talk like a real person - casual, helpful, and genuinely interested in solving people's problems.
 
-ABOUT QUILLSWITCH:
-- Mission: Make CRM data migration simple, secure, and fast for SMBs and Mid-Market companies
-- Core Problem Solved: Traditional CRM migrations are complex, time-consuming, risky, expensive, and require technical expertise or expensive consultants
-- Solution: Automated, AI-powered, secure CRM migration with Unified API Integration
+Here's what you know about QuillSwitch and CRM migrations:
 
-KEY FEATURES & BENEFITS:
-🔒 Enterprise-Grade Security:
-- Unified API Integration (secure, standardized connections)
-- pgsodium encryption at rest
-- Row Level Security (RLS)
-- Data protection guarantee
-- Compliance-ready infrastructure
+QuillSwitch makes moving CRM data way easier than it usually is. Most businesses dread CRM migrations because they're complicated, take forever, cost a ton, and something usually goes wrong. We solve that with AI that does the heavy lifting automatically.
 
-🤖 AI-Powered Automation:
-- 99.9% data accuracy with intelligent mapping
-- Automated field matching and transformation
-- Smart error detection and resolution
-- Comprehensive validation
+What makes us different:
+- We use AI to map your data automatically with 99.9% accuracy, so you don't have to figure out which field goes where
+- Everything connects through our Unified API Integration which is secure and standardized 
+- We encrypt everything and have enterprise-grade security
+- Takes weeks instead of months (about 5x faster than doing it manually or with consultants)
+- Saves most businesses 60-80% on costs compared to hiring consultants (who usually charge $15k-50k+)
 
-⚡ 5x Faster Migrations:
-- Complete in weeks vs months (80% time reduction)
-- Minimal business disruption
-- Real-time monitoring and progress tracking
+We work with all the major CRMs: Salesforce, HubSpot, Pipedrive, Zoho, Microsoft Dynamics, Sugar CRM, Insightly, Copper. We migrate contacts, accounts, opportunities, activities, tasks, notes, documents, custom fields - basically everything.
 
-💰 Significant Cost Savings:
-- 60-80% cost reduction vs traditional methods
-- Avoid $15,000-$50,000+ in consulting fees
-- 80% reduction in internal staff time
+Pricing is straightforward:
+- Standard Plan is $2,500 (up to 50k records, basic mapping, standard support, 30-day retention)  
+- Pro Plan is custom pricing (unlimited records, advanced AI, priority support, 90-day retention, custom integrations)
 
-TECHNICAL CAPABILITIES:
-- Supported CRMs: Salesforce, HubSpot, Pipedrive, Zoho, Microsoft Dynamics, Sugar CRM, Insightly, Copper
-- Data Types: Contacts, Accounts, Opportunities, Activities, Tasks, Notes, Documents, Custom Fields
-- Unified API Integration: Secure, standardized CRM connections
-- Cloud-based platform with enterprise-grade infrastructure
+The process is pretty simple: connect your CRMs securely, our AI analyzes and maps everything, you review and approve the plan, we transfer everything with real-time monitoring, then validate it all worked correctly.
 
-PRICING PLANS:
-Standard Plan ($2,500):
-- Up to 50,000 records
-- Basic data mapping
-- Standard support
-- 30-day data retention
+How to talk:
+- Be conversational and natural, like talking to a colleague
+- Don't use lots of bullet points or corporate speak
+- Share relevant details but keep it flowing like a normal conversation
+- Ask follow-up questions to understand what they really need
+- If they ask about something totally unrelated, gently steer back to CRM stuff
+- Don't be overly salesy - just be helpful and informative
+- Use "we" when talking about QuillSwitch since you work there
+- Vary your responses so you don't sound repetitive
 
-Pro Plan (Custom pricing):
-- Unlimited records
-- Advanced AI mapping
-- Priority support
-- 90-day data retention
-- Custom integrations
-
-MIGRATION PROCESS:
-1. Secure Connection (Unified API Integration - standardized, secure connections)
-2. AI Analysis & Mapping (intelligent field matching)
-3. Review & Approve (custom adjustments available)
-4. Secure Transfer (real-time monitoring)
-5. Validation & Verification (comprehensive accuracy checks)
-
-PERSONALITY & TONE:
-- Be friendly, helpful, and enthusiastic about QuillSwitch
-- Use emojis and formatting to make responses engaging
-- Provide specific, actionable information
-- Always be ready to help with next steps
-- Focus on benefits and value proposition
-- Be concise but comprehensive
-
-If users ask about topics outside QuillSwitch/CRM migration, politely redirect them back to how you can help with their migration needs.
-
-Always end responses with a helpful question or suggestion for next steps to keep the conversation flowing.`;
+Remember, you're trying to help them solve a real business problem, not just rattle off features.`;
 
   const getGeminiResponse = async (userInput: string): Promise<string> => {
     try {
@@ -213,11 +176,11 @@ Always end responses with a helpful question or suggestion for next steps to kee
         throw new Error(response.error);
       }
       
-      return response.response || "I apologize, but I'm having trouble processing your request right now. Please try asking me about QuillSwitch features, pricing, or migration process!";
+      return response.response || "Sorry, I'm having a bit of trouble right now. But I'm still here to help with any CRM migration questions you have!";
       
     } catch (error) {
       console.error('Error getting Gemini response:', error);
-      return "I'm sorry, I'm experiencing some technical difficulties. However, I'd still love to help you with your CRM migration questions! Try asking me about our pricing plans, security features, or migration process.";
+      return "I'm having some technical issues at the moment, but I'd still love to help with your CRM migration questions. What would you like to know?";
     } finally {
       setIsLoading(false);
     }
@@ -233,7 +196,7 @@ Always end responses with a helpful question or suggestion for next steps to kee
     // Add loading message
     const loadingMessage: ChatMessage = { 
       type: 'bot', 
-      content: "🤔 Thinking...",
+      content: "Just a sec...",
       id: Date.now().toString()
     };
     setMessages(prev => [...prev, loadingMessage]);
@@ -269,32 +232,32 @@ Always end responses with a helpful question or suggestion for next steps to kee
     if (input.includes('cost') || input.includes('price') || input.includes('saving')) {
       addMessage({
         type: 'options',
-        content: "Would you like to:",
+        content: "Want to dig deeper into the numbers?",
         options: [
-          "Get Personalized Savings Calculation",
-          "View Detailed Pricing Plans", 
-          "Schedule Cost Consultation"
+          "Get My Custom Savings Estimate",
+          "See All Pricing Options", 
+          "Talk to Someone About Costs"
         ]
       });
     } else if (input.includes('how') || input.includes('process') || input.includes('start')) {
       addMessage({
         type: 'options', 
-        content: "Ready to get started?",
+        content: "Ready to take the next step?",
         options: [
-          "Start Migration Setup",
-          "Schedule Expert Consultation",
-          "Download Migration Guide"
+          "Start Setting Up My Migration",
+          "Talk to a Migration Expert",
+          "Get the Migration Playbook"
         ]
       });
     } else {
       addMessage({
         type: 'options',
-        content: "How can I help you further?",
+        content: "What would be most helpful right now?",
         options: [
-          "Calculate My Savings",
-          "Schedule Consultation", 
-          "Start Migration Setup",
-          "Compare Plans"
+          "Show Me What I Could Save",
+          "Connect Me With an Expert", 
+          "Help Me Get Started",
+          "Compare My Options"
         ]
       });
     }
@@ -304,24 +267,26 @@ Always end responses with a helpful question or suggestion for next steps to kee
     addMessage({ type: 'user', content: action });
     
     switch (action) {
-      case "Get Personalized Savings Calculation":
-      case "Calculate My Savings":
-      case "View Detailed Pricing Plans":
-      case "Compare Plans":
+      case "Get My Custom Savings Estimate":
+      case "Show Me What I Could Save":
+      case "See All Pricing Options":
+      case "Compare My Options":
         navigate("/pricing-estimator");
         break;
-      case "Start Migration Setup":
+      case "Start Setting Up My Migration":
+      case "Help Me Get Started":
         if (user) {
           navigate("/app/setup");
         } else {
           navigate("/auth?redirect=/app/setup");
         }
         break;
-      case "Schedule Expert Consultation":
-      case "Schedule Cost Consultation":
+      case "Talk to a Migration Expert":
+      case "Connect Me With an Expert":
+      case "Talk to Someone About Costs":
         navigate("/support");
         break;
-      case "Download Migration Guide":
+      case "Get the Migration Playbook":
         navigate("/resources");
         break;
     }
@@ -434,7 +399,7 @@ Always end responses with a helpful question or suggestion for next steps to kee
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask me anything about QuillSwitch..."
+                placeholder="What's on your mind?"
                 className="flex-1 text-sm"
               />
               <Button
@@ -447,7 +412,7 @@ Always end responses with a helpful question or suggestion for next steps to kee
               </Button>
             </div>
             <div className="text-xs text-muted-foreground mt-2">
-              Try asking: "How much can I save?" or "Tell me about security"
+              Try: "How much would this cost me?" or "What about security?"
             </div>
           </div>
         </CardContent>
