@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RefreshCw, Home, AlertTriangle, Bug } from 'lucide-react';
 import { errorHandler, QuillSwitchError, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
+import { captureError, setSentryContext } from '@/services/sentry/sentryConfig';
 
 interface Props {
   children: ReactNode;
@@ -40,10 +41,28 @@ class AppErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    const errorId = `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
     this.setState({
       error,
       errorInfo,
-      errorId: `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      errorId
+    });
+
+    // Send component error directly to Sentry with rich context
+    setSentryContext('react_error_boundary', {
+      componentStack: errorInfo.componentStack,
+      errorBoundary: this.constructor.name,
+      errorId,
+      retryCount: this.retryCount,
+      isolate: this.props.isolate
+    });
+
+    captureError(error, {
+      component_stack: errorInfo.componentStack,
+      error_boundary: this.constructor.name,
+      error_id: errorId,
+      retry_count: this.retryCount
     });
 
     // Create a QuillSwitch error for better handling
@@ -55,12 +74,12 @@ class AppErrorBoundary extends Component<Props, State> {
       {
         componentStack: errorInfo.componentStack,
         errorBoundary: this.constructor.name,
-        errorId: this.state.errorId,
+        errorId,
         retryCount: this.retryCount
       }
     );
 
-    // Handle through global error handler
+    // Handle through global error handler (which will also send to Sentry)
     errorHandler.handleError(quillError);
   }
 

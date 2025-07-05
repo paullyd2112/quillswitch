@@ -1,5 +1,6 @@
 
 import { toast } from "sonner";
+import { captureError, captureMessage, setSentryContext } from "@/services/sentry/sentryConfig";
 
 export interface AppError {
   code: string;
@@ -148,6 +149,9 @@ export class GlobalErrorHandler {
     // Log the error
     this.logError(appError);
 
+    // Send to Sentry with proper context
+    this.sendToSentry(appError, error);
+
     // Show user notification based on severity
     this.showUserNotification(appError);
 
@@ -236,11 +240,34 @@ export class GlobalErrorHandler {
   }
 
   private reportCriticalError(error: AppError): void {
-    // In a real application, this would send the error to a monitoring service
+    // Critical errors are already sent to Sentry via sendToSentry
     console.error('CRITICAL ERROR:', error);
     
-    // Could integrate with services like Sentry, LogRocket, etc.
-    // For now, we'll just log it prominently
+    // Send additional context for critical errors
+    captureMessage(`Critical Error: ${error.code} - ${error.message}`, 'error');
+  }
+
+  private sendToSentry(appError: AppError, originalError: Error | QuillSwitchError): void {
+    try {
+      // Set context for the error
+      setSentryContext('quillswitch_error', {
+        code: appError.code,
+        severity: appError.severity,
+        userMessage: appError.userMessage,
+        context: appError.context,
+        timestamp: appError.timestamp.toISOString()
+      });
+
+      // Capture the error with enhanced context
+      captureError(originalError, {
+        app_error: appError,
+        url: window.location.href,
+        user_agent: navigator.userAgent,
+        timestamp: appError.timestamp.toISOString()
+      });
+    } catch (sentryError) {
+      console.error('Failed to send error to Sentry:', sentryError);
+    }
   }
 
   public getRecentErrors(count: number = 10): AppError[] {

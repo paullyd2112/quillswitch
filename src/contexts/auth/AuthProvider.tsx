@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { supabase } from '../../integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
 import { AuthContextType, AuthResponse } from './types';
+import { setSentryUser, clearSentryUser } from '@/services/sentry/sentryConfig';
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -28,6 +29,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log('Auth state change:', event, currentSession?.user?.email);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
+        
+        // Update Sentry user context
+        if (currentSession?.user) {
+          setSentryUser({ 
+            id: currentSession.user.id, 
+            email: currentSession.user.email 
+          });
+        } else {
+          clearSentryUser();
+        }
+        
         setIsLoading(false);
       }
     );
@@ -37,6 +49,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log('Initial session check:', currentSession?.user?.email);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
+      
+      // Set Sentry user context for initial session
+      if (currentSession?.user) {
+        setSentryUser({ 
+          id: currentSession.user.id, 
+          email: currentSession.user.email 
+        });
+      }
+      
       setIsLoading(false);
     });
 
@@ -82,6 +103,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signOut = async (): Promise<AuthResponse> => {
     try {
       setIsLoading(true);
+      
+      // Clear Sentry user context on logout
+      clearSentryUser();
+      
       const { error } = await supabase.auth.signOut();
       return { error };
     } catch (error: any) {
