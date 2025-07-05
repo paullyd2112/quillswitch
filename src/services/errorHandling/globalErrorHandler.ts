@@ -1,6 +1,5 @@
 
 import { toast } from "sonner";
-import { captureError, captureMessage, setSentryContext } from "@/services/sentry/sentryConfig";
 
 export interface AppError {
   code: string;
@@ -111,6 +110,13 @@ const ERROR_MESSAGES: Record<string, string> = {
 export class GlobalErrorHandler {
   private static instance: GlobalErrorHandler;
   private errorLog: AppError[] = [];
+  private errorGroups: Map<string, AppError[]> = new Map();
+  private performanceMetrics: Array<{
+    action: string;
+    duration: number;
+    timestamp: Date;
+    context?: Record<string, any>;
+  }> = [];
 
   public static getInstance(): GlobalErrorHandler {
     if (!GlobalErrorHandler.instance) {
@@ -146,11 +152,12 @@ export class GlobalErrorHandler {
       };
     }
 
-    // Log the error
+    // Log and group the error
     this.logError(appError);
+    this.groupError(appError);
 
-    // Send to Sentry with proper context
-    this.sendToSentry(appError, error);
+    // Send to external monitoring (if configured)
+    this.sendToMonitoring(appError, error);
 
     // Show user notification based on severity
     this.showUserNotification(appError);
@@ -239,43 +246,202 @@ export class GlobalErrorHandler {
     }
   }
 
-  private reportCriticalError(error: AppError): void {
-    // Critical errors are already sent to Sentry via sendToSentry
-    console.error('CRITICAL ERROR:', error);
+  private groupError(error: AppError): void {
+    const groupKey = `${error.code}_${this.getErrorFingerprint(error)}`;
     
-    // Send additional context for critical errors
-    captureMessage(`Critical Error: ${error.code} - ${error.message}`, 'error');
+    if (!this.errorGroups.has(groupKey)) {
+      this.errorGroups.set(groupKey, []);
+    }
+    
+    const group = this.errorGroups.get(groupKey)!;
+    group.push(error);
+    
+    // Keep only last 10 errors per group to prevent memory issues
+    if (group.length > 10) {
+      group.splice(0, group.length - 10);
+    }
   }
 
-  private sendToSentry(appError: AppError, originalError: Error | QuillSwitchError): void {
-    try {
-      // Set context for the error
-      setSentryContext('quillswitch_error', {
-        code: appError.code,
-        severity: appError.severity,
-        userMessage: appError.userMessage,
-        context: appError.context,
-        timestamp: appError.timestamp.toISOString()
-      });
+  private getErrorFingerprint(error: AppError): string {
+    // Create a fingerprint based on error details for grouping
+    const parts = [
+      error.code,
+      error.message.slice(0, 50), // First 50 chars of message
+      error.context?.url || '',
+      error.context?.component || ''
+    ];
+    return parts.join('|').toLowerCase();
+  }
 
-      // Capture the error with enhanced context
-      captureError(originalError, {
-        app_error: appError,
+  private reportCriticalError(error: AppError): void {
+    console.error('CRITICAL ERROR:', error);
+    
+    // Send to external monitoring service if configured
+    this.sendCriticalAlert(error);
+  }
+
+  private sendCriticalAlert(error: AppError): void {
+    // Could integrate with Slack, Discord, email, etc.
+    // For now, just enhanced logging
+    const alertData = {
+      level: 'CRITICAL',
+      error: error,
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: error.timestamp.toISOString(),
+      sessionId: this.getSessionId()
+    };
+    
+    console.error('🚨 CRITICAL ALERT:', alertData);
+    
+    // Store for potential external sending
+    this.storeCriticalAlert(alertData);
+  }
+
+  private sendToMonitoring(appError: AppError, originalError: Error | QuillSwitchError): void {
+    // Enhanced local monitoring with rich context
+    const monitoringData = {
+      error: {
+        code: appError.code,
+        message: appError.message,
+        userMessage: appError.userMessage,
+        severity: appError.severity,
+        stack: originalError.stack,
+        context: appError.context
+      },
+      environment: {
         url: window.location.href,
-        user_agent: navigator.userAgent,
-        timestamp: appError.timestamp.toISOString()
-      });
-    } catch (sentryError) {
-      console.error('Failed to send error to Sentry:', sentryError);
+        userAgent: navigator.userAgent,
+        timestamp: appError.timestamp.toISOString(),
+        sessionId: this.getSessionId()
+      },
+      groupCount: this.getErrorGroupCount(appError)
+    };
+    
+    console.error('Error Monitoring:', monitoringData);
+    
+    // Store for analytics and potential external integration
+    this.storeMonitoringData(monitoringData);
+  }
+
+  private getErrorGroupCount(error: AppError): number {
+    const groupKey = `${error.code}_${this.getErrorFingerprint(error)}`;
+    return this.errorGroups.get(groupKey)?.length || 0;
+  }
+
+  private getSessionId(): string {
+    let sessionId = sessionStorage.getItem('quillswitch_session_id');
+    if (!sessionId) {
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      sessionStorage.setItem('quillswitch_session_id', sessionId);
     }
+    return sessionId;
+  }
+
+  private storeCriticalAlert(alertData: any): void {
+    const alerts = JSON.parse(localStorage.getItem('quillswitch_critical_alerts') || '[]');
+    alerts.push(alertData);
+    // Keep only last 5 critical alerts
+    if (alerts.length > 5) {
+      alerts.splice(0, alerts.length - 5);
+    }
+    localStorage.setItem('quillswitch_critical_alerts', JSON.stringify(alerts));
+  }
+
+  private storeMonitoringData(data: any): void {
+    const monitoring = JSON.parse(localStorage.getItem('quillswitch_monitoring') || '[]');
+    monitoring.push(data);
+    // Keep only last 50 monitoring entries
+    if (monitoring.length > 50) {
+      monitoring.splice(0, monitoring.length - 50);
+    }
+    localStorage.setItem('quillswitch_monitoring', JSON.stringify(monitoring));
+  }
+
+  // Performance monitoring methods
+  public trackPerformance(action: string, startTime: number, context?: Record<string, any>): void {
+    const duration = Date.now() - startTime;
+    this.performanceMetrics.push({
+      action,
+      duration,
+      timestamp: new Date(),
+      context
+    });
+    
+    // Keep only last 100 performance metrics
+    if (this.performanceMetrics.length > 100) {
+      this.performanceMetrics = this.performanceMetrics.slice(-100);
+    }
+
+    // Alert on slow operations
+    if (duration > 3000) { // 3 seconds
+      console.warn(`Slow operation detected: ${action} took ${duration}ms`, context);
+    }
+  }
+
+  public getPerformanceMetrics(action?: string): Array<any> {
+    if (action) {
+      return this.performanceMetrics.filter(m => m.action === action);
+    }
+    return this.performanceMetrics.slice();
+  }
+
+  // Error grouping and analytics
+  public getErrorGroups(): Map<string, AppError[]> {
+    return new Map(this.errorGroups);
+  }
+
+  public getErrorStats(): {
+    totalErrors: number;
+    groupCount: number;
+    bySeverity: Record<string, number>;
+    topErrors: Array<{ key: string; count: number; lastSeen: Date }>;
+  } {
+    const bySeverity: Record<string, number> = {};
+    let totalErrors = 0;
+
+    for (const [key, errors] of this.errorGroups) {
+      totalErrors += errors.length;
+      errors.forEach(error => {
+        bySeverity[error.severity] = (bySeverity[error.severity] || 0) + 1;
+      });
+    }
+
+    const topErrors = Array.from(this.errorGroups.entries())
+      .map(([key, errors]) => ({
+        key,
+        count: errors.length,
+        lastSeen: errors[errors.length - 1]?.timestamp || new Date()
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    return {
+      totalErrors,
+      groupCount: this.errorGroups.size,
+      bySeverity,
+      topErrors
+    };
   }
 
   public getRecentErrors(count: number = 10): AppError[] {
     return this.errorLog.slice(-count);
   }
 
+  public getCriticalAlerts(): any[] {
+    return JSON.parse(localStorage.getItem('quillswitch_critical_alerts') || '[]');
+  }
+
+  public getMonitoringData(): any[] {
+    return JSON.parse(localStorage.getItem('quillswitch_monitoring') || '[]');
+  }
+
   public clearErrorLog(): void {
     this.errorLog = [];
+    this.errorGroups.clear();
+    this.performanceMetrics = [];
+    localStorage.removeItem('quillswitch_critical_alerts');
+    localStorage.removeItem('quillswitch_monitoring');
   }
 }
 
