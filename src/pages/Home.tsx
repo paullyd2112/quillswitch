@@ -8,6 +8,7 @@ import HomeBenefitsSection from "@/components/home/HomeBenefitsSection";
 import HomeCtaSection from "@/components/home/HomeCtaSection";
 import Footer from "@/components/layout/Footer";
 import FeaturesSection from "@/components/home/FeaturesSection";
+import LandingChatbot from "@/components/home/LandingChatbot";
 
 const Home = () => {
   return (
@@ -22,6 +23,7 @@ const Home = () => {
         <HomeCtaSection />
       </main>
       <Footer />
+      <LandingChatbot />
     </div>
   );
 };
