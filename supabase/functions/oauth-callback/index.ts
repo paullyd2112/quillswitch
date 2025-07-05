@@ -18,7 +18,7 @@ serve(async (req) => {
     const code = url.searchParams.get("code");
     const state = url.searchParams.get("state");
     
-    console.log("=== OAuth Callback Debug ===");
+    console.log("=== Unified.to OAuth Callback ===");
     console.log("Code:", code ? "present" : "missing");
     console.log("State:", state ? "present" : "missing");
     
@@ -40,19 +40,100 @@ serve(async (req) => {
       );
     }
     
-    const { provider } = stateData;
-    console.log("Processing callback for provider:", provider);
+    const { provider, workspaceId } = stateData;
+    console.log("Processing callback for provider:", provider, "workspace:", workspaceId);
+
+    // Get Unified.to API key from Supabase secrets
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const unifiedApiKey = Deno.env.get('UNIFIED_API_KEY');
+    if (!unifiedApiKey) {
+      console.error("ERROR: UNIFIED_API_KEY not found in environment");
+      return new Response(
+        JSON.stringify({ error: "Unified API key not configured" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
+
+    // Exchange authorization code for connection using Unified.to API
+    const redirectUri = `${url.origin}/oauth/callback`;
     
-    // TODO: Replace with your chosen Unified API service
-    // This function will need to be updated once you select your unified API provider
+    const unifiedResponse = await fetch(`https://api.unified.to/unified/connections`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${unifiedApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        workspace_id: workspaceId,
+        integration_type: provider,
+        code: code,
+        redirect_uri: redirectUri,
+      }),
+    });
+
+    if (!unifiedResponse.ok) {
+      const errorData = await unifiedResponse.text();
+      console.error("Unified.to connection creation error:", errorData);
+      return new Response(
+        JSON.stringify({ 
+          error: "Failed to create connection",
+          details: errorData
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
+
+    const connectionData = await unifiedResponse.json();
+    console.log("Connection created successfully:", connectionData.id);
+
+    // Store connection info in Supabase for the user
+    const authHeader = req.headers.get('authorization');
+    let userId = null;
     
+    if (authHeader) {
+      const { data: { user }, error } = await supabase.auth.getUser(
+        authHeader.replace('Bearer ', '')
+      );
+      
+      if (!error && user) {
+        userId = user.id;
+        
+        // Store the connection in our database
+        const { error: insertError } = await supabase
+          .from('service_credentials')
+          .insert({
+            user_id: userId,
+            service_name: provider,
+            credential_name: `${provider}_connection`,
+            credential_type: 'oauth_connection',
+            credential_value: JSON.stringify({
+              connection_id: connectionData.id,
+              workspace_id: workspaceId,
+              integration_type: provider,
+              created_at: new Date().toISOString()
+            }),
+            environment: 'production'
+          });
+
+        if (insertError) {
+          console.error("Error storing connection:", insertError);
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
-        error: "OAuth service not yet configured", 
-        message: "Please configure your unified API service for OAuth callback handling",
-        provider: provider
+        success: true,
+        connectionId: connectionData.id,
+        provider: provider,
+        workspaceId: workspaceId,
+        message: "Connection created successfully"
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 501 }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
     
   } catch (error) {
