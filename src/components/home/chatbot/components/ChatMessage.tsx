@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { ChatMessage as ChatMessageType } from "../hooks/useChatbot";
+import { ChatMessage as ChatMessageType } from "../types";
 
 interface ChatMessageProps {
   message: ChatMessageType;
