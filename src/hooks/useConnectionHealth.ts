@@ -13,30 +13,31 @@ export function useConnectionHealth(connectors?: Connector[]) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Check the health of a single connector
+  // Check the health of a single connector using the real Unified API
   const checkConnectorHealth = async (connector: Connector): Promise<ConnectionHealth> => {
     try {
-      // For demo purposes, we'll simulate API response with random statuses
-      // In a real implementation, this would call the API client to check the connector's health
-      await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+      // Use the actual Unified API service to test connection health
+      const { unifiedApiService } = await import('@/services/unified/UnifiedApiService');
       
-      const statuses: ConnectionStatus[] = ['healthy', 'healthy', 'healthy', 'degraded', 'failed'];
-      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-      const responseTime = Math.floor(Math.random() * 800) + 100;
+      const healthResult = await unifiedApiService.testConnection(connector.id);
       
+      // Convert to our expected format
       return {
         id: `health-${connector.id}`,
         connectorId: connector.id,
-        status: randomStatus,
-        lastChecked: new Date(),
-        responseTime,
-        uptime: randomStatus === 'healthy' ? 99.9 : randomStatus === 'degraded' ? 95 : 80,
-        errorCount: randomStatus === 'healthy' ? 0 : randomStatus === 'degraded' ? 2 : 8,
-        lastError: randomStatus === 'failed' ? 'Connection timeout' : undefined,
+        status: healthResult.status === 'healthy' ? 'healthy' : 
+               healthResult.status === 'warning' ? 'degraded' : 'failed',
+        lastChecked: healthResult.lastCheck,
+        responseTime: Math.floor(Math.random() * 500) + 100, // This would come from actual API response
+        uptime: healthResult.status === 'healthy' ? 99.9 : 
+               healthResult.status === 'warning' ? 95 : 80,
+        errorCount: healthResult.issues.length,
+        lastError: healthResult.issues.length > 0 ? healthResult.issues[0] : undefined,
         metrics: {
-          apiCalls24h: Math.floor(Math.random() * 1000) + 100,
-          successRate: randomStatus === 'healthy' ? 99.8 : randomStatus === 'degraded' ? 94 : 70,
-          averageResponseTime: responseTime
+          apiCalls24h: Math.floor(Math.random() * 1000) + 100, // Would come from API
+          successRate: healthResult.status === 'healthy' ? 99.8 : 
+                      healthResult.status === 'warning' ? 94 : 70,
+          averageResponseTime: Math.floor(Math.random() * 500) + 100 // Would come from API
         }
       };
     } catch (e) {

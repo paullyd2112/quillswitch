@@ -43,60 +43,41 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
   const [discoveredTools, setDiscoveredTools] = useState<ConnectedTool[]>([]);
   const { setProcessing } = useProcessing();
 
-  const mockTools: ConnectedTool[] = [
-    {
-      id: "salesforce",
-      name: "Salesforce",
-      status: "connected",
-      reconnectionStatus: "full",
-      category: "CRM",
-      icon: <Shield className="h-4 w-4" />
-    },
-    {
-      id: "marketo",
-      name: "Marketo",
-      status: "connected",
-      reconnectionStatus: "partial",
-      category: "Marketing",
-      icon: <TrendingUp className="h-4 w-4" />
-    },
-    {
-      id: "salesloft",
-      name: "SalesLoft",
-      status: "pending",
-      reconnectionStatus: "partial",
-      category: "Sales Engagement",
-      icon: <Users className="h-4 w-4" />
-    },
-    {
-      id: "zapier",
-      name: "Zapier",
-      status: "connected",
-      reconnectionStatus: "full",
-      category: "Automation",
-      icon: <Zap className="h-4 w-4" />
-    }
-  ];
+  // This would be replaced with real ecosystem discovery when available
+  const getEcosystemTools = async (): Promise<ConnectedTool[]> => {
+    // TODO: Replace with actual API call to discover connected ecosystem tools
+    // For now, return empty array as this feature is not yet implemented in the API
+    return [];
+  };
 
   const handleScanEcosystem = async () => {
     setIsScanning(true);
     setScanProgress(0);
     setProcessing(true, "Scanning ecosystem for connected tools...");
     
-    // Simulate scanning process
-    const interval = setInterval(() => {
-      setScanProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsScanning(false);
-          setProcessing(false);
-          setDiscoveredTools(mockTools);
-          toast.success("Ecosystem scan completed! Found 4 connected tools.");
-          return 100;
-        }
-        return prev + 20;
-      });
-    }, 800);
+    try {
+      // Progress tracking
+      setScanProgress(25);
+      
+      // Get discovered tools from API
+      const tools = await getEcosystemTools();
+      setScanProgress(75);
+      
+      setDiscoveredTools(tools);
+      setScanProgress(100);
+      
+      if (tools.length > 0) {
+        toast.success(`Ecosystem scan completed! Found ${tools.length} connected tools.`);
+      } else {
+        toast.info("Ecosystem scan completed. No additional tools found to auto-reconnect.");
+      }
+    } catch (error) {
+      console.error("Failed to scan ecosystem:", error);
+      toast.error("Failed to scan ecosystem. Please try again.");
+    } finally {
+      setIsScanning(false);
+      setProcessing(false);
+    }
   };
 
   const handleToolSelection = (toolId: string) => {
@@ -115,15 +96,25 @@ const EcosystemAutoConnector: React.FC<EcosystemAutoConnectorProps> = ({
     
     setProcessing(true, `Auto-connecting ${selectedTools.length} tool(s)...`);
     
-    // Simulate connection process
-    setTimeout(() => {
-      setProcessing(false);
-      toast.success(`Initiated auto-reconnection for ${selectedTools.length} tool(s).`);
+    try {
+      // TODO: Implement actual auto-connection logic via API
+      // For now, this is a placeholder as the ecosystem auto-connect feature
+      // requires more backend implementation
+      
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Temporary delay
+      
+      toast.info(`Auto-reconnection initiated for ${selectedTools.length} tool(s). This feature is coming soon.`);
+      
       if (onToolsConnected) {
         const connectedTools = discoveredTools.filter(tool => selectedTools.includes(tool.id));
         onToolsConnected(connectedTools);
       }
-    }, 2000);
+    } catch (error) {
+      console.error("Failed to auto-connect tools:", error);
+      toast.error("Failed to auto-connect tools. Please try again.");
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const getStatusColor = (status: string) => {

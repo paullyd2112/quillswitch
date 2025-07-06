@@ -53,10 +53,9 @@ export const validateApiKeys = async (
     }
     
     // In production, perform actual API key validation request
-    // This would call an actual endpoint in production
     try {
-      // For now, we'll simulate a validation check
-      const validationResult = await simulateApiKeyValidation(currentApiKey);
+      // Use the real API client to validate the key
+      const validationResult = await validateWithUnifiedApi(currentApiKey);
       
       if (!validationResult.valid) {
         return {
@@ -94,38 +93,63 @@ export const validateApiKeys = async (
 };
 
 /**
- * Simulate API key validation for development/testing
+ * Validate API key with the real Unified API
  */
-const simulateApiKeyValidation = async (apiKey: string): Promise<{ 
+const validateWithUnifiedApi = async (apiKey: string): Promise<{ 
   valid: boolean; 
   message?: string;
   details?: Record<string, any>;
 }> => {
-  // This is a placeholder for actual API validation logic
-  // In a real app, this would call a validation endpoint
-  
-  // For now, we'll accept any key that:
-  // - Is at least 20 characters
-  // - Starts with "sk_" or "pk_"
-  // - Contains only allowed characters
-  const isValidFormat = /^[a-zA-Z0-9_]{20,}$/.test(apiKey);
-  const hasValidPrefix = apiKey.startsWith('sk_') || apiKey.startsWith('pk_');
-  
-  if (!isValidFormat || !hasValidPrefix) {
+  try {
+    // Set the API key and try to make a test call
+    apiClient.setApiKey(apiKey);
+    
+    // Try to get sources as a validation test
+    const result = await apiClient.getSources();
+    
+    if (result && (Array.isArray(result) || result.data)) {
+      return { valid: true };
+    } else {
+      return {
+        valid: false,
+        message: "API key validation failed",
+        details: { reason: "invalid_response" }
+      };
+    }
+  } catch (error: any) {
+    console.error("Unified API validation error:", error);
+    
+    // Parse different types of API errors
+    if (error.message.includes('401') || error.message.includes('unauthorized')) {
+      return {
+        valid: false,
+        message: "Invalid API key or unauthorized access",
+        details: { reason: "unauthorized" }
+      };
+    }
+    
+    if (error.message.includes('403') || error.message.includes('forbidden')) {
+      return {
+        valid: false,
+        message: "API key does not have required permissions",
+        details: { reason: "insufficient_permissions" }
+      };
+    }
+    
+    if (error.message.includes('timeout') || error.message.includes('network')) {
+      return {
+        valid: false,
+        message: "Network error - please check your connection and try again",
+        details: { reason: "network_error" }
+      };
+    }
+    
     return {
       valid: false,
-      message: "Invalid API key format",
-      details: {
-        reason: "invalid_format",
-        requirements: "API key must be at least 20 characters and start with sk_ or pk_"
-      }
+      message: "API validation failed",
+      details: { reason: "validation_error", error: error.message }
     };
   }
-  
-  // Simulate a network delay for realism
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  return { valid: true };
 };
 
 /**

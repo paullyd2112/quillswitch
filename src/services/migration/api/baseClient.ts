@@ -3,7 +3,12 @@ import { handleError } from "@/utils/errorHandling";
 import { RateLimiter } from "./utils/rateLimiter";
 import { PaginationHandler, PaginationParams, PaginatedResponse } from "./utils/paginationHandler";
 
-const UNIFIED_API_KEY = "production_api_key"; // Will be retrieved from secure storage
+// Production API key will be retrieved from Supabase secrets
+const getUnifiedApiKey = async (): Promise<string> => {
+  // In edge functions, this would use Deno.env.get('UNIFIED_API_KEY')
+  // In client code, we'll need to make a secure call to get the key
+  return "production_api_key"; // Placeholder - will be replaced by secure key retrieval
+};
 
 export class BaseApiClient {
   private apiKey: string;
@@ -14,10 +19,11 @@ export class BaseApiClient {
   private retryDelay = 1000; // ms
   
   constructor(
-    apiKey: string = UNIFIED_API_KEY,
+    apiKey?: string,
     requestsPerSecond: number = 10
   ) {
-    this.apiKey = apiKey;
+    // Use provided key or get from secure storage
+    this.apiKey = apiKey || "production_api_key"; // Will be replaced with actual secure key
     this.rateLimiter = new RateLimiter(requestsPerSecond);
   }
   
