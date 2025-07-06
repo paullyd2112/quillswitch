@@ -9,6 +9,9 @@ export interface ChatMessage {
   type: 'bot' | 'user' | 'options';
   content: string;
   options?: string[];
+  timestamp?: Date;
+  sentiment?: 'positive' | 'negative' | 'neutral' | 'frustrated' | 'excited';
+  intent?: 'research' | 'compare' | 'pricing' | 'technical' | 'ready' | 'concerned';
 }
 
 export const useChatbot = () => {
@@ -20,8 +23,29 @@ export const useChatbot = () => {
       id: '1',
       type: 'bot',
       content: "Hey there! I'm Quilly, and I'm here to help with any questions you have about CRM migrations.\n\nI've helped tons of businesses move their data from one CRM to another, so whether you're just starting to think about it or you're deep in the weeds trying to figure something out, I'm here to help.\n\nWhat's on your mind?",
+      timestamp: new Date(),
+      sentiment: 'neutral',
+      intent: 'research'
     }
   ]);
+  
+  // Conversation context tracking  
+  const [conversationContext, setConversationContext] = useState({
+    userDetails: {
+      currentCRM: null as string | null,
+      targetCRM: null as string | null,
+      companySize: null as string | null,
+      recordCount: null as string | null,
+      industry: null as string | null,
+      timeline: null as string | null,
+      concerns: [] as string[],
+      interests: [] as string[]
+    },
+    journeyStage: 'initial' as 'initial' | 'researching' | 'comparing' | 'evaluating' | 'ready' | 'concerned',
+    conversationTone: 'neutral' as 'formal' | 'casual' | 'neutral',
+    previousTopics: [] as string[],
+    lastSentiment: 'neutral' as 'positive' | 'negative' | 'neutral' | 'frustrated' | 'excited'
+  });
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,17 +67,98 @@ export const useChatbot = () => {
   };
 
   const addMessage = useCallback((message: Omit<ChatMessage, 'id'>) => {
-    setMessages(prev => [...prev, { ...message, id: Date.now().toString() }]);
+    const newMessage = { 
+      ...message, 
+      id: Date.now().toString(),
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, newMessage]);
+    
+    // Update conversation context based on new message
+    if (message.type === 'user') {
+      updateConversationContext(message.content);
+    }
+  }, []);
+
+  // Analyze user message and update context
+  const updateConversationContext = useCallback((userMessage: string) => {
+    const message = userMessage.toLowerCase();
+    
+    setConversationContext(prev => {
+      const updated = { ...prev };
+      
+      // Detect CRM mentions
+      const crmKeywords = {
+        'salesforce': 'Salesforce',
+        'hubspot': 'HubSpot', 
+        'pipedrive': 'Pipedrive',
+        'zoho': 'Zoho',
+        'dynamics': 'Microsoft Dynamics',
+        'sugar': 'Sugar CRM'
+      };
+      
+      Object.entries(crmKeywords).forEach(([keyword, name]) => {
+        if (message.includes(keyword)) {
+          if (message.includes('from') || message.includes('current')) {
+            updated.userDetails.currentCRM = name;
+          } else if (message.includes('to') || message.includes('switch')) {
+            updated.userDetails.targetCRM = name;
+          }
+        }
+      });
+      
+      // Detect company size indicators
+      if (message.includes('small business') || message.includes('startup')) {
+        updated.userDetails.companySize = 'small';
+      } else if (message.includes('enterprise') || message.includes('large company')) {
+        updated.userDetails.companySize = 'enterprise';
+      } else if (message.includes('medium') || message.includes('mid-size')) {
+        updated.userDetails.companySize = 'medium';
+      }
+      
+      // Detect concerns
+      const concernKeywords = ['worried', 'concerned', 'scared', 'risk', 'afraid', 'problem', 'issue', 'fail'];
+      if (concernKeywords.some(word => message.includes(word))) {
+        updated.lastSentiment = 'frustrated';
+        if (!updated.userDetails.concerns.includes('risk_averse')) {
+          updated.userDetails.concerns.push('risk_averse');
+        }
+      }
+      
+      // Detect positive sentiment
+      const positiveKeywords = ['excited', 'great', 'awesome', 'perfect', 'exactly', 'love'];
+      if (positiveKeywords.some(word => message.includes(word))) {
+        updated.lastSentiment = 'positive';
+      }
+      
+      // Detect urgency
+      if (message.includes('urgent') || message.includes('quickly') || message.includes('asap')) {
+        if (!updated.userDetails.concerns.includes('timeline_pressure')) {
+          updated.userDetails.concerns.push('timeline_pressure');
+        }
+      }
+      
+      // Update journey stage
+      if (message.includes('price') || message.includes('cost') || message.includes('budget')) {
+        updated.journeyStage = 'evaluating';
+      } else if (message.includes('ready') || message.includes('start') || message.includes('begin')) {
+        updated.journeyStage = 'ready';
+      } else if (message.includes('compare') || message.includes('vs') || message.includes('difference')) {
+        updated.journeyStage = 'comparing';
+      }
+      
+      return updated;
+    });
   }, []);
 
   const getGeminiResponse = async (userInput: string): Promise<string> => {
     try {
       setIsLoading(true);
       
-      // Build conversation history for context
+      // Build enhanced conversation history with context
       const conversationHistory: GeminiChatMessage[] = messages
         .filter(msg => msg.type !== 'options')
-        .slice(-6) // Keep last 6 messages for context
+        .slice(-8) // Keep more messages for better context
         .map(msg => ({
           role: msg.type === 'user' ? 'user' : 'assistant',
           content: msg.content
@@ -65,7 +170,21 @@ export const useChatbot = () => {
         content: userInput
       });
 
-      const response = await sendMessageToGemini(conversationHistory, QUILLSWITCH_SYSTEM_PROMPT);
+      // Create context-aware system prompt
+      const contextualPrompt = `${QUILLSWITCH_SYSTEM_PROMPT}
+
+CURRENT CONVERSATION CONTEXT:
+${conversationContext.userDetails.currentCRM ? `- Current CRM: ${conversationContext.userDetails.currentCRM}` : ''}
+${conversationContext.userDetails.targetCRM ? `- Target CRM: ${conversationContext.userDetails.targetCRM}` : ''}
+${conversationContext.userDetails.companySize ? `- Company size: ${conversationContext.userDetails.companySize}` : ''}
+${conversationContext.userDetails.concerns.length ? `- Concerns: ${conversationContext.userDetails.concerns.join(', ')}` : ''}
+- Journey stage: ${conversationContext.journeyStage}
+- Last sentiment: ${conversationContext.lastSentiment}
+- Previous topics discussed: ${conversationContext.previousTopics.slice(-3).join(', ')}
+
+IMPORTANT: Use this context to provide personalized, relevant responses that build on our conversation history. Reference previous details naturally and proactively address their specific situation.`;
+
+      const response = await sendMessageToGemini(conversationHistory, contextualPrompt);
       
       if (response.error) {
         throw new Error(response.error);
@@ -83,77 +202,110 @@ export const useChatbot = () => {
 
   const shouldShowCTA = useCallback((userInput: string, conversationHistory: ChatMessage[]): boolean => {
     const input = userInput.toLowerCase();
-    const recentMessages = conversationHistory.slice(-4); // Look at recent conversation context
+    const userMessageCount = conversationHistory.filter(msg => msg.type === 'user').length;
     
-    // PRIORITY: Detect explicit requests for expert/specialist connection
+    // Enhanced logic based on conversation context and user journey
+    
+    // PRIORITY: Explicit expert requests
     const expertRequestIndicators = [
       'talk to a specialist', 'migration specialist', 'talk to someone', 'speak to someone',
       'connect me with', 'talk to a person', 'human help', 'live person', 'expert help',
       'migration expert', 'talk to an expert', 'speak with expert', 'connect with specialist',
-      'want to talk', 'need to talk', 'let me talk', 'talk to your team'
+      'want to talk', 'need to talk', 'let me talk', 'talk to your team', 'schedule a call'
     ];
     
-    const hasExpertRequest = expertRequestIndicators.some(indicator => input.includes(indicator));
+    if (expertRequestIndicators.some(indicator => input.includes(indicator)) && userMessageCount >= 1) {
+      return true;
+    }
     
-    // If user explicitly asks for expert connection, show CTA immediately (after first message)
-    const userMessageCount = conversationHistory.filter(msg => msg.type === 'user').length;
-    if (hasExpertRequest && userMessageCount >= 1) return true;
-    
-    // Don't show CTAs too early in normal conversation flow
+    // Don't show CTAs too early unless user is clearly ready
     if (userMessageCount < 2) return false;
     
-    // Show CTAs when user expresses clear intent or decision points
-    const actionIndicators = [
+    // Context-aware CTA timing based on journey stage
+    const { journeyStage, lastSentiment } = conversationContext;
+    
+    // Show CTAs when user reaches key decision points
+    if (journeyStage === 'ready' || journeyStage === 'evaluating') {
+      return true;
+    }
+    
+    // High-intent signals
+    const readinessIndicators = [
       'ready', 'interested', 'sounds good', 'makes sense', 'convinced', 'sold',
       'let\'s do', 'want to', 'need to', 'should we', 'next step', 'move forward',
-      'get started', 'sign up', 'try it', 'demo', 'setup'
+      'get started', 'sign up', 'try it', 'demo', 'setup', 'how much', 'pricing'
     ];
     
-    const questionIndicators = [
+    // Question/concern indicators (don't show CTAs yet)
+    const hesitationIndicators = [
       'what if', 'but what about', 'concerned about', 'worried about', 'issue with',
-      'problem with', 'not sure', 'hesitant', 'doubt', 'risk'
+      'problem with', 'not sure', 'hesitant', 'doubt', 'risk', 'what happens',
+      'tell me more', 'how does', 'can you explain'
     ];
     
-    // Check if user seems ready to act
-    const showsReadiness = actionIndicators.some(indicator => input.includes(indicator));
+    const showsReadiness = readinessIndicators.some(indicator => input.includes(indicator));
+    const showsHesitation = hesitationIndicators.some(indicator => input.includes(indicator)) ||
+                           input.includes('?');
     
-    // Check if user still has concerns (don't show CTAs yet)
-    const hasMoreQuestions = questionIndicators.some(indicator => input.includes(indicator)) ||
-                            input.includes('?') ||
-                            input.includes('what about') ||
-                            input.includes('tell me more');
+    // Smart timing based on conversation flow
+    if (showsReadiness && !showsHesitation) return true;
+    if (showsHesitation) return false;
     
-    // Look at conversation flow - if user asked multiple questions, wait for natural pause
-    const recentlyAskedQuestions = recentMessages.filter(msg => 
-      msg.type === 'user' && msg.content.includes('?')
-    ).length;
+    // Natural conversation pause detection
+    if (lastSentiment === 'positive' && userMessageCount >= 3) return true;
+    if (userMessageCount >= 5 && !showsHesitation) return true;
     
-    return showsReadiness || (!hasMoreQuestions && recentlyAskedQuestions === 0 && userMessageCount >= 3);
-  }, []);
+    return false;
+  }, [conversationContext]);
 
   const addContextualCTA = useCallback((userInput: string) => {
     const input = userInput.toLowerCase();
+    const { journeyStage, userDetails, lastSentiment } = conversationContext;
     
-    if (input.includes('cost') || input.includes('price') || input.includes('saving')) {
-      addMessage({
-        type: 'options',
-        content: "Want to dig deeper into the numbers?",
-        options: CTA_OPTIONS.cost
-      });
-    } else if (input.includes('how') || input.includes('process') || input.includes('start')) {
-      addMessage({
-        type: 'options', 
-        content: "Ready to take the next step?",
-        options: CTA_OPTIONS.process
-      });
-    } else {
-      addMessage({
-        type: 'options',
-        content: "What would be most helpful right now?",
-        options: CTA_OPTIONS.general
-      });
+    // Intelligent CTA selection based on conversation context
+    let ctaMessage: string;
+    let ctaOptions: string[];
+    
+    // Context-aware CTA messaging
+    if (input.includes('cost') || input.includes('price') || input.includes('saving') || journeyStage === 'evaluating') {
+      ctaMessage = userDetails.companySize === 'small' 
+        ? "Want to see exactly how much you could save with your size business?"
+        : "Ready to get a custom savings estimate for your specific situation?";
+      ctaOptions = CTA_OPTIONS.cost;
+    } 
+    else if (input.includes('how') || input.includes('process') || input.includes('start') || journeyStage === 'ready') {
+      ctaMessage = lastSentiment === 'positive' 
+        ? "Sounds like you're ready to make this happen. What's the best next step for you?"
+        : "Ready to take the next step?";
+      ctaOptions = CTA_OPTIONS.process;
     }
-  }, [addMessage]);
+    else if (userDetails.concerns.includes('risk_averse')) {
+      ctaMessage = "I get it - migrations can feel risky. Want to talk through your specific concerns with one of our specialists?";
+      ctaOptions = ["Talk to a Migration Expert", "Get the Migration Playbook", "See Risk-Free Options"];
+    }
+    else if (userDetails.concerns.includes('timeline_pressure')) {
+      ctaMessage = "Time is crucial for you. Let's see what we can do to fast-track this:";
+      ctaOptions = ["Talk to a Migration Expert", "Get Emergency Migration Quote", "See Fastest Options"];
+    }
+    else {
+      // Default contextual message based on journey stage
+      const messages = {
+        'researching': "What would help you make the best decision?",
+        'comparing': "Ready to see how we stack up?",
+        'evaluating': "What would be most helpful for your evaluation?",
+        'ready': "Looks like you're ready to move forward. What's next?",
+        'initial': "What would be most helpful right now?"
+      };
+      ctaMessage = messages[journeyStage] || messages['initial'];
+      ctaOptions = CTA_OPTIONS.general;
+    }
+    
+    addMessage({
+      type: 'options',
+      content: ctaMessage,
+      options: ctaOptions
+    });
+  }, [addMessage, conversationContext]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
