@@ -26,8 +26,10 @@ serve(async (req) => {
       );
     }
 
-    // Test basic API connection by fetching integrations
-    const response = await fetch('https://api.unified.to/integrations', {
+    // Test basic API connection by fetching activated integrations
+    console.log('Testing Unified.to API with key:', unifiedApiKey.substring(0, 10) + '...');
+    
+    const response = await fetch('https://api.unified.to/unified/integration', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${unifiedApiKey}`,
@@ -35,13 +37,25 @@ serve(async (req) => {
       },
     });
 
+    console.log('API Response status:', response.status);
+    console.log('API Response headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('API Error response:', errorText);
       return new Response(
         JSON.stringify({ 
           success: false,
           error: `Unified.to API error: ${response.status} ${errorText}`,
-          status: response.status
+          status: response.status,
+          details: {
+            url: 'https://api.unified.to/unified/integration',
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${unifiedApiKey.substring(0, 10)}...`,
+              'Content-Type': 'application/json'
+            }
+          }
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
