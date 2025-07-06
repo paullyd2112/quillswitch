@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { toast } from "sonner";
 import { storeSecureData, getSecureData, encryptData } from "@/utils/encryptionUtils";
+import { unifiedApiService, UnifiedConnection } from "@/services/unified/UnifiedApiService";
 
 interface ConnectedSystem {
   id: string;
@@ -40,31 +41,49 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isConnecting, setIsConnecting] = useState(false);
   const [currentSystem, setCurrentSystem] = useState<string | null>(null);
 
-  // Load connected systems from secure storage on initialization
+  // Load connected systems from Unified API on initialization
   useEffect(() => {
-    const loadConnectedSystems = () => {
-      const storedSystems = getSecureData("connected_systems");
-      if (storedSystems) {
-        try {
-          const parsedSystems = JSON.parse(storedSystems);
-          if (Array.isArray(parsedSystems)) {
-            setConnectedSystems(parsedSystems);
-          }
-        } catch (error) {
-          console.error("Failed to parse stored connected systems", error);
-        }
+    const loadConnectedSystems = async () => {
+      try {
+        const unifiedConnections = await unifiedApiService.getUserConnections();
+        const mappedSystems: ConnectedSystem[] = unifiedConnections.map(conn => ({
+          id: conn.id,
+          name: conn.name,
+          type: "source", // Default to source, could be enhanced to detect type
+          status: conn.status === 'connected' ? 'connected' : 'error',
+          connectionDate: new Date(conn.created_at),
+          authMethod: "oauth"
+        }));
+        setConnectedSystems(mappedSystems);
+      } catch (error) {
+        console.error("Failed to load connected systems from Unified API", error);
       }
     };
     
     loadConnectedSystems();
   }, []);
 
-  // Save connected systems to secure storage whenever they change
+  // Auto-refresh connections periodically
   useEffect(() => {
-    if (connectedSystems.length > 0) {
-      storeSecureData("connected_systems", JSON.stringify(connectedSystems));
-    }
-  }, [connectedSystems]);
+    const interval = setInterval(async () => {
+      try {
+        const unifiedConnections = await unifiedApiService.getUserConnections();
+        const mappedSystems: ConnectedSystem[] = unifiedConnections.map(conn => ({
+          id: conn.id,
+          name: conn.name,
+          type: "source",
+          status: conn.status === 'connected' ? 'connected' : 'error',
+          connectionDate: new Date(conn.created_at),
+          authMethod: "oauth"
+        }));
+        setConnectedSystems(mappedSystems);
+      } catch (error) {
+        console.error("Failed to refresh connections", error);
+      }
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const connectWithOAuth = async (
     systemId: string, 
@@ -74,33 +93,56 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setIsConnecting(true);
       setCurrentSystem(systemId);
       
-      // Simulate OAuth flow - in a real app, this would redirect to the OAuth provider
-      toast.info(`Starting OAuth flow for ${systemId}...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, we'll simulate a successful OAuth connection
-      // In a real app, you would handle the OAuth callback and token exchange
-      
       // Check if system is already connected
       if (connectedSystems.some(system => system.id === systemId)) {
         toast.info(`${systemId} is already connected`);
         return;
       }
       
-      // Add the new connected system
-      setConnectedSystems(prev => [
-        ...prev,
-        {
-          id: systemId,
-          name: systemId.charAt(0).toUpperCase() + systemId.slice(1),
-          type,
-          status: "connected",
-          connectionDate: new Date(),
-          authMethod: "oauth"
-        }
-      ]);
+      // Use the real Unified API to initiate connection
+      toast.info(`Initiating connection to ${systemId}...`);
+      const { authUrl } = await unifiedApiService.initiateConnection(systemId);
       
-      toast.success(`Successfully connected to ${systemId} using OAuth`);
+      // Open auth URL in popup window
+      const popup = window.open(
+        authUrl,
+        'unified-auth',
+        'width=600,height=700,scrollbars=yes,resizable=yes'
+      );
+
+      // Listen for successful connection
+      const checkClosed = setInterval(() => {
+        if (popup?.closed) {
+          clearInterval(checkClosed);
+          // Refresh connections after popup closes
+          setTimeout(async () => {
+            try {
+              const unifiedConnections = await unifiedApiService.getUserConnections();
+              const mappedSystems: ConnectedSystem[] = unifiedConnections.map(conn => ({
+                id: conn.id,
+                name: conn.name,
+                type: "source",
+                status: conn.status === 'connected' ? 'connected' : 'error',
+                connectionDate: new Date(conn.created_at),
+                authMethod: "oauth"
+              }));
+              setConnectedSystems(mappedSystems);
+              
+              // Check if new connection was added
+              const wasConnected = mappedSystems.some(system => 
+                system.name.toLowerCase() === systemId.toLowerCase()
+              );
+              
+              if (wasConnected) {
+                toast.success(`Successfully connected to ${systemId} using OAuth`);
+              }
+            } catch (error) {
+              console.error("Failed to refresh connections after OAuth", error);
+            }
+          }, 1000);
+        }
+      }, 1000);
+      
     } catch (error) {
       toast.error(`Failed to connect to ${systemId} with OAuth`);
       console.error("OAuth connection error:", error);
@@ -162,13 +204,23 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
-  const disconnectSystem = (systemId: string) => {
-    // Remove the stored API key when disconnecting
-    const secureKeyId = `api_key_${systemId}`;
-    localStorage.removeItem(`secure_${secureKeyId}`);
-    
-    setConnectedSystems(prev => prev.filter(system => system.id !== systemId));
-    toast.success(`Disconnected from ${systemId}`);
+  const disconnectSystem = async (systemId: string) => {
+    try {
+      // Use the real Unified API to remove connection
+      await unifiedApiService.removeConnection(systemId);
+      
+      // Update local state
+      setConnectedSystems(prev => prev.filter(system => system.id !== systemId));
+      
+      // Clean up any stored API keys
+      const secureKeyId = `api_key_${systemId}`;
+      localStorage.removeItem(`secure_${secureKeyId}`);
+      
+      toast.success(`Disconnected from ${systemId}`);
+    } catch (error) {
+      toast.error(`Failed to disconnect from ${systemId}`);
+      console.error("Disconnect error:", error);
+    }
   };
 
   const validateConnection = async (systemId: string, apiKey: string): Promise<{ valid: boolean; message?: string }> => {
