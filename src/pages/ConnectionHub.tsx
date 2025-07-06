@@ -8,6 +8,7 @@ import IntegratedToolsSection from "@/components/connection-hub/IntegratedToolsS
 import ConnectionGuide from "@/components/connection-hub/ConnectionGuide";
 import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
 import SecurityInfoCard from "@/components/connection-hub/SecurityInfoCard";
+import { UnifiedTestButton } from "@/components/connection-hub/UnifiedTestButton";
 import { ArrowRight, Info, Shield } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -122,6 +123,18 @@ const ConnectionHub: React.FC = () => {
                 </p>
                 
                 <SecurityInfoCard />
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>🧪 Test Unified.to Integration</CardTitle>
+                    <CardDescription>
+                      Verify that your Unified.to API key is working and see available CRM integrations.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <UnifiedTestButton />
+                  </CardContent>
+                </Card>
                 
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                   <Card>
