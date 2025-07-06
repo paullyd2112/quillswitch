@@ -22,14 +22,47 @@ export interface PIIType {
  * Advanced PII detection service using NLP and AI
  */
 export class PIIDetectionService {
-  private patterns: Record<string, RegExp> = {
-    email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-    phone: /(\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})/g,
-    ssn: /\b(?:\d{3}[-.\s]?\d{2}[-.\s]?\d{4}|\d{9})\b/g,
-    credit_card: /\b(?:\d{4}[-.\s]?){3}\d{4}\b/g,
-    ip_address: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g,
-    date_of_birth: /\b(?:0?[1-9]|1[0-2])[-\/](?:0?[1-9]|[12][0-9]|3[01])[-\/](?:19|20)\d{2}\b/g
-  };
+/**
+ * Enhanced PII patterns with more comprehensive detection
+ */
+private enhancedPatterns: Record<string, { regex: RegExp; confidence: number }> = {
+  email: { 
+    regex: /\b[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\b/g,
+    confidence: 95
+  },
+  phone: { 
+    regex: /(?:\+?1[-.\s]?)?(?:\([0-9]{3}\)|[0-9]{3})[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}|(?:\+?[1-9]\d{0,3}[-.\s]?)?(?:\([0-9]{1,4}\)|[0-9]{1,4})[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,9}/g,
+    confidence: 90
+  },
+  ssn: { 
+    regex: /(?!000|666|9\d{2})\d{3}[-.\s]?(?!00)\d{2}[-.\s]?(?!0000)\d{4}|\d{9}/g,
+    confidence: 98
+  },
+  credit_card: { 
+    regex: /(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3[0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12})/g,
+    confidence: 95
+  },
+  ip_address: { 
+    regex: /(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/g,
+    confidence: 85
+  },
+  date_of_birth: { 
+    regex: /(?:0?[1-9]|1[0-2])[-\/](?:0?[1-9]|[12][0-9]|3[01])[-\/](?:19|20)\d{2}|\b(?:19|20)\d{2}[-\/](?:0?[1-9]|1[0-2])[-\/](?:0?[1-9]|[12][0-9]|3[01])\b/g,
+    confidence: 80
+  },
+  passport: {
+    regex: /[A-Z]{1,2}[0-9]{6,9}/g,
+    confidence: 75
+  },
+  license_plate: {
+    regex: /[A-Z]{1,3}[-\s]?[0-9]{1,4}[-\s]?[A-Z]{0,3}/g,
+    confidence: 70
+  },
+  bank_account: {
+    regex: /\b[0-9]{8,17}\b/g,
+    confidence: 65
+  }
+};
 
   /**
    * Detect PII in extracted data
@@ -86,22 +119,58 @@ export class PIIDetectionService {
   }
 
   /**
-   * Pattern-based PII detection
+   * Enhanced pattern-based PII detection with confidence scoring
    */
   private detectByPatterns(value: string): PIIType[] {
     const results: PIIType[] = [];
 
-    for (const [type, pattern] of Object.entries(this.patterns)) {
-      if (pattern.test(value)) {
+    for (const [type, patternInfo] of Object.entries(this.enhancedPatterns)) {
+      if (patternInfo.regex.test(value)) {
+        // Additional validation for certain types
+        let actualConfidence = patternInfo.confidence;
+        
+        if (type === 'credit_card') {
+          // Luhn algorithm check for credit cards
+          actualConfidence = this.validateCreditCard(value) ? patternInfo.confidence : 50;
+        } else if (type === 'bank_account' && value.length < 10) {
+          // Bank accounts should be longer
+          actualConfidence = 40;
+        }
+
         results.push({
           type: type as PIIType['type'],
-          confidence: 95,
-          pattern: pattern.source
+          confidence: actualConfidence,
+          pattern: patternInfo.regex.source
         });
       }
     }
 
     return results;
+  }
+
+  /**
+   * Validate credit card using Luhn algorithm
+   */
+  private validateCreditCard(cardNumber: string): boolean {
+    const digits = cardNumber.replace(/\D/g, '');
+    let sum = 0;
+    let isEven = false;
+
+    for (let i = digits.length - 1; i >= 0; i--) {
+      let digit = parseInt(digits.charAt(i), 10);
+
+      if (isEven) {
+        digit *= 2;
+        if (digit > 9) {
+          digit -= 9;
+        }
+      }
+
+      sum += digit;
+      isEven = !isEven;
+    }
+
+    return sum % 10 === 0 && digits.length >= 13;
   }
 
   /**

@@ -1,4 +1,5 @@
 import * as fuzzball from 'fuzzball';
+import Fuse from 'fuse.js';
 import { ExtractedData, ExtractedField } from '@/services/migration/extractionService';
 
 export interface DuplicationResult {
@@ -186,7 +187,71 @@ export class DeduplicationService {
   }
 
   /**
-   * Batch deduplication for large datasets
+   * Fast fuzzy search using Fuse.js for large datasets
+   */
+  async fastDuplicateSearch(
+    targetRecord: ExtractedData,
+    searchPool: ExtractedData[],
+    threshold: number = 0.3
+  ): Promise<DuplicationResult[]> {
+    if (searchPool.length === 0) return [];
+
+    // Convert records to searchable format
+    const searchData = searchPool.map(record => ({
+      ...record,
+      searchableText: this.createSearchableText(record)
+    }));
+
+    // Configure Fuse.js for fuzzy search
+    const fuse = new Fuse(searchData, {
+      keys: ['searchableText'],
+      threshold,
+      includeScore: true,
+      ignoreLocation: true,
+      findAllMatches: true
+    });
+
+    const targetText = this.createSearchableText(targetRecord);
+    const searchResults = fuse.search(targetText);
+
+    return searchResults
+      .filter(result => result.score !== undefined && result.score <= threshold)
+      .map(result => ({
+        isDuplicate: true,
+        confidence: Math.round((1 - result.score!) * 100),
+        matchedRecord: result.item,
+        matchingFields: this.findMatchingFields(targetRecord, result.item),
+        reason: `Fuzzy match with ${Math.round((1 - result.score!) * 100)}% confidence using Fuse.js`
+      }))
+      .sort((a, b) => b.confidence - a.confidence);
+  }
+
+  private createSearchableText(record: ExtractedData): string {
+    return record.fields
+      .filter(f => !this.config.skipFields?.includes(f.name))
+      .map(f => `${f.name}:${this.normalizeValue(f.value)}`)
+      .join(' ');
+  }
+
+  private findMatchingFields(record1: ExtractedData, record2: ExtractedData): string[] {
+    const fields1 = this.fieldsToMap(record1.fields);
+    const fields2 = this.fieldsToMap(record2.fields);
+    const matches: string[] = [];
+
+    for (const fieldName of Object.keys(fields1)) {
+      if (fields2[fieldName]) {
+        const similarity = this.calculateSimilarity(fields1[fieldName], fields2[fieldName]);
+        if (similarity >= this.config.fuzzyThreshold) {
+          matches.push(fieldName);
+        }
+      }
+    }
+
+    return matches;
+  }
+
+  /**
+   * Batch deduplication for large datasets (enhanced with Fuse.js)
    */
   async batchDeduplicate(
     records: ExtractedData[],
@@ -200,7 +265,11 @@ export class DeduplicationService {
 
     for (let i = 0; i < records.length; i++) {
       const record = records[i];
-      const duplicateResults = this.detectDuplicates(record, unique);
+      
+      // Use fast fuzzy search for large datasets
+      const duplicateResults = unique.length > 100 
+        ? await this.fastDuplicateSearch(record, unique)
+        : this.detectDuplicates(record, unique);
 
       if (duplicateResults.length > 0) {
         const bestMatch = duplicateResults[0];
