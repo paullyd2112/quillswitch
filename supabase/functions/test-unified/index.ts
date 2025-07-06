@@ -27,7 +27,7 @@ serve(async (req) => {
     }
 
     // Test basic API connection by fetching integrations
-    const response = await fetch('https://api.unified.to/unified/integrations', {
+    const response = await fetch('https://api.unified.to/integrations', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${unifiedApiKey}`,
