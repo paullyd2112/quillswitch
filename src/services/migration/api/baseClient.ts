@@ -5,9 +5,16 @@ import { PaginationHandler, PaginationParams, PaginatedResponse } from "./utils/
 
 // Production API key will be retrieved from Supabase secrets
 const getUnifiedApiKey = async (): Promise<string> => {
-  // In edge functions, this would use Deno.env.get('UNIFIED_API_KEY')
-  // In client code, we'll need to make a secure call to get the key
-  return "production_api_key"; // Placeholder - will be replaced by secure key retrieval
+  try {
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data, error } = await supabase.functions.invoke('get-unified-api-key');
+    
+    if (error) throw error;
+    return data.apiKey;
+  } catch (error) {
+    console.error("Failed to retrieve Unified API key:", error);
+    throw new Error("Unable to retrieve API key. Please check your configuration.");
+  }
 };
 
 export class BaseApiClient {
@@ -22,9 +29,25 @@ export class BaseApiClient {
     apiKey?: string,
     requestsPerSecond: number = 10
   ) {
-    // Use provided key or get from secure storage
-    this.apiKey = apiKey || "production_api_key"; // Will be replaced with actual secure key
+    // Use provided key or initialize with placeholder that will be replaced
+    this.apiKey = apiKey || "";
     this.rateLimiter = new RateLimiter(requestsPerSecond);
+    
+    // Initialize API key from secure storage if not provided
+    if (!apiKey) {
+      this.initializeApiKey();
+    }
+  }
+  
+  /**
+   * Initialize API key from secure storage
+   */
+  private async initializeApiKey() {
+    try {
+      this.apiKey = await getUnifiedApiKey();
+    } catch (error) {
+      console.warn("Failed to initialize API key:", error);
+    }
   }
   
   /**

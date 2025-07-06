@@ -172,8 +172,12 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const encryptedApiKey = encryptData(apiKey);
       storeSecureData(secureKeyId, encryptedApiKey);
       
-      // Simulate connection process
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Validate the API key with real API before connecting
+      const validationResult = await validateConnection(systemId, apiKey);
+      if (!validationResult.valid) {
+        toast.error(validationResult.message || `Failed to validate ${systemId} connection`);
+        return;
+      }
       
       // Check if system is already connected
       if (connectedSystems.some(system => system.id === systemId)) {
@@ -240,26 +244,37 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
     
     try {
-      // Simulate API key validation
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Use the Unified API to validate the connection
+      const { unifiedApiService } = await import('@/services/unified/UnifiedApiService');
       
-      // For demo, consider certain keys "invalid" to show error handling
-      if (apiKey === "invalid_permissions") {
+      // Try to validate the API key by attempting to connect
+      try {
+        const testResult = await unifiedApiService.testConnection(systemId);
+        return { 
+          valid: testResult.status === 'healthy',
+          message: testResult.status !== 'healthy' ? testResult.issues.join(', ') : undefined
+        };
+      } catch (validationError: any) {
+        // Parse specific error types
+        if (validationError.message?.includes('401') || validationError.message?.includes('unauthorized')) {
+          return {
+            valid: false,
+            message: `Invalid API key for ${systemId}`
+          };
+        }
+        
+        if (validationError.message?.includes('403') || validationError.message?.includes('forbidden')) {
+          return {
+            valid: false,
+            message: `API key does not have required permissions for ${systemId}`
+          };
+        }
+        
         return {
           valid: false,
-          message: `QuillSwitch doesn't have permission to access required data in ${systemId}`
+          message: validationError.message || "Failed to validate API key"
         };
       }
-      
-      // Check for common test/demo API keys that shouldn't be used in production
-      if (apiKey.includes("test") || apiKey.includes("demo") || apiKey.includes("example")) {
-        return {
-          valid: false,
-          message: `This appears to be a test API key. Please use a production key for ${systemId}`
-        };
-      }
-      
-      return { valid: true };
     } catch (error) {
       console.error("Validation error:", error);
       return {

@@ -28,16 +28,16 @@ export function useConnectionHealth(connectors?: Connector[]) {
         status: healthResult.status === 'healthy' ? 'healthy' : 
                healthResult.status === 'warning' ? 'degraded' : 'failed',
         lastChecked: healthResult.lastCheck,
-        responseTime: Math.floor(Math.random() * 500) + 100, // This would come from actual API response
+        responseTime: 0, // Default value since API doesn't provide this yet
         uptime: healthResult.status === 'healthy' ? 99.9 : 
                healthResult.status === 'warning' ? 95 : 80,
         errorCount: healthResult.issues.length,
         lastError: healthResult.issues.length > 0 ? healthResult.issues[0] : undefined,
         metrics: {
-          apiCalls24h: Math.floor(Math.random() * 1000) + 100, // Would come from API
+          apiCalls24h: 0, // Default value since API doesn't provide this yet
           successRate: healthResult.status === 'healthy' ? 99.8 : 
                       healthResult.status === 'warning' ? 94 : 70,
-          averageResponseTime: Math.floor(Math.random() * 500) + 100 // Would come from API
+          averageResponseTime: 0 // Default value since API doesn't provide this yet
         }
       };
     } catch (e) {

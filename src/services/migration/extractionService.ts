@@ -1,5 +1,6 @@
 import { apiClient } from './api/apiClient';
 import { handleServiceError } from '../utils/serviceUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Types for the extraction service
@@ -60,16 +61,8 @@ export const extractDataPreview = async (
       return mockData;
       
     } catch (extractionError) {
-      console.warn("Data extraction not yet fully implemented, using mock data:", extractionError);
-      // Fallback to mock data with a note
-      const mockData = generateMockData(sourceSystem, objectType, limit, filters);
-      return mockData.map(item => ({
-        ...item,
-        metadata: {
-          ...item.metadata,
-          note: "Preview data - actual extraction will be available during migration"
-        }
-      }));
+      console.error("Data extraction failed:", extractionError);
+      throw new Error(`Failed to extract data from ${sourceSystem}. Please check your connection and try again. Error: ${extractionError instanceof Error ? extractionError.message : 'Unknown error'}`);
     }
   } catch (error: any) {
     handleServiceError(error, `Failed to extract ${options.objectType} preview from ${options.sourceSystem}`);
@@ -240,33 +233,49 @@ export const extractFullDataSet = async (
     }
     
     // TODO: Implement actual full data extraction via unified API
-    // This would make paginated requests to extract all data
-    // For now, return enhanced mock data with progress simulation
-    
-    if (options.onProgress) {
-      const totalSteps = 4;
-      for (let i = 1; i <= totalSteps; i++) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        options.onProgress(i / totalSteps);
+    // Use the unified API to extract all data in batches
+    try {
+      const { data, error } = await supabase.functions.invoke('unified-data-extraction', {
+        method: 'POST',
+        body: {
+          connection_id: connection.id,
+          object_type: options.objectType,
+          batch_size: options.batchSize || 50,
+          filters: options.filters || {}
+        }
+      });
+
+      if (error) throw error;
+
+      // Report progress if callback provided
+      if (options.onProgress) {
+        options.onProgress(1.0);
       }
+
+      // Transform the unified API response to our format
+      return (data.records || []).map((record: any) => ({
+        recordId: record.id,
+        sourceSystem: options.sourceSystem,
+        objectType: options.objectType,
+        fields: Object.entries(record.raw || {}).map(([key, value]) => ({
+          name: key,
+          value,
+          type: typeof value === 'string' ? 'string' : 
+                typeof value === 'number' ? 'number' :
+                typeof value === 'boolean' ? 'boolean' :
+                value instanceof Date ? 'date' : 'unknown'
+        })),
+        metadata: {
+          extractionMethod: 'unified_api',
+          connectionId: connection.id,
+          extractedAt: new Date().toISOString(),
+          originalId: record.id
+        }
+      }));
+    } catch (extractionError) {
+      console.error("Unified API extraction failed:", extractionError);
+      throw new Error(`Failed to extract data: ${extractionError instanceof Error ? extractionError.message : 'Unknown error'}`);
     }
-    
-    const mockData = generateMockData(
-      options.sourceSystem, 
-      options.objectType, 
-      25, // Simulating larger dataset
-      options.filters || {}
-    );
-    
-    return mockData.map(item => ({
-      ...item,
-      metadata: {
-        ...item.metadata,
-        extractionMethod: 'unified_api',
-        connectionId: connection.id,
-        extractedAt: new Date().toISOString()
-      }
-    }));
     
   } catch (error: any) {
     console.error("Full data extraction failed:", error);
