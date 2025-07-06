@@ -18,8 +18,7 @@ const ConnectionGuide: React.FC = () => {
           <Tabs defaultValue="overview">
             <TabsList className="mb-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="oauth">OAuth Connections</TabsTrigger>
-              <TabsTrigger value="api">API Keys</TabsTrigger>
+              <TabsTrigger value="unified">Unified Integration</TabsTrigger>
               <TabsTrigger value="troubleshooting">Troubleshooting</TabsTrigger>
             </TabsList>
             
@@ -40,8 +39,8 @@ const ConnectionGuide: React.FC = () => {
                     Connection Types
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    QuillSwitch supports two types of connections: OAuth and API Key. OAuth is the recommended 
-                    method as it's more secure and doesn't require you to manage API keys.
+                    QuillSwitch uses Unified.to's platform to connect to 28+ CRM systems through a single, 
+                    standardized API. All connections use OAuth 2.0 for security and are managed automatically.
                   </p>
                 </div>
                 
@@ -58,72 +57,37 @@ const ConnectionGuide: React.FC = () => {
               </div>
             </TabsContent>
             
-            <TabsContent value="oauth" className="space-y-4">
+            <TabsContent value="unified" className="space-y-4">
               <div>
-                <h3 className="text-lg font-medium mb-2">OAuth Connection Process</h3>
+                <h3 className="text-lg font-medium mb-2">Unified API Connection Process</h3>
                 <p className="text-muted-foreground">
-                  OAuth connections allow you to connect your systems without sharing your password or API keys 
-                  with QuillSwitch. Here's how it works:
+                  Our unified API platform provides secure connections to all CRM systems through OAuth 2.0 
+                  authentication. Here's how it works:
                 </p>
               </div>
               
               <div className="grid gap-4 mt-4">
                 <div className="bg-muted/40 p-4 rounded-md border">
-                  <h4 className="font-medium mb-2">Step 1: Initiate the connection</h4>
+                  <h4 className="font-medium mb-2">Step 1: Select your CRM</h4>
                   <p className="text-sm text-muted-foreground">
-                    Click the "Connect" button on the system you want to connect to. You'll see a modal with 
-                    information about what permissions QuillSwitch will request.
+                    Choose from 28+ supported CRM systems including Salesforce, HubSpot, Zoho, Pipedrive, 
+                    and Microsoft Dynamics 365.
                   </p>
                 </div>
                 
                 <div className="bg-muted/40 p-4 rounded-md border">
-                  <h4 className="font-medium mb-2">Step 2: Authorize QuillSwitch</h4>
+                  <h4 className="font-medium mb-2">Step 2: Secure authorization</h4>
                   <p className="text-sm text-muted-foreground">
-                    You'll be redirected to the system's authorization page where you can review and approve 
-                    the requested permissions. Make sure you're logged in to your account.
+                    You'll be redirected to your CRM's secure OAuth authorization page to grant QuillSwitch 
+                    the necessary permissions for data access.
                   </p>
                 </div>
                 
                 <div className="bg-muted/40 p-4 rounded-md border">
-                  <h4 className="font-medium mb-2">Step 3: Return to QuillSwitch</h4>
+                  <h4 className="font-medium mb-2">Step 3: Automatic setup</h4>
                   <p className="text-sm text-muted-foreground">
-                    After authorizing, you'll be redirected back to QuillSwitch and your connection will 
-                    be established automatically. You're now ready to start using the system.
-                  </p>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="api" className="space-y-4">
-              <div>
-                <h3 className="text-lg font-medium mb-2">Using API Keys</h3>
-                <p className="text-muted-foreground">
-                  For systems that don't support OAuth or when you prefer using API keys, follow these steps:
-                </p>
-              </div>
-              
-              <div className="grid gap-4 mt-4">
-                <div className="bg-muted/40 p-4 rounded-md border">
-                  <h4 className="font-medium mb-2">Step 1: Generate an API key</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Log in to your system's admin panel and navigate to the API or Developer settings. Generate a 
-                    new API key with the necessary permissions for QuillSwitch.
-                  </p>
-                </div>
-                
-                <div className="bg-muted/40 p-4 rounded-md border">
-                  <h4 className="font-medium mb-2">Step 2: Enter your API key</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Click the "Connect" button on the system you want to connect and enter your API key in the 
-                    provided field. QuillSwitch will validate your key before establishing the connection.
-                  </p>
-                </div>
-                
-                <div className="bg-muted/40 p-4 rounded-md border">
-                  <h4 className="font-medium mb-2">Step 3: Verify permissions</h4>
-                  <p className="text-sm text-muted-foreground">
-                    If your connection fails due to permission issues, make sure your API key has all the 
-                    required permissions. Check the system-specific documentation for details.
+                    Once authorized, the connection is established automatically and your CRM data becomes 
+                    available for migration through our unified interface.
                   </p>
                 </div>
               </div>
@@ -141,17 +105,16 @@ const ConnectionGuide: React.FC = () => {
                 <div className="bg-muted/40 p-4 rounded-md border">
                   <h4 className="font-medium mb-2">Permission Errors</h4>
                   <p className="text-sm text-muted-foreground">
-                    If you receive a permission error, ensure your account has admin access or that your API key 
-                    has the necessary permissions. For OAuth connections, make sure you approved all requested 
-                    permissions.
+                    If you receive a permission error, ensure your account has admin access in your CRM system. 
+                    During the OAuth authorization process, make sure you approve all requested permissions.
                   </p>
                 </div>
                 
                 <div className="bg-muted/40 p-4 rounded-md border">
-                  <h4 className="font-medium mb-2">Invalid API Keys</h4>
+                  <h4 className="font-medium mb-2">Connection Failures</h4>
                   <p className="text-sm text-muted-foreground">
-                    Make sure you're using a valid API key and not a personal access token or other credential. 
-                    Try generating a new API key if you continue to have issues.
+                    If the connection process fails, try clearing your browser cache and ensure you're logged 
+                    into your CRM system before attempting to connect.
                   </p>
                 </div>
                 

@@ -6,7 +6,7 @@ import { CheckCircle, XCircle } from "lucide-react";
 import { apiClient } from "@/services/migration/apiClient";
 
 const ApiTestSection = () => {
-  const [testApiKey, setTestApiKey] = useState("demo_api_key_123456");
+  const [testApiKey, setTestApiKey] = useState("unified_api_key_production");
   const [apiTestResult, setApiTestResult] = useState<{
     success: boolean;
     message: string;
@@ -66,7 +66,7 @@ const ApiTestSection = () => {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Default demo key: demo_api_key_123456
+            Production Unified.to API key required for testing
           </p>
         </div>
         
