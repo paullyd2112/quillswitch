@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
 import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
-import { mainNav } from "./navConfig";
+import { mainNav, userNav } from "./navConfig";
 import { useAuth } from "@/contexts/auth";
 import { throttle } from "@/utils/performance";
 
@@ -71,8 +71,8 @@ const Navbar = () => {
               <span className="font-bold text-lg text-white">QuillSwitch</span>
             </Link>
             
-            {/* Desktop Navigation - Make sure it's visible */}
-            <DesktopNav navLinks={mainNav} />
+            {/* Desktop Navigation - Show userNav when authenticated, mainNav otherwise */}
+            <DesktopNav navLinks={user ? userNav : mainNav} />
           </div>
           
           <div className="flex items-center gap-2">
@@ -94,10 +94,10 @@ const Navbar = () => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Show appropriate navigation */}
       <MobileMenu 
         isOpen={isMenuOpen}
-        navLinks={mainNav}
+        navLinks={user ? userNav : mainNav}
         onClose={() => setIsMenuOpen(false)}
       />
     </header>

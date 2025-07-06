@@ -19,6 +19,7 @@ import Resources from "@/pages/Resources";
 import ApiDocs from "@/pages/ApiDocs";
 import AppRoutes from "@/pages/app/AppRoutes";
 import ConnectionHub from "@/pages/ConnectionHub";
+import MigrationPage from "@/pages/MigrationPage";
 import OAuthCallback from "@/pages/OAuthCallback";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
@@ -62,6 +63,7 @@ function App() {
                       <Route path="/api-docs" element={<ApiDocs />} />
                       <Route path="/support" element={<Support />} />
                       <Route path="/connections" element={<ConnectionHub />} />
+                      <Route path="/migration" element={<MigrationPage />} />
                       <Route path="/privacy" element={<PrivacyPolicy />} />
                       <Route path="/terms" element={<TermsOfService />} />
                       <Route path="/app/*" element={<AppRoutes />} />
