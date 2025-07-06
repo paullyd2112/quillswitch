@@ -1,40 +1,82 @@
 
 import { useCallback } from "react";
 import { useMigrationError } from "./use-migration-error";
+import { apiClient } from "@/services/migration/api/apiClient";
 
 type UseMigrationApiReturn = {
-  createMigration: () => Promise<string | undefined>;
+  createMigration: (migrationData: any) => Promise<string | undefined>;
+  executeMigration: (params: {
+    projectId: string;
+    destinationConnectionId: string;
+    objectType: string;
+    batchSize?: number;
+  }) => Promise<{success: boolean, migratedCount: number, failedCount: number}>;
+  getMigrationStatus: (migrationId: string) => Promise<{status: string, progress: number}>;
 };
 
 /**
- * Hook to manage API interactions for migrations
+ * Hook to manage API interactions for migrations - Production version
  */
 export const useMigrationApi = (): UseMigrationApiReturn => {
   const { handleMigrationError } = useMigrationError();
   
-  // Create a migration using a mock API for demo purposes
-  const createMigration = useCallback(async () => {
+  // Create a migration using the production API
+  const createMigration = useCallback(async (migrationData: any) => {
     try {
-      // For demo purposes, simulate API call without actual backend
-      console.log("Demo: Simulating migration creation...");
+      console.log("Creating migration with data:", migrationData);
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const response = await apiClient.createMigration(migrationData);
       
-      // Generate a mock migration ID
-      const migrationId = `demo_migration_${Date.now()}`;
+      if (!response.data?.migrationId) {
+        throw new Error("Migration creation failed - no migration ID returned");
+      }
       
-      console.log("Demo: Migration created successfully with ID:", migrationId);
-      
-      return migrationId;
+      console.log("Migration created successfully with ID:", response.data.migrationId);
+      return response.data.migrationId;
     } catch (error) {
-      console.warn("Demo: Migration API simulation failed, continuing with demo anyway:", error);
-      // For demo, we'll continue even if there's an error
-      return `demo_migration_fallback_${Date.now()}`;
+      console.error("Migration creation failed:", error);
+      handleMigrationError(error);
+      throw error;
     }
-  }, []);
+  }, [handleMigrationError]);
+
+  // Execute migration for a specific object type
+  const executeMigration = useCallback(async (params: {
+    projectId: string;
+    destinationConnectionId: string;
+    objectType: string;
+    batchSize?: number;
+  }) => {
+    try {
+      console.log("Executing migration:", params);
+      
+      const result = await apiClient.executeMigration(params);
+      
+      console.log("Migration execution completed:", result);
+      return result;
+    } catch (error) {
+      console.error("Migration execution failed:", error);
+      handleMigrationError(error);
+      throw error;
+    }
+  }, [handleMigrationError]);
+
+  // Get migration status
+  const getMigrationStatus = useCallback(async (migrationId: string) => {
+    try {
+      const status = await apiClient.getMigrationStatus(migrationId);
+      console.log("Migration status retrieved:", status);
+      return status;
+    } catch (error) {
+      console.error("Failed to get migration status:", error);
+      handleMigrationError(error);
+      throw error;
+    }
+  }, [handleMigrationError]);
   
   return {
-    createMigration
+    createMigration,
+    executeMigration,
+    getMigrationStatus
   };
 };

@@ -7,8 +7,8 @@ import { OpportunitiesApiClient } from './opportunitiesClient';
 import { WebhooksApiClient } from './webhooksClient';
 
 /**
- * Migration API Client - Demo version
- * This provides mock functionality for demonstration purposes
+ * Migration API Client - Production version
+ * Integrates with Unified.to API and production services
  */
 
 export interface MigrationData {
@@ -141,39 +141,90 @@ export class ApiClient extends BaseApiClient {
   }
 
   /**
-   * Create a migration (demo version)
+   * Create a migration project
    */
   public async createMigration(migrationData: MigrationData): Promise<MigrationResponse> {
-    console.log("Demo API: Creating migration with data:", migrationData);
+    console.log("Creating migration project:", migrationData);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Generate mock response
-    const response: MigrationResponse = {
-      data: {
-        migrationId: `demo_migration_${Date.now()}`,
-        status: 'initiated'
+    try {
+      const response = await this.request<{success: boolean, data?: any, error?: string}>(
+        'migrations/migrations',
+        'POST',
+        migrationData
+      );
+      
+      if (!response.success) {
+        throw new Error(`Migration creation failed: ${response.error || 'Unknown error'}`);
       }
-    };
-    
-    console.log("Demo API: Migration created successfully:", response);
-    return response;
+      
+      return {
+        data: {
+          migrationId: response.data.migrationId || response.data.id,
+          status: response.data.status || 'initiated'
+        }
+      };
+    } catch (error) {
+      console.error("Migration creation failed:", error);
+      throw error;
+    }
   }
 
   /**
-   * Get migration status (demo version)
+   * Get migration status
    */
   public async getMigrationStatus(migrationId: string): Promise<{ status: string; progress: number }> {
-    console.log("Demo API: Getting status for migration:", migrationId);
+    console.log("Getting migration status for:", migrationId);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    return {
-      status: 'running',
-      progress: Math.floor(Math.random() * 100)
-    };
+    try {
+      const response = await this.request<{success: boolean, data?: any, error?: string}>(
+        `migrations/${migrationId}`,
+        'GET'
+      );
+      
+      if (!response.success) {
+        throw new Error(`Failed to get migration status: ${response.error || 'Unknown error'}`);
+      }
+      
+      return {
+        status: response.data.status || 'unknown',
+        progress: response.data.progress || 0
+      };
+    } catch (error) {
+      console.error("Failed to get migration status:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Execute migration for a specific object type
+   */
+  public async executeMigration(params: {
+    projectId: string;
+    destinationConnectionId: string;
+    objectType: string;
+    batchSize?: number;
+  }): Promise<{success: boolean, migratedCount: number, failedCount: number}> {
+    try {
+      const response = await this.request<{success: boolean, migrated_count: number, failed_count: number}>(
+        'unified-migration-execute',
+        'POST',
+        {
+          project_id: params.projectId,
+          destination_connection_id: params.destinationConnectionId,
+          object_type: params.objectType,
+          batch_size: params.batchSize || 50
+        }
+      );
+      
+      return {
+        success: response.success,
+        migratedCount: response.migrated_count || 0,
+        failedCount: response.failed_count || 0
+      };
+    } catch (error) {
+      console.error("Migration execution failed:", error);
+      throw error;
+    }
   }
 }
 

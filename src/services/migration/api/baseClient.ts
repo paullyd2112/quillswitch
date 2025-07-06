@@ -3,7 +3,7 @@ import { handleError } from "@/utils/errorHandling";
 import { RateLimiter } from "./utils/rateLimiter";
 import { PaginationHandler, PaginationParams, PaginatedResponse } from "./utils/paginationHandler";
 
-const DEFAULT_API_KEY = "demo_api_key_123456";
+const UNIFIED_API_KEY = "production_api_key"; // Will be retrieved from secure storage
 
 export class BaseApiClient {
   private apiKey: string;
@@ -14,7 +14,7 @@ export class BaseApiClient {
   private retryDelay = 1000; // ms
   
   constructor(
-    apiKey: string = DEFAULT_API_KEY,
+    apiKey: string = UNIFIED_API_KEY,
     requestsPerSecond: number = 10
   ) {
     this.apiKey = apiKey;
@@ -78,13 +78,6 @@ export class BaseApiClient {
     
     return this.rateLimiter.add(async () => {
       try {
-        // For demo purposes, if we're in the home page migration demo, use mock data
-        // to ensure the demo works even if edge functions aren't working
-        if (window.location.pathname === '/' && endpoint === 'migrations/migrations' && method === 'POST') {
-          console.log('Using mock migration data for demo on homepage');
-          return this.getMockMigrationResponse(data) as T;
-        }
-
         const params = new URLSearchParams();
         if (paginationParams) {
           Object.entries(paginationParams).forEach(([key, value]) => {
@@ -149,24 +142,6 @@ export class BaseApiClient {
       maxItems: options.maxItems,
       onProgress: options.onProgress
     });
-  }
-  
-  /**
-   * Generate mock migration response for demo
-   */
-  private getMockMigrationResponse(requestData: any): any {
-    const migrationId = `mig_${Math.floor(Math.random() * 1000000)}`;
-    
-    return {
-      success: true,
-      data: {
-        migrationId,
-        name: requestData.name || "Demo CRM Migration",
-        status: "scheduled",
-        createdAt: new Date().toISOString(),
-        estimatedCompletionTime: new Date(Date.now() + 45 * 60000).toISOString()
-      }
-    };
   }
   
   /**

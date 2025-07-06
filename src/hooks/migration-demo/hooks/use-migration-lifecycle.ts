@@ -45,12 +45,21 @@ export const useMigrationLifecycle = (
         dataVolume: 0
       });
       
-      // Create the migration (demo version)
+      // Create the migration
       try {
-        const migrationId = await createMigration();
-        console.log("Demo migration created with ID:", migrationId);
+        // For production, we would pass actual migration data
+        const migrationData = {
+          name: "CRM Migration",
+          source: { type: "demo", credentials: {} },
+          destination: { type: "demo", credentials: {} },
+          dataTypes: [{ type: "contacts" }],
+          schedule: { startNow: true }
+        };
+        
+        const migrationId = await createMigration(migrationData);
+        console.log("Migration created with ID:", migrationId);
       } catch (error) {
-        console.warn("Failed to create demo migration, but continuing anyway:", error);
+        console.warn("Failed to create migration, but continuing with demo:", error);
         // For the demo, we'll continue even if the API call fails
       }
       
