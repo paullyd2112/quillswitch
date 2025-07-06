@@ -1,2 +1,8 @@
 
 project_id = "kxjidapjtcxwzpwdomnm"
+
+[functions.unified-oauth-authorize]
+verify_jwt = true
+
+[functions.unified-oauth-callback]
+verify_jwt = true

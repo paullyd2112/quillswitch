@@ -20,7 +20,7 @@ export const useCrmConnections = () => {
       const { data, error } = await supabase
         .from('service_credentials')
         .select('id, service_name, credential_name, credential_type, created_at, expires_at')
-        .eq('credential_type', 'oauth_token');
+        .in('credential_type', ['oauth_token', 'unified_connection']);
         
       if (error) throw error;
       
@@ -42,14 +42,34 @@ export const useCrmConnections = () => {
     setConnectingProvider(provider);
     
     try {
-      // Show a message that OAuth service needs to be configured
-      toast({
-        title: "OAuth Service Not Configured",
-        description: "Please configure your unified API service before connecting to CRMs.",
-        variant: "destructive"
-      });
+      const redirectUri = `${window.location.origin}/oauth/callback`;
+      const state = `${provider}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
-      setConnectingProvider(null);
+      // Get authorization URL from Unified.to
+      const { data: authData, error: authError } = await supabase.functions.invoke('unified-oauth-authorize', {
+        body: {
+          integration_type: provider,
+          redirect_uri: redirectUri,
+          state: state
+        }
+      });
+
+      if (authError || !authData?.success) {
+        throw new Error(authData?.error || authError?.message || 'Failed to start OAuth flow');
+      }
+
+      console.log('Authorization URL received:', authData.authorization_url);
+
+      // Store connection details temporarily in localStorage for callback
+      localStorage.setItem('oauth_state', JSON.stringify({
+        state: authData.state,
+        connection_id: authData.connection_id,
+        workspace_id: authData.workspace_id,
+        integration_type: provider
+      }));
+
+      // Redirect to OAuth provider
+      window.location.href = authData.authorization_url;
       
     } catch (error) {
       console.error('=== OAuth Error ===');
