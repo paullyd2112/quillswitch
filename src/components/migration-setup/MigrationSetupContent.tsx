@@ -16,6 +16,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth";
+import { createDefaultMigrationProject } from "@/services/migration/setupService";
+import { startMigrationFromSetup } from "@/services/migration/executionService";
+import { useSetupWizard } from "@/contexts/SetupWizardContext";
 import FadeIn from "@/components/animations/FadeIn";
 import GlassPanel from "@/components/ui-elements/GlassPanel";
 import ConnectionSection from "@/components/connection-hub/ConnectionSection";
@@ -24,18 +27,45 @@ import EcosystemAutoConnector from "./EcosystemAutoConnector";
 const MigrationSetupContent: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("connect");
+  const { formData, selectedSourceCrms, selectedDestinationCrms, multiCrmEnabled, multiDestinationEnabled, customCrmNames } = useSetupWizard();
+  const [activeTab, setActiveTab] = useState("ecosystem");
   const [setupProgress, setSetupProgress] = useState(0);
   const [connectedEcosystemTools, setConnectedEcosystemTools] = useState<any[]>([]);
+  const [crmConnectionsCompleted, setCrmConnectionsCompleted] = useState(false);
+  const [configurationCompleted, setConfigurationCompleted] = useState(false);
 
-  const handleStartMigration = () => {
+  const handleStartMigration = async () => {
     if (setupProgress < 100) {
       toast.error("Please complete all setup steps before starting migration.");
       return;
     }
     
-    toast.success("Migration started successfully!");
-    navigate("/app/migrations/new");
+    try {
+      // Create migration project from setup data
+      const project = await createDefaultMigrationProject({
+        ...formData,
+        multiCrmSourceList: selectedSourceCrms,
+        multiDestinationList: selectedDestinationCrms,
+        multiCrmEnabled,
+        multiDestinationEnabled,
+        customCrmNames
+      });
+
+      if (project) {
+        // Start migration execution
+        const success = await startMigrationFromSetup(project.id);
+        
+        if (success) {
+          toast.success("Migration started successfully!");
+          navigate(`/app/migrations/${project.id}`);
+        } else {
+          toast.error("Failed to start migration execution.");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to start migration:", error);
+      toast.error("Failed to start migration. Please try again.");
+    }
   };
 
   const handleEcosystemToolsConnected = (tools: any[]) => {
@@ -48,7 +78,8 @@ const MigrationSetupContent: React.FC = () => {
     // Calculate progress based on completed steps
     let progress = 0;
     if (connectedEcosystemTools.length > 0) progress += 25;
-    // Add other progress indicators as needed
+    if (crmConnectionsCompleted) progress += 35;
+    if (configurationCompleted) progress += 40;
     setSetupProgress(progress);
   };
 
@@ -167,6 +198,25 @@ const MigrationSetupContent: React.FC = () => {
                 />
               </div>
               
+              <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className={`h-5 w-5 ${crmConnectionsCompleted ? 'text-green-500' : 'text-muted-foreground'}`} />
+                  <span className="text-sm">
+                    {crmConnectionsCompleted ? 'CRM connections completed' : 'Complete CRM connections'}
+                  </span>
+                </div>
+                <Button 
+                  onClick={() => {
+                    setCrmConnectionsCompleted(true);
+                    updateSetupProgress();
+                  }}
+                  disabled={crmConnectionsCompleted}
+                  size="sm"
+                >
+                  {crmConnectionsCompleted ? 'Completed' : 'Mark Complete'}
+                </Button>
+              </div>
+              
               <div className="flex justify-between">
                 <Button 
                   variant="outline"
@@ -178,6 +228,7 @@ const MigrationSetupContent: React.FC = () => {
                 <Button 
                   onClick={() => setActiveTab("configure")}
                   className="gap-2"
+                  disabled={!crmConnectionsCompleted}
                 >
                   Continue to Configuration
                   <ArrowRight className="h-4 w-4" />
@@ -198,15 +249,60 @@ const MigrationSetupContent: React.FC = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="p-6 bg-muted/30 rounded-lg text-center">
-                      <Settings className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-                      <h3 className="font-medium mb-2">Advanced Configuration</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Detailed migration configuration options will be available here.
-                      </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 border rounded-lg">
+                        <h4 className="font-medium mb-2">Batch Size</h4>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Number of records to process at once
+                        </p>
+                        <div className="text-sm font-medium">100 records (recommended)</div>
+                      </div>
+                      
+                      <div className="p-4 border rounded-lg">
+                        <h4 className="font-medium mb-2">Validation Level</h4>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Data validation strictness
+                        </p>
+                        <div className="text-sm font-medium">Standard validation</div>
+                      </div>
+                      
+                      <div className="p-4 border rounded-lg">
+                        <h4 className="font-medium mb-2">Error Handling</h4>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          How to handle migration errors
+                        </p>
+                        <div className="text-sm font-medium">Continue on error</div>
+                      </div>
+                      
+                      <div className="p-4 border rounded-lg">
+                        <h4 className="font-medium mb-2">Backup Strategy</h4>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Data backup before migration
+                        </p>
+                        <div className="text-sm font-medium">Automatic backup</div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
+              </div>
+              
+              <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className={`h-5 w-5 ${configurationCompleted ? 'text-green-500' : 'text-muted-foreground'}`} />
+                  <span className="text-sm">
+                    {configurationCompleted ? 'Configuration completed' : 'Review and confirm configuration'}
+                  </span>
+                </div>
+                <Button 
+                  onClick={() => {
+                    setConfigurationCompleted(true);
+                    updateSetupProgress();
+                  }}
+                  disabled={configurationCompleted}
+                  size="sm"
+                >
+                  {configurationCompleted ? 'Completed' : 'Confirm Settings'}
+                </Button>
               </div>
               
               <div className="flex justify-between">
@@ -220,6 +316,7 @@ const MigrationSetupContent: React.FC = () => {
                 <Button 
                   onClick={() => setActiveTab("review")}
                   className="gap-2"
+                  disabled={!configurationCompleted}
                 >
                   Review Setup
                   <ArrowRight className="h-4 w-4" />
