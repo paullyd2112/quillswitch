@@ -58,7 +58,12 @@ export const FormattedMonitoringDashboard: React.FC = () => {
 
   const responseTimeSummary = getMetricSummary('api_response_time');
   const errorRate = data.metrics.filter(m => m.metric_name === 'api_error_rate').length;
-  const uniqueUsers = new Set(data.activities.map(a => a.user_id).filter(Boolean)).size;
+  const uniqueUsers = data.activities.reduce((unique, a) => {
+    if (a.user_id && !unique.has(a.user_id)) {
+      unique.add(a.user_id);
+    }
+    return unique;
+  }, new Set()).size;
 
   return (
     <div className="space-y-6">

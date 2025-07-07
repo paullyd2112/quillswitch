@@ -60,7 +60,10 @@ export function createMemoizedFunction<T extends (...args: any[]) => any>(
   const cache = new Map<string, { value: ReturnType<T>; timestamp: number }>();
 
   return ((...args: Parameters<T>): ReturnType<T> => {
-    const key = JSON.stringify(args);
+    // Use faster hashing for cache key
+    const key = args.map(arg => 
+      typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+    ).join('::');
     const now = Date.now();
     const cached = cache.get(key);
 

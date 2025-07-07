@@ -8,7 +8,7 @@ type MigrationStepsListProps = {
   activeStep?: MigrationStepType;
 };
 
-const MigrationStepsList = ({ steps, activeStep }: MigrationStepsListProps) => {
+const MigrationStepsList = React.memo(({ steps, activeStep }: MigrationStepsListProps) => {
   return (
     <div className="space-y-4 my-6">
       {steps.map(step => (
@@ -22,6 +22,8 @@ const MigrationStepsList = ({ steps, activeStep }: MigrationStepsListProps) => {
       ))}
     </div>
   );
-};
+});
+
+MigrationStepsList.displayName = 'MigrationStepsList';
 
 export default MigrationStepsList;

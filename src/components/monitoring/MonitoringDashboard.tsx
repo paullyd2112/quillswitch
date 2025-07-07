@@ -151,7 +151,13 @@ export const MonitoringDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {new Set(data.activities.map(a => a.user_id).filter(Boolean)).size}
+              {/* Optimize to avoid double iteration */}
+              {data.activities.reduce((unique, a) => {
+                if (a.user_id && !unique.has(a.user_id)) {
+                  unique.add(a.user_id);
+                }
+                return unique;
+              }, new Set()).size}
             </div>
             <p className="text-xs text-muted-foreground">
               Unique users
