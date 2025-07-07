@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { MigrationProject } from "@/integrations/supabase/migrationTypes";
+import { safeTable } from "@/services/utils/supabaseUtils";
 import { DeduplicationService } from '@/services/ai-enhancements/deduplicationService';
 import { PIIDetectionService } from '@/services/ai-enhancements/piiDetectionService';
 import { MLQualityService } from '@/services/ai-enhancements/mlQualityService';
@@ -67,7 +68,7 @@ export class MigrationROIReportService {
       const recommendations = this.generateRecommendations(metrics, duplicatesData, piiData);
 
       // Generate report summary using LLM
-      const reportSummary = await this.generateReportSummary(project, metrics, recommendations);
+      const reportSummary = await this.generateReportSummary(project as MigrationProject, metrics, recommendations);
 
       const reportData: ROIReportData = {
         projectId: inputs.projectId,
@@ -219,12 +220,11 @@ The migration achieved a ${metrics.dataQualityImprovement.toFixed(1)}% improveme
   }
 
   private static async saveROIReport(reportData: ROIReportData): Promise<void> {
-    const { error } = await supabase
-      .from('migration_roi_reports')
+    const { error } = await safeTable('migration_roi_reports')
       .insert({
         project_id: reportData.projectId,
-        report_data: reportData,
-        metrics: reportData.metrics,
+        report_data: reportData as any,
+        metrics: reportData.metrics as any,
         generated_at: reportData.generatedAt
       });
 
@@ -239,19 +239,18 @@ The migration achieved a ${metrics.dataQualityImprovement.toFixed(1)}% improveme
    */
   static async getROIReport(projectId: string): Promise<ROIReportData | null> {
     try {
-      const { data, error } = await supabase
-        .from('migration_roi_reports')
+      const { data, error } = await safeTable('migration_roi_reports')
         .select('*')
         .eq('project_id', projectId)
         .order('generated_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error || !data) {
         return null;
       }
 
-      return data.report_data as ROIReportData;
+      return data.report_data as unknown as ROIReportData;
     } catch (error) {
       console.error('Failed to fetch ROI report:', error);
       return null;

@@ -646,6 +646,44 @@ export type Database = {
         }
         Relationships: []
       }
+      migration_roi_reports: {
+        Row: {
+          created_at: string
+          generated_at: string
+          id: string
+          metrics: Json
+          project_id: string
+          report_data: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          metrics: Json
+          project_id: string
+          report_data: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          metrics?: Json
+          project_id?: string
+          report_data?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_roi_reports_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "migration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       migration_stages: {
         Row: {
           completed_at: string | null
