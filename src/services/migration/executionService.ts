@@ -137,7 +137,7 @@ export class MigrationExecutionEngine {
       .order('sequence_order');
 
     if (error) throw error;
-    return stages || [];
+    return (stages || []) as MigrationStage[];
   }
 
   private async getProjectObjectTypes(): Promise<MigrationObjectType[]> {
@@ -147,7 +147,7 @@ export class MigrationExecutionEngine {
       .eq('project_id', this.config.projectId);
 
     if (error) throw error;
-    return objectTypes || [];
+    return (objectTypes || []) as MigrationObjectType[];
   }
 
   private async executeStage(stage: MigrationStage, objectTypes: MigrationObjectType[]): Promise<void> {
@@ -364,7 +364,7 @@ export class MigrationExecutionEngine {
       this.config.projectId,
       'Migration Failed',
       `Migration failed: ${error.message}`,
-      'error'
+      'error_occurred'
     );
 
     toast.error(`Migration failed: ${error.message}`);
