@@ -10,6 +10,7 @@ import { AutomatedMappingPanel } from "../../automated-mapping";
 import { FieldMapping } from "@/integrations/supabase/migrationTypes";
 import { toast } from "sonner";
 import { updateFieldMapping } from "@/services/migration/fieldMappingService";
+import { RealtimeDataMapping } from "@/components/realtime/RealtimeDataMapping";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UnmappedFieldsPanel from "../../data-mapping/UnmappedFieldsPanel";
 
@@ -109,11 +110,27 @@ const DataMappingTab: React.FC = () => {
               </div>
               
               <TabsContent value="mapped" className="mt-0">
-                <DataMappingVisualizer 
-                  objectType={selectedObjectType} 
-                  fieldMappings={fieldMappings}
-                  onUpdateMapping={handleUpdateMapping}
+                <RealtimeDataMapping 
+                  projectId={projectId}
+                  mappings={fieldMappings.map(fm => ({
+                    id: fm.id,
+                    sourceField: fm.source_field,
+                    destinationField: fm.destination_field || '',
+                    isRequired: fm.is_required || false
+                  }))}
+                  destinationFields={[]} // Would come from schema API
+                  onMappingChange={async (fieldId, destinationField) => {
+                    await handleUpdateMapping(fieldId, { destination_field: destinationField });
+                  }}
                 />
+                
+                <div className="mt-6">
+                  <DataMappingVisualizer 
+                    objectType={selectedObjectType} 
+                    fieldMappings={fieldMappings}
+                    onUpdateMapping={handleUpdateMapping}
+                  />
+                </div>
               </TabsContent>
               
               <TabsContent value="unmapped" className="mt-0">

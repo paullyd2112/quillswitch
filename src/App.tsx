@@ -7,7 +7,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/auth";
 import { ProcessingProvider } from "@/contexts/ProcessingContext";
+import { RealtimeProvider } from "@/contexts/RealtimeContext";
 import { UserOnboardingProvider } from "@/components/onboarding/UserOnboardingProvider";
+import { LiveNotificationPanel } from "@/components/realtime/LiveNotificationPanel";
 import NavigationOverlay from "@/components/layout/NavigationOverlay";
 import Home from "@/pages/Home";
 import Auth from "@/pages/Auth";
@@ -46,8 +48,9 @@ function App() {
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
         <TooltipProvider>
           <AuthProvider>
-            <ProcessingProvider>
-              <Router>
+            <RealtimeProvider>
+              <ProcessingProvider>
+                <Router>
                 <UserOnboardingProvider>
                   <div className="min-h-screen bg-background font-sans antialiased">
                     <NavigationOverlay />
@@ -73,10 +76,12 @@ function App() {
                     </Routes>
                     
                     <Toaster />
+                    <LiveNotificationPanel />
                   </div>
                 </UserOnboardingProvider>
               </Router>
             </ProcessingProvider>
+            </RealtimeProvider>
           </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>

@@ -6,6 +6,7 @@ import DemoLayout from "@/components/layout/DemoLayout";
 import TryItExperience from "@/components/demo/TryItExperience";
 import MigrationDemoSection from "@/components/home/MigrationDemoSection";
 import DemoFooterCta from "@/components/demo/DemoFooterCta";
+import { RealtimeDemo } from "@/components/realtime/RealtimeDemo";
 import { Separator } from "@/components/ui/separator";
 
 const Demo = () => {
@@ -27,6 +28,14 @@ const Demo = () => {
           </p>
 
           <div className="space-y-16">
+            {/* Real-Time Collaboration Demo */}
+            <section id="realtime-collaboration">
+              <h2 className="text-2xl font-bold mb-6">Real-Time Collaboration</h2>
+              <RealtimeDemo />
+            </section>
+            
+            <Separator />
+            
             {/* Interactive Demo Section */}
             <section id="migration-visualizer">
               <h2 className="text-2xl font-bold mb-6">Interactive Migration Visualizer</h2>
