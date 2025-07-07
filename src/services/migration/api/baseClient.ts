@@ -3,18 +3,41 @@ import { handleError } from "@/utils/errorHandling";
 import { RateLimiter } from "./utils/rateLimiter";
 import { PaginationHandler, PaginationParams, PaginatedResponse } from "./utils/paginationHandler";
 
+// Cache API key to prevent multiple requests
+let cachedApiKey: string | null = null;
+let apiKeyPromise: Promise<string> | null = null;
+
 // Production API key will be retrieved from Supabase secrets
 const getUnifiedApiKey = async (): Promise<string> => {
-  try {
-    const { supabase } = await import("@/integrations/supabase/client");
-    const { data, error } = await supabase.functions.invoke('get-unified-api-key');
-    
-    if (error) throw error;
-    return data.apiKey;
-  } catch (error) {
-    console.error("Failed to retrieve Unified API key:", error);
-    throw new Error("Unable to retrieve API key. Please check your configuration.");
+  // Return cached key if available
+  if (cachedApiKey) {
+    return cachedApiKey;
   }
+  
+  // Return existing promise if already in progress
+  if (apiKeyPromise) {
+    return apiKeyPromise;
+  }
+  
+  // Create new promise
+  apiKeyPromise = (async () => {
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data, error } = await supabase.functions.invoke('get-unified-api-key');
+      
+      if (error) throw error;
+      cachedApiKey = data.apiKey;
+      return cachedApiKey;
+    } catch (error) {
+      console.error("Failed to retrieve Unified API key:", error);
+      throw new Error("Unable to retrieve API key. Please check your configuration.");
+    } finally {
+      // Clear promise after completion
+      apiKeyPromise = null;
+    }
+  })();
+  
+  return apiKeyPromise;
 };
 
 export class BaseApiClient {
