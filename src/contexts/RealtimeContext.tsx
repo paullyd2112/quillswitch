@@ -127,11 +127,10 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setChannels(prev => ({ ...prev, notifications: notificationsChannel }));
 
     return () => {
-      Object.values(channels).forEach(channel => {
-        supabase.removeChannel(channel);
-      });
+      presenceChannel.unsubscribe();
+      notificationsChannel.unsubscribe();
     };
-  }, [toast]);
+  }, []); // Remove toast dependency
 
   const updatePresence = useCallback(async (data: Partial<UserPresence>) => {
     const channel = channels.presence;
