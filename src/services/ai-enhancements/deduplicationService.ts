@@ -1,6 +1,7 @@
 import * as fuzzball from 'fuzzball';
 import Fuse from 'fuse.js';
 import { ExtractedData, ExtractedField } from '@/services/migration/extractionService';
+import { workerManager } from './workerManager';
 
 export interface DuplicationResult {
   isDuplicate: boolean;
@@ -22,6 +23,7 @@ export interface DeduplicationConfig {
  */
 export class DeduplicationService {
   private config: DeduplicationConfig;
+  private useWorker = false;
 
   constructor(config: DeduplicationConfig = {
     fuzzyThreshold: 85,
@@ -30,6 +32,12 @@ export class DeduplicationService {
     skipFields: ['id', 'created_at', 'updated_at', 'recordId']
   }) {
     this.config = config;
+    this.initializeWorker();
+  }
+
+  private initializeWorker() {
+    this.useWorker = workerManager.initWorker('deduplication', '/workers/deduplicationWorker.js');
+    console.log(`Deduplication Service: Using ${this.useWorker ? 'Web Worker' : 'main thread'}`);
   }
 
   /**
@@ -251,9 +259,42 @@ export class DeduplicationService {
   }
 
   /**
-   * Batch deduplication for large datasets (enhanced with Fuse.js)
+   * Batch deduplication for large datasets (with web worker support)
    */
   async batchDeduplicate(
+    records: ExtractedData[],
+    onProgress?: (processed: number, total: number, duplicatesFound: number) => void
+  ): Promise<{
+    unique: ExtractedData[];
+    duplicates: Array<{ record: ExtractedData; duplicateOf: ExtractedData; confidence: number }>;
+  }> {
+    if (this.useWorker && workerManager.getWorkerStatus('deduplication') === 'ready') {
+      try {
+        // Set up progress listener
+        if (onProgress) {
+          workerManager.onProgress('deduplication', (data) => {
+            if (data.type === 'PROGRESS') {
+              onProgress(data.processed, data.total, data.duplicatesFound);
+            }
+          });
+        }
+
+        return await workerManager.executeTask(
+          'deduplication',
+          'BATCH_DEDUPLICATE',
+          { records },
+          () => this.batchDeduplicateMainThread(records, onProgress)
+        );
+      } catch (error) {
+        console.warn('Worker failed, falling back to main thread:', error);
+        return this.batchDeduplicateMainThread(records, onProgress);
+      }
+    } else {
+      return this.batchDeduplicateMainThread(records, onProgress);
+    }
+  }
+
+  private async batchDeduplicateMainThread(
     records: ExtractedData[],
     onProgress?: (processed: number, total: number, duplicatesFound: number) => void
   ): Promise<{

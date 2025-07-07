@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { ExtractedData, ExtractedField } from '@/services/migration/extractionService';
+import { workerManager } from './workerManager';
 
 export interface MLQualityScore {
   overallScore: number; // 0-100
@@ -38,9 +39,33 @@ export interface MLFeatures {
 export class MLQualityService {
   private qualityModel: tf.LayersModel | null = null;
   private isModelReady = false;
+  private useWorker = false;
 
   constructor() {
-    this.initializeModel();
+    this.initializeWorkerAndModel();
+  }
+
+  /**
+   * Initialize web worker with fallback to main thread
+   */
+  private async initializeWorkerAndModel() {
+    // Try to initialize web worker first
+    this.useWorker = workerManager.initWorker('mlQuality', '/workers/mlQualityWorker.js');
+    
+    if (this.useWorker) {
+      console.log('ML Quality Service: Using Web Worker');
+      // Listen for worker ready event
+      workerManager.onEvent('mlQuality', (event) => {
+        if (event.type === 'MODEL_READY') {
+          this.isModelReady = true;
+          console.log('ML Quality Worker: Model ready');
+        }
+      });
+    } else {
+      console.log('ML Quality Service: Using main thread');
+      // Fallback to main thread initialization
+      await this.initializeModel();
+    }
   }
 
   /**
@@ -173,9 +198,47 @@ export class MLQualityService {
   }
 
   /**
-   * Assess data quality using ML
+   * Assess data quality using ML (with web worker support)
    */
-  async assessQuality(records: ExtractedData[]): Promise<MLQualityScore[]> {
+  async assessQuality(
+    records: ExtractedData[],
+    onProgress?: (processed: number, total: number) => void
+  ): Promise<MLQualityScore[]> {
+    if (this.useWorker && workerManager.getWorkerStatus('mlQuality') === 'ready') {
+      // Use web worker
+      try {
+        // Set up progress listener
+        if (onProgress) {
+          workerManager.onProgress('mlQuality', (data) => {
+            if (data.type === 'PROGRESS') {
+              onProgress(data.processed, data.total);
+            }
+          });
+        }
+
+        return await workerManager.executeTask(
+          'mlQuality',
+          'ASSESS_QUALITY',
+          { records },
+          () => this.assessQualityMainThread(records, onProgress)
+        );
+      } catch (error) {
+        console.warn('Worker failed, falling back to main thread:', error);
+        return this.assessQualityMainThread(records, onProgress);
+      }
+    } else {
+      // Use main thread
+      return this.assessQualityMainThread(records, onProgress);
+    }
+  }
+
+  /**
+   * Main thread assessment (original implementation)
+   */
+  private async assessQualityMainThread(
+    records: ExtractedData[],
+    onProgress?: (processed: number, total: number) => void
+  ): Promise<MLQualityScore[]> {
     if (!this.isModelReady || !this.qualityModel) {
       console.warn('ML model not ready, falling back to rule-based scoring');
       return records.map(record => this.fallbackQualityScore(record));
@@ -183,14 +246,19 @@ export class MLQualityService {
 
     const results: MLQualityScore[] = [];
 
-    for (const record of records) {
+    for (let i = 0; i < records.length; i++) {
       try {
-        const features = this.extractFeatures(record);
+        const features = this.extractFeatures(records[i]);
         const score = await this.predictQuality(features);
         results.push(score);
+        
+        // Report progress
+        if (onProgress && i % 10 === 0) {
+          onProgress(i + 1, records.length);
+        }
       } catch (error) {
         console.error('Error assessing record quality:', error);
-        results.push(this.fallbackQualityScore(record));
+        results.push(this.fallbackQualityScore(records[i]));
       }
     }
 
@@ -445,17 +513,37 @@ export class MLQualityService {
   }
 
   /**
-   * Get model performance metrics
+   * Get model performance metrics (with worker support)
    */
-  getModelInfo(): {
+  async getModelInfo(): Promise<{
     isReady: boolean;
     modelParams: number;
     memoryUsage: number;
-  } {
+    usingWorker: boolean;
+  }> {
+    if (this.useWorker && workerManager.getWorkerStatus('mlQuality') === 'ready') {
+      try {
+        const workerInfo: any = await workerManager.executeTask(
+          'mlQuality',
+          'GET_MODEL_INFO',
+          {}
+        );
+        return {
+          isReady: workerInfo.isReady || false,
+          modelParams: workerInfo.modelParams || 0,
+          memoryUsage: workerInfo.memoryUsage || 0,
+          usingWorker: true
+        };
+      } catch (error) {
+        console.warn('Failed to get worker info:', error);
+      }
+    }
+
     return {
       isReady: this.isModelReady,
       modelParams: this.qualityModel?.countParams() || 0,
-      memoryUsage: tf.memory().numBytes
+      memoryUsage: tf.memory().numBytes,
+      usingWorker: false
     };
   }
 
@@ -463,6 +551,10 @@ export class MLQualityService {
    * Cleanup resources
    */
   dispose(): void {
+    if (this.useWorker) {
+      workerManager.terminateWorker('mlQuality');
+    }
+    
     if (this.qualityModel) {
       this.qualityModel.dispose();
       this.qualityModel = null;
