@@ -112,7 +112,7 @@ export function useConnectionHealth(connectors?: Connector[]) {
     const interval = setInterval(fetchHealthStatus, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
-  }, [connectors]);
+  }, []); // Remove connectors dependency to prevent restarts
 
   return {
     systemHealth,

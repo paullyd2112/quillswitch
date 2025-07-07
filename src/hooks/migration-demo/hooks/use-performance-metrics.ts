@@ -75,14 +75,7 @@ export const usePerformanceMetrics = (initialStatus: MigrationStatus, steps: Mig
     
     const intervalId = setInterval(updateMetrics, 1000);
     return () => clearInterval(intervalId);
-  }, [
-    migrationStatus, 
-    steps, 
-    startTime, 
-    recordsProcessedHistory, 
-    peakRps, 
-    performanceMetrics
-  ]);
+  }, [migrationStatus, steps, startTime]); // Remove state dependencies that cause re-renders
 
   return {
     performanceMetrics,
