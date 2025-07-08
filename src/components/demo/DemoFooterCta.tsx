@@ -10,14 +10,26 @@ const DemoFooterCta: React.FC = () => {
   const navigate = useNavigate();
   
   return (
-    <Card className="border-0 shadow-lg bg-gradient-to-br from-primary/20 via-slate-100 to-slate-50 dark:from-primary/20 dark:via-slate-900/70 dark:to-slate-900/60 overflow-hidden">
-      <div className="px-8 py-10 md:py-16 text-center">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Experience Effortless CRM Migration?
+    <Card className="border-0 shadow-2xl glass-panel relative overflow-hidden">
+      {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent pointer-events-none" />
+      
+      <div className="px-8 py-12 md:py-20 text-center relative">
+        <div className="max-w-4xl mx-auto">
+          {/* Status badge */}
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8">
+            <div className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse" />
+            <span className="text-sm font-medium text-primary">Ready to Get Started</span>
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-white to-primary/80 bg-clip-text text-transparent leading-tight">
+            Ready to Experience Effortless
+            <br />
+            CRM Migration?
           </h2>
           
-          <p className="text-lg mb-8 text-muted-foreground">
+          <p className="text-xl mb-10 text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Join hundreds of companies that have simplified their CRM migration with QuillSwitch. 
             Get started today and migrate weeks faster with better results.
           </p>
@@ -25,73 +37,89 @@ const DemoFooterCta: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
             <Button 
               size="lg" 
-              className="gap-2"
+              className="gap-2 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
               onClick={() => navigate("/app/setup")}
             >
-              Start Your Free Migration <ArrowRight size={16} />
+              Start Your Free Migration <ArrowRight size={18} />
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
+              className="px-8 py-4 text-lg font-semibold glass-panel border-primary/20 hover:bg-primary/10 transition-all duration-200"
               onClick={() => window.open("#schedule-demo", "_blank")}
             >
               Schedule a Demo
             </Button>
           </div>
           
-          <Separator className="mb-8" />
+          <Separator className="mb-10 opacity-30" />
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-            <div>
-              <h3 className="font-medium mb-3">No Commitment Required</h3>
-              <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <div className="p-6 glass-panel rounded-xl border border-primary/10 hover:border-primary/20 transition-all duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-primary font-bold">✨</span>
+                </div>
+                <h3 className="font-semibold text-lg">No Commitment Required</h3>
+              </div>
+              <div className="space-y-3">
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">Free test migration with your data</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Free test migration with your data</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">No credit card needed to start</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">No credit card needed to start</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">Cancel anytime</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Cancel anytime</span>
                 </div>
               </div>
             </div>
             
-            <div>
-              <h3 className="font-medium mb-3">Enterprise-Grade Security</h3>
-              <div className="space-y-2">
+            <div className="p-6 glass-panel rounded-xl border border-primary/10 hover:border-primary/20 transition-all duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-primary font-bold">🔒</span>
+                </div>
+                <h3 className="font-semibold text-lg">Enterprise-Grade Security</h3>
+              </div>
+              <div className="space-y-3">
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">SOC 2 Type II certified</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">SOC 2 Type II certified</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">End-to-end encryption</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">End-to-end encryption</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">Zero data retention policy</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Zero data retention policy</span>
                 </div>
               </div>
             </div>
             
-            <div>
-              <h3 className="font-medium mb-3">World-Class Support</h3>
-              <div className="space-y-2">
+            <div className="p-6 glass-panel rounded-xl border border-primary/10 hover:border-primary/20 transition-all duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-primary font-bold">🚀</span>
+                </div>
+                <h3 className="font-semibold text-lg">World-Class Support</h3>
+              </div>
+              <div className="space-y-3">
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">Free migration consultation</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Free migration consultation</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">Expert technical support</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Expert technical support</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
-                  <span className="text-sm">Comprehensive knowledge base</span>
+                  <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">Comprehensive knowledge base</span>
                 </div>
               </div>
             </div>

@@ -49,34 +49,64 @@ const TryItExperience: React.FC = () => {
   };
 
   return (
-    <Card className="border border-slate-200 dark:border-slate-800">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-2xl">
-          <div className="h-6 w-1 bg-gradient-to-b from-emerald-500 to-cyan-500 rounded-full"></div>
-          Try QuillSwitch Migration
+    <Card className="glass-panel border-primary/20 shadow-2xl">
+      <CardHeader className="pb-6">
+        <CardTitle className="flex items-center gap-3 text-3xl">
+          <div className="relative">
+            <div className="h-8 w-2 bg-gradient-to-b from-primary via-primary/80 to-accent rounded-full"></div>
+            <div className="absolute -inset-1 bg-gradient-to-b from-primary/40 to-accent/40 rounded-full blur-sm -z-10"></div>
+          </div>
+          <span className="bg-gradient-to-r from-white to-primary/80 bg-clip-text text-transparent">
+            Try QuillSwitch Migration
+          </span>
         </CardTitle>
-        <CardDescription>
-          Experience a simulated CRM migration using sample data
+        <CardDescription className="text-lg text-muted-foreground">
+          Experience a complete simulated CRM migration workflow using realistic sample data
         </CardDescription>
       </CardHeader>
       
       <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="w-full grid grid-cols-5 mb-8">
-            <TabsTrigger value="connect" disabled={activeTab !== "connect" && !isConnectStepComplete}>
-              1. Connect CRMs
+          <TabsList className="w-full grid grid-cols-5 mb-8 h-auto p-1 bg-secondary/50 backdrop-blur-sm">
+            <TabsTrigger 
+              value="connect" 
+              disabled={activeTab !== "connect" && !isConnectStepComplete}
+              className="flex flex-col items-center p-4 data-[state=active]:bg-primary data-[state=active]:text-white transition-all duration-200"
+            >
+              <span className="font-semibold text-sm">Step 1</span>
+              <span className="text-xs opacity-80">Connect CRMs</span>
             </TabsTrigger>
-            <TabsTrigger value="select" disabled={activeTab !== "select" && !isSelectStepComplete}>
-              2. Select Data
+            <TabsTrigger 
+              value="select" 
+              disabled={activeTab !== "select" && !isSelectStepComplete}
+              className="flex flex-col items-center p-4 data-[state=active]:bg-primary data-[state=active]:text-white transition-all duration-200"
+            >
+              <span className="font-semibold text-sm">Step 2</span>
+              <span className="text-xs opacity-80">Select Data</span>
             </TabsTrigger>
-            <TabsTrigger value="map" disabled={activeTab !== "map" && !isMappingStepComplete}>
-              3. Map Fields
+            <TabsTrigger 
+              value="map" 
+              disabled={activeTab !== "map" && !isMappingStepComplete}
+              className="flex flex-col items-center p-4 data-[state=active]:bg-primary data-[state=active]:text-white transition-all duration-200"
+            >
+              <span className="font-semibold text-sm">Step 3</span>
+              <span className="text-xs opacity-80">Map Fields</span>
             </TabsTrigger>
-            <TabsTrigger value="validate" disabled={activeTab !== "validate" && !isValidationStepComplete}>
-              4. Validate
+            <TabsTrigger 
+              value="validate" 
+              disabled={activeTab !== "validate" && !isValidationStepComplete}
+              className="flex flex-col items-center p-4 data-[state=active]:bg-primary data-[state=active]:text-white transition-all duration-200"
+            >
+              <span className="font-semibold text-sm">Step 4</span>
+              <span className="text-xs opacity-80">Validate</span>
             </TabsTrigger>
-            <TabsTrigger value="migrate" disabled={activeTab === "migrate" ? false : !isValidationStepComplete}>
-              5. Migrate
+            <TabsTrigger 
+              value="migrate" 
+              disabled={activeTab === "migrate" ? false : !isValidationStepComplete}
+              className="flex flex-col items-center p-4 data-[state=active]:bg-primary data-[state=active]:text-white transition-all duration-200"
+            >
+              <span className="font-semibold text-sm">Step 5</span>
+              <span className="text-xs opacity-80">Migrate</span>
             </TabsTrigger>
           </TabsList>
           
