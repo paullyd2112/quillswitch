@@ -154,8 +154,7 @@
     transform: translateY(-1px);
     @apply shadow-lg;
   }
-}
-  
+
   .section-title {
     @apply relative pb-2 mb-6;
   }
