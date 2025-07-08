@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowUp, Users, BarChart3, Play } from 'lucide-react';
+import { ArrowUp, Users, BarChart3, Play, Database } from 'lucide-react';
 
 interface NavigationItem {
   id: string;
@@ -28,6 +28,12 @@ const navigationItems: NavigationItem[] = [
     label: 'Try It Yourself',
     icon: <Play className="h-4 w-4" />,
     description: 'Interactive migration simulation'
+  },
+  {
+    id: 'crm-integration-testing',
+    label: 'Integration Testing',
+    icon: <Database className="h-4 w-4" />,
+    description: 'CRM connection validation'
   }
 ];
 
