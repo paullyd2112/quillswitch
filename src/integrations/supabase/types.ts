@@ -46,6 +46,59 @@ export type Database = {
           },
         ]
       }
+      custom_validation_rules: {
+        Row: {
+          created_at: string
+          description: string | null
+          error_message: string
+          field_type: string
+          id: string
+          is_active: boolean | null
+          name: string
+          rule_config: Json
+          updated_at: string
+          user_id: string
+          validation_type: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          error_message: string
+          field_type: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          rule_config: Json
+          updated_at?: string
+          user_id: string
+          validation_type: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          error_message?: string
+          field_type?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          rule_config?: Json
+          updated_at?: string
+          user_id?: string
+          validation_type?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_validation_rules_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       data_loading_jobs: {
         Row: {
           created_at: string
@@ -568,6 +621,7 @@ export type Database = {
           total_objects: number | null
           updated_at: string
           user_id: string | null
+          workspace_id: string | null
         }
         Insert: {
           company_name: string
@@ -583,6 +637,7 @@ export type Database = {
           total_objects?: number | null
           updated_at?: string
           user_id?: string | null
+          workspace_id?: string | null
         }
         Update: {
           company_name?: string
@@ -598,8 +653,17 @@ export type Database = {
           total_objects?: number | null
           updated_at?: string
           user_id?: string | null
+          workspace_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "migration_projects_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       migration_records: {
         Row: {
@@ -680,6 +744,65 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "migration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      migration_schedules: {
+        Row: {
+          created_at: string
+          cron_expression: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          last_run_at: string | null
+          max_retries: number | null
+          migration_config: Json
+          name: string
+          next_run_at: string | null
+          retry_count: number | null
+          updated_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          cron_expression: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_run_at?: string | null
+          max_retries?: number | null
+          migration_config: Json
+          name: string
+          next_run_at?: string | null
+          retry_count?: number | null
+          updated_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          cron_expression?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_run_at?: string | null
+          max_retries?: number | null
+          migration_config?: Json
+          name?: string
+          next_run_at?: string | null
+          retry_count?: number | null
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_schedules_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -765,6 +888,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      offline_sync_queue: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          last_error: string | null
+          operation_type: string
+          record_id: string | null
+          retry_count: number | null
+          status: string | null
+          synced_at: string | null
+          table_name: string
+          user_id: string
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          last_error?: string | null
+          operation_type: string
+          record_id?: string | null
+          retry_count?: number | null
+          status?: string | null
+          synced_at?: string | null
+          table_name: string
+          user_id: string
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          last_error?: string | null
+          operation_type?: string
+          record_id?: string | null
+          retry_count?: number | null
+          status?: string | null
+          synced_at?: string | null
+          table_name?: string
+          user_id?: string
+          workspace_id?: string | null
+        }
+        Relationships: []
       }
       optimization_cache: {
         Row: {
@@ -882,6 +1050,7 @@ export type Database = {
           tags: string[] | null
           updated_at: string
           user_id: string
+          workspace_id: string | null
         }
         Insert: {
           created_at?: string
@@ -897,6 +1066,7 @@ export type Database = {
           tags?: string[] | null
           updated_at?: string
           user_id: string
+          workspace_id?: string | null
         }
         Update: {
           created_at?: string
@@ -912,8 +1082,17 @@ export type Database = {
           tags?: string[] | null
           updated_at?: string
           user_id?: string
+          workspace_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "service_credentials_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_activities: {
         Row: {
@@ -1096,6 +1275,80 @@ export type Database = {
           },
         ]
       }
+      workspace_memberships: {
+        Row: {
+          id: string
+          invited_by: string | null
+          joined_at: string
+          role: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          role?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          role?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_memberships_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspaces: {
+        Row: {
+          created_at: string
+          id: string
+          max_projects: number | null
+          max_users: number | null
+          name: string
+          owner_id: string
+          settings: Json | null
+          slug: string
+          subscription_tier: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_projects?: number | null
+          max_users?: number | null
+          name: string
+          owner_id: string
+          settings?: Json | null
+          slug: string
+          subscription_tier?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_projects?: number | null
+          max_users?: number | null
+          name?: string
+          owner_id?: string
+          settings?: Json | null
+          slug?: string
+          subscription_tier?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1170,6 +1423,16 @@ export type Database = {
           metric_value: number
           metric_description: string
           last_updated: string
+        }[]
+      }
+      get_user_workspaces: {
+        Args: { user_uuid?: string }
+        Returns: {
+          workspace_id: string
+          workspace_name: string
+          workspace_slug: string
+          user_role: string
+          member_count: number
         }[]
       }
     }
