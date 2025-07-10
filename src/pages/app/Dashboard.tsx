@@ -13,30 +13,9 @@ import { useDashboardFormatting } from "@/hooks/useDashboardFormatting";
 import { SystemTestDashboard } from "@/components/testing/SystemTestDashboard";
 
 const Dashboard = () => {
-  // Mock data - in a real app this would come from your API/hooks
+  // Empty data - no fake migrations
   const mockData = {
-    migration_projects: [
-      {
-        id: "1",
-        name: "Salesforce to HubSpot Migration",
-        status: "in_progress",
-        total_objects: 15000,
-        migrated_objects: 12000,
-        failed_objects: 150,
-        created_at: "2024-01-15T10:00:00Z",
-        completed_at: null
-      },
-      {
-        id: "2", 
-        name: "Pipedrive to Salesforce Migration",
-        status: "completed",
-        total_objects: 8500,
-        migrated_objects: 8500,
-        failed_objects: 0,
-        created_at: "2024-01-10T09:00:00Z",
-        completed_at: "2024-01-12T15:30:00Z"
-      }
-    ],
+    migration_projects: [],
     migration_stages: [],
     migration_object_types: [],
     migration_errors: [],
@@ -148,13 +127,13 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="flex flex-col items-center">
                 <ProgressRing 
-                  progress={80} 
+                  progress={0} 
                   size={120}
                   color="hsl(var(--primary))"
                 />
                 <div className="mt-4 text-center">
                   <p className="text-sm text-muted-foreground">
-                    {stats.records.migrated} of {stats.records.total} records
+                    No active migrations
                   </p>
                 </div>
               </CardContent>
@@ -164,31 +143,8 @@ const Dashboard = () => {
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Recent Activity</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Migration completed</p>
-                    <p className="text-xs text-muted-foreground">Pipedrive → Salesforce</p>
-                  </div>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Data validation started</p>
-                    <p className="text-xs text-muted-foreground">Salesforce → HubSpot</p>
-                  </div>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">Field mapping complete</p>
-                    <p className="text-xs text-muted-foreground">15,000 records mapped</p>
-                  </div>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </div>
+              <CardContent className="flex items-center justify-center py-8">
+                <p className="text-sm text-muted-foreground">No recent activity</p>
               </CardContent>
             </EnhancedCard>
 

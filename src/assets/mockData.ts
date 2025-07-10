@@ -29,51 +29,5 @@ export const mockKnowledgeArticles: KnowledgeArticle[] = [
   },
 ];
 
-// Mock data for migrations with proper typing for the status field
-export const mockMigrations: MigrationProject[] = [
-  {
-    id: '1',
-    user_id: 'user-1',
-    company_name: 'Acme Corp',
-    source_crm: 'HubSpot',
-    destination_crm: 'Salesforce',
-    migration_strategy: 'Full Migration',
-    status: "completed" as "completed",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    completed_at: new Date().toISOString(),
-    total_objects: 100,
-    migrated_objects: 100,
-    failed_objects: 0
-  },
-  {
-    id: '2',
-    user_id: 'user-1',
-    company_name: 'Beta Inc',
-    source_crm: 'ActiveCampaign',
-    destination_crm: 'MailChimp',
-    migration_strategy: 'Selective Migration',
-    status: "in_progress" as "in_progress",
-    created_at: new Date(Date.now() - 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 86400000).toISOString(),
-    completed_at: null,
-    total_objects: 200,
-    migrated_objects: 130,
-    failed_objects: 0
-  },
-  {
-    id: '3',
-    user_id: 'user-1',
-    company_name: 'Gamma LLC',
-    source_crm: 'Zoho',
-    destination_crm: 'HubSpot',
-    migration_strategy: 'Incremental Migration',
-    status: "failed" as "failed",
-    created_at: new Date(Date.now() - 172800000).toISOString(),
-    updated_at: new Date(Date.now() - 172800000).toISOString(),
-    completed_at: null,
-    total_objects: 150,
-    migrated_objects: 45,
-    failed_objects: 10
-  }
-];
+// Empty mock data - no fake migrations
+export const mockMigrations: MigrationProject[] = [];
