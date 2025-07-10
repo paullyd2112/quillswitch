@@ -12,7 +12,7 @@ const AnimatedHeadline: React.FC = () => {
         }
         return prev + 2;
       });
-    }, 50);
+    }, 100);
 
     return () => clearInterval(interval);
   }, []);

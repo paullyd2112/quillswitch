@@ -29,7 +29,7 @@ const HeroBackground: React.FC = () => {
 
     const createPoints = () => {
       const points: Point[] = [];
-      const numPoints = Math.min(80, Math.floor((canvas.width * canvas.height) / 15000));
+      const numPoints = Math.min(30, Math.floor((canvas.width * canvas.height) / 25000));
       
       for (let i = 0; i < numPoints; i++) {
         points.push({
