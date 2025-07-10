@@ -169,8 +169,13 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
       // Store the API key securely
       const secureKeyId = `api_key_${systemId}`;
-      const encryptedApiKey = encryptData(apiKey);
-      storeSecureData(secureKeyId, encryptedApiKey);
+      try {
+        await storeSecureData(secureKeyId, apiKey, true); // Store temporarily encrypted
+      } catch (error) {
+        console.error('Failed to store API key securely:', error);
+        toast.error('Failed to store API key securely');
+        return;
+      }
       
       // Validate the API key with real API before connecting
       const validationResult = await validateConnection(systemId, apiKey);

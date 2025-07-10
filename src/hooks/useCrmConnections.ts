@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ConnectedCredential } from "@/components/crm-connections/types";
+import { oauthStorage } from "@/utils/secureStorage";
 
 export const useCrmConnections = () => {
   const { toast } = useToast();
@@ -60,13 +61,13 @@ export const useCrmConnections = () => {
 
       console.log('Authorization URL received:', authData.authorization_url);
 
-      // Store connection details temporarily in localStorage for callback
-      localStorage.setItem('oauth_state', JSON.stringify({
+      // Store connection details securely for callback
+      const stateId = await oauthStorage.store({
         state: authData.state,
         connection_id: authData.connection_id,
         workspace_id: authData.workspace_id,
         integration_type: provider
-      }));
+      });
 
       // Redirect to OAuth provider
       window.location.href = authData.authorization_url;

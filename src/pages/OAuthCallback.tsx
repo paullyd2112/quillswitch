@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { oauthStorage } from "@/utils/secureStorage";
 
 const OAuthCallback: React.FC = () => {
   const navigate = useNavigate();
@@ -45,20 +46,29 @@ const OAuthCallback: React.FC = () => {
           return;
         }
 
-        // Get stored OAuth state from localStorage
-        const storedStateData = localStorage.getItem('oauth_state');
-        if (!storedStateData) {
+        // Get stored OAuth state from secure storage
+        if (!state) {
           setStatus('error');
-          setMessage('Missing OAuth state data');
+          setMessage('Missing OAuth state parameter');
           toast({
             title: "Connection Failed",
-            description: "OAuth state data not found. Please try connecting again.",
+            description: "OAuth state parameter not found. Please try connecting again.",
             variant: "destructive"
           });
           return;
         }
 
-        const stateData = JSON.parse(storedStateData);
+        const stateData = await oauthStorage.retrieve(state);
+        if (!stateData) {
+          setStatus('error');
+          setMessage('Missing OAuth state data');
+          toast({
+            title: "Connection Failed",
+            description: "OAuth state data not found or expired. Please try connecting again.",
+            variant: "destructive"
+          });
+          return;
+        }
         
         // Verify state parameter matches (basic CSRF protection)
         if (state && state !== stateData.state) {
@@ -98,8 +108,8 @@ const OAuthCallback: React.FC = () => {
 
         console.log('OAuth flow completed successfully:', callbackData);
 
-        // Clean up localStorage
-        localStorage.removeItem('oauth_state');
+        // Clean up secure storage
+        oauthStorage.clear(state);
 
         setStatus('success');
         setMessage(`Successfully connected to ${stateData.integration_type}!`);

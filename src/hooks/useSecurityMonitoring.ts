@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/auth';
 import { apiSecurity } from '@/services/security/apiSecurityService';
 import { monitoring } from '@/services/monitoring/monitoringService';
 import { inputValidator } from '@/services/validation/inputValidationService';
+import { validateFileUpload } from '@/utils/securityUtils';
 
 /**
  * Hook for monitoring security events and user activities
@@ -110,7 +111,7 @@ export const useSecurityMonitoring = () => {
     file: File,
     context: string
   ) => {
-    const validation = inputValidator.validateFileUpload(file);
+    const validation = validateFileUpload(file);
     
     monitoring.trackActivity({
       activity_type: 'file_upload',

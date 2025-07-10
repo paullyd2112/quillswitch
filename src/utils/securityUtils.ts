@@ -168,7 +168,8 @@ export function generateSecureId(length: number = 16): string {
 /**
  * Validate and clean file uploads
  */
-export function validateFileUpload(file: File): void {
+export function validateFileUpload(file: File): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
   const allowedTypes = [
     'text/csv',
     'application/json',
@@ -182,19 +183,11 @@ export function validateFileUpload(file: File): void {
   const maxSize = 50 * 1024 * 1024; // 50MB
 
   if (!allowedTypes.includes(file.type)) {
-    throw errorHandler.createError(
-      ERROR_CODES.FILE_UPLOAD_FAILED,
-      `Invalid file type: ${file.type}`,
-      { fileType: file.type, fileName: file.name }
-    );
+    errors.push(`Invalid file type: ${file.type}`);
   }
 
   if (file.size > maxSize) {
-    throw errorHandler.createError(
-      ERROR_CODES.FILE_UPLOAD_FAILED,
-      `File too large: ${file.size} bytes`,
-      { fileSize: file.size, fileName: file.name, maxSize }
-    );
+    errors.push(`File too large: ${(file.size / 1024 / 1024).toFixed(2)}MB (max: 50MB)`);
   }
 
   // Check for suspicious file names
@@ -205,12 +198,13 @@ export function validateFileUpload(file: File): void {
   ];
 
   if (suspiciousPatterns.some(pattern => pattern.test(file.name))) {
-    throw errorHandler.createError(
-      ERROR_CODES.FILE_UPLOAD_FAILED,
-      `Suspicious file name: ${file.name}`,
-      { fileName: file.name }
-    );
+    errors.push(`Suspicious file name: ${file.name}`);
   }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 }
 
 /**

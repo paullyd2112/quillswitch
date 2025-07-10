@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { sessionManager } from "@/utils/secureStorage";
 
 export function useAuthState() {
   const [session, setSession] = useState<Session | null>(null);
@@ -17,9 +18,17 @@ export function useAuthState() {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Store auth status in localStorage for quick access
+        // Handle secure session management
         if (session) {
-          localStorage.setItem("isAuthenticated", "true");
+          // Start secure session (defer async operations to avoid blocking)
+          setTimeout(() => {
+            sessionManager.startSession(session.user.id, {
+              email: session.user.email,
+              role: session.user.role
+            }).catch(error => {
+              console.error('Failed to start secure session:', error);
+            });
+          }, 0);
           
           // Show toast for successful sign-in or recovery
           if (event === 'SIGNED_IN') {
@@ -28,7 +37,8 @@ export function useAuthState() {
             toast.success("Password reset successful!");
           }
         } else {
-          localStorage.removeItem("isAuthenticated");
+          // End secure session and clear all sensitive data
+          sessionManager.endSession();
           
           // Show toast for sign-out
           if (event === 'SIGNED_OUT') {

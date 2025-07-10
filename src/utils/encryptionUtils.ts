@@ -1,6 +1,6 @@
-
 /**
  * Enhanced encryption utilities for QuillSwitch security
+ * Uses Web Crypto API for proper AES-256-GCM encryption
  */
 
 // Function to check connection security
@@ -35,45 +35,151 @@ export function generateSecureId(length: number = 32): string {
 }
 
 /**
- * Simple encryption for demo purposes (in production, use proper encryption)
+ * Generate a cryptographic key from a password using PBKDF2
  */
-export function encryptData(data: string): string {
-  // In a real implementation, this would use proper encryption
-  // For demo purposes, we'll use base64 encoding
-  return btoa(data);
+async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
+  const encoder = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(password),
+    { name: 'PBKDF2' },
+    false,
+    ['deriveKey']
+  );
+
+  return crypto.subtle.deriveKey(
+    {
+      name: 'PBKDF2',
+      salt: salt,
+      iterations: 100000,
+      hash: 'SHA-256'
+    },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
 }
 
 /**
- * Simple decryption for demo purposes (in production, use proper decryption)
+ * Get or generate a master key for encryption
  */
-export function decryptData(encryptedData: string): string {
+async function getMasterKey(): Promise<string> {
+  let masterKey = sessionStorage.getItem('quillswitch_master_key');
+  if (!masterKey) {
+    // Generate a new master key for this session
+    masterKey = generateSecureId(64);
+    sessionStorage.setItem('quillswitch_master_key', masterKey);
+  }
+  return masterKey;
+}
+
+/**
+ * Proper AES-256-GCM encryption
+ */
+export async function encryptData(data: string): Promise<string> {
   try {
-    return atob(encryptedData);
-  } catch {
+    const encoder = new TextEncoder();
+    const masterKey = await getMasterKey();
+    
+    // Generate random salt and IV
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    
+    // Derive key from master key
+    const cryptoKey = await deriveKey(masterKey, salt);
+    
+    // Encrypt the data
+    const encryptedData = await crypto.subtle.encrypt(
+      {
+        name: 'AES-GCM',
+        iv: iv
+      },
+      cryptoKey,
+      encoder.encode(data)
+    );
+    
+    // Combine salt, IV, and encrypted data
+    const combined = new Uint8Array(salt.length + iv.length + encryptedData.byteLength);
+    combined.set(salt, 0);
+    combined.set(iv, salt.length);
+    combined.set(new Uint8Array(encryptedData), salt.length + iv.length);
+    
+    // Return as base64
+    return btoa(String.fromCharCode(...combined));
+  } catch (error) {
+    console.error('Encryption failed:', error);
+    throw new Error('Failed to encrypt data');
+  }
+}
+
+/**
+ * Proper AES-256-GCM decryption
+ */
+export async function decryptData(encryptedData: string): Promise<string> {
+  try {
+    const masterKey = await getMasterKey();
+    
+    // Decode from base64
+    const combined = Uint8Array.from(atob(encryptedData), c => c.charCodeAt(0));
+    
+    // Extract salt, IV, and encrypted data
+    const salt = combined.slice(0, 16);
+    const iv = combined.slice(16, 28);
+    const encrypted = combined.slice(28);
+    
+    // Derive key from master key
+    const cryptoKey = await deriveKey(masterKey, salt);
+    
+    // Decrypt the data
+    const decryptedData = await crypto.subtle.decrypt(
+      {
+        name: 'AES-GCM',
+        iv: iv
+      },
+      cryptoKey,
+      encrypted
+    );
+    
+    // Convert back to string
+    const decoder = new TextDecoder();
+    return decoder.decode(decryptedData);
+  } catch (error) {
+    console.error('Decryption failed:', error);
     return '';
   }
 }
 
 /**
- * Store data securely in localStorage
+ * Store data securely - NO LONGER USES localStorage FOR SENSITIVE DATA
+ * Sensitive data should be stored server-side or in secure cookies
  */
-export function storeSecureData(key: string, data: string): void {
+export async function storeSecureData(key: string, data: string, temporary: boolean = false): Promise<void> {
   try {
-    const encryptedData = encryptData(data);
-    localStorage.setItem(`secure_${key}`, encryptedData);
+    if (temporary) {
+      // For temporary data only, use sessionStorage with encryption
+      const encryptedData = await encryptData(data);
+      sessionStorage.setItem(`secure_${key}`, encryptedData);
+    } else {
+      // For persistent sensitive data, warn that it should be server-side
+      console.warn(`Attempted to store persistent sensitive data for key: ${key}. Consider server-side storage.`);
+      throw new Error('Persistent sensitive data storage not allowed in client');
+    }
   } catch (error) {
     console.error('Failed to store secure data:', error);
+    throw error;
   }
 }
 
 /**
- * Retrieve data securely from localStorage
+ * Retrieve data securely
  */
-export function getSecureData(key: string): string | null {
+export async function getSecureData(key: string, temporary: boolean = false): Promise<string | null> {
   try {
-    const encryptedData = localStorage.getItem(`secure_${key}`);
+    const storage = temporary ? sessionStorage : localStorage;
+    const encryptedData = storage.getItem(`secure_${key}`);
     if (!encryptedData) return null;
-    return decryptData(encryptedData);
+    return await decryptData(encryptedData);
   } catch (error) {
     console.error('Failed to retrieve secure data:', error);
     return null;
@@ -81,14 +187,22 @@ export function getSecureData(key: string): string | null {
 }
 
 /**
- * Remove secure data from localStorage
+ * Remove secure data
  */
-export function removeSecureData(key: string): void {
+export function removeSecureData(key: string, temporary: boolean = false): void {
   try {
-    localStorage.removeItem(`secure_${key}`);
+    const storage = temporary ? sessionStorage : localStorage;
+    storage.removeItem(`secure_${key}`);
   } catch (error) {
     console.error('Failed to remove secure data:', error);
   }
+}
+
+/**
+ * Clear all session encryption keys (call on logout)
+ */
+export function clearEncryptionKeys(): void {
+  sessionStorage.removeItem('quillswitch_master_key');
 }
 
 /**
@@ -164,8 +278,6 @@ export function checkSecurityHeaders(): Promise<{
   score: number;
 }> {
   return new Promise((resolve) => {
-    // In a real implementation, this would check actual response headers
-    // For now, we'll simulate based on the current environment
     const isSecure = isConnectionSecure();
     
     resolve({
