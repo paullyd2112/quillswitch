@@ -91,7 +91,7 @@ const HomeHero = () => {
         </div>
         
         {/* Enhanced stats section with blue gradient effects */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 max-w-4xl mx-auto">
           {[
             { value: "99.9%", label: "Data Accuracy Rate" },
             { value: "95%", label: "Time Savings" },
