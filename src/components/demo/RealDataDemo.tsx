@@ -193,43 +193,54 @@ const RealDataDemo: React.FC<RealDataDemoProps> = ({ userEmail }) => {
   );
 
   const renderConnectStep = () => (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-8">
+      <div className="text-center">
         <h2 className="text-2xl font-bold mb-4">Connect Your CRMs</h2>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           Select your source and destination CRM systems. If you haven't connected your CRMs yet, 
           you can do so in a new tab.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Source CRM</CardTitle>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <Card className="h-full">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-xl flex items-center justify-center gap-2">
+              <Database className="h-5 w-5" />
+              Source CRM
+            </CardTitle>
             <CardDescription>Where your data currently lives</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 flex flex-col">
             {connections.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-3 flex-1">
                 {connections.map((conn) => (
                   <Button
                     key={conn.id}
                     variant={selectedSource === conn.id ? "default" : "outline"}
-                    className="w-full justify-start"
+                    className="w-full justify-start h-auto p-4 relative z-10"
                     onClick={() => setSelectedSource(conn.id)}
                   >
-                    <Database className="mr-2 h-4 w-4" />
-                    {conn.name} ({conn.type})
+                    <Database className="mr-3 h-4 w-4 flex-shrink-0" />
+                    <div className="text-left">
+                      <div className="font-medium">{conn.name}</div>
+                      <div className="text-xs opacity-70">({conn.type})</div>
+                    </div>
                   </Button>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <Database className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-sm text-muted-foreground mb-4">
+              <div className="text-center py-12 flex-1 flex flex-col justify-center">
+                <Database className="mx-auto h-16 w-16 text-muted-foreground mb-6" />
+                <p className="text-sm text-muted-foreground mb-6">
                   No CRM connections found
                 </p>
-                <Button onClick={handleConnectCrm} variant="outline">
+                <Button 
+                  onClick={handleConnectCrm} 
+                  variant="outline" 
+                  className="mx-auto relative z-10 pointer-events-auto"
+                  style={{ pointerEvents: 'auto' }}
+                >
                   <ExternalLink className="mr-2 h-4 w-4" />
                   Connect Your CRMs
                 </Button>
@@ -238,35 +249,46 @@ const RealDataDemo: React.FC<RealDataDemoProps> = ({ userEmail }) => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Destination CRM</CardTitle>
+        <Card className="h-full">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-xl flex items-center justify-center gap-2">
+              <Database className="h-5 w-5" />
+              Destination CRM
+            </CardTitle>
             <CardDescription>Where you want to migrate your data</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 flex flex-col">
             {connections.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-3 flex-1">
                 {connections
                   .filter(conn => conn.id !== selectedSource)
                   .map((conn) => (
                     <Button
                       key={conn.id}
                       variant={selectedDestination === conn.id ? "default" : "outline"}
-                      className="w-full justify-start"
+                      className="w-full justify-start h-auto p-4 relative z-10"
                       onClick={() => setSelectedDestination(conn.id)}
                     >
-                      <Database className="mr-2 h-4 w-4" />
-                      {conn.name} ({conn.type})
+                      <Database className="mr-3 h-4 w-4 flex-shrink-0" />
+                      <div className="text-left">
+                        <div className="font-medium">{conn.name}</div>
+                        <div className="text-xs opacity-70">({conn.type})</div>
+                      </div>
                     </Button>
                   ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <Database className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-sm text-muted-foreground mb-4">
+              <div className="text-center py-12 flex-1 flex flex-col justify-center">
+                <Database className="mx-auto h-16 w-16 text-muted-foreground mb-6" />
+                <p className="text-sm text-muted-foreground mb-6">
                   No CRM connections found
                 </p>
-                <Button onClick={handleConnectCrm} variant="outline">
+                <Button 
+                  onClick={handleConnectCrm} 
+                  variant="outline" 
+                  className="mx-auto relative z-10 pointer-events-auto"
+                  style={{ pointerEvents: 'auto' }}
+                >
                   <ExternalLink className="mr-2 h-4 w-4" />
                   Connect Your CRMs
                 </Button>
@@ -276,7 +298,7 @@ const RealDataDemo: React.FC<RealDataDemoProps> = ({ userEmail }) => {
         </Card>
       </div>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between max-w-5xl mx-auto">
         <Button variant="outline" onClick={() => setStep("access")}>
           Back
         </Button>
