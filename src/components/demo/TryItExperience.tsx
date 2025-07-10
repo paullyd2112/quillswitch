@@ -61,7 +61,7 @@ const TryItExperience: React.FC = () => {
           </span>
         </CardTitle>
         <CardDescription className="text-lg text-muted-foreground">
-          Experience a complete simulated CRM migration workflow using realistic sample data
+          Experience a complete CRM migration workflow - choose between sample data or your real CRM data
         </CardDescription>
       </CardHeader>
       
