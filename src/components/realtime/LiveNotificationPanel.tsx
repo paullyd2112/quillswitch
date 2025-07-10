@@ -18,7 +18,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 export const LiveNotificationPanel: React.FC = () => {
   const { notifications, markNotificationRead } = useRealtime();
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
 
   const getNotificationIcon = (type: RealtimeNotification['type']) => {
     switch (type) {
@@ -48,8 +48,8 @@ export const LiveNotificationPanel: React.FC = () => {
     });
   };
 
-  if (isMinimized) {
-    return (
+  if (isMinimized || notifications.length === 0) {
+    return notifications.length > 0 ? (
       <div className="fixed bottom-4 right-4 z-50">
         <Button
           variant="outline"
@@ -58,14 +58,12 @@ export const LiveNotificationPanel: React.FC = () => {
           className="rounded-full shadow-lg"
         >
           <Bell className="h-4 w-4" />
-          {notifications.length > 0 && (
-            <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 text-xs">
-              {notifications.length}
-            </Badge>
-          )}
+          <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 text-xs">
+            {notifications.length}
+          </Badge>
         </Button>
       </div>
-    );
+    ) : null;
   }
 
   return (
