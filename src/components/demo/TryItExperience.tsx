@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ConnectTab from "./try-it-experience/tabs/ConnectTab";
@@ -7,10 +7,15 @@ import SelectTab from "./try-it-experience/tabs/SelectTab";
 import MapTab from "./try-it-experience/tabs/MapTab";
 import ValidateTab from "./try-it-experience/tabs/ValidateTab";
 import MigrateTab from "./try-it-experience/tabs/MigrateTab";
+import DemoModeSelector from "./try-it-experience/tabs/DemoModeSelector";
 import { useTryItExperience } from "./try-it-experience/hooks/useTryItExperience";
 import { TabType } from "./try-it-experience/types";
+import { useNavigate } from "react-router-dom";
 
 const TryItExperience: React.FC = () => {
+  const navigate = useNavigate();
+  const [selectedMode, setSelectedMode] = useState<'sample' | 'real' | null>(null);
+  
   const {
     activeTab,
     sourceCrm,
@@ -47,6 +52,40 @@ const TryItExperience: React.FC = () => {
   const handleTabChange = (value: string) => {
     setActiveTab(value as TabType);
   };
+
+  const handleSelectMode = (mode: 'sample' | 'real') => {
+    if (mode === 'real') {
+      navigate('/app/real-data-demo');
+    } else {
+      setSelectedMode(mode);
+    }
+  };
+
+  // Show mode selector if no mode is selected
+  if (!selectedMode) {
+    return (
+      <Card className="glass-panel border-primary/20 shadow-2xl">
+        <CardHeader className="pb-6">
+          <CardTitle className="flex items-center gap-3 text-3xl">
+            <div className="relative">
+              <div className="h-8 w-2 bg-gradient-to-b from-primary via-primary/80 to-accent rounded-full"></div>
+              <div className="absolute -inset-1 bg-gradient-to-b from-primary/40 to-accent/40 rounded-full blur-sm -z-10"></div>
+            </div>
+            <span className="bg-gradient-to-r from-white to-primary/80 bg-clip-text text-transparent">
+              Try QuillSwitch Migration
+            </span>
+          </CardTitle>
+          <CardDescription className="text-lg text-muted-foreground">
+            Experience a complete CRM migration workflow - choose between sample data or your real CRM data
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent>
+          <DemoModeSelector onSelectMode={handleSelectMode} />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="glass-panel border-primary/20 shadow-2xl">
