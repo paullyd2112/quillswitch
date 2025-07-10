@@ -29,7 +29,7 @@ const HeroBackground: React.FC = () => {
 
     const createPoints = () => {
       const points: Point[] = [];
-      const numPoints = Math.min(30, Math.floor((canvas.width * canvas.height) / 25000));
+      const numPoints = Math.min(60, Math.floor((canvas.width * canvas.height) / 18000));
       
       for (let i = 0; i < numPoints; i++) {
         points.push({
@@ -57,9 +57,9 @@ const HeroBackground: React.FC = () => {
     };
 
     const drawConnections = () => {
-      const maxDistance = 120;
-      ctx.strokeStyle = 'rgba(0, 123, 255, 0.1)';
-      ctx.lineWidth = 0.5;
+      const maxDistance = 140;
+      ctx.strokeStyle = 'rgba(0, 123, 255, 0.15)';
+      ctx.lineWidth = 0.8;
 
       for (let i = 0; i < pointsRef.current.length; i++) {
         for (let j = i + 1; j < pointsRef.current.length; j++) {
@@ -70,7 +70,7 @@ const HeroBackground: React.FC = () => {
           );
 
           if (distance < maxDistance) {
-            const opacity = (1 - distance / maxDistance) * 0.2;
+            const opacity = (1 - distance / maxDistance) * 0.25;
             ctx.strokeStyle = `rgba(0, 123, 255, ${opacity})`;
             ctx.beginPath();
             ctx.moveTo(point1.x, point1.y);
@@ -88,8 +88,8 @@ const HeroBackground: React.FC = () => {
         );
         const maxMouseDistance = 100;
         const proximity = Math.max(0, 1 - mouseDistance / maxMouseDistance);
-        const size = 1 + proximity * 2;
-        const opacity = 0.3 + proximity * 0.7;
+        const size = 1.5 + proximity * 2.5;
+        const opacity = 0.4 + proximity * 0.6;
 
         ctx.fillStyle = `rgba(0, 123, 255, ${opacity})`;
         ctx.beginPath();
