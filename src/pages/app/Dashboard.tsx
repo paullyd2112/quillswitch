@@ -10,6 +10,7 @@ import StatusBadge from "@/components/ui/status-badge";
 import DataTable from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { useDashboardFormatting } from "@/hooks/useDashboardFormatting";
+import { SystemTestDashboard } from "@/components/testing/SystemTestDashboard";
 
 const Dashboard = () => {
   // Mock data - in a real app this would come from your API/hooks
@@ -210,6 +211,11 @@ const Dashboard = () => {
                 </Button>
               </CardContent>
             </EnhancedCard>
+          </div>
+
+          {/* System Test Dashboard */}
+          <div className="mb-8">
+            <SystemTestDashboard />
           </div>
 
           {/* Recent Projects Table */}
