@@ -63,7 +63,7 @@ const ConnectStep: React.FC<ConnectStepProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 flex-1 flex flex-col justify-center">
+              <div className="text-center py-12 flex-1 flex flex-col justify-center items-center">
                 <Database className="mx-auto h-16 w-16 text-muted-foreground mb-6" />
                 <p className="text-sm text-muted-foreground mb-6">
                   No CRM connections found
@@ -71,7 +71,7 @@ const ConnectStep: React.FC<ConnectStepProps> = ({
                 <Button 
                   onClick={onConnectCrm} 
                   variant="outline" 
-                  className="mx-auto relative z-10 pointer-events-auto"
+                  className="relative z-10 pointer-events-auto"
                   style={{ pointerEvents: 'auto' }}
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
@@ -111,7 +111,7 @@ const ConnectStep: React.FC<ConnectStepProps> = ({
                   ))}
               </div>
             ) : (
-              <div className="text-center py-12 flex-1 flex flex-col justify-center">
+              <div className="text-center py-12 flex-1 flex flex-col justify-center items-center">
                 <Database className="mx-auto h-16 w-16 text-muted-foreground mb-6" />
                 <p className="text-sm text-muted-foreground mb-6">
                   No CRM connections found
@@ -119,7 +119,7 @@ const ConnectStep: React.FC<ConnectStepProps> = ({
                 <Button 
                   onClick={onConnectCrm} 
                   variant="outline" 
-                  className="mx-auto relative z-10 pointer-events-auto"
+                  className="relative z-10 pointer-events-auto"
                   style={{ pointerEvents: 'auto' }}
                 >
                   <ExternalLink className="mr-2 h-4 w-4" />
