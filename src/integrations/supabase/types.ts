@@ -144,6 +144,134 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_access_control: {
+        Row: {
+          access_granted_at: string
+          created_at: string
+          data_record_limit: number | null
+          demo_count: number | null
+          demo_type: string
+          email_domain: string
+          id: string
+          is_blocked: boolean | null
+          last_demo_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          access_granted_at?: string
+          created_at?: string
+          data_record_limit?: number | null
+          demo_count?: number | null
+          demo_type?: string
+          email_domain: string
+          id?: string
+          is_blocked?: boolean | null
+          last_demo_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          access_granted_at?: string
+          created_at?: string
+          data_record_limit?: number | null
+          demo_count?: number | null
+          demo_type?: string
+          email_domain?: string
+          id?: string
+          is_blocked?: boolean | null
+          last_demo_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      demo_data: {
+        Row: {
+          created_at: string
+          data: Json
+          external_id: string | null
+          id: string
+          object_type: string
+          session_id: string | null
+          source_system: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          external_id?: string | null
+          id?: string
+          object_type: string
+          session_id?: string | null
+          source_system: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          external_id?: string | null
+          id?: string
+          object_type?: string
+          session_id?: string | null
+          source_system?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_data_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "demo_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      demo_sessions: {
+        Row: {
+          created_at: string
+          data_source_type: string
+          demo_type: string
+          destination_connection_id: string | null
+          expires_at: string
+          id: string
+          processing_status: string | null
+          record_count: number | null
+          session_data: Json | null
+          session_token: string
+          source_connection_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_source_type: string
+          demo_type: string
+          destination_connection_id?: string | null
+          expires_at?: string
+          id?: string
+          processing_status?: string | null
+          record_count?: number | null
+          session_data?: Json | null
+          session_token?: string
+          source_connection_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_source_type?: string
+          demo_type?: string
+          destination_connection_id?: string | null
+          expires_at?: string
+          id?: string
+          processing_status?: string | null
+          record_count?: number | null
+          session_data?: Json | null
+          session_token?: string
+          source_connection_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       document_migration: {
         Row: {
           associated_record_id: string | null
@@ -1354,6 +1482,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_demo_access: {
+        Args: { p_email_domain: string }
+        Returns: {
+          can_access: boolean
+          demo_type: string
+          record_limit: number
+          reason: string
+        }[]
+      }
       encrypt_and_store_credential: {
         Args: {
           p_service_name: string
@@ -1434,6 +1571,14 @@ export type Database = {
           user_role: string
           member_count: number
         }[]
+      }
+      update_demo_access: {
+        Args: {
+          p_email_domain: string
+          p_demo_type?: string
+          p_data_record_limit?: number
+        }
+        Returns: string
       }
     }
     Enums: {
