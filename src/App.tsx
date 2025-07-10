@@ -11,6 +11,8 @@ import { RealtimeProvider } from "@/contexts/RealtimeContext";
 import { UserOnboardingProvider } from "@/components/onboarding/UserOnboardingProvider";
 import { LiveNotificationPanel } from "@/components/realtime/LiveNotificationPanel";
 import NavigationOverlay from "@/components/layout/NavigationOverlay";
+import SecurityHeaders from "@/components/security/SecurityHeaders";
+import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import Home from "@/pages/Home";
 import Auth from "@/pages/Auth";
 import Welcome from "@/pages/Welcome";
@@ -42,6 +44,45 @@ const Support = () => (
   </div>
 );
 
+function AppContent() {
+  // Initialize session timeout monitoring
+  useSessionTimeout({
+    warningMinutes: 5,
+    timeoutMinutes: 30,
+    enableWarnings: true
+  });
+
+  return (
+    <div className="min-h-screen bg-background font-sans antialiased">
+      <SecurityHeaders />
+      <NavigationOverlay />
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/pricing" element={<PricingEstimator />} />
+        <Route path="/demo" element={<Demo />} />
+        <Route path="/comparison" element={<Comparison />} />
+        <Route path="/resources" element={<Resources />} />
+        <Route path="/api-docs" element={<ApiDocs />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/connections" element={<ConnectionHub />} />
+        <Route path="/migration" element={<MigrationPage />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/app/*" element={<AppRoutes />} />
+        <Route path="/oauth/callback" element={<OAuthCallback />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      
+      <Toaster />
+      <LiveNotificationPanel />
+    </div>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -51,36 +92,11 @@ function App() {
             <RealtimeProvider>
               <ProcessingProvider>
                 <Router>
-                <UserOnboardingProvider>
-                  <div className="min-h-screen bg-background font-sans antialiased">
-                    <NavigationOverlay />
-                    
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/welcome" element={<Welcome />} />
-                      <Route path="/pricing" element={<PricingEstimator />} />
-                      <Route path="/demo" element={<Demo />} />
-                      <Route path="/comparison" element={<Comparison />} />
-                      <Route path="/resources" element={<Resources />} />
-                      <Route path="/api-docs" element={<ApiDocs />} />
-                      <Route path="/support" element={<Support />} />
-                      <Route path="/connections" element={<ConnectionHub />} />
-                      <Route path="/migration" element={<MigrationPage />} />
-                      <Route path="/privacy" element={<PrivacyPolicy />} />
-                      <Route path="/terms" element={<TermsOfService />} />
-                      <Route path="/app/*" element={<AppRoutes />} />
-                      <Route path="/oauth/callback" element={<OAuthCallback />} />
-                      <Route path="/payment-success" element={<PaymentSuccess />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                    
-                    <Toaster />
-                    <LiveNotificationPanel />
-                  </div>
-                </UserOnboardingProvider>
-              </Router>
-            </ProcessingProvider>
+                  <UserOnboardingProvider>
+                    <AppContent />
+                  </UserOnboardingProvider>
+                </Router>
+              </ProcessingProvider>
             </RealtimeProvider>
           </AuthProvider>
         </TooltipProvider>
