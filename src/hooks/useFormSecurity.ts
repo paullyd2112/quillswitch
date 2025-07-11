@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/auth';
-import { checkRateLimit, rateLimiters, sanitizeHtml, validateInput } from '@/utils/securityUtils';
+import { checkRateLimit, rateLimiters, sanitizeHtml, validateInput } from '@/utils/security';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
 import { z } from 'zod';
 

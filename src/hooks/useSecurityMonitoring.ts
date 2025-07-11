@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/auth';
 import { apiSecurity } from '@/services/security/apiSecurityService';
 import { monitoring } from '@/services/monitoring/monitoringService';
 import { inputValidator } from '@/services/validation/inputValidationService';
-import { validateFileUpload } from '@/utils/securityUtils';
+import { validateFileUpload } from '@/utils/security';
 
 /**
  * Hook for monitoring security events and user activities

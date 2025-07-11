@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { securityHeaders } from '@/utils/securityUtils';
+import { securityHeaders } from '@/utils/security';
 
 /**
  * Component to apply security headers via meta tags and script policies

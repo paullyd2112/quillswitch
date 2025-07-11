@@ -1,5 +1,5 @@
 import { apiSecurity } from '@/services/security/apiSecurityService';
-import { validateInput, securitySchemas } from '@/utils/securityUtils';
+import { validateInput, securitySchemas } from '@/utils/security';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
 
 /**

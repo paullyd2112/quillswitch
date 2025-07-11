@@ -5,7 +5,7 @@ import {
   checkRateLimit, 
   rateLimiters,
   securitySchemas 
-} from '@/utils/securityUtils';
+} from '@/utils/security';
 import { useToast } from '@/hooks/use-toast';
 
 /**

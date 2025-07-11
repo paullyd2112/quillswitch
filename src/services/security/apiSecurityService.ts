@@ -1,4 +1,4 @@
-import { rateLimiters, checkRateLimit, validateInput, securitySchemas } from '@/utils/securityUtils';
+import { rateLimiters, checkRateLimit, validateInput, securitySchemas } from '@/utils/security';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
 import { supabase } from '@/integrations/supabase/client';
 import { safeTable } from '@/services/utils/supabaseUtils';
