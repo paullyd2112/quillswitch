@@ -14,12 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          context_json: Json | null
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          context_json?: Json | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          context_json?: Json | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       credential_access_log: {
         Row: {
           accessed_at: string | null
           action: string
           credential_id: string | null
           id: number
+          ip_address: unknown | null
+          metadata: Json | null
+          user_agent: string | null
           user_id: string | null
         }
         Insert: {
@@ -27,6 +72,9 @@ export type Database = {
           action?: string
           credential_id?: string | null
           id?: number
+          ip_address?: unknown | null
+          metadata?: Json | null
+          user_agent?: string | null
           user_id?: string | null
         }
         Update: {
@@ -34,6 +82,9 @@ export type Database = {
           action?: string
           credential_id?: string | null
           id?: number
+          ip_address?: unknown | null
+          metadata?: Json | null
+          user_agent?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -1551,6 +1602,21 @@ export type Database = {
           user_id: string
           violation_count: number
           last_violation: string
+        }[]
+      }
+      get_suspicious_credential_access: {
+        Args: {
+          p_time_window_hours?: number
+          p_high_threshold?: number
+          p_medium_threshold?: number
+          p_min_count_to_report?: number
+        }
+        Returns: {
+          user_id: string
+          credential_id: string
+          access_count: number
+          last_access: string
+          risk_level: string
         }[]
       }
       get_system_health_metrics: {
