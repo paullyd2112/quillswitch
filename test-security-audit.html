@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QuillSwitch Security Assessment</title>
+    <script type="module">
+        // Import and run security audit
+        import { securityAuditor } from '/src/utils/securityAudit.ts';
+        
+        console.log('Running comprehensive security audit...');
+        
+        try {
+            const result = await securityAuditor.performComprehensiveAudit();
+            console.log('=== SECURITY AUDIT RESULTS ===');
+            console.log('Score:', result.score + '/100');
+            console.log('Compliant:', result.compliant ? 'YES' : 'NO');
+            console.log('Issues Found:', result.issues.length);
+            console.log('Recommendations:', result.recommendations.length);
+            console.log('Full Result:', result);
+        } catch (error) {
+            console.error('Security audit failed:', error);
+        }
+    </script>
+</head>
+<body>
+    <h1>Security Audit Running...</h1>
+    <p>Check the browser console for results.</p>
+</body>
+</html>
