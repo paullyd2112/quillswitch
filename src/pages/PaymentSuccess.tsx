@@ -1,25 +1,92 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { CheckCircle, ArrowRight, Home } from "lucide-react";
+import { CheckCircle, ArrowRight, Home, MessageSquare, Calendar, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const tier = searchParams.get("tier");
+  const plan = searchParams.get("plan");
+  const sessionId = searchParams.get("session_id");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [leadUpdated, setLeadUpdated] = useState(false);
+
+  const isPlanPayment = plan === 'express' || plan === 'premium';
 
   useEffect(() => {
     toast.success("Payment successful! Welcome to QuillSwitch!");
-  }, []);
+    
+    // Update lead status if this is a migration service payment
+    if (isPlanPayment && sessionId && !leadUpdated) {
+      updateLeadStatus();
+    }
+  }, [isPlanPayment, sessionId, leadUpdated]);
 
-  const getTierInfo = () => {
-    if (tier === 'essentials') {
+  const updateLeadStatus = async () => {
+    if (isProcessing) return;
+    
+    setIsProcessing(true);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) {
+        const { error } = await supabase
+          .from("demo_completion_leads")
+          .update({ 
+            lead_status: 'payment_completed',
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', userData.user.id);
+
+        if (error) {
+          console.error("Error updating lead status:", error);
+        } else {
+          setLeadUpdated(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error updating lead:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const getServiceInfo = () => {
+    if (plan === 'express') {
+      return {
+        name: "Express Migration",
+        price: "$2,997",
+        timeline: "7 days",
+        features: [
+          "Complete data migration (all records)",
+          "Personal consultation call",
+          "Custom field mapping",
+          "Data validation & cleanup",
+          "7-day migration guarantee"
+        ]
+      };
+    } else if (plan === 'premium') {
+      return {
+        name: "Premium Migration",
+        price: "$4,997",
+        timeline: "14 days",
+        features: [
+          "Everything in Express Migration",
+          "Dedicated migration specialist",
+          "Team training sessions (2 hours)",
+          "30-day post-migration support",
+          "Integration with 3rd party tools"
+        ]
+      };
+    } else if (tier === 'essentials') {
       return {
         name: "Essentials Plan",
         price: "$999",
+        timeline: "Self-service",
         features: [
           "Complete data migration for up to 250,000 records",
           "AI-powered field mapping",
@@ -32,6 +99,7 @@ const PaymentSuccess = () => {
       return {
         name: "Professional Migration Plan",
         price: "$2,499",
+        timeline: "Self-service",
         features: [
           "Complete data migration for up to 500,000 records",
           "Everything in Essentials",
@@ -45,11 +113,12 @@ const PaymentSuccess = () => {
     return {
       name: "QuillSwitch Plan",
       price: "Paid",
+      timeline: "TBD",
       features: ["Complete CRM migration solution"]
     };
   };
 
-  const tierInfo = getTierInfo();
+  const serviceInfo = getServiceInfo();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
@@ -73,17 +142,17 @@ const PaymentSuccess = () => {
               Order Confirmed
             </CardTitle>
             <CardDescription>
-              You have successfully purchased the {tierInfo.name}
+              You have successfully purchased the {serviceInfo.name}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
               <div>
-                <h3 className="font-semibold">{tierInfo.name}</h3>
+                <h3 className="font-semibold">{serviceInfo.name}</h3>
                 <p className="text-sm text-muted-foreground">One-time payment</p>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold">{tierInfo.price}</p>
+                <p className="text-2xl font-bold">{serviceInfo.price}</p>
                 <p className="text-sm text-muted-foreground">USD</p>
               </div>
             </div>
@@ -91,7 +160,7 @@ const PaymentSuccess = () => {
             <div className="space-y-3">
               <h4 className="font-medium">What's included:</h4>
               <ul className="space-y-2">
-                {tierInfo.features.map((feature, index) => (
+                {serviceInfo.features.map((feature, index) => (
                   <li key={index} className="flex items-center gap-2 text-sm">
                     <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                     {feature}
