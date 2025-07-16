@@ -66,9 +66,9 @@ export const useRegister = (): UseRegisterReturn => {
       
       setSignupStatus("success");
       
-      // After a delay, redirect to welcome page
+      // After a delay, redirect to demo page for new users
       setTimeout(() => {
-        navigate("/welcome");
+        navigate("/demo");
       }, 1500);
       
     } catch (error: any) {
