@@ -237,6 +237,71 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_completion_leads: {
+        Row: {
+          company_name: string
+          created_at: string
+          current_crm: string | null
+          demo_session_id: string | null
+          email: string
+          estimated_records: number | null
+          follow_up_scheduled: boolean | null
+          id: string
+          lead_status: string
+          name: string
+          pain_points: string | null
+          phone: string | null
+          target_crm: string | null
+          timeline: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          company_name: string
+          created_at?: string
+          current_crm?: string | null
+          demo_session_id?: string | null
+          email: string
+          estimated_records?: number | null
+          follow_up_scheduled?: boolean | null
+          id?: string
+          lead_status?: string
+          name: string
+          pain_points?: string | null
+          phone?: string | null
+          target_crm?: string | null
+          timeline?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          current_crm?: string | null
+          demo_session_id?: string | null
+          email?: string
+          estimated_records?: number | null
+          follow_up_scheduled?: boolean | null
+          id?: string
+          lead_status?: string
+          name?: string
+          pain_points?: string | null
+          phone?: string | null
+          target_crm?: string | null
+          timeline?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_completion_leads_demo_session_id_fkey"
+            columns: ["demo_session_id"]
+            isOneToOne: false
+            referencedRelation: "demo_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       demo_data: {
         Row: {
           created_at: string
