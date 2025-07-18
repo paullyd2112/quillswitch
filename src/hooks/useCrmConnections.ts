@@ -46,23 +46,55 @@ export const useCrmConnections = () => {
       const redirectUri = `${window.location.origin}/oauth/callback`;
       const state = `${provider}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
-      // Get authorization URL from Unified.to
-      const { data: authData, error: authError } = await supabase.functions.invoke('unified-oauth-authorize', {
-        body: {
-          integration_type: provider,
-          redirect_uri: redirectUri,
-          state: state
+      let authData;
+      
+      if (provider === 'salesforce') {
+        // Use direct Salesforce integration
+        const { data, error } = await supabase.functions.invoke('salesforce-oauth', {
+          body: {
+            action: 'authorize',
+            redirectUri,
+            state,
+            sandbox: false
+          }
+        });
+        
+        if (error || !data.success) {
+          throw new Error(data?.error || error?.message || 'Failed to start Salesforce OAuth flow');
         }
-      });
+        
+        authData = {
+          authorization_url: data.authUrl,
+          state: data.state,
+          provider: 'salesforce'
+        };
+      } else {
+        // Use Unified.to for other providers  
+        const { data, error } = await supabase.functions.invoke('unified-oauth-authorize', {
+          body: {
+            integration_type: provider,
+            redirect_uri: redirectUri,
+            state: state
+          }
+        });
 
-      if (authError || !authData?.success) {
-        throw new Error(authData?.error || authError?.message || 'Failed to start OAuth flow');
+        if (error || !data?.success) {
+          throw new Error(data?.error || error?.message || 'Failed to start OAuth flow');
+        }
+
+        authData = {
+          authorization_url: data.authorization_url,
+          state: data.state,
+          connection_id: data.connection_id,
+          workspace_id: data.workspace_id,
+          provider
+        };
       }
 
       console.log('Authorization URL received:', authData.authorization_url);
 
       // Store connection details securely for callback
-      const stateId = await oauthStorage.store({
+      await oauthStorage.store({
         state: authData.state,
         connection_id: authData.connection_id,
         workspace_id: authData.workspace_id,
