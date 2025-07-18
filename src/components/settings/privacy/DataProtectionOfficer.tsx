@@ -29,16 +29,12 @@ const DataProtectionOfficer: React.FC = () => {
                 
                 <div className="space-y-2">
                   <div className="flex items-center text-sm">
-                    <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
-                    dpo@quillswitch.com
-                  </div>
-                  <div className="flex items-center text-sm">
-                    <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
-                    +1 (555) 123-4567
-                  </div>
-                  <div className="flex items-center text-sm">
                     <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                     Appointed: January 1, 2025
+                  </div>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Mail className="h-4 w-4 mr-2" />
+                    Contact via support channel
                   </div>
                 </div>
                 

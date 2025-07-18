@@ -52,8 +52,7 @@ const About = () => {
               <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
               <p className="text-muted-foreground">
                 Have questions or want to learn more about how QuillSwitch can help your organization?
-                Reach out to our team at <span className="text-brand-600">contact@quillswitch.com</span> or
-                visit our headquarters at 1234 Innovation Way, Tech City, CA 94043.
+                We'd love to hear from you and discuss how we can help with your CRM migration needs.
               </p>
             </CardContent>
           </Card>

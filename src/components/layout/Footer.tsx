@@ -24,16 +24,8 @@ const Footer = () => {
             
             <div className="space-y-2">
               <div className="flex gap-3 items-start">
-                <MapPin size={18} className="text-primary mt-1" />
-                <span className="text-slate-300">123 Innovation Way, San Francisco, CA 94103</span>
-              </div>
-              <div className="flex gap-3 items-start">
                 <Mail size={18} className="text-primary mt-1" />
-                <span className="text-slate-300">contact@quillswitch.com</span>
-              </div>
-              <div className="flex gap-3 items-start">
-                <Phone size={18} className="text-primary mt-1" />
-                <span className="text-slate-300">+1 (555) 123-4567</span>
+                <span className="text-slate-300">hello@quillswitch.com</span>
               </div>
             </div>
           </div>

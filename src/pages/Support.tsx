@@ -21,7 +21,7 @@ const Support = () => {
                 Our support team is available Monday through Friday, 9am-5pm EST.
                 We typically respond within 24 business hours.
               </p>
-              <p className="font-medium">support@quillswitch.com</p>
+              <p className="font-medium">We're here to help with your migration questions</p>
             </CardContent>
             <CardFooter>
               <Button className="w-full">Send Email</Button>
