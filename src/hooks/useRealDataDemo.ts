@@ -52,15 +52,9 @@ export const useRealDataDemo = () => {
         try {
           console.log(`Extracting ${objectType} data...`);
           
-          // Call unified data extraction edge function
-          const { data, error } = await supabase.functions.invoke('unified-data-extraction', {
-            body: {
-              connection_id: options.sourceConnectionId,
-              object_type: objectType,
-              limit: Math.floor(options.recordLimit / options.dataTypes.length), // Distribute limit across data types
-              session_id: session.id
-            }
-          });
+          // TODO: Call native data extraction
+      const data = { records: [], success: true };
+      const error = null;
 
           if (error) {
             console.error(`Error extracting ${objectType}:`, error);

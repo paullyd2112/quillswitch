@@ -69,37 +69,19 @@ export const useCrmConnections = () => {
           provider: 'salesforce'
         };
       } else {
-        // Use Unified.to for other providers  
-        const { data, error } = await supabase.functions.invoke('unified-oauth-authorize', {
-          body: {
-            integration_type: provider,
-            redirect_uri: redirectUri,
-            state: state
-          }
-        });
-
-        if (error || !data?.success) {
-          throw new Error(data?.error || error?.message || 'Failed to start OAuth flow');
-        }
-
-        authData = {
-          authorization_url: data.authorization_url,
-          state: data.state,
-          connection_id: data.connection_id,
-          workspace_id: data.workspace_id,
-          provider
-        };
+        // TODO: Use native OAuth for other providers
+        throw new Error('Native OAuth not yet implemented for ' + provider);
       }
 
       console.log('Authorization URL received:', authData.authorization_url);
 
-      // Store connection details securely for callback
-      await oauthStorage.store({
-        state: authData.state,
-        connection_id: authData.connection_id,
-        workspace_id: authData.workspace_id,
-        integration_type: provider
-      });
+      // Store connection details securely for callback (for supported providers)
+      if (authData.state) {
+        await oauthStorage.store({
+          state: authData.state,
+          integration_type: provider
+        });
+      }
 
       // Redirect to OAuth provider
       window.location.href = authData.authorization_url;

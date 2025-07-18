@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Users, Building2, Target, TrendingUp } from "lucide-react";
 import { useDemoAccess } from "@/hooks/useDemoAccess";
 import { useRealDataDemo } from "@/hooks/useRealDataDemo";
-import { unifiedApiService } from "@/services/unified/UnifiedApiService";
+
 import { useToast } from "@/hooks/use-toast";
 import AccessStep from "./real-data-demo/steps/AccessStep";
 import ConnectStep from "./real-data-demo/steps/ConnectStep";
@@ -58,8 +58,8 @@ const RealDataDemo: React.FC<RealDataDemoProps> = ({ userEmail }) => {
           await handleAccessCheck(currentEmail);
         }
         
-        // Load available connections
-        const userConnections = await unifiedApiService.getUserConnections();
+        // Load available connections (placeholder for native CRM connections)
+        const userConnections: Connection[] = [];
         setConnections(userConnections);
       } catch (error) {
         console.error('Demo initialization error:', error);

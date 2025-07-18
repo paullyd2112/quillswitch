@@ -36,34 +36,10 @@ export const extractDataPreview = async (
   try {
     const { sourceSystem, objectType, limit = 5, filters = {} } = options;
     
-    // Use the actual Unified API to extract data
-    const { unifiedApiService } = await import('@/services/unified/UnifiedApiService');
-    
-    // Get available connections to find the right one
-    const connections = await unifiedApiService.getUserConnections();
-    const connection = connections.find(conn => 
-      conn.name.toLowerCase().includes(sourceSystem.toLowerCase()) || 
-      conn.type.toLowerCase().includes(sourceSystem.toLowerCase())
-    );
-    
-    if (!connection) {
-      throw new Error(`No connection found for ${sourceSystem}. Please connect your CRM system first.`);
-    }
-    
-    try {
-      // Get schema to understand the data structure
-      const schema = await unifiedApiService.getConnectionSchema(connection.id);
-      
-      // TODO: Replace with actual data extraction via unified API
-      // For now, we'll use the schema information to create more realistic mock data
-      // This is a placeholder until the unified data extraction API is fully implemented
-      const mockData = generateRealisticMockData(sourceSystem, objectType, limit, filters, schema);
-      return mockData;
-      
-    } catch (extractionError) {
-      console.error("Data extraction failed:", extractionError);
-      throw new Error(`Failed to extract data from ${sourceSystem}. Please check your connection and try again. Error: ${extractionError instanceof Error ? extractionError.message : 'Unknown error'}`);
-    }
+    // TODO: Use native CRM APIs for data extraction
+    // For now, generate mock data for preview
+    const mockData = generateRealisticMockData(sourceSystem, objectType, limit, filters, null);
+    return mockData;
   } catch (error: any) {
     handleServiceError(error, `Failed to extract ${options.objectType} preview from ${options.sourceSystem}`);
     return [];
@@ -218,64 +194,16 @@ export const extractFullDataSet = async (
   options: ExtractPreviewOptions & { batchSize?: number; onProgress?: (progress: number) => void }
 ): Promise<ExtractedData[]> => {
   try {
-    // Use the actual Unified API for full data extraction
-    const { unifiedApiService } = await import('@/services/unified/UnifiedApiService');
+    // TODO: Implement native CRM data extraction
+    // For now, return mock data for the full dataset
+    const mockData = generateMockData(options.sourceSystem, options.objectType, options.limit || 100, options.filters || {});
     
-    // Get available connections
-    const connections = await unifiedApiService.getUserConnections();
-    const connection = connections.find(conn => 
-      conn.name.toLowerCase().includes(options.sourceSystem.toLowerCase()) || 
-      conn.type.toLowerCase().includes(options.sourceSystem.toLowerCase())
-    );
-    
-    if (!connection) {
-      throw new Error(`No connection found for ${options.sourceSystem}. Please connect your CRM system first.`);
+    // Report progress if callback provided
+    if (options.onProgress) {
+      options.onProgress(1.0);
     }
     
-    // TODO: Implement actual full data extraction via unified API
-    // Use the unified API to extract all data in batches
-    try {
-      const { data, error } = await supabase.functions.invoke('unified-data-extraction', {
-        method: 'POST',
-        body: {
-          connection_id: connection.id,
-          object_type: options.objectType,
-          batch_size: options.batchSize || 50,
-          filters: options.filters || {}
-        }
-      });
-
-      if (error) throw error;
-
-      // Report progress if callback provided
-      if (options.onProgress) {
-        options.onProgress(1.0);
-      }
-
-      // Transform the unified API response to our format
-      return (data.records || []).map((record: any) => ({
-        recordId: record.id,
-        sourceSystem: options.sourceSystem,
-        objectType: options.objectType,
-        fields: Object.entries(record.raw || {}).map(([key, value]) => ({
-          name: key,
-          value,
-          type: typeof value === 'string' ? 'string' : 
-                typeof value === 'number' ? 'number' :
-                typeof value === 'boolean' ? 'boolean' :
-                value instanceof Date ? 'date' : 'unknown'
-        })),
-        metadata: {
-          extractionMethod: 'unified_api',
-          connectionId: connection.id,
-          extractedAt: new Date().toISOString(),
-          originalId: record.id
-        }
-      }));
-    } catch (extractionError) {
-      console.error("Unified API extraction failed:", extractionError);
-      throw new Error(`Failed to extract data: ${extractionError instanceof Error ? extractionError.message : 'Unknown error'}`);
-    }
+    return mockData;
     
   } catch (error: any) {
     console.error("Full data extraction failed:", error);

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import UnifiedConnectionManager from "@/components/unified/UnifiedConnectionManager";
+
 import ConnectionGuide from "@/components/connection-hub/ConnectionGuide";
 import SecurityInfoCard from "@/components/connection-hub/SecurityInfoCard";
 import { ArrowRight, Info, Shield, Building2, CheckCircle, Users } from "lucide-react";
@@ -75,28 +75,20 @@ const ConnectionHub: React.FC = () => {
             </TabsList>
             
             <TabsContent value="connections" className="space-y-6">
-              <UnifiedConnectionManager onConnectionChange={handleConnectionChange} />
-              
-              <Card className="border-2 border-dashed">
-                <CardContent className="pt-6">
-                  <div className="text-center space-y-4">
-                    <h3 className="text-lg font-semibold">Ready to start your migration?</h3>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Native CRM Connections</CardTitle>
+                  <CardDescription>
+                    Direct integrations with CRM systems (coming soon)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center space-y-4 py-8">
                     <p className="text-muted-foreground">
-                      {connectionCount < 2 ? (
-                        "Connect at least 2 systems to set up your migration"
-                      ) : (
-                        "Great! You have enough connections to proceed with migration setup"
-                      )}
+                      Native CRM connection management is being developed. Use the Salesforce integration in the migration flow for now.
                     </p>
-                    <Button 
-                      onClick={handleContinueToSetup}
-                      disabled={connectionCount < 2}
-                      size="lg"
-                      className="min-w-48"
-                    >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Set Up Migration
-                      <ArrowRight className="h-4 w-4 ml-2" />
+                    <Button onClick={() => navigate("/app/migrate")}>
+                      Go to Migration
                     </Button>
                   </div>
                 </CardContent>

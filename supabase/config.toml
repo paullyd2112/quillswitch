@@ -42,15 +42,6 @@ pop3_port = 54327
 [functions.create-payment]
 verify_jwt = true
 
-[functions.unified-data-extraction]
-verify_jwt = true
-
-[functions.unified-migration-execute]
-verify_jwt = true
-
-[functions.unified-get-schema]
-verify_jwt = true
-
 [auth]
 enabled = true
 port = 54326

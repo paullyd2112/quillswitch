@@ -7,7 +7,7 @@ import TryItExperience from "@/components/demo/TryItExperience";
 import MigrationDemoSection from "@/components/home/MigrationDemoSection";
 import DemoFooterCta from "@/components/demo/DemoFooterCta";
 import DemoNavigation from "@/components/demo/DemoNavigation";
-import CrmIntegrationTester from "@/components/testing/CrmIntegrationTester";
+
 import ApiEndpointTester from "@/components/testing/ApiEndpointTester";
 import { RealtimeDemo } from "@/components/realtime/RealtimeDemo";
 import { Separator } from "@/components/ui/separator";
@@ -113,18 +113,17 @@ const Demo = () => {
             
             <Separator className="opacity-30" />
             
-            {/* CRM Integration Testing */}
-            <section id="crm-integration-testing" className="scroll-mt-20">
+            {/* API Testing */}
+            <section id="api-testing" className="scroll-mt-20">
               <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white to-primary/80 bg-clip-text text-transparent">
-                  CRM Integration Testing
+                  API Testing
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Comprehensive testing suite for validating CRM connections, API functionality, and data access reliability.
+                  Test API functionality and endpoint reliability with our native migration tools.
                 </p>
               </div>
               <div className="space-y-8">
-                <CrmIntegrationTester />
                 <ApiEndpointTester />
               </div>
             </section>

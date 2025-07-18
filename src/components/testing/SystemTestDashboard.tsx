@@ -33,7 +33,7 @@ export const SystemTestDashboard: React.FC = () => {
     { name: 'Authentication System', status: 'pending', icon: <Shield className="h-4 w-4" /> },
     { name: 'Database Connectivity', status: 'pending', icon: <Database className="h-4 w-4" /> },
     { name: 'Security Audit', status: 'pending', icon: <Shield className="h-4 w-4" /> },
-    { name: 'Unified.to Integration', status: 'pending', icon: <Globe className="h-4 w-4" /> },
+    { name: 'Native CRM Integration', status: 'pending', icon: <Globe className="h-4 w-4" /> },
     { name: 'Migration Engine', status: 'pending', icon: <Zap className="h-4 w-4" /> },
     { name: 'Payment System', status: 'pending', icon: <CreditCard className="h-4 w-4" /> },
     { name: 'Edge Functions', status: 'pending', icon: <Settings className="h-4 w-4" /> },
@@ -183,9 +183,7 @@ export const SystemTestDashboard: React.FC = () => {
     updateTestStatus('Edge Functions', 'running');
     try {
       const functionTests = [
-        'test-unified',
-        'unified-data-extraction',
-        'unified-oauth-authorize',
+        // removed unified functions
         'gemini-chat'
       ];
       
@@ -253,7 +251,7 @@ export const SystemTestDashboard: React.FC = () => {
       testAuthentication,
       testDatabase,
       testSecurity,
-      testUnifiedIntegration,
+      testNativeCrmIntegration,
       testMigrationEngine,
       testPaymentSystem,
       testEdgeFunctions,
