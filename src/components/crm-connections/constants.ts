@@ -5,8 +5,8 @@ export const CRM_PROVIDERS: CrmProvider[] = [
   {
     id: "salesforce",
     name: "Salesforce",
-    description: "Connect your Salesforce account to import contacts, opportunities and more",
-    icon: "🏢"
+    description: "Direct integration with Salesforce - no third-party dependencies",
+    icon: "⚡"
   },
   {
     id: "hubspot",
