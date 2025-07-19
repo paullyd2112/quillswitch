@@ -36,9 +36,9 @@ const ConnectionHub: React.FC = () => {
     <BaseLayout>
       <div className="container px-4 py-8 max-w-7xl mx-auto">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold mb-2">Unified API Connection Hub</h1>
+          <h1 className="text-3xl font-bold mb-2">Native CRM Connection Hub</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Connect your CRM systems through our unified API platform. Secure, fast, and reliable integrations with 28+ CRM systems.
+            Connect your CRM systems through our native engine. Secure, fast, and reliable integrations with 28+ CRM systems.
           </p>
         </div>
         
@@ -101,7 +101,7 @@ const ConnectionHub: React.FC = () => {
             
             <TabsContent value="security">
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold mb-2">Unified API Security</h2>
+                <h2 className="text-xl font-semibold mb-2">Native CRM Security</h2>
                 <p className="text-muted-foreground mb-6">
                   Learn about the security measures protecting your CRM integrations through Unified.to.
                 </p>

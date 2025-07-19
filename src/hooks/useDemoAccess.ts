@@ -14,7 +14,7 @@ export interface DemoSession {
   id: string;
   sessionToken: string;
   demoType: string;
-  dataSourceType: 'unified_api' | 'manual_api' | 'csv_upload';
+  dataSourceType: 'native_crm' | 'manual_api' | 'csv_upload';
   recordCount: number;
   processingStatus: 'pending' | 'processing' | 'completed' | 'failed';
   expiresAt: string;
@@ -65,7 +65,7 @@ export const useDemoAccess = () => {
 
   const createDemoSession = async (
     demoType: string,
-    dataSourceType: 'unified_api' | 'manual_api' | 'csv_upload',
+    dataSourceType: 'native_crm' | 'manual_api' | 'csv_upload',
     sourceConnectionId?: string,
     destinationConnectionId?: string
   ): Promise<DemoSession | null> => {
@@ -102,7 +102,7 @@ export const useDemoAccess = () => {
         id: data.id,
         sessionToken: data.session_token,
         demoType: data.demo_type,
-        dataSourceType: data.data_source_type as 'unified_api' | 'manual_api' | 'csv_upload',
+        dataSourceType: data.data_source_type as 'native_crm' | 'manual_api' | 'csv_upload',
         recordCount: data.record_count,
         processingStatus: data.processing_status as 'pending' | 'processing' | 'completed' | 'failed',
         expiresAt: data.expires_at

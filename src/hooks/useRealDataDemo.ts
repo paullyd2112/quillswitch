@@ -32,7 +32,7 @@ export const useRealDataDemo = () => {
       // Create demo session
       const session = await createDemoSession(
         'real_data',
-        'unified_api',
+        'native_crm',
         options.sourceConnectionId,
         options.destinationConnectionId
       );

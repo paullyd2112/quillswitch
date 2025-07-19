@@ -3,13 +3,13 @@ export const QUILLSWITCH_KNOWLEDGE = {
   overview: {
     mission: "QuillSwitch makes CRM data migration simple, secure, and fast for Small-to-Medium Businesses (SMBs) and Mid-Market companies.",
     problem: "Current CRM migration methods are complex, time-consuming, risky (data loss/errors), require technical expertise or expensive consultants.",
-    solution: "Automated, secure CRM migration with AI-powered mapping and Unified API Integration security."
+    solution: "Automated, secure CRM migration with AI-powered mapping and Native CRM Engine security."
   },
   
   features: {
     security: {
       title: "Enterprise-Grade Security",
-      details: "Unified API Integration, pgsodium encryption at rest, Row Level Security (RLS), secure API connections, data protection guarantees."
+      details: "Native CRM Engine, pgsodium encryption at rest, Row Level Security (RLS), secure direct connections, data protection guarantees."
     },
     automation: {
       title: "AI-Powered Automation", 
@@ -32,7 +32,7 @@ export const QUILLSWITCH_KNOWLEDGE = {
   technical: {
     supported_crms: ["Salesforce", "HubSpot", "Pipedrive", "Zoho", "Microsoft Dynamics", "Sugar CRM", "Insightly", "Copper"],
     data_types: ["Contacts", "Accounts", "Opportunities", "Activities", "Tasks", "Notes", "Documents", "Custom Fields", "Dashboards", "Reports"],
-    integrations: "Unified API integration for secure, standardized CRM connections",
+    integrations: "Native CRM Engine for secure, direct CRM connections",
     architecture: "Cloud-based platform with redundant security, real-time monitoring, and enterprise-grade infrastructure",
     dashboard_recreation: "AI-powered dashboard recreation with chart conversion, layout adaptation, and filter translation"
   },
@@ -59,7 +59,7 @@ export const QUILLSWITCH_KNOWLEDGE = {
 
   process: {
     steps: [
-      "1. Connect your source and destination CRMs securely via Unified API Integration",
+      "1. Connect your source and destination CRMs securely via Native CRM Engine",
       "2. AI analyzes and maps your data automatically", 
       "3. Review and approve the migration plan",
       "4. Execute secure data transfer with real-time monitoring",

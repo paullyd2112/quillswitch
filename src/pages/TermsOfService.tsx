@@ -41,7 +41,7 @@ const TermsOfServicePage: React.FC = () => {
                     <p className="mt-2 text-sm text-muted-foreground">
                       QuillSwitch provides a cloud-based, self-service platform that enables customers to migrate data 
                       between various third-party Customer Relationship Management (CRM) systems. The Service utilizes 
-                      a Unified API Integration and AI-powered schema mapping to facilitate the transfer of Customer Data 
+                      a Native CRM Engine and AI-powered schema mapping to facilitate the transfer of Customer Data 
                       from a source CRM to a destination CRM.
                     </p>
                   </section>
@@ -98,7 +98,7 @@ const TermsOfServicePage: React.FC = () => {
                     <h4 className="text-base font-medium mt-4 mb-2">QuillSwitch IP</h4>
                     <p className="text-sm text-muted-foreground mb-2">
                       We retain all rights, title, and interest in and to the Service, including our website, branding, 
-                      AI-powered mapping algorithms, Unified API architecture, and all related software and technology. 
+                      AI-powered mapping algorithms, Native CRM Engine architecture, and all related software and technology. 
                       This Agreement does not grant you any rights to our intellectual property except for the limited 
                       right to use the Service as described.
                     </p>

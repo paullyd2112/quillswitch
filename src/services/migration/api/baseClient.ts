@@ -3,42 +3,7 @@ import { handleError } from "@/utils/errorHandling";
 import { RateLimiter } from "./utils/rateLimiter";
 import { PaginationHandler, PaginationParams, PaginatedResponse } from "./utils/paginationHandler";
 
-// Cache API key to prevent multiple requests
-let cachedApiKey: string | null = null;
-let apiKeyPromise: Promise<string> | null = null;
-
-// Production API key will be retrieved from Supabase secrets
-const getUnifiedApiKey = async (): Promise<string> => {
-  // Return cached key if available
-  if (cachedApiKey) {
-    return cachedApiKey;
-  }
-  
-  // Return existing promise if already in progress
-  if (apiKeyPromise) {
-    return apiKeyPromise;
-  }
-  
-  // Create new promise
-  apiKeyPromise = (async () => {
-    try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { data, error } = await supabase.functions.invoke('get-unified-api-key');
-      
-      if (error) throw error;
-      cachedApiKey = data.apiKey;
-      return cachedApiKey;
-    } catch (error) {
-      console.error("Failed to retrieve Unified API key:", error);
-      throw new Error("Unable to retrieve API key. Please check your configuration.");
-    } finally {
-      // Clear promise after completion
-      apiKeyPromise = null;
-    }
-  })();
-  
-  return apiKeyPromise;
-};
+// Note: This client is now used for native CRM operations, not unified API
 
 export class BaseApiClient {
   private apiKey: string;
@@ -52,25 +17,9 @@ export class BaseApiClient {
     apiKey?: string,
     requestsPerSecond: number = 10
   ) {
-    // Use provided key or initialize with placeholder that will be replaced
+    // Use provided key or leave empty (native CRM engine doesn't require API keys)
     this.apiKey = apiKey || "";
     this.rateLimiter = new RateLimiter(requestsPerSecond);
-    
-    // Initialize API key from secure storage if not provided
-    if (!apiKey) {
-      this.initializeApiKey();
-    }
-  }
-  
-  /**
-   * Initialize API key from secure storage
-   */
-  private async initializeApiKey() {
-    try {
-      this.apiKey = await getUnifiedApiKey();
-    } catch (error) {
-      console.warn("Failed to initialize API key:", error);
-    }
   }
   
   /**

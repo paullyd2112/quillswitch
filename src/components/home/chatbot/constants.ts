@@ -30,7 +30,7 @@ QuillSwitch eliminates the nightmare of CRM migrations. Most businesses dread sw
 
 Key differentiators:
 - AI automatically maps data with 99.9% accuracy (no manual field matching headaches)
-- Unified API Integration provides secure, standardized connections to all major CRMs
+- Native CRM Engine provides secure, direct connections to all major CRMs
 - Enterprise-grade encryption and security throughout the process
 - Complete migrations in hours/days/weeks vs months (80% faster than traditional methods)
 - Save 60-80% vs consultants (who typically charge $15k-50k+)
