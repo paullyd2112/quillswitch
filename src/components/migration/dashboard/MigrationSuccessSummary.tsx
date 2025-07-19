@@ -63,7 +63,7 @@ const MigrationSuccessSummary: React.FC<{
   const downloadErrorReport = () => {
     // In a real implementation, this would trigger a CSV download
     // For now, we'll just log to console
-    console.log("Downloading error report...");
+    // Downloading error report
     toast.success("Error report downloaded");
   };
   

@@ -100,7 +100,7 @@ class AppErrorBoundary extends Component<Props, State> {
     };
 
     // In a real app, this would send to a bug tracking system
-    console.log('Bug report:', bugReport);
+    // Bug report generated
     
     // For now, copy to clipboard
     navigator.clipboard.writeText(JSON.stringify(bugReport, null, 2)).then(() => {

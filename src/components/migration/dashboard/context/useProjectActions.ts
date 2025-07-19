@@ -93,7 +93,7 @@ export const useProjectActions = ({
     
     try {
       // In a real app, we would save this to the database
-      console.log("Delta migration config saved:", config);
+      // Delta migration config saved
       
       // Create a notification
       if (config.enabled) {

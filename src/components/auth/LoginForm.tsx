@@ -83,7 +83,7 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
       
       // Note: For OAuth flows, the actual redirect happens in the browser
       // The user will be redirected to Google, then back to our app
-      console.log('Google OAuth redirect initiated successfully');
+      // Google OAuth redirect initiated successfully
       
     } catch (error: any) {
       console.error('Unexpected Google sign in error:', error);
