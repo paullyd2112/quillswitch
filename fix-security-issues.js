@@ -34,7 +34,7 @@ function cleanFile(filePath) {
   
   // Remove console.log statements (keep console.error for critical errors)
   let cleanedContent = content.replace(
-    /console\.log\([^)]*\);?\n?/g, 
+    /console\.log\([^)]*\);?\s*\n?/g, 
     (match) => {
       modified = true;
       return '';
