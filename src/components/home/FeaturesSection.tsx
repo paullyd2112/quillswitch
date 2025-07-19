@@ -12,12 +12,12 @@ type FeatureCardProps = {
 }
 
 const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
-  <div className="feature-card-premium">
-    <div className="icon-container">
+  <div className="feature-card group p-8 bg-slate-900 border border-slate-800 rounded-xl hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+    <div className="mb-6 w-14 h-14 rounded-xl bg-slate-800 group-hover:bg-primary/10 flex items-center justify-center text-primary transition-colors duration-300">
       {icon}
     </div>
-    <h3 className="text-xl font-semibold mb-3 font-display">{title}</h3>
-    <p className="text-muted-foreground">{description}</p>
+    <h3 className="text-xl font-semibold text-white mb-3">{title}</h3>
+    <p className="text-slate-400">{description}</p>
   </div>
 );
 

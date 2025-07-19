@@ -35,151 +35,138 @@ const ConnectionHub: React.FC = () => {
   return (
     <BaseLayout>
       <div className="container px-4 py-8 max-w-7xl mx-auto">
-        <div className="mb-12 text-center">
-          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 text-hero-gradient">Unified API Connection Hub</h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Connect your CRM systems through our <span className="text-primary font-semibold">unified API platform</span>. 
-            Secure, fast, and reliable integrations with <span className="text-primary font-semibold">28+ CRM systems</span>.
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold mb-2">Unified API Connection Hub</h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Connect your CRM systems through our unified API platform. Secure, fast, and reliable integrations with 28+ CRM systems.
           </p>
         </div>
         
-        <div className="space-y-6 mb-8">
-          <div className="badge-premium text-blue-400">
-            <Info className="h-4 w-4" />
-            <span className="font-semibold text-foreground">Setup Required</span>
-            <span className="text-muted-foreground">•</span>
-            <span className="text-muted-foreground">Connect at least 2 CRM systems (source and destination) to enable migration functionality</span>
-          </div>
+        <div className="space-y-4 mb-6">
+          <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
+            <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <AlertDescription className="text-blue-700 dark:text-blue-300">
+              Connect at least 2 CRM systems (source and destination) to enable migration functionality.
+            </AlertDescription>
+          </Alert>
           
-          <div className="badge-premium text-green-400">
-            <Shield className="h-4 w-4" />
-            <span className="font-semibold text-foreground">Enterprise Security</span>
-            <span className="text-muted-foreground">•</span>
-            <span className="text-muted-foreground">All connections use OAuth 2.0 authentication and Unified.to's secure infrastructure</span>
-          </div>
+          <Alert className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
+            <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertDescription className="text-green-700 dark:text-green-300">
+              All connections use OAuth 2.0 authentication and are managed through Unified.to's secure infrastructure.
+            </AlertDescription>
+          </Alert>
         </div>
           
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="glass-panel p-1.5 h-auto">
-            <TabsTrigger value="connections" className="gap-2 px-6 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Building2 className="h-4 w-4" />
-              Connections
-            </TabsTrigger>
-            <TabsTrigger value="help" className="gap-2 px-6 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Users className="h-4 w-4" />
-              Setup Guide
-            </TabsTrigger>
-            <TabsTrigger value="security" className="gap-2 px-6 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Shield className="h-4 w-4" />
-              Security
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="connections" className="space-y-6">
-            <div className="card-premium">
-              <div className="p-8">
-                <div className="mb-6">
-                  <h3 className="font-display text-2xl font-bold mb-2">Native CRM Connections</h3>
-                  <p className="text-muted-foreground">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="w-full sm:w-auto grid grid-cols-3 gap-1">
+              <TabsTrigger value="connections">
+                <Building2 className="h-4 w-4 mr-2" />
+                Connections
+              </TabsTrigger>
+              <TabsTrigger value="help">
+                <Users className="h-4 w-4 mr-2" />
+                Setup Guide
+              </TabsTrigger>
+              <TabsTrigger value="security">
+                <Shield className="h-4 w-4 mr-2" />
+                Security
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="connections" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Native CRM Connections</CardTitle>
+                  <CardDescription>
                     Direct integrations with CRM systems (coming soon)
-                  </p>
-                </div>
-                <div className="text-center space-y-6 py-12">
-                  <p className="text-muted-foreground text-lg">
-                    Native CRM connection management is being developed. Use the Salesforce integration in the migration flow for now.
-                  </p>
-                  <div className="btn-premium-primary interactive-premium" onClick={() => navigate("/app/migrate")}>
-                    Go to Migration <ArrowRight className="ml-2 h-4 w-4" />
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center space-y-4 py-8">
+                    <p className="text-muted-foreground">
+                      Native CRM connection management is being developed. Use the Salesforce integration in the migration flow for now.
+                    </p>
+                    <Button onClick={() => navigate("/app/migrate")}>
+                      Go to Migration
+                    </Button>
                   </div>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="help">
-            <div className="card-premium">
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="help">
               <ConnectionGuide />
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="security">
-            <div className="space-y-8">
-              <div className="text-center mb-8">
-                <h2 className="font-display text-3xl font-bold mb-4 text-hero-gradient">Unified API Security</h2>
-                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            </TabsContent>
+            
+            <TabsContent value="security">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold mb-2">Unified API Security</h2>
+                <p className="text-muted-foreground mb-6">
                   Learn about the security measures protecting your CRM integrations through Unified.to.
                 </p>
-              </div>
-              
-              <div className="card-premium">
-                <SecurityInfoCard />
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="card-premium">
-                  <div className="p-8">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="icon-container bg-primary/10">
-                          <Shield className="h-6 w-6 text-primary" />
-                        </div>
-                        <h3 className="font-display text-xl font-bold">Security Features</h3>
-                      </div>
-                    </div>
-                    <ul className="space-y-4">
-                      {[
-                        "OAuth 2.0 authentication for all CRM connections",
-                        "End-to-end encryption for all credential storage", 
-                        "Automatic token refresh and secure session management",
-                        "SOC 2 Type II compliant infrastructure via Unified.to"
-                      ].map((feature, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                          <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                          <span className="text-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
                 
-                <div className="card-premium">
-                  <div className="p-8">
-                    <div className="mb-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="icon-container bg-primary/10">
-                          <Shield className="h-6 w-6 text-primary" />
+                <SecurityInfoCard />
+                
+                <div className="grid md:grid-cols-2 gap-6 mt-8">
+                  <Card>
+                    <CardHeader className="bg-blue-50 dark:bg-blue-900/20 border-b border-blue-100 dark:border-blue-800">
+                      <CardTitle className="text-blue-800 dark:text-blue-400">Security Features</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-4">
+                      <ul className="space-y-3">
+                        <li className="flex items-start gap-2">
+                          <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
+                          <p className="text-sm">OAuth 2.0 authentication for all CRM connections</p>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
+                          <p className="text-sm">End-to-end encryption for all credential storage</p>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
+                          <p className="text-sm">Automatic token refresh and secure session management</p>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
+                          <p className="text-sm">SOC 2 Type II compliant infrastructure via Unified.to</p>
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Privacy & Compliance</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="space-y-3">
+                        <div>
+                          <h3 className="font-medium mb-1">How is my data protected?</h3>
+                          <p className="text-sm text-muted-foreground">
+                            All data is encrypted in transit and at rest. We never store your CRM credentials directly.
+                          </p>
                         </div>
-                        <h3 className="font-display text-xl font-bold">Privacy & Compliance</h3>
+                        <div>
+                          <h3 className="font-medium mb-1">GDPR Compliance</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Fully GDPR compliant data processing with user consent and data portability rights.
+                          </p>
+                        </div>
+                        <div>
+                          <h3 className="font-medium mb-1">Data Retention</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Connection tokens are automatically refreshed and old tokens are securely deleted.
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-y-6">
-                      {[
-                        {
-                          title: "How is my data protected?",
-                          description: "All data is encrypted in transit and at rest. We never store your CRM credentials directly."
-                        },
-                        {
-                          title: "GDPR Compliance", 
-                          description: "Fully GDPR compliant data processing with user consent and data portability rights."
-                        },
-                        {
-                          title: "Data Retention",
-                          description: "Connection tokens are automatically refreshed and old tokens are securely deleted."
-                        }
-                      ].map((item, index) => (
-                        <div key={index}>
-                          <h4 className="font-semibold mb-2 text-foreground">{item.title}</h4>
-                          <p className="text-muted-foreground">{item.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+            </TabsContent>
+          </Tabs>
+        </div>
     </BaseLayout>
   );
 };

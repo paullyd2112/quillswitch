@@ -21,78 +21,76 @@ const HomeHero = () => {
   };
   
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: 'hsl(var(--background))' }}>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
       {/* Animated Neural Network Background */}
       <HeroBackground />
       
-      {/* Premium gradient overlays */}
+      {/* Gradient overlays */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-primary/10 to-primary/5 rounded-full blur-[100px] animate-premium-float" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-primary/8 to-primary/3 rounded-full blur-[120px] animate-premium-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-primary/5 to-primary/10 rounded-full blur-[150px] animate-premium-float" style={{ animationDelay: '4s' }} />
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[60px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[80px]" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-blue-400/3 rounded-full blur-[100px]" />
       </div>
 
       <div className="container relative z-10 max-w-6xl mx-auto px-4 text-center">
         <div className="mb-12">
-          {/* Premium Data Protection Badge */}
-          <div className="badge-premium mb-12 text-primary animate-premium-fade-in">
-            <Shield className="h-5 w-5" />
+          {/* Data Protection Guarantee with brand-consistent blue styling */}
+          <div className="inline-flex items-center gap-3 px-6 py-3 mb-8 text-sm font-medium rounded-full bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20 text-blue-400 backdrop-blur-sm">
+            <Shield className="h-5 w-5 text-blue-400" />
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
-            <span className="font-semibold text-foreground">100% Data Protection Guarantee</span>
-            <span className="text-muted-foreground">•</span>
-            <span className="text-muted-foreground">Zero Data Loss • Enterprise Security • GDPR Compliant</span>
+            <span className="font-semibold">100% Data Protection Guarantee</span>
+            <span className="text-slate-300">•</span>
+            <span>Zero Data Loss • Enterprise Security • GDPR Compliant</span>
           </div>
           
-          {/* Premium animated headline */}
-          <div className="animate-premium-fade-in delay-200">
-            <AnimatedHeadline />
-          </div>
+          {/* Animated headline with shimmer effect */}
+          <AnimatedHeadline />
           
-          <p className="text-xl md:text-2xl leading-relaxed max-w-4xl mx-auto mb-12 opacity-90 animate-premium-fade-in delay-400" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            Migrate your CRM data with <span className="text-premium-gradient font-semibold">unprecedented accuracy</span>, 
-            <span className="text-primary font-semibold"> enterprise security</span>, and 
-            <span className="text-hero-gradient font-semibold"> AI-powered speed</span>. Effortlessly.
+          <p className="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-4xl mx-auto mb-12 opacity-90">
+            Migrate your CRM data with <span className="text-blue-400 font-semibold">unprecedented accuracy</span>, 
+            <span className="text-blue-300 font-semibold"> enterprise security</span>, and 
+            <span className="text-blue-500 font-semibold"> AI-powered speed</span>. Effortlessly.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12 animate-premium-fade-in delay-600">
-            <div className="btn-premium-primary interactive-premium animate-premium-glow" onClick={handleGetStarted}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+            <GlowingCTA onClick={handleGetStarted}>
               {user ? "Start New Migration" : "Start Free Migration Analysis"}
-            </div>
+            </GlowingCTA>
             
             <Button 
               variant="outline" 
               size="lg"
               onClick={() => navigate("/demo")}
-              className="gap-2 px-8 py-6 text-lg glass-panel interactive-premium hover:border-primary/30"
+              className="gap-2 px-8 py-6 text-lg bg-transparent text-slate-200 border-slate-600 hover:bg-slate-800 hover:border-slate-500 transition-all duration-300 hover:scale-105"
             >
               <Play size={20} /> Experience Demo
             </Button>
           </div>
           
-          {/* Premium key benefits with enhanced animations */}
-          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+          {/* Enhanced key benefits with animations */}
+          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-slate-400">
             {[
-              { text: "No Data Loss Guaranteed", delay: "800ms" },
-              { text: "99.9% AI Accuracy", delay: "1000ms" },
-              { text: "Enterprise Security", delay: "1200ms" },
-              { text: "Zero Technical Skills", delay: "1400ms" }
+              { text: "No Data Loss Guaranteed", delay: "0ms" },
+              { text: "99.9% AI Accuracy", delay: "200ms" },
+              { text: "Enterprise Security", delay: "400ms" },
+              { text: "Zero Technical Skills", delay: "600ms" }
             ].map((benefit, index) => (
               <div 
                 key={index} 
-                className="flex items-center gap-2 opacity-0 animate-premium-fade-in"
+                className="flex items-center gap-2 opacity-0 animate-fade-in"
                 style={{ animationDelay: benefit.delay, animationFillMode: 'forwards' }}
               >
-                <CheckCircle2 size={20} className="text-primary" />
-                <span className="text-lg font-medium text-foreground">{benefit.text}</span>
+                <CheckCircle2 size={20} className="text-blue-400" />
+                <span className="text-lg font-medium">{benefit.text}</span>
               </div>
             ))}
           </div>
         </div>
         
-        {/* Premium stats section with enhanced design */}
+        {/* Enhanced stats section with blue gradient effects */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 max-w-4xl mx-auto">
           {[
             { value: "99.9%", label: "Data Accuracy Rate" },
@@ -101,12 +99,15 @@ const HomeHero = () => {
           ].map((stat, index) => (
             <div 
               key={index} 
-              className={`stats-card-premium interactive-premium animate-premium-fade-in delay-${1600 + (index * 200)}`}
+              className="relative p-6 rounded-lg bg-slate-900/50 border border-slate-800 backdrop-blur-sm hover:border-slate-700 transition-all duration-300 hover:transform hover:-translate-y-1 group"
             >
-              <div className="text-4xl md:text-5xl font-bold mb-3 text-premium-gradient font-display">
-                {stat.value}
+              <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-br from-blue-500 to-blue-600" />
+              <div className="relative">
+                <div className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                  {stat.value}
+                </div>
+                <div className="text-slate-400">{stat.label}</div>
               </div>
-              <div className="text-muted-foreground font-medium">{stat.label}</div>
             </div>
           ))}
         </div>

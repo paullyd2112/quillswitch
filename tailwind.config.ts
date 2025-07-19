@@ -20,9 +20,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'system-ui', 'sans-serif'],
-				display: ['Sora', 'Inter', 'system-ui', 'sans-serif'],
-				mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
+				nunito: ['Nunito', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -31,19 +29,8 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(216 100% 55%)', // Premium blue #1e5eff
-					foreground: 'hsl(0 0% 100%)',
-					50: 'hsl(217 100% 97%)',
-					100: 'hsl(217 100% 94%)',
-					200: 'hsl(217 100% 87%)',
-					300: 'hsl(217 100% 78%)',
-					400: 'hsl(217 100% 67%)',
-					500: 'hsl(216 100% 55%)',
-					600: 'hsl(215 100% 47%)',
-					700: 'hsl(214 100% 38%)',
-					800: 'hsl(213 100% 30%)',
-					900: 'hsl(212 100% 23%)',
-					950: 'hsl(210 100% 15%)',
+					DEFAULT: '#0070f3', // Modern blue
+					foreground: '#ffffff'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -111,12 +98,7 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			boxShadow: {
-				'glow-primary': '0 0 30px hsl(216 100% 55% / 0.4)',
-				'glow-intense': '0 0 60px hsl(216 100% 55% / 0.6)',
-				'premium': '0 8px 32px hsl(220 13% 9% / 0.7)',
-				'premium-hover': '0 16px 48px hsl(220 13% 9% / 0.8)',
-				'glass': '0 8px 32px hsl(220 13% 9% / 0.37)',
-				'glass-lg': '0 12px 40px hsl(220 13% 9% / 0.15)',
+				'glow-primary': '0 0 20px rgba(0, 112, 243, 0.35)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -128,53 +110,34 @@ export default {
 					to: { height: '0' },
 				},
 				'fade-in': {
-					'0%': { opacity: '0', transform: 'translateY(10px)' },
-					'100%': { opacity: '1', transform: 'translateY(0)' },
+					'0%': { opacity: '0' },
+					'100%': { opacity: '1' },
 				},
 				'fade-up': {
-					'0%': { opacity: '0', transform: 'translateY(30px)' },
+					'0%': { opacity: '0', transform: 'translateY(20px)' },
 					'100%': { opacity: '1', transform: 'translateY(0)' },
 				},
 				'scale-up': {
-					'0%': { opacity: '0', transform: 'scale(0.95)' },
-					'100%': { opacity: '1', transform: 'scale(1)' },
+					'0%': { transform: 'scale(0.95)' },
+					'100%': { transform: 'scale(1)' },
 				},
-				'slide-up': {
-					'0%': { opacity: '0', transform: 'translateY(40px)' },
-					'100%': { opacity: '1', transform: 'translateY(0)' },
-				},
-				'glow-pulse': {
-					'0%, 100%': { boxShadow: '0 0 30px hsl(216 100% 55% / 0.4)' },
-					'50%': { boxShadow: '0 0 60px hsl(216 100% 55% / 0.8)' },
+				'border-pulse': {
+					'0%, 100%': { borderColor: 'rgba(26, 115, 232, 0.5)' },
+					'50%': { borderColor: 'rgba(26, 115, 232, 0.2)' },
 				},
 				'shimmer': {
 					'0%': { backgroundPosition: '-200% 0' },
 					'100%': { backgroundPosition: '200% 0' },
 				},
-				'float': {
-					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' },
-				},
-				'premium-glow': {
-					'0%, 100%': { 
-						boxShadow: '0 0 30px hsl(216 100% 55% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.1)' 
-					},
-					'50%': { 
-						boxShadow: '0 0 60px hsl(216 100% 55% / 0.6), inset 0 1px 0 hsl(0 0% 100% / 0.2)' 
-					},
-				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-				'fade-up': 'fade-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-				'scale-up': 'scale-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-				'slide-up': 'slide-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-				'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
-				'shimmer': 'shimmer 2.5s infinite linear',
-				'float': 'float 3s ease-in-out infinite',
-				'premium-glow': 'premium-glow 4s ease-in-out infinite',
+				'fade-in': 'fade-in 0.5s ease-out forwards',
+				'fade-up': 'fade-up 0.5s ease-out forwards',
+				'scale-up': 'scale-up 0.5s ease-out forwards',
+				'border-pulse': 'border-pulse 2s ease-in-out infinite',
+				'shimmer': 'shimmer 2s infinite linear',
 			},
 		},
 	},
