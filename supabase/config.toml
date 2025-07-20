@@ -45,8 +45,8 @@ verify_jwt = true
 [auth]
 enabled = true
 port = 54326
-site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["https://xhbtwtedynttlyrcjfco.supabase.co/auth/v1/callback"]
+site_url = "https://4990aeb5-c38b-49db-83a0-a508d598e0b4.lovableproject.com"
+additional_redirect_urls = ["https://4990aeb5-c38b-49db-83a0-a508d598e0b4.lovableproject.com/**", "https://kxjidapjtcxwzpwdomnm.supabase.co/auth/v1/callback"]
 jwt_expiry = 3600
 refresh_token_rotation_enabled = true
 security_update_password_require_reauthentication = true
