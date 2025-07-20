@@ -105,9 +105,9 @@ client_id = ""
 secret = ""
 
 [auth.external.google]
-enabled = false
-client_id = ""
-secret = ""
+enabled = true
+client_id = "env(GOOGLE_CLIENT_ID)"
+secret = "env(GOOGLE_CLIENT_SECRET)"
 
 [auth.external.keycloak]
 enabled = false
