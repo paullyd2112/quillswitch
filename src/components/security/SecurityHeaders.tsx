@@ -1,18 +1,20 @@
+
 import React, { useEffect } from 'react';
 import { securityHeaders } from '@/utils/security';
 
 /**
  * Component to apply security headers via meta tags and script policies
+ * Updated to support OAuth flows
  */
 const SecurityHeaders: React.FC = () => {
   useEffect(() => {
-    // Apply Content Security Policy
+    // Apply Content Security Policy with OAuth support
     const cspMeta = document.createElement('meta');
     cspMeta.httpEquiv = 'Content-Security-Policy';
     cspMeta.content = securityHeaders['Content-Security-Policy'];
     document.head.appendChild(cspMeta);
 
-    // Apply other security headers via meta tags where possible
+    // Apply X-Frame-Options as SAMEORIGIN to allow OAuth popups
     const frameOptionsMeta = document.createElement('meta');
     frameOptionsMeta.httpEquiv = 'X-Frame-Options';
     frameOptionsMeta.content = securityHeaders['X-Frame-Options'];
@@ -29,12 +31,19 @@ const SecurityHeaders: React.FC = () => {
     referrerMeta.content = 'strict-origin-when-cross-origin';
     document.head.appendChild(referrerMeta);
 
+    console.log('Security headers applied with OAuth support');
+
     return () => {
       // Cleanup on unmount
-      document.head.removeChild(cspMeta);
-      document.head.removeChild(frameOptionsMeta);
-      document.head.removeChild(contentTypeMeta);
-      document.head.removeChild(referrerMeta);
+      try {
+        document.head.removeChild(cspMeta);
+        document.head.removeChild(frameOptionsMeta);
+        document.head.removeChild(contentTypeMeta);
+        document.head.removeChild(referrerMeta);
+      } catch (error) {
+        // Headers might have already been removed
+        console.log('Header cleanup completed');
+      }
     };
   }, []);
 

@@ -1,3 +1,4 @@
+
 /**
  * Security Configuration for QuillSwitch
  * Centralized security settings and policies
@@ -29,16 +30,17 @@ export const SECURITY_CONFIG = {
     },
   },
 
-  // Content Security Policy
+  // Content Security Policy with OAuth support
   csp: {
     directives: {
       'default-src': ["'self'"],
-      'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"],
-      'style-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net", "https://accounts.google.com"],
+      'style-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com"],
       'font-src': ["'self'", "https://fonts.gstatic.com"],
       'img-src': ["'self'", "data:", "https:"],
-      'connect-src': ["'self'", "https://*.supabase.co", "wss://*.supabase.co"],
-      'frame-ancestors': ["'none'"],
+      'connect-src': ["'self'", "https://*.supabase.co", "wss://*.supabase.co", "https://accounts.google.com", "https://oauth2.googleapis.com"],
+      'frame-src': ["'self'", "https://accounts.google.com"],
+      'frame-ancestors': ["'self'"],
       'object-src': ["'none'"],
       'base-uri': ["'self'"],
     },

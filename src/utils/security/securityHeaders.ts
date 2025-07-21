@@ -1,6 +1,7 @@
+
 /**
  * Security Headers Configuration
- * Implements security headers for production deployment
+ * Implements security headers for production deployment with OAuth support
  */
 
 import { SECURITY_CONFIG } from './securityConfig';
@@ -14,11 +15,11 @@ export function generateCSPHeader(): string {
 }
 
 export const SECURITY_HEADERS = {
-  // Content Security Policy
+  // Content Security Policy with OAuth support
   'Content-Security-Policy': generateCSPHeader(),
   
-  // Prevent clickjacking
-  'X-Frame-Options': 'DENY',
+  // Allow OAuth frames (changed from DENY to SAMEORIGIN)
+  'X-Frame-Options': 'SAMEORIGIN',
   
   // Prevent MIME type sniffing
   'X-Content-Type-Options': 'nosniff',
@@ -64,6 +65,12 @@ export function validateSecurityHeaders(): { passed: boolean; issues: string[] }
   
   if (!SECURITY_CONFIG.monitoring.enableSecurityHeaders) {
     issues.push('Security headers are disabled');
+  }
+  
+  // Check for OAuth compatibility
+  const cspHeader = generateCSPHeader();
+  if (!cspHeader.includes('https://accounts.google.com')) {
+    issues.push('Google OAuth domains not included in CSP');
   }
   
   return {
