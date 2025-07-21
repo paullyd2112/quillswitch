@@ -62,7 +62,7 @@ const BenefitsSection: React.FC = () => {
                     {benefit.title}
                   </h3>
                   
-                  <p className="text-slate-300 leading-relaxed mb-8 text-base">
+                  <p className="text-slate-300 leading-relaxed mb-6 text-base">
                     {benefit.description}
                   </p>
                   
