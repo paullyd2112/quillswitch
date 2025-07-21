@@ -1,3 +1,4 @@
+
 {
   "name": "QuillSwitch - CRM Migration Platform",
   "short_name": "QuillSwitch",
@@ -10,15 +11,15 @@
   "start_url": "/",
   "icons": [
     {
-      "src": "placeholder.svg",
+      "src": "/lovable-uploads/ce45d44c-fa29-40e8-b1ad-4e5b47b30329.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "placeholder.svg", 
+      "src": "/lovable-uploads/ce45d44c-fa29-40e8-b1ad-4e5b47b30329.png", 
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "maskable any"
     }
   ],
@@ -29,21 +30,21 @@
       "short_name": "New Migration",
       "description": "Start a new CRM migration project",
       "url": "/setup-wizard",
-      "icons": [{ "src": "placeholder.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/lovable-uploads/ce45d44c-fa29-40e8-b1ad-4e5b47b30329.png", "sizes": "96x96" }]
     },
     {
       "name": "Dashboard",
       "short_name": "Dashboard",
       "description": "View migration dashboard",
       "url": "/dashboard",
-      "icons": [{ "src": "placeholder.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/lovable-uploads/ce45d44c-fa29-40e8-b1ad-4e5b47b30329.png", "sizes": "96x96" }]
     },
     {
       "name": "Connection Hub",
       "short_name": "Connections",
       "description": "Manage CRM connections",
       "url": "/connection-hub",
-      "icons": [{ "src": "placeholder.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/lovable-uploads/ce45d44c-fa29-40e8-b1ad-4e5b47b30329.png", "sizes": "96x96" }]
     }
   ],
   "prefer_related_applications": false
