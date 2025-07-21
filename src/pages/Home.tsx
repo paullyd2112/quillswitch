@@ -1,25 +1,23 @@
 
 import React from "react";
 import HomeHero from "@/components/home/HomeHero";
-import ProblemSolutionSection from "@/components/home/sections/ProblemSolutionSection";
-import EnhancedFeaturesSection from "@/components/home/sections/EnhancedFeaturesSection";
-import HowItWorksSection from "@/components/home/sections/HowItWorksSection";
+import BenefitsSection from "@/components/home/sections/BenefitsSection";
+import SimplifiedHowItWorksSection from "@/components/home/sections/SimplifiedHowItWorksSection";
 import HomeCtaSection from "@/components/home/HomeCtaSection";
-import Footer from "@/components/layout/Footer";
-import LandingChatbot from "@/components/home/chatbot/LandingChatbot";
+import MinimalFooter from "@/components/layout/MinimalFooter";
+import LazyLandingChatbot from "@/components/home/chatbot/LazyLandingChatbot";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-slate-950">
       <main>
         <HomeHero />
-        <ProblemSolutionSection />
-        <EnhancedFeaturesSection />
-        <HowItWorksSection />
+        <BenefitsSection />
+        <SimplifiedHowItWorksSection />
         <HomeCtaSection />
       </main>
-      <Footer />
-      <LandingChatbot />
+      <MinimalFooter />
+      <LazyLandingChatbot />
     </div>
   );
 };
