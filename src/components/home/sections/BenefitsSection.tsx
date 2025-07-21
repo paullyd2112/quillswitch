@@ -43,7 +43,7 @@ const BenefitsSection: React.FC = () => {
           </div>
         </FadeIn>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 items-stretch">
           {benefits.map((benefit, index) => (
             <FadeIn key={index} delay={`${(index + 1) * 100}` as any}>
               <EnhancedCard 
