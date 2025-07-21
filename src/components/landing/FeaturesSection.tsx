@@ -1,37 +1,37 @@
 
 import React from "react";
-import { Database, Shield, Zap, GitMerge, ListChecks, BellRing } from "lucide-react";
+import { TrendingUp, Clock, DollarSign, Users, CheckSquare, Handshake } from "lucide-react";
 
 const features = [
   {
-    icon: Database,
-    title: "Comprehensive Data Transfer",
-    description: "Migrate contacts, opportunities, and custom objects seamlessly across CRM platforms."
+    icon: TrendingUp,
+    title: "Keep Revenue Growing",
+    description: "Your sales team stays productive during the switch. No lost deals, no downtime, no excuses."
   },
   {
-    icon: Shield,
-    title: "Enterprise-Grade Security",
-    description: "End-to-end encryption and compliance with GDPR, CCPA, and other data protection standards."
+    icon: Clock,
+    title: "Switch in Days, Not Months",
+    description: "Complete your CRM migration in under 2 weeks. Get back to business while competitors are still planning."
   },
   {
-    icon: Zap,
-    title: "High-Performance Migration",
-    description: "Optimize migration speed with parallel processing and intelligent data handling."
+    icon: DollarSign,
+    title: "Save $50K+ in Consulting Fees",
+    description: "Skip expensive consultants and lengthy implementations. Get enterprise-quality results at a fraction of the cost."
   },
   {
-    icon: GitMerge,
-    title: "AI-Powered Field Matching",
-    description: "Advanced artificial intelligence matches your fields with 95%+ accuracy to minimize manual work."
+    icon: Users,
+    title: "Zero Training Required",
+    description: "Your team focuses on what they do best - selling. We handle the technical complexity behind the scenes."
   },
   {
-    icon: ListChecks,
-    title: "Data Validation",
-    description: "Comprehensive data quality checks and transformation rules to ensure clean migrations."
+    icon: CheckSquare,
+    title: "Perfect Data, Every Time",
+    description: "Your customer data arrives clean, organized, and ready to use. No missing contacts, no broken relationships."
   },
   {
-    icon: BellRing,
-    title: "Real-time Notifications",
-    description: "Stay informed with detailed migration progress and instant alerts."
+    icon: Handshake,
+    title: "We Guarantee Success",
+    description: "Your migration works perfectly, or we fix it for free. No hidden costs, no surprises, no risk."
   }
 ];
 
@@ -41,10 +41,10 @@ const FeaturesSection = () => {
       <div className="container max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">
-            Why Choose QuillSwitch?
+            From Pain Points to Perfect Solutions
           </h2>
           <p className="text-xl max-w-3xl mx-auto text-friendly-text-secondary">
-            We've built a comprehensive migration platform that addresses the most complex CRM transition challenges.
+            Finally, a CRM migration that solves your business problems instead of creating new ones.
           </p>
         </div>
         
