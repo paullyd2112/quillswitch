@@ -1,44 +1,44 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Brain, Shield, Zap, Database, CheckCircle, Clock } from 'lucide-react';
+import { TrendingUp, Shield, Clock, Users, CheckCircle, DollarSign } from 'lucide-react';
 import FadeIn from '@/components/animations/FadeIn';
 
 const features = [
   {
-    icon: Brain,
-    title: "AI Schema Mapping",
-    description: "Gemini-powered intelligent field matching with 99.9% accuracy. Our AI understands data relationships and suggests optimal mappings automatically.",
+    icon: TrendingUp,
+    title: "Keep Revenue Growing",
+    description: "Your sales team stays productive during the switch. No lost deals, no downtime, no interruptions to your business.",
     gradient: "from-blue-400 to-blue-600"
   },
   {
     icon: Shield,
-    title: "Enterprise Security",
-    description: "Bank-level encryption, SOC 2 compliance, and zero-trust architecture ensure your data remains protected throughout every migration step.",
+    title: "Your Data Stays Safe",
+    description: "Bank-level security ensures your customer information is protected. We guarantee zero data loss with every migration.",
     gradient: "from-blue-500 to-blue-700"
   },
   {
-    icon: Zap,
-    title: "Lightning Performance",
-    description: "Process millions of records in hours, not weeks. Our optimized algorithms and parallel processing deliver unmatched speed.",
+    icon: Clock,
+    title: "Switch in Days, Not Months",
+    description: "Complete migrations in under 2 weeks. Get back to business while competitors are still planning their switch.",
     gradient: "from-blue-300 to-blue-500"
   },
   {
-    icon: Database,
-    title: "Universal Compatibility",
-    description: "Connect to 50+ CRM platforms with native API integrations. From Salesforce to HubSpot, we speak every CRM's language.",
+    icon: Users,
+    title: "No Training Required",
+    description: "Your team focuses on what they do best - selling. We handle all the technical complexity behind the scenes.",
     gradient: "from-blue-400 to-blue-600"
   },
   {
     icon: CheckCircle,
-    title: "Guaranteed Accuracy",
-    description: "Advanced validation engines and real-time monitoring ensure 100% data integrity with comprehensive rollback capabilities.",
+    title: "Perfect Data, Every Time",
+    description: "Your customer data arrives clean, organized, and ready to use. No missing contacts, no broken relationships.",
     gradient: "from-blue-500 to-blue-600"
   },
   {
-    icon: Clock,
-    title: "Real-Time Intelligence",
-    description: "Live progress tracking, predictive analytics, and instant notifications keep you informed throughout the entire process.",
+    icon: DollarSign,
+    title: "Save Thousands in Consulting",
+    description: "Skip expensive consultants and lengthy implementations. Get enterprise-quality results at a fraction of the cost.",
     gradient: "from-blue-400 to-blue-700"
   }
 ];
@@ -52,10 +52,10 @@ const EnhancedFeaturesSection: React.FC = () => {
         <FadeIn>
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Next-Generation Migration Technology
+              Why Smart Businesses Choose QuillSwitch
             </h2>
             <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-              Powered by cutting-edge AI and built for enterprise-scale performance.
+              Built specifically for business owners who need results without the technical headaches.
             </p>
           </div>
         </FadeIn>

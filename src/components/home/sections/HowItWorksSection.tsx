@@ -1,31 +1,31 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Database, Brain, Zap, CheckCircle } from 'lucide-react';
+import { ArrowRight, Database, Cog, Zap, CheckCircle } from 'lucide-react';
 import FadeIn from '@/components/animations/FadeIn';
 
 const steps = [
   {
     icon: Database,
     title: "Connect",
-    description: "Secure API connections to your source and target CRMs",
+    description: "Link your old and new CRM systems securely in just a few clicks",
     color: "from-blue-400 to-blue-600"
   },
   {
-    icon: Brain,
-    title: "AI Analysis",
-    description: "Gemini AI analyzes and maps your data structures intelligently",
+    icon: Cog,
+    title: "Map",
+    description: "We automatically figure out how your data should move between systems",
     color: "from-blue-500 to-blue-700"
   },
   {
     icon: Zap,
-    title: "Migrate",
-    description: "Lightning-fast transfer with real-time monitoring",
+    title: "Move",
+    description: "Watch your data transfer safely while your business keeps running",
     color: "from-blue-300 to-blue-500"
   },
   {
     icon: CheckCircle,
-    title: "Validate",
-    description: "Comprehensive validation ensures 100% data integrity",
+    title: "Verify",
+    description: "We double-check everything arrived perfectly before you go live",
     color: "from-blue-400 to-blue-600"
   }
 ];
@@ -50,7 +50,7 @@ const HowItWorksSection: React.FC = () => {
               How It Works
             </h2>
             <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-              Four simple steps to migrate your CRM data with AI precision.
+              Four simple steps to switch CRMs without disrupting your business.
             </p>
           </div>
         </FadeIn>
