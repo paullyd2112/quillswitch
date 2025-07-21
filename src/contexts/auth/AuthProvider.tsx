@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             access_type: 'offline',
             prompt: 'consent',
           },
-          skipBrowserRedirect: false // Ensure redirect flow instead of popup
+          skipBrowserRedirect: true // Get the URL but handle redirect manually
         }
       });
       
@@ -121,8 +121,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return { error };
       }
       
-      // The redirect will happen automatically, so we don't need to do anything else
-      return { data, error: null };
+      // Manually redirect to Google OAuth URL to avoid any frame issues
+      if (data?.url) {
+        console.log('Redirecting to Google OAuth URL:', data.url);
+        window.location.href = data.url;
+        return { data, error: null };
+      }
+      
+      return { error: new Error('No OAuth URL received') };
     } catch (error: any) {
       console.error('Unexpected Google OAuth error:', error);
       return { error };
