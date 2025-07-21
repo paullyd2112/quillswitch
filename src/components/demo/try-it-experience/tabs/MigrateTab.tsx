@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Check } from "lucide-react";
+import { Check, Zap } from "lucide-react";
 import { DataType, MigrationStats } from "../types";
+import { createMigrationEngine, MigrationProgress } from "@/services/migration/executionService";
 
 interface MigrateTabProps {
   sourceCrm: string;
@@ -32,20 +33,101 @@ const MigrateTab: React.FC<MigrateTabProps> = ({
   onBack,
   formatTime
 }) => {
+  const [engineProgress, setEngineProgress] = useState<MigrationProgress | null>(null);
+  const [isUsingNativeEngine, setIsUsingNativeEngine] = useState(false);
+
+  const handleStartNativeMigration = async () => {
+    setIsUsingNativeEngine(true);
+    
+    // Create a demo migration project for the native engine
+    const demoProjectId = `demo-${Date.now()}`;
+    
+    const engine = createMigrationEngine({
+      projectId: demoProjectId,
+      batchSize: 50,
+      concurrency: 2,
+      validateFirst: true,
+      dryRun: true // Use dry run for demo
+    });
+
+    // Set up progress tracking
+    engine.onProgress((progress: MigrationProgress) => {
+      setEngineProgress(progress);
+    });
+
+    try {
+      await engine.startMigration();
+    } catch (error) {
+      console.error('Demo migration error:', error);
+    }
+  };
   return (
     <div className="space-y-8">
+      {/* Native Migration Engine Option */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+            <Zap className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-lg font-medium text-blue-900 dark:text-blue-100">Native CRM Migration Engine</h3>
+            <p className="text-sm text-blue-700 dark:text-blue-300">Experience the real migration engine with live progress tracking</p>
+          </div>
+        </div>
+        
+        {engineProgress && (
+          <div className="space-y-4 mb-6">
+            <div className="bg-white dark:bg-slate-900 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-medium text-blue-900 dark:text-blue-100">
+                  Stage: {engineProgress.stage}
+                </span>
+                <span className="text-sm text-blue-700 dark:text-blue-300">
+                  {engineProgress.percentage.toFixed(1)}%
+                </span>
+              </div>
+              <Progress value={engineProgress.percentage} className="h-3 mb-2" />
+              <div className="flex justify-between text-sm text-blue-600 dark:text-blue-400">
+                <span>Processing: {engineProgress.currentObject}</span>
+                <span>{engineProgress.processedRecords.toLocaleString()} / {engineProgress.totalRecords.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-xs text-blue-500 dark:text-blue-500 mt-2">
+                <span>Speed: {engineProgress.throughputPerSecond} records/sec</span>
+                <span>ETA: {Math.ceil(engineProgress.estimatedTimeRemaining)}s</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {!isUsingNativeEngine ? (
+          <Button 
+            onClick={handleStartNativeMigration} 
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+          >
+            <Zap className="h-4 w-4 mr-2" />
+            Try Native Migration Engine
+          </Button>
+        ) : (
+          <div className="text-center text-blue-700 dark:text-blue-300">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            Native engine running...
+          </div>
+        )}
+      </div>
+
+      {/* Standard Demo Migration */}
       <div className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-6">
-        <h3 className="text-lg font-medium mb-4">Start Your Migration</h3>
+        <h3 className="text-lg font-medium mb-4">Standard Demo Migration</h3>
         
         <div className="space-y-6">
           <p className="text-muted-foreground mb-4">
             You're ready to migrate your data from {sourceCrm} to {targetCrm}.
-            Click the button below to start the full migration process.
+            Click the button below to start the simulated migration process.
           </p>
           
           {!isMigrating && migrationProgress === 0 && !isMigrationComplete ? (
-            <Button onClick={onStartMigration} className="w-full">
-              Start Full Migration
+            <Button onClick={onStartMigration} className="w-full" variant="outline">
+              Start Demo Migration
             </Button>
           ) : (
             <div className="space-y-4">
