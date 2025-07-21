@@ -67,26 +67,30 @@ const BenefitsSection: React.FC = () => {
                   </p>
                   
                   {/* Enhanced Challenge/Solution comparison */}
-                  <div className="bg-slate-800/50 rounded-xl p-6 space-y-4">
+                  <div className="bg-slate-800/30 rounded-xl p-6 space-y-5 border border-slate-700/50">
                     <div className="text-left">
-                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 letterspacing-wide">
                         The Challenge
                       </div>
-                      <div className="flex items-start gap-3 text-red-400">
-                        <X className="h-4 w-4 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                        <span className="text-sm leading-relaxed">{benefit.challenge}</span>
+                      <div className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-slate-600/40 flex items-center justify-center mt-0.5 flex-shrink-0">
+                          <X className="h-3 w-3 text-slate-400" strokeWidth={2.5} />
+                        </div>
+                        <span className="text-sm leading-relaxed text-slate-300">{benefit.challenge}</span>
                       </div>
                     </div>
                     
-                    <div className="h-px bg-slate-700"></div>
+                    <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
                     
                     <div className="text-left">
-                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
                         With QuillSwitch
                       </div>
-                      <div className="flex items-start gap-3 text-blue-400">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" strokeWidth={2} />
-                        <span className="text-sm leading-relaxed font-medium">{benefit.solution}</span>
+                      <div className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
+                          <Check className="h-3 w-3 text-blue-400" strokeWidth={2.5} />
+                        </div>
+                        <span className="text-sm leading-relaxed text-white font-medium">{benefit.solution}</span>
                       </div>
                     </div>
                   </div>
