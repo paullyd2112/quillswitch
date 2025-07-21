@@ -52,7 +52,7 @@ const BenefitsSection: React.FC = () => {
                 glow={true}
                 className="bg-slate-900/80 border-slate-700 backdrop-blur-sm h-full shadow-2xl"
               >
-                <CardContent className="p-10 text-center">
+                <CardContent className="p-10 text-center h-full flex flex-col">
                   {/* Premium Icon */}
                   <div className="mb-8 mx-auto w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
                     <benefit.icon className="h-10 w-10 text-white" strokeWidth={1.5} />
@@ -62,12 +62,12 @@ const BenefitsSection: React.FC = () => {
                     {benefit.title}
                   </h3>
                   
-                  <p className="text-slate-300 leading-relaxed mb-6 text-base">
+                  <p className="text-slate-300 leading-relaxed mb-6 text-base flex-grow">
                     {benefit.description}
                   </p>
                   
                   {/* Enhanced Challenge/Solution comparison */}
-                  <div className="bg-slate-800/30 rounded-xl p-6 space-y-5 border border-slate-700/50">
+                  <div className="bg-slate-800/30 rounded-xl p-6 space-y-5 border border-slate-700/50 mt-auto">
                     <div className="text-left">
                       <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 letterspacing-wide">
                         The Challenge
