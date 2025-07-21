@@ -10,9 +10,9 @@ const AnimatedHeadline: React.FC = () => {
         if (prev >= 200) {
           return -100;
         }
-        return prev + 2;
+        return prev + 4; // Faster animation with fewer frames
       });
-    }, 100);
+    }, 200); // Less frequent updates
 
     return () => clearInterval(interval);
   }, []);

@@ -1,5 +1,6 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { throttle } from '@/utils/performance';
 
 interface Point {
   x: number;
@@ -29,14 +30,14 @@ const HeroBackground: React.FC = () => {
 
     const createPoints = () => {
       const points: Point[] = [];
-      const numPoints = Math.min(60, Math.floor((canvas.width * canvas.height) / 18000));
+      const numPoints = Math.min(40, Math.floor((canvas.width * canvas.height) / 25000)); // Reduced points
       
       for (let i = 0; i < numPoints; i++) {
         points.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
+          vx: (Math.random() - 0.5) * 0.3, // Slower movement
+          vy: (Math.random() - 0.5) * 0.3,
           connections: []
         });
       }
@@ -57,20 +58,23 @@ const HeroBackground: React.FC = () => {
     };
 
     const drawConnections = () => {
-      const maxDistance = 140;
-      ctx.strokeStyle = 'rgba(0, 123, 255, 0.15)';
-      ctx.lineWidth = 0.8;
+      const maxDistance = 120; // Reduced connection distance
+      ctx.strokeStyle = 'rgba(0, 123, 255, 0.1)';
+      ctx.lineWidth = 0.6;
 
-      for (let i = 0; i < pointsRef.current.length; i++) {
-        for (let j = i + 1; j < pointsRef.current.length; j++) {
+      // Skip frames for better performance
+      const skipConnections = Math.floor(pointsRef.current.length / 15);
+      
+      for (let i = 0; i < pointsRef.current.length; i += skipConnections) {
+        for (let j = i + skipConnections; j < pointsRef.current.length; j += skipConnections) {
           const point1 = pointsRef.current[i];
           const point2 = pointsRef.current[j];
-          const distance = Math.sqrt(
-            Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2)
-          );
+          const dx = point2.x - point1.x;
+          const dy = point2.y - point1.y;
+          const distance = Math.sqrt(dx * dx + dy * dy); // Optimized distance calc
 
           if (distance < maxDistance) {
-            const opacity = (1 - distance / maxDistance) * 0.25;
+            const opacity = (1 - distance / maxDistance) * 0.15;
             ctx.strokeStyle = `rgba(0, 123, 255, ${opacity})`;
             ctx.beginPath();
             ctx.moveTo(point1.x, point1.y);
@@ -106,11 +110,11 @@ const HeroBackground: React.FC = () => {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = useCallback(throttle((e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       mouseRef.current.x = e.clientX - rect.left;
       mouseRef.current.y = e.clientY - rect.top;
-    };
+    }, 16), []); // Throttle to ~60fps
 
     const handleResize = () => {
       resizeCanvas();
