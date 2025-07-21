@@ -16,6 +16,15 @@ const HeroBackground: React.FC = () => {
   const pointsRef = useRef<Point[]>([]);
   const mouseRef = useRef({ x: 0, y: 0 });
 
+  // Create throttled mouse handler at component level
+  const handleMouseMove = useCallback(throttle((e: MouseEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    mouseRef.current.x = e.clientX - rect.left;
+    mouseRef.current.y = e.clientY - rect.top;
+  }, 16), []); // Throttle to ~60fps
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -110,12 +119,6 @@ const HeroBackground: React.FC = () => {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    const handleMouseMove = useCallback(throttle((e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseRef.current.x = e.clientX - rect.left;
-      mouseRef.current.y = e.clientY - rect.top;
-    }, 16), []); // Throttle to ~60fps
-
     const handleResize = () => {
       resizeCanvas();
       pointsRef.current = createPoints();
@@ -134,7 +137,7 @@ const HeroBackground: React.FC = () => {
       canvas.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [handleMouseMove]);
 
   return (
     <canvas
