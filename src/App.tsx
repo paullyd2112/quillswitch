@@ -11,7 +11,7 @@ import { RealtimeProvider } from "@/contexts/RealtimeContext";
 import { UserOnboardingProvider } from "@/components/onboarding/UserOnboardingProvider";
 import { LiveNotificationPanel } from "@/components/realtime/LiveNotificationPanel";
 import NavigationOverlay from "@/components/layout/NavigationOverlay";
-import SecurityHeaders from "@/components/security/SecurityHeaders";
+// SecurityHeaders removed - meta tags don't work for OAuth popups
 import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import Home from "@/pages/Home";
 import Auth from "@/pages/Auth";
@@ -54,7 +54,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-background font-sans antialiased">
-      <SecurityHeaders />
+      {/* SecurityHeaders removed - meta tags don't work for OAuth popups */}
       <NavigationOverlay />
       
       <Routes>
