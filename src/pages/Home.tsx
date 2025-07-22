@@ -5,19 +5,17 @@ import BenefitsSection from "@/components/home/sections/BenefitsSection";
 import SimplifiedHowItWorksSection from "@/components/home/sections/SimplifiedHowItWorksSection";
 import HomeCtaSection from "@/components/home/HomeCtaSection";
 import MinimalFooter from "@/components/layout/MinimalFooter";
-import LazyLandingChatbot from "@/components/home/chatbot/LazyLandingChatbot";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-slate-950">
-      <main>
+    <div className="min-h-screen w-full bg-slate-950">
+      <main className="w-full">
         <HomeHero />
         <BenefitsSection />
         <SimplifiedHowItWorksSection />
         <HomeCtaSection />
       </main>
       <MinimalFooter />
-      <LazyLandingChatbot />
     </div>
   );
 };
