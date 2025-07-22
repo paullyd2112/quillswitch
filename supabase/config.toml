@@ -1,5 +1,5 @@
 
-project_id = "xhbtwtedynttlyrcjfco"
+project_id = "kxjidapjtcxwzpwdomnm"
 
 [api]
 enabled = true
@@ -8,155 +8,42 @@ schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
-[db]
-enabled = true
-port = 54322
-shadow_port = 54320
-major_version = 15
-
-[db.pooler]
-enabled = false
-port = 54329
-pool_mode = "transaction"
-default_pool_size = 20
-max_client_conn = 100
-
-[realtime]
-enabled = true
-ip_version = "ipv4"
-port = 54323
-max_header_length = 4096
-
-[studio]
-enabled = true
-port = 54324
-api_url = "http://127.0.0.1:54321"
-openai_api_key = "env(OPENAI_API_KEY)"
-
-[inbucket]
-enabled = true
-port = 54325
-smtp_port = 54326
-pop3_port = 54327
-
-[functions.create-payment]
-verify_jwt = true
-
 [auth]
 enabled = true
-port = 54326
-site_url = "https://4990aeb5-c38b-49db-83a0-a508d598e0b4.lovableproject.com"
-additional_redirect_urls = ["https://4990aeb5-c38b-49db-83a0-a508d598e0b4.lovableproject.com/**", "https://kxjidapjtcxwzpwdomnm.supabase.co/auth/v1/callback"]
+port = 54324
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["https://lovable.dev"]
 jwt_expiry = 3600
-refresh_token_rotation_enabled = true
-security_update_password_require_reauthentication = true
-security_manual_linking_enabled = false
+enable_signup = true
+enable_confirmations = false
 
 [auth.email]
 enable_signup = true
 double_confirm_changes = true
 enable_confirmations = false
-template_path = "./supabase/templates"
 
-[auth.sms]
-enable_signup = false
-enable_confirmations = false
-template_path = "./supabase/templates"
-
-[auth.external.apple]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.azure]
-enabled = false
-client_id = ""
-secret = ""
-url = ""
-
-[auth.external.bitbucket]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.discord]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.facebook]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.figma]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.github]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.gitlab]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.google]
+[db]
 enabled = true
-client_id = "env(GOOGLE_CLIENT_ID)"
-secret = "env(GOOGLE_CLIENT_SECRET)"
-
-[auth.external.keycloak]
-enabled = false
-client_id = ""
-secret = ""
-url = ""
-
-[auth.external.linkedin]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.notion]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.twitch]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.twitter]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.slack]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.spotify]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.workos]
-enabled = false
-client_id = ""
-secret = ""
-
-[auth.external.zoom]
-enabled = false
-client_id = ""
-secret = ""
-
-[edge_runtime]
-enabled = true
-ip_version = "ipv4"
 port = 54322
-inspector_port = 54321
+shadow_port = 54320
+
+[realtime]
+enabled = true
+port = 54323
+
+[storage]
+enabled = true
+port = 54324
+
+[edge_functions]
+enabled = true
+port = 54325
+
+[analytics]
+enabled = false
+
+[functions.migration-orchestrator]
+verify_jwt = true
+
+[functions.scheduled-migrations]
+verify_jwt = false
