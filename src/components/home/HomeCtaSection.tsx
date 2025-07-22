@@ -28,22 +28,13 @@ const HomeCtaSection = () => {
           while your business keeps running smoothly.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+        <div className="flex justify-center items-center mb-8">
           <Button 
             size="lg"
             onClick={handleGetStarted}
             className="gap-2 px-8 py-4 text-lg bg-primary text-white hover:bg-primary/90 shadow-glow-primary"
           >
-            {user ? "Start Your Migration" : "Get My Free Assessment"} <ArrowRight size={20} />
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            size="lg"
-            onClick={() => navigate("/demo")}
-            className="gap-2 px-8 py-4 text-lg bg-transparent text-slate-200 border-slate-600 hover:bg-slate-800 hover:border-slate-500"
-          >
-            <Play size={20} /> See How It Works
+            Get Started <ArrowRight size={20} />
           </Button>
         </div>
         

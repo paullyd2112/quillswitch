@@ -23,22 +23,13 @@ const CtaSection = () => {
             Start your migration today and keep all your valuable customer data intact. No technical skills required.
           </p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
+          <div className="flex justify-center">
             <Button 
               size="lg" 
               onClick={handleGetStarted} 
               className="px-10 py-6 text-lg bg-friendly-accent hover:bg-friendly-accent/90"
             >
-              Start Your Migration
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              size="lg" 
-              onClick={() => navigate("/features")}
-              className="px-10 py-6 text-lg bg-friendly-card text-friendly-text-primary border-friendly-border hover:bg-friendly-card/80"
-            >
-              See How It Works
+              Get Started
             </Button>
           </div>
         </div>
