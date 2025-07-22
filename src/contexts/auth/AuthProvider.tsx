@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         password,
         options: {
           data: metadata,
-          emailRedirectTo: `${window.location.origin}/welcome`
+          emailRedirectTo: `${window.location.origin}/`
         }
       });
       
@@ -105,12 +105,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${currentOrigin}/oauth/callback`,
+          redirectTo: `${currentOrigin}/`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
-          },
-          skipBrowserRedirect: true // Get the URL but handle redirect manually
+          }
         }
       });
       
@@ -121,14 +120,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return { error };
       }
       
-      // Manually redirect to Google OAuth URL to avoid any frame issues
-      if (data?.url) {
-        console.log('Redirecting to Google OAuth URL:', data.url);
-        window.location.href = data.url;
-        return { data, error: null };
-      }
-      
-      return { error: new Error('No OAuth URL received') };
+      return { data, error: null };
     } catch (error: any) {
       console.error('Unexpected Google OAuth error:', error);
       return { error };
