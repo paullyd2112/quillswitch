@@ -68,46 +68,68 @@ const HomeHero = () => {
             </GlowingCTA>
           </div>
           
-          {/* Simplified key benefits */}
-          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-slate-400">
-            {[
-              { text: "Business Keeps Running", delay: "0ms" },
-              { text: "No Data Loss", delay: "200ms" },
-              { text: "Done in Days", delay: "400ms" },
-              { text: "No Tech Skills Needed", delay: "600ms" }
-            ].map((benefit, index) => (
-              <div 
-                key={index} 
-                className="flex items-center gap-2 opacity-0 animate-fade-in"
-                style={{ animationDelay: benefit.delay, animationFillMode: 'forwards' }}
-              >
-                <CheckCircle2 size={20} className="text-blue-400" />
-                <span className="text-lg font-medium">{benefit.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Updated stats section with business-focused metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 max-w-4xl mx-auto">
-          {[
-            { value: "95%", label: "Time Savings vs Traditional Methods" },
-            { value: "Zero", label: "Business Downtime Required" },
-            { value: "24/7", label: "Support When You Need It" }
-          ].map((stat, index) => (
-            <div 
-              key={index} 
-              className="relative p-6 rounded-lg bg-slate-900/50 border border-slate-800 backdrop-blur-sm hover:border-slate-700 transition-all duration-300 hover:transform hover:-translate-y-1 group"
-            >
-              <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-br from-blue-500 to-blue-600" />
-              <div className="relative">
-                <div className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                  {stat.value}
+          {/* The QuillSwitch Advantage */}
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-12">
+              The QuillSwitch Advantage
+            </h2>
+            
+            {/* Four key benefit boxes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {[
+                {
+                  stat: "95%",
+                  title: "Time Savings vs. Traditional Methods",
+                  subtitle: "Done in Days. Automate weeks of manual effort.",
+                  delay: "0ms"
+                },
+                {
+                  stat: "Zero",
+                  title: "Business Downtime Required",
+                  subtitle: "Your business keeps running without interruption.",
+                  delay: "200ms"
+                },
+                {
+                  stat: "24/7",
+                  title: "Expert Support When You Need It",
+                  subtitle: "No tech skills needed. We're here to guide you.",
+                  delay: "400ms"
+                },
+                {
+                  stat: "100%",
+                  title: "Data Integrity & Accuracy",
+                  subtitle: "No data loss. Your critical information is secure.",
+                  delay: "600ms"
+                }
+              ].map((benefit, index) => (
+                <div 
+                  key={index}
+                  className="relative p-8 rounded-lg bg-slate-900/50 border border-slate-800 backdrop-blur-sm hover:border-slate-700 transition-all duration-300 hover:transform hover:-translate-y-1 group opacity-0 animate-fade-in"
+                  style={{ animationDelay: benefit.delay, animationFillMode: 'forwards' }}
+                >
+                  <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-br from-blue-500 to-blue-600" />
+                  <div className="relative text-center">
+                    <div className="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-br from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                      {benefit.stat}
+                    </div>
+                    <div className="text-xl font-semibold text-white mb-2">
+                      {benefit.title}
+                    </div>
+                    <div className="text-slate-400 text-sm">
+                      {benefit.subtitle}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-slate-400">{stat.label}</div>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+          
+          {/* Concluding statement */}
+          <div className="text-center mt-12">
+            <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent">
+              Finally, CRM Migration That Works
+            </h3>
+          </div>
         </div>
       </div>
     </section>
