@@ -62,19 +62,10 @@ const HomeHero = () => {
             <span className="text-blue-500 font-semibold"> gets done fast</span>. No tech headaches.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+          <div className="flex justify-center mb-12">
             <GlowingCTA onClick={handleGetStarted}>
-              {user ? "Start Your Migration" : "Get My Free Assessment"}
+              Get Started
             </GlowingCTA>
-            
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={() => navigate("/demo")}
-              className="gap-2 px-8 py-6 text-lg bg-transparent text-slate-200 border-slate-600 hover:bg-slate-800 hover:border-slate-500 transition-all duration-300 hover:scale-105"
-            >
-              <Play size={20} /> See How It Works
-            </Button>
           </div>
           
           {/* Simplified key benefits */}
