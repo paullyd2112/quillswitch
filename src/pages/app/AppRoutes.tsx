@@ -13,6 +13,7 @@ import Settings from "../Settings";
 import MigrationDashboard from "../MigrationDashboard";
 import RealDataDemoPage from "../RealDataDemo";
 import TryItPage from "./TryItPage";
+import CloudMigration from "../CloudMigration";
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const AppRoutes = () => {
         <Route path="connections" element={<ConnectionHub />} />
         <Route path="migrations" element={<Migrations />} />
         <Route path="migrations/:id" element={<MigrationDashboard />} />
+        <Route path="cloud-migration" element={<CloudMigration />} />
         <Route path="vault" element={<CredentialsVault />} />
         <Route path="setup" element={<SetupWizard />} />
         <Route path="reports" element={<Reports />} />

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Home, Zap, Calculator, Monitor, BookOpen, FileText, HelpCircle, Scale, Settings, BarChart3, Database, Activity, Brain } from "lucide-react";
+import { Home, Zap, Calculator, Monitor, BookOpen, FileText, HelpCircle, Scale, Settings, BarChart3, Database, Activity, Brain, Cloud } from "lucide-react";
 
 export interface NavItem {
   name: string;
@@ -43,6 +43,7 @@ export const userNav: NavLink[] = [
   { href: "/app/dashboard", label: "Dashboard", icon: <BarChart3 className="h-4 w-4" />, category: "App" },
   { href: "/app/connections", label: "Connections", icon: <Zap className="h-4 w-4" />, category: "App" },
   { href: "/app/migrations", label: "Migrations", icon: <Database className="h-4 w-4" />, category: "App" },
+  { href: "/app/cloud-migration", label: "Cloud Migration", icon: <Cloud className="h-4 w-4" />, category: "App" },
   { href: "/migration", label: "AI Migration", icon: <Brain className="h-4 w-4" />, category: "App" },
   { href: "/app/try-it", label: "Try It", icon: <Monitor className="h-4 w-4" />, category: "Demo" },
   { href: "/app/real-data-demo", label: "Real Data Demo", icon: <Zap className="h-4 w-4" />, category: "Demo" },
