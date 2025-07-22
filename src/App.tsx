@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
 import Home from "./pages/Home";
+import Auth from "./pages/Auth";
 import Setup from "./pages/Setup";
 import AppMigrations from "./pages/AppMigrations";
 import MigrationDashboard from "./pages/MigrationDashboard";
@@ -22,6 +23,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/auth" element={<Auth />} />
             
             {/* Core app routes - candidates for future overhaul */}
             <Route path="/app/setup" element={<Setup />} />
