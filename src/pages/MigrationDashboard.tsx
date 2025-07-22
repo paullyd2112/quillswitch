@@ -1,54 +1,28 @@
-
-import React, { Suspense } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React from "react";
+import { useParams } from "react-router-dom";
 import { DashboardProvider } from "@/components/migration/dashboard/context";
-import DashboardHeader from "@/components/migration/dashboard/DashboardHeader";
-import DashboardTabs from "@/components/migration/dashboard/DashboardTabs";
-import { UserPresenceIndicator } from "@/components/realtime/UserPresenceIndicator";
-import { RealtimeMigrationProgress } from "@/components/realtime/RealtimeMigrationProgress";
-import { LoadingFallback } from "@/components/pages/migration";
-import ProgressIndicator from "@/components/connection-hub/ProgressIndicator";
+import { MigrationDashboardContent } from "@/components/migration/dashboard/MigrationDashboardContent";
 
 const MigrationDashboard = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   
-  // Handle case when ID is missing
   if (!id) {
     return (
-      <LoadingFallback 
-        error={new Error("Migration ID is missing")} 
-        onRetry={() => navigate("/migrations")} 
-      />
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-2xl font-bold mb-2">Migration Not Found</h1>
+          <p className="text-slate-400">The migration project ID is missing.</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <div className="min-h-screen bg-slate-950">
       <DashboardProvider projectId={id}>
-        <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900/50 hero-gradient">
-          <div className="container px-4 pt-8 pb-20">
-            <div className="flex items-center justify-between mb-8">
-              <DashboardHeader />
-              <UserPresenceIndicator 
-                projectId={id} 
-                showCount={true}
-                maxVisible={5}
-              />
-            </div>
-            
-            <div className="grid gap-6">
-              <RealtimeMigrationProgress projectId={id} />
-              <ProgressIndicator />
-            </div>
-            
-            <div className="mt-8">
-              <DashboardTabs activeTab="overview" setActiveTab={() => {}} />
-            </div>
-          </div>
-        </div>
+        <MigrationDashboardContent />
       </DashboardProvider>
-    </Suspense>
+    </div>
   );
 };
 
