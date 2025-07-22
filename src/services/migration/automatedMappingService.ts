@@ -106,29 +106,47 @@ const generateAiMappingSuggestions = async (
   destinationFields: string[]
 ): Promise<MappingSuggestion[]> => {
   try {
-    const response = await callGeminiApi({
+    // Enhanced prompt for better contextual mapping
+    const enhancedPrompt = {
       sourceFields,
-      destinationFields
-    });
+      destinationFields,
+      analysisType: "contextual_semantic",
+      includeConfidence: true,
+      includeLearningContext: true
+    };
+
+    const response = await callGeminiApi(enhancedPrompt);
     
     if (!response) {
       throw new Error("Failed to get response from Gemini API");
     }
     
     try {
-      // Parse JSON response from AI
       const suggestions = JSON.parse(response);
       
       if (!Array.isArray(suggestions)) {
         throw new Error("Invalid response format from Gemini API");
       }
       
+      // Enhanced mapping with confidence scores and semantic analysis
       return suggestions.map(suggestion => ({
         source_field: suggestion.source_field,
         destination_field: suggestion.destination_field,
-        confidence: suggestion.confidence || 0.8,
-        reason: suggestion.reason || "AI-generated mapping",
-        is_required: suggestion.is_required || false
+        confidence: Math.min(Math.max(suggestion.confidence || 75, 0), 100),
+        reason: suggestion.reason || "AI contextual analysis",
+        is_required: suggestion.is_required || false,
+        semanticAnalysis: {
+          dataType: suggestion.dataType || "string",
+          contentPattern: suggestion.pattern || "text",
+          fieldCategory: suggestion.category || "custom",
+          sampleValues: suggestion.samples || []
+        },
+        learningContext: {
+          previousMappings: suggestion.previousUse || 0,
+          userCorrections: 0,
+          successRate: suggestion.historicalSuccess || 85,
+          lastUsed: suggestion.lastUsed
+        }
       }));
     } catch (parseError) {
       console.error("Failed to parse AI suggestions:", parseError);
