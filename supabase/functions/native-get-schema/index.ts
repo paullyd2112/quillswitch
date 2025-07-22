@@ -31,19 +31,10 @@ serve(async (req: Request) => {
 
     const connectionDetails = credentials[0];
 
-    // Get native engine credentials
-    const nativeEngineUrl = Deno.env.get('NATIVE_CRM_ENGINE_URL');
-    const nativeEngineKey = Deno.env.get('NATIVE_CRM_ENGINE_KEY');
-
-    if (!nativeEngineUrl || !nativeEngineKey) {
-      throw new Error('Native CRM Engine credentials not configured');
-    }
-
-    // Get schema from native CRM engine
-    const response = await fetch(`${nativeEngineUrl}/schema/${connectionDetails.service_name}/${object_type}`, {
+    // Call internal native schema function
+    const response = await supabase.functions.invoke('native-schema', {
+      body: { connectionId: connection_id, objectType: object_type },
       headers: {
-        'Authorization': `Bearer ${nativeEngineKey}`,
-        'Content-Type': 'application/json',
         'X-Connection-ID': connection_id
       }
     });
