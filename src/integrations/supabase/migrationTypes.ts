@@ -6,13 +6,14 @@ export type MigrationProject = {
   source_crm: string;
   destination_crm: string;
   migration_strategy: string;
-  status: "pending" | "in_progress" | "completed" | "failed" | "paused";
+  status: string; // Changed from union type to string to match database
   created_at: string;
   updated_at: string;
   completed_at: string | null;
   total_objects: number;
   migrated_objects: number;
   failed_objects: number;
+  workspace_id?: string | null; // Added missing field from database
 };
 
 export type MigrationStage = {

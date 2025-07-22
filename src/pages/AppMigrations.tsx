@@ -121,7 +121,7 @@ const AppMigrations = () => {
                 <Card key={project.id} className="border-slate-800 bg-slate-900 hover:bg-slate-800/50 transition-colors">
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-white text-lg">{project.name}</CardTitle>
+                      <CardTitle className="text-white text-lg">{project.company_name}</CardTitle>
                       <div className="flex items-center gap-1">
                         {getStatusIcon(project.status)}
                         <Badge variant={getStatusVariant(project.status)}>

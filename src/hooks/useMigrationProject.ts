@@ -10,13 +10,14 @@ export interface MigrationProject {
   source_crm: string;
   destination_crm: string;
   migration_strategy: string;
-  status: "pending" | "in_progress" | "completed" | "failed" | "paused";
+  status: string; // Changed from union type to string to match database
   created_at: string;
   updated_at: string;
   completed_at: string | null;
   total_objects: number;
   migrated_objects: number;
   failed_objects: number;
+  workspace_id?: string | null; // Added missing field from database
 }
 
 export const useMigrationProject = (projectId?: string) => {
@@ -41,11 +42,8 @@ export const useMigrationProject = (projectId?: string) => {
 
         if (error) throw error;
         
-        // Type cast the status to ensure it matches the expected type
-        const typedData = {
-          ...data,
-          status: data.status as MigrationProject['status']
-        };
+        // Use data directly since status is now string type
+        const typedData = data as MigrationProject;
         
         setProject(typedData);
       } catch (err: any) {
