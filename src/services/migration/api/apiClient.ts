@@ -8,7 +8,7 @@ import { WebhooksApiClient } from './webhooksClient';
 
 /**
  * Migration API Client - Production version
- * Integrates with Unified.to API and production services
+ * Integrates with Native CRM Engine and production services
  */
 
 export interface MigrationData {

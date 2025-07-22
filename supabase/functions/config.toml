@@ -1,6 +1,12 @@
 
 project_id = "kxjidapjtcxwzpwdomnm"
 
+[functions.migration-orchestrator]
+verify_jwt = true
+
+[functions.native-get-schema]
+verify_jwt = true
+
 [functions.unified-oauth-authorize]
 verify_jwt = true
 

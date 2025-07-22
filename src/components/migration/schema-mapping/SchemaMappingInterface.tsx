@@ -57,15 +57,15 @@ const SchemaMappingInterface: React.FC<SchemaMappingInterfaceProps> = ({
   const loadSchemas = async () => {
     setIsLoading(true);
     try {
-      // Get schema information from Unified.to API
+      // Get schema information from Native CRM Engine
       const [sourceResponse, destinationResponse] = await Promise.all([
-        supabase.functions.invoke('unified-get-schema', {
+        supabase.functions.invoke('native-get-schema', {
           body: {
             connection_id: sourceConnectionId,
             object_type: objectType
           }
         }),
-        supabase.functions.invoke('unified-get-schema', {
+        supabase.functions.invoke('native-get-schema', {
           body: {
             connection_id: destinationConnectionId,
             object_type: objectType

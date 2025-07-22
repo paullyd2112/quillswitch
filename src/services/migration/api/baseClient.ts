@@ -3,7 +3,7 @@ import { handleError } from "@/utils/errorHandling";
 import { RateLimiter } from "./utils/rateLimiter";
 import { PaginationHandler, PaginationParams, PaginatedResponse } from "./utils/paginationHandler";
 
-// Note: This client is now used for native CRM operations, not unified API
+// Note: This client is used for native CRM operations with QuillSwitch's engine
 
 export class BaseApiClient {
   private apiKey: string;

@@ -45,7 +45,6 @@
     "@tensorflow/tfjs": "^4.15.0",
     "@types/react-helmet": "^6.1.11",
     "@types/uuid": "^10.0.0",
-    "@unified-api/typescript-sdk": "^2.73.6",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.0.0",

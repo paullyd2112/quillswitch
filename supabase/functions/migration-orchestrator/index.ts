@@ -204,15 +204,24 @@ async function extractDataFromSource(request: MigrationJobRequest) {
   const sourceCredential = credentials[0];
   const extractedData: Record<string, any[]> = {};
 
-  // Extract data for each object type
+  // Get native engine credentials
+  const nativeEngineUrl = Deno.env.get('NATIVE_CRM_ENGINE_URL');
+  const nativeEngineKey = Deno.env.get('NATIVE_CRM_ENGINE_KEY');
+
+  if (!nativeEngineUrl || !nativeEngineKey) {
+    throw new Error('Native CRM Engine credentials not configured');
+  }
+
+  // Extract data for each object type using native CRM engine
   for (const objectType of request.objectTypes) {
     console.log(`Extracting ${objectType} from ${sourceCredential.service_name}`);
     
-    // Use Unified API for data extraction
-    const response = await fetch(`https://api.unified.to/crm/${sourceCredential.service_name}/${objectType}`, {
+    // Use Native CRM Engine for data extraction
+    const response = await fetch(`${nativeEngineUrl}/extract/${sourceCredential.service_name}/${objectType}`, {
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('UNIFIED_API_KEY')}`,
-        'Content-Type': 'application/json'
+        'Authorization': `Bearer ${nativeEngineKey}`,
+        'Content-Type': 'application/json',
+        'X-Connection-ID': request.sourceCredentials.connectionId
       }
     });
 
@@ -300,6 +309,14 @@ async function loadDataToDestination(transformedData: Record<string, any[]>, req
   let successCount = 0;
   let failedCount = 0;
 
+  // Get native engine credentials
+  const nativeEngineUrl = Deno.env.get('NATIVE_CRM_ENGINE_URL');
+  const nativeEngineKey = Deno.env.get('NATIVE_CRM_ENGINE_KEY');
+
+  if (!nativeEngineUrl || !nativeEngineKey) {
+    throw new Error('Native CRM Engine credentials not configured');
+  }
+
   for (const [objectType, records] of Object.entries(transformedData)) {
     console.log(`Loading ${records.length} ${objectType} records to ${destinationCredential.service_name}`);
     
@@ -309,11 +326,12 @@ async function loadDataToDestination(transformedData: Record<string, any[]>, req
       const batch = records.slice(i, i + batchSize);
       
       try {
-        const response = await fetch(`https://api.unified.to/crm/${destinationCredential.service_name}/${objectType}/batch`, {
+        const response = await fetch(`${nativeEngineUrl}/load/${destinationCredential.service_name}/${objectType}/batch`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${Deno.env.get('UNIFIED_API_KEY')}`,
-            'Content-Type': 'application/json'
+            'Authorization': `Bearer ${nativeEngineKey}`,
+            'Content-Type': 'application/json',
+            'X-Connection-ID': request.destinationCredentials.connectionId
           },
           body: JSON.stringify({ records: batch })
         });

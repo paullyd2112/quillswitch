@@ -53,7 +53,7 @@ const ConnectionHub: React.FC = () => {
           <Alert className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
             <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
             <AlertDescription className="text-green-700 dark:text-green-300">
-              All connections use OAuth 2.0 authentication and are managed through Unified.to's secure infrastructure.
+              All connections use OAuth 2.0 authentication and are managed through QuillSwitch's secure native CRM engine.
             </AlertDescription>
           </Alert>
         </div>
@@ -103,7 +103,7 @@ const ConnectionHub: React.FC = () => {
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold mb-2">Native CRM Security</h2>
                 <p className="text-muted-foreground mb-6">
-                  Learn about the security measures protecting your CRM integrations through Unified.to.
+                  Learn about the security measures protecting your CRM integrations through QuillSwitch's native engine.
                 </p>
                 
                 <SecurityInfoCard />
@@ -129,7 +129,7 @@ const ConnectionHub: React.FC = () => {
                         </li>
                         <li className="flex items-start gap-2">
                           <div className="mt-1 text-blue-600 dark:text-blue-400">•</div>
-                          <p className="text-sm">SOC 2 Type II compliant infrastructure via Unified.to</p>
+                          <p className="text-sm">SOC 2 Type II compliant infrastructure via QuillSwitch's native engine</p>
                         </li>
                       </ul>
                     </CardContent>

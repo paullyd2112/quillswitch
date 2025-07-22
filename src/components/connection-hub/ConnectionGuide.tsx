@@ -39,8 +39,8 @@ const ConnectionGuide: React.FC = () => {
                     Connection Types
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    QuillSwitch uses Unified.to's platform to connect to 28+ CRM systems through a single, 
-                    standardized API. All connections use OAuth 2.0 for security and are managed automatically.
+                    QuillSwitch uses its native CRM engine to connect to 28+ CRM systems through direct, 
+                    secure integrations. All connections use OAuth 2.0 for security and are managed automatically.
                   </p>
                 </div>
                 
@@ -59,9 +59,9 @@ const ConnectionGuide: React.FC = () => {
             
             <TabsContent value="unified" className="space-y-4">
               <div>
-                <h3 className="text-lg font-medium mb-2">Unified API Connection Process</h3>
+                <h3 className="text-lg font-medium mb-2">Native CRM Engine Connection Process</h3>
                 <p className="text-muted-foreground">
-                  Our unified API platform provides secure connections to all CRM systems through OAuth 2.0 
+                  Our native CRM engine provides secure direct connections to all CRM systems through OAuth 2.0 
                   authentication. Here's how it works:
                 </p>
               </div>
