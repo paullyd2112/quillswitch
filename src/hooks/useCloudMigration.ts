@@ -19,7 +19,9 @@ export const useCloudMigration = (projectId?: string) => {
       }
     );
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+    };
   }, [projectId]);
 
   // Fetch initial progress

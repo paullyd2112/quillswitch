@@ -193,8 +193,9 @@ export class CloudMigrationService {
           name: schedule.name,
           description: schedule.description,
           cron_expression: schedule.cronExpression,
-          migration_config: schedule.migrationConfig,
+          migration_config: JSON.parse(JSON.stringify(schedule.migrationConfig)),
           workspace_id: schedule.workspaceId,
+          user_id: (await supabase.auth.getUser()).data.user?.id!,
           is_active: true,
           next_run_at: this.getNextRunTime(schedule.cronExpression)
         });

@@ -11,7 +11,7 @@ import { Cloud, Calendar, Settings, Zap } from 'lucide-react';
 import { CloudMigrationRequest } from '@/services/cloud/CloudMigrationService';
 
 interface CloudMigrationSetupProps {
-  onSetupComplete: (config: CloudMigrationRequest & { schedule?: any }) => void;
+  onSetupComplete: (config: CloudMigrationRequest & { schedule?: any; scheduleDetails?: any }) => void;
 }
 
 const CloudMigrationSetup: React.FC<CloudMigrationSetupProps> = ({ onSetupComplete }) => {
@@ -41,7 +41,7 @@ const CloudMigrationSetup: React.FC<CloudMigrationSetupProps> = ({ onSetupComple
       return;
     }
 
-    const finalConfig: CloudMigrationRequest & { schedule?: any } = {
+    const finalConfig: CloudMigrationRequest & { schedule?: any; scheduleDetails?: any } = {
       ...config as CloudMigrationRequest,
       schedule: schedule.enabled ? {
         immediate: !schedule.recurring,
