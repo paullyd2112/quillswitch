@@ -2,18 +2,24 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSessionContext } from '@supabase/auth-helpers-react';
 import { ConnectedCredential } from "@/components/crm-connections/types";
 
 export const useCrmConnections = () => {
   const { toast } = useToast();
+  const { session, isLoading: sessionLoading } = useSessionContext();
   const [connectingProvider, setConnectingProvider] = useState<string | null>(null);
   const [connectedCredentials, setConnectedCredentials] = useState<ConnectedCredential[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   // Load connected credentials on hook mount
   useEffect(() => {
-    loadConnectedCredentials();
-  }, []);
+    if (session && !sessionLoading) {
+      loadConnectedCredentials();
+    } else if (!sessionLoading && !session) {
+      setIsLoading(false);
+    }
+  }, [session, sessionLoading]);
 
   const loadConnectedCredentials = async () => {
     try {
@@ -39,6 +45,17 @@ export const useCrmConnections = () => {
   
   const handleConnect = async (provider: string) => {
     console.log(`=== Starting OAuth for ${provider} ===`);
+    
+    // Check if user is authenticated
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to connect your CRM",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setConnectingProvider(provider);
     
     try {
