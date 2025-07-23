@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
+import { ConnectionProvider } from "@/contexts/ConnectionContext";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Setup from "./pages/Setup";
@@ -28,13 +29,20 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             
-            {/* Core app routes - candidates for future overhaul */}
-            <Route path="/app/setup" element={<Setup />} />
-            <Route path="/app/migrations" element={<AppMigrations />} />
-            <Route path="/app/migrations/:id" element={<MigrationDashboard />} />
-            
-            {/* New app routes structure */}
-            <Route path="/app/*" element={<AppRoutes />} />
+            {/* App routes wrapped with ConnectionProvider */}
+            <Route path="/app/*" element={
+              <ConnectionProvider>
+                <Routes>
+                  {/* Core app routes - candidates for future overhaul */}
+                  <Route path="setup" element={<Setup />} />
+                  <Route path="migrations" element={<AppMigrations />} />
+                  <Route path="migrations/:id" element={<MigrationDashboard />} />
+                  
+                  {/* New app routes structure */}
+                  <Route path="*" element={<AppRoutes />} />
+                </Routes>
+              </ConnectionProvider>
+            } />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
