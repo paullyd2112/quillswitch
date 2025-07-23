@@ -54,23 +54,41 @@ serve(async (req) => {
 
     switch (body.action) {
       case 'authorize': {
-        // Generate authorization URL
+        // Generate PKCE code verifier and challenge
+        const codeVerifier = generateCodeVerifier();
+        const codeChallenge = await generateCodeChallenge(codeVerifier);
+        
+        // Store code verifier temporarily (in a real app, you'd want to use a more secure storage)
+        const state = `sf_${user.id}_${Date.now()}`;
+        
+        // Generate authorization URL with PKCE
         const scopes = ['id', 'api', 'refresh_token', 'offline_access']
         const params = new URLSearchParams({
           response_type: 'code',
           client_id: clientId,
           redirect_uri: body.redirectUri,
           scope: scopes.join(' '),
-          state: body.state || `sf_${user.id}_${Date.now()}`
+          code_challenge: codeChallenge,
+          code_challenge_method: 'S256',
+          state: state
         })
 
         const authUrl = `${baseUrl}/services/oauth2/authorize?${params.toString()}`
+        
+        // Store the code verifier in user metadata (temporary storage)
+        // In production, you might want to use a more secure method
+        await supabase.auth.updateUser({
+          data: { 
+            pkce_code_verifier: codeVerifier,
+            pkce_state: state
+          }
+        });
         
         return new Response(
           JSON.stringify({ 
             success: true, 
             authUrl,
-            state: body.state || `sf_${user.id}_${Date.now()}`
+            state
           }),
           { 
             headers: { 
@@ -86,13 +104,21 @@ serve(async (req) => {
           throw new Error('Authorization code is required')
         }
 
-        // Exchange code for tokens
+        // Get the stored code verifier from user metadata
+        const { data: userData } = await supabase.auth.getUser(token);
+        const codeVerifier = userData.user?.user_metadata?.pkce_code_verifier;
+        
+        if (!codeVerifier) {
+          throw new Error('Code verifier not found. Please restart the OAuth flow.');
+        }
+
+        // Exchange code for tokens with PKCE
         const tokenParams = new URLSearchParams({
           grant_type: 'authorization_code',
           client_id: clientId,
-          client_secret: clientSecret,
           redirect_uri: body.redirectUri,
-          code: body.code
+          code: body.code,
+          code_verifier: codeVerifier
         })
 
         const tokenResponse = await fetch(`${baseUrl}/services/oauth2/token`, {
@@ -251,3 +277,20 @@ serve(async (req) => {
     )
   }
 })
+
+// PKCE utility functions
+function generateCodeVerifier(): string {
+  const array = new Uint32Array(56);
+  crypto.getRandomValues(array);
+  return Array.from(array, (dec) => ('0' + dec.toString(16)).substr(-2)).join('');
+}
+
+async function generateCodeChallenge(codeVerifier: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+}
