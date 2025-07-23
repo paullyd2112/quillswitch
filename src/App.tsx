@@ -11,6 +11,8 @@ import Auth from "./pages/Auth";
 import Setup from "./pages/Setup";
 import AppMigrations from "./pages/AppMigrations";
 import MigrationDashboard from "./pages/MigrationDashboard";
+import AppRoutes from "./pages/app/AppRoutes";
+import OAuthCallback from "./pages/OAuthCallback";
 
 const queryClient = new QueryClient();
 
@@ -24,11 +26,15 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/oauth/callback" element={<OAuthCallback />} />
             
             {/* Core app routes - candidates for future overhaul */}
             <Route path="/app/setup" element={<Setup />} />
             <Route path="/app/migrations" element={<AppMigrations />} />
             <Route path="/app/migrations/:id" element={<MigrationDashboard />} />
+            
+            {/* New app routes structure */}
+            <Route path="/app/*" element={<AppRoutes />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

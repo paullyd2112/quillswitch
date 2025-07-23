@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import BaseLayout from "@/components/layout/BaseLayout";
 import Dashboard from "./Dashboard";
 import ConnectionHub from "./ConnectionHub";
+import CrmConnections from "./CrmConnections";
 import Migrations from "./Migrations";
 import CredentialsVault from "../CredentialsVault";
 import SetupWizard from "../SetupWizard";
@@ -21,6 +22,7 @@ const AppRoutes = () => {
       <Routes>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="connections" element={<ConnectionHub />} />
+        <Route path="crm-connections" element={<CrmConnections />} />
         <Route path="migrations" element={<Migrations />} />
         <Route path="migrations/:id" element={<MigrationDashboard />} />
         <Route path="cloud-migration" element={<CloudMigration />} />

@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { ConnectedCredential } from "./types";
+import SalesforceConnectionTest from "./SalesforceConnectionTest";
 
 interface ConnectedCrmsListProps {
   connectedCredentials: ConnectedCredential[];
@@ -21,7 +22,7 @@ const ConnectedCrmsList: React.FC<ConnectedCrmsListProps> = ({
       <CardHeader>
         <CardTitle>Connected CRMs</CardTitle>
         <CardDescription>
-          Manage your connected CRM accounts
+          Manage your connected CRM accounts and test their connections
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -33,25 +34,31 @@ const ConnectedCrmsList: React.FC<ConnectedCrmsListProps> = ({
         ) : connectedCredentials.length > 0 ? (
           <div className="space-y-4">
             {connectedCredentials.map((credential) => (
-              <div key={credential.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <h4 className="font-medium capitalize">{credential.service_name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Connected on {new Date(credential.created_at).toLocaleDateString()}
-                  </p>
-                  {credential.expires_at && (
-                    <p className="text-xs text-amber-600">
-                      Expires: {new Date(credential.expires_at).toLocaleDateString()}
+              <div key={credential.id} className="border rounded-lg p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium capitalize">{credential.service_name}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Connected on {new Date(credential.created_at).toLocaleDateString()}
                     </p>
-                  )}
+                    {credential.expires_at && (
+                      <p className="text-xs text-amber-600">
+                        Expires: {new Date(credential.expires_at).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => onDisconnect(credential.id, credential.service_name)}
+                  >
+                    Disconnect
+                  </Button>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onDisconnect(credential.id, credential.service_name)}
-                >
-                  Disconnect
-                </Button>
+                
+                {credential.service_name === 'salesforce' && (
+                  <SalesforceConnectionTest credentialId={credential.id} />
+                )}
               </div>
             ))}
           </div>

@@ -35,62 +35,27 @@ const OAuthCallback: React.FC = () => {
           return;
         }
 
-        if (!code) {
+        if (!code || !state) {
           setStatus('error');
-          setMessage('Missing authorization code');
+          setMessage('Missing required OAuth parameters');
           toast({
             title: "Connection Failed",
-            description: "No authorization code received",
+            description: "Missing authorization code or state parameter",
             variant: "destructive"
           });
           return;
         }
 
-        // Get stored OAuth state from secure storage
-        if (!state) {
-          setStatus('error');
-          setMessage('Missing OAuth state parameter');
-          toast({
-            title: "Connection Failed",
-            description: "OAuth state parameter not found. Please try connecting again.",
-            variant: "destructive"
-          });
-          return;
-        }
+        setMessage('Completing Salesforce OAuth flow...');
 
-        const stateData = await oauthStorage.retrieve(state);
-        if (!stateData) {
-          setStatus('error');
-          setMessage('Missing OAuth state data');
-          toast({
-            title: "Connection Failed",
-            description: "OAuth state data not found or expired. Please try connecting again.",
-            variant: "destructive"
-          });
-          return;
-        }
-        
-        // Verify state parameter matches (basic CSRF protection)
-        if (state && state !== stateData.state) {
-          setStatus('error');
-          setMessage('Invalid OAuth state');
-          toast({
-            title: "Connection Failed",
-            description: "OAuth state mismatch. Please try connecting again.",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        setMessage('Completing OAuth flow...');
-
-        // Complete the OAuth flow
-        const { data: callbackData, error: callbackError } = await supabase.functions.invoke('unified-oauth-callback', {
+        // For Salesforce, call the salesforce-oauth edge function directly
+        const { data: callbackData, error: callbackError } = await supabase.functions.invoke('salesforce-oauth', {
           body: {
+            action: 'callback',
             code: code,
             state: state,
-            connection_id: stateData.connection_id,
-            workspace_id: stateData.workspace_id
+            redirectUri: `${window.location.origin}/oauth/callback`,
+            sandbox: false
           }
         });
 
@@ -108,20 +73,17 @@ const OAuthCallback: React.FC = () => {
 
         console.log('OAuth flow completed successfully:', callbackData);
 
-        // Clean up secure storage
-        oauthStorage.clear(state);
-
         setStatus('success');
-        setMessage(`Successfully connected to ${stateData.integration_type}!`);
+        setMessage('Successfully connected to Salesforce!');
         
         toast({
           title: "Connection Successful!",
-          description: `${stateData.integration_type} has been connected to your account.`,
+          description: "Salesforce has been connected to your account.",
         });
 
-        // Redirect to connection hub after a short delay
+        // Redirect to CRM connections page after a short delay
         setTimeout(() => {
-          navigate('/app/connections');
+          navigate('/app/crm-connections');
         }, 2000);
 
       } catch (error) {
@@ -162,7 +124,7 @@ const OAuthCallback: React.FC = () => {
                 {message}
               </p>
               <p className="text-sm text-muted-foreground">
-                Redirecting you back to the connection hub...
+                Redirecting you back to the CRM connections page...
               </p>
             </div>
           )}
@@ -175,10 +137,10 @@ const OAuthCallback: React.FC = () => {
                 {message}
               </p>
               <button 
-                onClick={() => navigate('/app/connections')}
+                onClick={() => navigate('/app/crm-connections')}
                 className="text-blue-600 hover:text-blue-700 underline"
               >
-                Return to Connection Hub
+                Return to CRM Connections
               </button>
             </div>
           )}

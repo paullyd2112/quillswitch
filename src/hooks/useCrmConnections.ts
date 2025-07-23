@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ConnectedCredential } from "@/components/crm-connections/types";
-import { oauthStorage } from "@/utils/secureStorage";
 
 export const useCrmConnections = () => {
   const { toast } = useToast();
@@ -21,7 +20,7 @@ export const useCrmConnections = () => {
       const { data, error } = await supabase
         .from('service_credentials')
         .select('id, service_name, credential_name, credential_type, created_at, expires_at')
-        .in('credential_type', ['oauth_token', 'unified_connection']);
+        .in('credential_type', ['oauth', 'oauth_token']);
         
       if (error) throw error;
       
@@ -44,18 +43,14 @@ export const useCrmConnections = () => {
     
     try {
       const redirectUri = `${window.location.origin}/oauth/callback`;
-      const state = `${provider}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      let authData;
       
       if (provider === 'salesforce') {
-        // Use direct Salesforce integration
+        // Use Salesforce OAuth edge function
         const { data, error } = await supabase.functions.invoke('salesforce-oauth', {
           body: {
             action: 'authorize',
             redirectUri,
-            state,
-            sandbox: false
+            sandbox: false // You could make this configurable later
           }
         });
         
@@ -63,28 +58,18 @@ export const useCrmConnections = () => {
           throw new Error(data?.error || error?.message || 'Failed to start Salesforce OAuth flow');
         }
         
-        authData = {
-          authorization_url: data.authUrl,
-          state: data.state,
-          provider: 'salesforce'
-        };
+        console.log('Authorization URL received:', data.authUrl);
+        
+        // Redirect to OAuth provider
+        window.location.href = data.authUrl;
       } else {
-        // TODO: Use native OAuth for other providers
-        throw new Error('Native OAuth not yet implemented for ' + provider);
-      }
-
-      console.log('Authorization URL received:', authData.authorization_url);
-
-      // Store connection details securely for callback (for supported providers)
-      if (authData.state) {
-        await oauthStorage.store({
-          state: authData.state,
-          integration_type: provider
+        // For other providers, show a message that they're not yet implemented
+        toast({
+          title: "Coming Soon",
+          description: `${provider} integration is coming soon!`,
+          variant: "default"
         });
       }
-
-      // Redirect to OAuth provider
-      window.location.href = authData.authorization_url;
       
     } catch (error) {
       console.error('=== OAuth Error ===');
@@ -102,6 +87,29 @@ export const useCrmConnections = () => {
 
   const handleDisconnect = async (credentialId: string, serviceName: string) => {
     try {
+      // For Salesforce, we can call the revoke endpoint
+      if (serviceName === 'salesforce') {
+        // Get credential first to revoke properly
+        const { data: credentials, error: getError } = await supabase
+          .rpc('get_decrypted_credential_with_logging', {
+            p_credential_id: credentialId
+          });
+
+        if (!getError && credentials && credentials.length > 0) {
+          const credentialData = JSON.parse(credentials[0].credential_value);
+          
+          // Call revoke endpoint
+          await supabase.functions.invoke('salesforce-oauth', {
+            body: {
+              action: 'revoke',
+              refreshToken: credentialData.refresh_token,
+              redirectUri: `${window.location.origin}/oauth/callback`
+            }
+          });
+        }
+      }
+
+      // Delete the credential from our database
       const { error } = await supabase
         .from('service_credentials')
         .delete()
