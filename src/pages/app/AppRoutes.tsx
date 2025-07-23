@@ -22,7 +22,6 @@ const AppRoutes = () => {
       <Routes>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="connections" element={<ConnectionHub />} />
-        <Route path="crm-connections" element={<CrmConnections />} />
         <Route path="migrations" element={<Migrations />} />
         <Route path="migrations/:id" element={<MigrationDashboard />} />
         <Route path="cloud-migration" element={<CloudMigration />} />

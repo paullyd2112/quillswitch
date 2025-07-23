@@ -13,6 +13,7 @@ import Setup from "./pages/Setup";
 import AppMigrations from "./pages/AppMigrations";
 import MigrationDashboard from "./pages/MigrationDashboard";
 import AppRoutes from "./pages/app/AppRoutes";
+import CrmConnections from "./pages/app/CrmConnections";
 import OAuthCallback from "./pages/OAuthCallback";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,11 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
+            <Route path="/crm-connections" element={
+              <ConnectionProvider>
+                <CrmConnections />
+              </ConnectionProvider>
+            } />
             
             {/* App routes wrapped with ConnectionProvider */}
             <Route path="/app/*" element={
