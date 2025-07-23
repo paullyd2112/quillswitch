@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, ArrowLeft, Shield } from "lucide-react";
+import { Loader2, ArrowLeft, Shield, UserPlus, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 
@@ -18,6 +17,7 @@ const Auth = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mode, setMode] = useState<'select' | 'signup' | 'signin'>('select');
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -103,31 +103,88 @@ const Auth = () => {
           Back to Home
         </Button>
 
-        <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Shield className="h-6 w-6 text-blue-400" />
-              <span className="text-xl font-bold text-white">QuillSwitch</span>
-            </div>
-            <CardTitle className="text-2xl text-white">Get Started</CardTitle>
-            <CardDescription className="text-slate-400">
-              Create your account or sign in to begin your CRM migration
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent>
-            <Tabs defaultValue="signup" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-2 bg-slate-800">
-                <TabsTrigger value="signup" className="data-[state=active]:bg-slate-700">
-                  Sign Up
-                </TabsTrigger>
-                <TabsTrigger value="signin" className="data-[state=active]:bg-slate-700">
-                  Sign In
-                </TabsTrigger>
-              </TabsList>
-
+{mode === 'select' ? (
+          <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+            <CardHeader className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Shield className="h-6 w-6 text-blue-400" />
+                <span className="text-xl font-bold text-white">QuillSwitch</span>
+              </div>
+              <CardTitle className="text-2xl text-white">Get Started</CardTitle>
+              <CardDescription className="text-slate-400">
+                Create your account or sign in to begin your CRM migration
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              <div className="grid gap-4">
+                <Button
+                  onClick={() => setMode('signup')}
+                  className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 shadow-lg"
+                  size="lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <UserPlus className="h-5 w-5" />
+                    <div className="text-left">
+                      <div className="font-semibold">Create Account</div>
+                      <div className="text-xs text-blue-100">New to QuillSwitch</div>
+                    </div>
+                  </div>
+                </Button>
+                
+                <Button
+                  onClick={() => setMode('signin')}
+                  variant="outline"
+                  className="w-full h-16 border-slate-700 bg-slate-800/50 hover:bg-slate-700/50 text-white"
+                  size="lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <LogIn className="h-5 w-5" />
+                    <div className="text-left">
+                      <div className="font-semibold">Sign In</div>
+                      <div className="text-xs text-slate-400">Already have an account</div>
+                    </div>
+                  </div>
+                </Button>
+              </div>
+              
+              <div className="mt-6 text-center">
+                <p className="text-sm text-slate-400">
+                  By creating an account, you agree to our terms of service and privacy policy.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="bg-slate-900/50 border-slate-800 backdrop-blur-sm">
+            <CardHeader className="text-center">
+              <Button
+                variant="ghost"
+                onClick={() => setMode('select')}
+                className="mb-2 text-slate-400 hover:text-white self-start"
+                size="sm"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Shield className="h-6 w-6 text-blue-400" />
+                <span className="text-xl font-bold text-white">QuillSwitch</span>
+              </div>
+              <CardTitle className="text-2xl text-white">
+                {mode === 'signup' ? 'Create Account' : 'Sign In'}
+              </CardTitle>
+              <CardDescription className="text-slate-400">
+                {mode === 'signup' 
+                  ? 'Enter your details to create a new account'
+                  : 'Welcome back! Please sign in to your account'
+                }
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent>
               {error && (
-                <Alert className="border-red-500/20 bg-red-500/10">
+                <Alert className="border-red-500/20 bg-red-500/10 mb-4">
                   <AlertDescription className="text-red-400">
                     {error}
                   </AlertDescription>
@@ -135,108 +192,70 @@ const Auth = () => {
               )}
 
               {success && (
-                <Alert className="border-green-500/20 bg-green-500/10">
+                <Alert className="border-green-500/20 bg-green-500/10 mb-4">
                   <AlertDescription className="text-green-400">
                     {success}
                   </AlertDescription>
                 </Alert>
               )}
 
-              <TabsContent value="signup" className="space-y-4">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-slate-300">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-slate-300">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      placeholder="Create a password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      minLength={6}
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
-                    />
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating Account...
-                      </>
-                    ) : (
-                      "Create Account"
-                    )}
-                  </Button>
-                </form>
-              </TabsContent>
+              <form onSubmit={mode === 'signup' ? handleSignUp : handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-slate-300">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-slate-300">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder={mode === 'signup' ? "Create a password" : "Enter your password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={mode === 'signup' ? 6 : undefined}
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {mode === 'signup' ? 'Creating Account...' : 'Signing In...'}
+                    </>
+                  ) : (
+                    mode === 'signup' ? 'Create Account' : 'Sign In'
+                  )}
+                </Button>
+              </form>
 
-              <TabsContent value="signin" className="space-y-4">
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-email" className="text-slate-300">Email</Label>
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password" className="text-slate-300">Password</Label>
-                    <Input
-                      id="signin-password"
-                      type="password"
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
-                    />
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Signing In...
-                      </>
-                    ) : (
-                      "Sign In"
-                    )}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-slate-400">
-                By creating an account, you agree to our terms of service and privacy policy.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="mt-6 text-center">
+                <Button
+                  variant="link"
+                  onClick={() => setMode(mode === 'signup' ? 'signin' : 'signup')}
+                  className="text-sm text-slate-400 hover:text-white"
+                >
+                  {mode === 'signup' 
+                    ? 'Already have an account? Sign in'
+                    : "Don't have an account? Create one"
+                  }
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
