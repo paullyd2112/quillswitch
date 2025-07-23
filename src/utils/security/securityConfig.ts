@@ -48,9 +48,19 @@ export const SECURITY_CONFIG = {
         "https://test.salesforce.com",
         "https://*.salesforce.com",
         "https://*.force.com",
-        "https://*.my.salesforce.com"
+        "https://*.my.salesforce.com",
+        "https://*.develop.my.salesforce.com"
       ],
-      'frame-src': ["'self'", "https://accounts.google.com", "https://login.salesforce.com", "https://test.salesforce.com"],
+      'frame-src': [
+        "'self'", 
+        "https://accounts.google.com", 
+        "https://login.salesforce.com", 
+        "https://test.salesforce.com",
+        "https://*.salesforce.com",
+        "https://*.force.com", 
+        "https://*.my.salesforce.com",
+        "https://*.develop.my.salesforce.com"
+      ],
       'frame-ancestors': ["'self'"],
       'object-src': ["'none'"],
       'base-uri': ["'self'"],
