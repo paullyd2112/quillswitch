@@ -83,7 +83,7 @@ const OAuthCallback: React.FC = () => {
 
         // Redirect to CRM connections page after a short delay
         setTimeout(() => {
-          navigate('/app/crm-connections');
+          navigate('/crm-connections');
         }, 2000);
 
       } catch (error) {
@@ -137,7 +137,7 @@ const OAuthCallback: React.FC = () => {
                 {message}
               </p>
               <button 
-                onClick={() => navigate('/app/crm-connections')}
+                onClick={() => navigate('/crm-connections')}
                 className="text-blue-600 hover:text-blue-700 underline"
               >
                 Return to CRM Connections
