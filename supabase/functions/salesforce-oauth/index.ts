@@ -92,17 +92,17 @@ serve(async (req) => {
         const authUrl = `${baseUrl}/services/oauth2/authorize?${params.toString()}`
         console.log('Generated auth URL:', authUrl);
         
-        // Store the code verifier in user metadata (temporary storage)
-        // In production, you might want to use a more secure method
-        const { error: updateError } = await supabase.auth.updateUser({
-          data: { 
-            pkce_code_verifier: codeVerifier,
-            pkce_state: state
-          }
-        });
+        // Store the code verifier in the database temporarily
+        const { error: storeError } = await supabase
+          .from('oauth_state')
+          .insert({
+            user_id: user.id,
+            state_key: state,
+            code_verifier: codeVerifier
+          });
         
-        if (updateError) {
-          console.error('Failed to store PKCE data:', updateError);
+        if (storeError) {
+          console.error('Failed to store PKCE data:', storeError);
           throw new Error('Failed to store OAuth state');
         }
         
@@ -128,19 +128,27 @@ serve(async (req) => {
           throw new Error('Authorization code is required')
         }
 
-        // Get the stored code verifier from user metadata
-        const { data: userData } = await supabase.auth.getUser(token);
-        const codeVerifier = userData.user?.user_metadata?.pkce_code_verifier;
+        // Get the stored code verifier from the database
+        const { data: oauthData, error: fetchError } = await supabase
+          .from('oauth_state')
+          .select('code_verifier, state_key')
+          .eq('user_id', user.id)
+          .eq('state_key', body.state)
+          .gte('expires_at', new Date().toISOString())
+          .single();
         
         console.log('Retrieved PKCE data:', { 
-          codeVerifierPresent: !!codeVerifier,
-          userMetadata: userData.user?.user_metadata 
+          codeVerifierPresent: !!oauthData?.code_verifier,
+          stateMatch: oauthData?.state_key === body.state,
+          fetchError: fetchError?.message
         });
         
-        if (!codeVerifier) {
-          console.error('Code verifier not found in user metadata');
-          throw new Error('Code verifier not found. Please restart the OAuth flow.');
+        if (fetchError || !oauthData?.code_verifier) {
+          console.error('Code verifier not found or expired:', fetchError);
+          throw new Error('Code verifier not found or expired. Please restart the OAuth flow.');
         }
+
+        const codeVerifier = oauthData.code_verifier;
 
         // Exchange code for tokens with PKCE
         const tokenParams = new URLSearchParams({
@@ -219,13 +227,12 @@ serve(async (req) => {
           throw new Error('Failed to store Salesforce credentials')
         }
 
-        // Clean up PKCE data from user metadata
-        await supabase.auth.updateUser({
-          data: { 
-            pkce_code_verifier: null,
-            pkce_state: null
-          }
-        });
+        // Clean up PKCE data from database
+        await supabase
+          .from('oauth_state')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('state_key', body.state);
 
         console.log('OAuth callback completed successfully for user:', user.id);
 

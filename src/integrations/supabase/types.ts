@@ -1095,6 +1095,33 @@ export type Database = {
           },
         ]
       }
+      oauth_state: {
+        Row: {
+          code_verifier: string
+          created_at: string
+          expires_at: string
+          id: string
+          state_key: string
+          user_id: string
+        }
+        Insert: {
+          code_verifier: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          state_key: string
+          user_id: string
+        }
+        Update: {
+          code_verifier?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          state_key?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       object_mappings: {
         Row: {
           created_at: string
@@ -1606,6 +1633,10 @@ export type Database = {
           record_limit: number
           reason: string
         }[]
+      }
+      cleanup_expired_oauth_state: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       encrypt_and_store_credential: {
         Args: {
