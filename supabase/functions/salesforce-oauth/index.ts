@@ -4,6 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+  'Access-Control-Max-Age': '86400',
 }
 
 interface SalesforceOAuthRequest {
@@ -16,8 +18,11 @@ interface SalesforceOAuthRequest {
 }
 
 serve(async (req) => {
+  console.log(`Salesforce OAuth request: ${req.method} ${req.url}`);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -29,28 +34,39 @@ serve(async (req) => {
 
     // Get the authenticated user
     const authHeader = req.headers.get('Authorization')
+    console.log('Auth header present:', !!authHeader);
+    
     if (!authHeader) {
+      console.error('No authorization header provided');
       throw new Error('No authorization header')
     }
 
     const token = authHeader.replace('Bearer ', '')
     const { data: { user }, error: userError } = await supabase.auth.getUser(token)
     
+    console.log('User auth result:', { userId: user?.id, error: userError?.message });
+    
     if (userError || !user) {
+      console.error('Authentication failed:', userError);
       throw new Error('Invalid token')
     }
 
     const body: SalesforceOAuthRequest = await req.json()
+    console.log('Request body:', { action: body.action, sandbox: body.sandbox });
     
     // Get Salesforce OAuth credentials from Supabase secrets
     const clientId = Deno.env.get('SALESFORCE_CLIENT_ID')
     const clientSecret = Deno.env.get('SALESFORCE_CLIENT_SECRET')
     
+    console.log('OAuth credentials:', { clientIdPresent: !!clientId, clientSecretPresent: !!clientSecret });
+    
     if (!clientId || !clientSecret) {
+      console.error('Missing Salesforce OAuth credentials');
       throw new Error('Salesforce OAuth credentials not configured')
     }
 
     const baseUrl = body.sandbox ? 'https://test.salesforce.com' : 'https://login.salesforce.com'
+    console.log('Using Salesforce base URL:', baseUrl);
 
     switch (body.action) {
       case 'authorize': {
@@ -74,15 +90,23 @@ serve(async (req) => {
         })
 
         const authUrl = `${baseUrl}/services/oauth2/authorize?${params.toString()}`
+        console.log('Generated auth URL:', authUrl);
         
         // Store the code verifier in user metadata (temporary storage)
         // In production, you might want to use a more secure method
-        await supabase.auth.updateUser({
+        const { error: updateError } = await supabase.auth.updateUser({
           data: { 
             pkce_code_verifier: codeVerifier,
             pkce_state: state
           }
         });
+        
+        if (updateError) {
+          console.error('Failed to store PKCE data:', updateError);
+          throw new Error('Failed to store OAuth state');
+        }
+        
+        console.log('Successfully stored PKCE data for user:', user.id);
         
         return new Response(
           JSON.stringify({ 
@@ -108,7 +132,13 @@ serve(async (req) => {
         const { data: userData } = await supabase.auth.getUser(token);
         const codeVerifier = userData.user?.user_metadata?.pkce_code_verifier;
         
+        console.log('Retrieved PKCE data:', { 
+          codeVerifierPresent: !!codeVerifier,
+          userMetadata: userData.user?.user_metadata 
+        });
+        
         if (!codeVerifier) {
+          console.error('Code verifier not found in user metadata');
           throw new Error('Code verifier not found. Please restart the OAuth flow.');
         }
 
@@ -121,6 +151,11 @@ serve(async (req) => {
           code_verifier: codeVerifier
         })
 
+        console.log('Token exchange request:', {
+          url: `${baseUrl}/services/oauth2/token`,
+          params: tokenParams.toString()
+        });
+
         const tokenResponse = await fetch(`${baseUrl}/services/oauth2/token`, {
           method: 'POST',
           headers: {
@@ -130,12 +165,24 @@ serve(async (req) => {
           body: tokenParams.toString()
         })
 
+        console.log('Token response status:', tokenResponse.status);
+
         if (!tokenResponse.ok) {
           const errorText = await tokenResponse.text()
+          console.error('Token exchange failed:', {
+            status: tokenResponse.status,
+            statusText: tokenResponse.statusText,
+            error: errorText
+          });
           throw new Error(`Token exchange failed: ${tokenResponse.status} - ${errorText}`)
         }
 
         const tokens = await tokenResponse.json()
+        console.log('Token data received:', {
+          hasAccessToken: !!tokens.access_token,
+          hasRefreshToken: !!tokens.refresh_token,
+          instanceUrl: tokens.instance_url
+        });
         
         // Store encrypted credentials in Supabase
         const credentialData = {
@@ -162,10 +209,25 @@ serve(async (req) => {
             }
           })
 
+        console.log('Credential storage result:', { 
+          credentialId, 
+          error: storeError?.message 
+        });
+
         if (storeError) {
           console.error('Error storing credential:', storeError)
           throw new Error('Failed to store Salesforce credentials')
         }
+
+        // Clean up PKCE data from user metadata
+        await supabase.auth.updateUser({
+          data: { 
+            pkce_code_verifier: null,
+            pkce_state: null
+          }
+        });
+
+        console.log('OAuth callback completed successfully for user:', user.id);
 
         return new Response(
           JSON.stringify({ 
@@ -260,7 +322,10 @@ serve(async (req) => {
     }
 
   } catch (error) {
-    console.error('Salesforce OAuth error:', error)
+    console.error('Salesforce OAuth error:', {
+      message: error.message,
+      stack: error.stack
+    });
     
     return new Response(
       JSON.stringify({ 
@@ -268,7 +333,7 @@ serve(async (req) => {
         error: error.message 
       }),
       { 
-        status: 500,
+        status: 400,
         headers: { 
           ...corsHeaders, 
           'Content-Type': 'application/json' 

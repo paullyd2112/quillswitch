@@ -44,60 +44,56 @@ export const useCrmConnections = () => {
   };
   
   const handleConnect = async (provider: string) => {
-    console.log(`=== Starting OAuth for ${provider} ===`);
-    
-    // Check if user is authenticated
-    if (!session) {
+    if (!session?.user) {
       toast({
-        title: "Authentication Required",
-        description: "Please log in to connect your CRM",
-        variant: "destructive"
+        title: "Authentication required",
+        description: "Please log in to connect CRM services.",
+        variant: "destructive",
       });
       return;
     }
-    
+
     setConnectingProvider(provider);
-    
+
     try {
-      const redirectUri = `${window.location.origin}/oauth/callback`;
-      
       if (provider === 'salesforce') {
-        // Use Salesforce OAuth edge function
+        console.log('Starting Salesforce OAuth flow for user:', session.user.id);
+        
+        // Call the edge function to start OAuth flow
         const { data, error } = await supabase.functions.invoke('salesforce-oauth', {
           body: {
             action: 'authorize',
-            redirectUri,
-            sandbox: false // You could make this configurable later
-          }
+            redirectUri: `${window.location.origin}/oauth-callback`,
+            sandbox: false, // Default to production, could be made configurable
+          },
         });
-        
-        if (error || !data.success) {
-          throw new Error(data?.error || error?.message || 'Failed to start Salesforce OAuth flow');
+
+        console.log('Salesforce OAuth authorize response:', { data, error });
+
+        if (error) {
+          console.error('OAuth authorize error:', error);
+          throw error;
         }
-        
-        console.log('Authorization URL received:', data.authUrl);
-        
-        // Redirect to OAuth provider
-        window.location.href = data.authUrl;
+
+        if (data?.authUrl) {
+          console.log('Redirecting to Salesforce OAuth URL:', data.authUrl);
+          // Redirect to Salesforce OAuth
+          window.location.href = data.authUrl;
+        } else {
+          console.error('No authorization URL returned from OAuth');
+          throw new Error('No authorization URL returned');
+        }
       } else {
-        // For other providers, show a message that they're not yet implemented
-        toast({
-          title: "Coming Soon",
-          description: `${provider} integration is coming soon!`,
-          variant: "default"
-        });
+        throw new Error(`Provider ${provider} not yet implemented`);
       }
-      
     } catch (error) {
-      console.error('=== OAuth Error ===');
-      console.error('Error:', error);
-      
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.error('Connection error:', error);
       toast({
-        title: "Connection Failed",
-        description: `Failed to start OAuth flow for ${provider}. ${errorMessage}`,
-        variant: "destructive"
+        title: "Connection failed",
+        description: error.message || "Failed to connect to CRM service",
+        variant: "destructive",
       });
+    } finally {
       setConnectingProvider(null);
     }
   };

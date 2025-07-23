@@ -72,6 +72,9 @@ export function validateSecurityHeaders(): { passed: boolean; issues: string[] }
   if (!cspHeader.includes('https://accounts.google.com')) {
     issues.push('Google OAuth domains not included in CSP');
   }
+  if (!cspHeader.includes('https://login.salesforce.com')) {
+    issues.push('Salesforce OAuth domains not included in CSP');
+  }
   
   return {
     passed: issues.length === 0,
