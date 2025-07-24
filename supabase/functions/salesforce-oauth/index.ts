@@ -1,3 +1,4 @@
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -15,6 +16,102 @@ interface SalesforceOAuthRequest {
   state?: string;
   redirectUri: string;
   sandbox?: boolean;
+}
+
+interface RetryConfig {
+  maxAttempts: number;
+  baseDelay: number;
+  maxDelay: number;
+  backoffFactor: number;
+}
+
+const DEFAULT_RETRY_CONFIG: RetryConfig = {
+  maxAttempts: 3,
+  baseDelay: 1000,
+  maxDelay: 10000,
+  backoffFactor: 2
+};
+
+// Enhanced fetch with SSL/TLS configuration and retry logic
+async function enhancedFetch(
+  url: string, 
+  options: RequestInit = {}, 
+  retryConfig: RetryConfig = DEFAULT_RETRY_CONFIG
+): Promise<Response> {
+  const enhancedOptions: RequestInit = {
+    ...options,
+    // Enhanced headers for better SSL/TLS compatibility
+    headers: {
+      'User-Agent': 'QuillSwitch-OAuth/1.0',
+      'Accept': 'application/json',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      ...options.headers
+    }
+  };
+
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= retryConfig.maxAttempts; attempt++) {
+    try {
+      console.log(`Fetch attempt ${attempt}/${retryConfig.maxAttempts} to ${url}`);
+      
+      // Create AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+      
+      const response = await fetch(url, {
+        ...enhancedOptions,
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      console.log(`Fetch successful on attempt ${attempt}, status: ${response.status}`);
+      return response;
+      
+    } catch (error) {
+      lastError = error as Error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      console.error(`Fetch attempt ${attempt} failed:`, {
+        error: errorMessage,
+        url: url,
+        attempt: attempt
+      });
+      
+      // Check if this is an SSL/TLS related error
+      const isSSLError = errorMessage.toLowerCase().includes('ssl') ||
+                        errorMessage.toLowerCase().includes('tls') ||
+                        errorMessage.toLowerCase().includes('handshake') ||
+                        errorMessage.toLowerCase().includes('certificate') ||
+                        errorMessage.toLowerCase().includes('connection reset') ||
+                        errorMessage.toLowerCase().includes('network error');
+      
+      // Check if this is a timeout error
+      const isTimeoutError = errorMessage.toLowerCase().includes('timeout') ||
+                            errorMessage.toLowerCase().includes('aborted');
+      
+      // Don't retry on the last attempt
+      if (attempt === retryConfig.maxAttempts) {
+        console.error(`All ${retryConfig.maxAttempts} attempts failed. Last error:`, errorMessage);
+        break;
+      }
+      
+      // Calculate delay with exponential backoff
+      const delay = Math.min(
+        retryConfig.baseDelay * Math.pow(retryConfig.backoffFactor, attempt - 1),
+        retryConfig.maxDelay
+      );
+      
+      console.log(`Retrying in ${delay}ms due to ${isSSLError ? 'SSL/TLS' : isTimeoutError ? 'timeout' : 'network'} error`);
+      
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw lastError || new Error('All retry attempts failed');
 }
 
 serve(async (req) => {
@@ -150,7 +247,7 @@ serve(async (req) => {
 
         const codeVerifier = oauthData.code_verifier;
 
-        // Exchange code for tokens with PKCE
+        // Exchange code for tokens with PKCE using enhanced fetch
         const tokenParams = new URLSearchParams({
           grant_type: 'authorization_code',
           client_id: clientId,
@@ -159,19 +256,20 @@ serve(async (req) => {
           code_verifier: codeVerifier
         })
 
+        const tokenUrl = `${baseUrl}/services/oauth2/token`;
         console.log('Token exchange request:', {
-          url: `${baseUrl}/services/oauth2/token`,
+          url: tokenUrl,
           params: tokenParams.toString()
         });
 
-        const tokenResponse = await fetch(`${baseUrl}/services/oauth2/token`, {
+        const tokenResponse = await enhancedFetch(tokenUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Accept': 'application/json'
           },
           body: tokenParams.toString()
-        })
+        });
 
         console.log('Token response status:', tokenResponse.status);
 
@@ -263,14 +361,15 @@ serve(async (req) => {
           refresh_token: body.refreshToken
         })
 
-        const refreshResponse = await fetch(`${baseUrl}/services/oauth2/token`, {
+        const refreshUrl = `${baseUrl}/services/oauth2/token`;
+        const refreshResponse = await enhancedFetch(refreshUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Accept': 'application/json'
           },
           body: refreshParams.toString()
-        })
+        });
 
         if (!refreshResponse.ok) {
           const errorText = await refreshResponse.text()
@@ -302,13 +401,14 @@ serve(async (req) => {
           token: body.refreshToken
         })
 
-        const revokeResponse = await fetch(`${baseUrl}/services/oauth2/revoke`, {
+        const revokeUrl = `${baseUrl}/services/oauth2/revoke`;
+        const revokeResponse = await enhancedFetch(revokeUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           body: revokeParams.toString()
-        })
+        });
 
         return new Response(
           JSON.stringify({ 
@@ -331,16 +431,42 @@ serve(async (req) => {
   } catch (error) {
     console.error('Salesforce OAuth error:', {
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
+      name: error.name
     });
+    
+    // Enhanced error classification
+    let errorType = 'unknown';
+    let userMessage = 'An unexpected error occurred';
+    
+    if (error.message.toLowerCase().includes('ssl') || 
+        error.message.toLowerCase().includes('handshake') ||
+        error.message.toLowerCase().includes('certificate')) {
+      errorType = 'ssl_error';
+      userMessage = 'SSL connection failed. Please try again in a moment.';
+    } else if (error.message.toLowerCase().includes('timeout')) {
+      errorType = 'timeout_error';
+      userMessage = 'Request timed out. Please try again.';
+    } else if (error.message.toLowerCase().includes('network')) {
+      errorType = 'network_error';
+      userMessage = 'Network error occurred. Please check your connection and try again.';
+    } else if (error.message.includes('Invalid token')) {
+      errorType = 'auth_error';
+      userMessage = 'Authentication failed. Please log in again.';
+    } else if (error.message.includes('Code verifier not found')) {
+      errorType = 'oauth_state_error';
+      userMessage = 'OAuth state expired. Please restart the connection process.';
+    }
     
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: userMessage,
+        errorType: errorType,
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
       }),
       { 
-        status: 400,
+        status: errorType === 'auth_error' ? 401 : 400,
         headers: { 
           ...corsHeaders, 
           'Content-Type': 'application/json' 
