@@ -92,16 +92,14 @@ export const useOAuthCallback = () => {
         provider: stateData.provider || "CRM"
       }));
       
-      // Call the OAuth callback edge function
-      const { data, error: callbackError } = await supabase.functions.invoke('oauth-callback', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: new URLSearchParams({ 
+      // Call the Salesforce OAuth callback function
+      const { data, error: callbackError } = await supabase.functions.invoke('salesforce-oauth', {
+        body: {
+          action: 'callback',
           code: code,
-          state: stateParam
-        })
+          state: stateParam,
+          redirectUri: `${window.location.origin}/oauth-callback`
+        }
       });
       
       if (callbackError) {
