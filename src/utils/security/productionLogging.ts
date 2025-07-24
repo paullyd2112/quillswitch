@@ -18,6 +18,7 @@ interface LogContext {
   metadata?: Record<string, any>;
   eventType?: string;
   data?: any;
+  [key: string]: any; // Allow additional properties
 }
 
 class ProductionLogger {
