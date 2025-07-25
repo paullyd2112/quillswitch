@@ -12,8 +12,6 @@ import Reports from "./Reports";
 import Activity from "./Activity";
 import Settings from "../Settings";
 import MigrationDashboard from "../MigrationDashboard";
-import RealDataDemoPage from "../RealDataDemo";
-import TryItPage from "./TryItPage";
 import CloudMigration from "../CloudMigration";
 
 const AppRoutes = () => {
@@ -30,8 +28,6 @@ const AppRoutes = () => {
         <Route path="reports" element={<Reports />} />
         <Route path="activity" element={<Activity />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="try-it" element={<TryItPage />} />
-        <Route path="real-data-demo" element={<RealDataDemoPage />} />
         <Route path="*" element={<Dashboard />} />
       </Routes>
     </BaseLayout>

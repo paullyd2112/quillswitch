@@ -45,8 +45,6 @@ export const userNav: NavLink[] = [
   { href: "/app/migrations", label: "Migrations", icon: <Database className="h-4 w-4" />, category: "App" },
   { href: "/app/cloud-migration", label: "Cloud Migration", icon: <Cloud className="h-4 w-4" />, category: "App" },
   { href: "/migration", label: "AI Migration", icon: <Brain className="h-4 w-4" />, category: "App" },
-  { href: "/app/try-it", label: "Try It", icon: <Monitor className="h-4 w-4" />, category: "Demo" },
-  { href: "/app/real-data-demo", label: "Real Data Demo", icon: <Zap className="h-4 w-4" />, category: "Demo" },
   { href: "/app/activity", label: "Activity", icon: <Activity className="h-4 w-4" />, category: "App" },
   { href: "/app/settings", label: "Settings", icon: <Settings className="h-4 w-4" />, category: "App" },
 ];
