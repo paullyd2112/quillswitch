@@ -158,7 +158,7 @@ export const useOAuthCallback = () => {
           action: 'callback',
           code: code,
           state: stateParam,
-          redirectUri: `${window.location.origin}/oauth-callback`
+          redirectUri: `${window.location.origin}/oauth/callback`
         }
       });
       
