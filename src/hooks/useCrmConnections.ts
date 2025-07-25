@@ -78,8 +78,17 @@ export const useCrmConnections = () => {
 
         if (data?.authUrl) {
           console.log('Redirecting to Salesforce OAuth URL:', data.authUrl);
-          // Redirect to Salesforce OAuth - don't reset connecting state before redirect
-          window.location.href = data.authUrl;
+          console.log('About to execute window.location.href assignment...');
+          
+          // Use a more forceful redirect method
+          try {
+            window.location.assign(data.authUrl);
+            console.log('window.location.assign executed');
+          } catch (redirectError) {
+            console.error('Redirect failed:', redirectError);
+            // Fallback to window.open
+            window.open(data.authUrl, '_self');
+          }
           return; // Exit early to prevent finally block from running
         } else {
           console.error('No authorization URL returned from OAuth');
