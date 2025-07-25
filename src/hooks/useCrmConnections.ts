@@ -64,7 +64,7 @@ export const useCrmConnections = () => {
         const { data, error } = await supabase.functions.invoke('salesforce-oauth', {
           body: {
             action: 'authorize',
-            redirectUri: `${window.location.origin}/oauth-callback`,
+            redirectUri: `${window.location.origin}/oauth/callback`,
             sandbox: false, // Default to production, could be made configurable
           },
         });
