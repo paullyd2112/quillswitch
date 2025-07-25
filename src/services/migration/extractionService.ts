@@ -34,12 +34,11 @@ export const extractDataPreview = async (
   options: ExtractPreviewOptions
 ): Promise<ExtractedData[]> => {
   try {
-    const { sourceSystem, objectType, limit = 5, filters = {} } = options;
+    // TODO: Implement real CRM data extraction via authenticated APIs
+    console.warn('Real data extraction not yet implemented for', options.sourceSystem);
     
-    // TODO: Use native CRM APIs for data extraction
-    // For now, generate mock data for preview
-    const mockData = generateRealisticMockData(sourceSystem, objectType, limit, filters, null);
-    return mockData;
+    // Return empty array instead of mock data for authenticated users
+    return [];
   } catch (error: any) {
     handleServiceError(error, `Failed to extract ${options.objectType} preview from ${options.sourceSystem}`);
     return [];
@@ -194,17 +193,11 @@ export const extractFullDataSet = async (
   options: ExtractPreviewOptions & { batchSize?: number; onProgress?: (progress: number) => void }
 ): Promise<ExtractedData[]> => {
   try {
-    // TODO: Implement native CRM data extraction
-    // For now, return mock data for the full dataset
-    const mockData = generateMockData(options.sourceSystem, options.objectType, options.limit || 100, options.filters || {});
+    // TODO: Implement real full dataset extraction from authenticated CRM APIs
+    console.warn('Real full dataset extraction not yet implemented');
     
-    // Report progress if callback provided
-    if (options.onProgress) {
-      options.onProgress(1.0);
-    }
-    
-    return mockData;
-    
+    // Return empty array instead of mock data for authenticated users
+    return [];
   } catch (error: any) {
     console.error("Full data extraction failed:", error);
     handleServiceError(error, `Failed to extract full ${options.objectType} dataset from ${options.sourceSystem}`);

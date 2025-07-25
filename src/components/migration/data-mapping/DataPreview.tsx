@@ -12,62 +12,11 @@ interface DataPreviewProps {
   fieldMappings: FieldMapping[];
 }
 
-// Mock data - In a real application, this would come from an API
-const generateMockData = (fieldMappings: FieldMapping[], count: number = 5) => {
-  const data = [];
-  
-  for (let i = 0; i < count; i++) {
-    const record: Record<string, any> = {};
-    
-    fieldMappings.forEach(mapping => {
-      const fieldName = mapping.source_field.toLowerCase();
-      
-      // Generate appropriate mock data based on field name
-      if (fieldName.includes('name')) {
-        record[mapping.source_field] = ['John Doe', 'Jane Smith', 'Robert Johnson', 'Emily Davis', 'Michael Wilson'][i % 5];
-      } else if (fieldName.includes('email')) {
-        record[mapping.source_field] = [`user${i}@example.com`, 'contact@company.com', 'support@business.org'][i % 3];
-      } else if (fieldName.includes('phone')) {
-        record[mapping.source_field] = [`(555) 123-${1000 + i}`, '(800) 555-1234', '(123) 456-7890'][i % 3];
-      } else if (fieldName.includes('date')) {
-        const date = new Date();
-        date.setDate(date.getDate() - i * 10);
-        record[mapping.source_field] = date.toISOString().split('T')[0];
-      } else if (fieldName.includes('id')) {
-        record[mapping.source_field] = `ID-${10000 + i}`;
-      } else if (fieldName.includes('amount') || fieldName.includes('price')) {
-        record[mapping.source_field] = (100 * (i + 1)).toFixed(2);
-      } else if (fieldName.includes('description')) {
-        record[mapping.source_field] = `Sample description for record ${i+1}`;
-      } else if (fieldName.includes('status')) {
-        record[mapping.source_field] = ['Active', 'Pending', 'Completed', 'On Hold'][i % 4];
-      } else {
-        record[mapping.source_field] = `Value ${i+1}`;
-      }
-      
-      // Apply transformation if it exists
-      if (mapping.transformation_rule) {
-        try {
-          // Simple transformation logic - in a real app this would be more robust
-          if (mapping.transformation_rule.includes('toUpperCase')) {
-            record[`${mapping.destination_field}_transformed`] = record[mapping.source_field].toUpperCase();
-          } else if (mapping.transformation_rule.includes('toLowerCase')) {
-            record[`${mapping.destination_field}_transformed`] = record[mapping.source_field].toLowerCase();
-          } else {
-            record[`${mapping.destination_field}_transformed`] = record[mapping.source_field];
-          }
-        } catch (error) {
-          record[`${mapping.destination_field}_transformed`] = `Error: Could not transform`;
-        }
-      } else {
-        record[`${mapping.destination_field}_transformed`] = record[mapping.source_field];
-      }
-    });
-    
-    data.push(record);
-  }
-  
-  return data;
+// Real data preview - connects to actual CRM data
+const generateRealDataPreview = async (fieldMappings: FieldMapping[], count: number = 5) => {
+  // TODO: Implement real data preview from connected CRM systems
+  console.warn('Real data preview not yet implemented');
+  return [];
 };
 
 const DataPreview: React.FC<DataPreviewProps> = ({ objectType, fieldMappings }) => {
@@ -77,41 +26,43 @@ const DataPreview: React.FC<DataPreviewProps> = ({ objectType, fieldMappings }) 
   const [hasErrors, setHasErrors] = useState(false);
   
   useEffect(() => {
-    // Simulate API call to get preview data
-    const timer = setTimeout(() => {
+    // Load real data preview instead of mock data
+    const loadRealDataPreview = async () => {
+      setIsLoading(true);
       try {
-        const mockData = generateMockData(fieldMappings);
-        setSourceData(mockData);
+        console.log('Loading real data preview for object type:', objectType.name);
         
-        // Transform data for destination preview
-        const transformedData = mockData.map(record => {
-          const transformed: Record<string, any> = {};
-          
-          fieldMappings.forEach(mapping => {
-            transformed[mapping.destination_field] = record[`${mapping.destination_field}_transformed`] || record[mapping.source_field];
-          });
-          
-          return transformed;
-        });
-        
-        setDestinationData(transformedData);
-        setIsLoading(false);
+        // For now, show empty state until real data preview is implemented
+        setSourceData([]);
+        setDestinationData([]);
+        setHasErrors(false);
       } catch (error) {
-        console.error("Error generating preview data:", error);
+        console.error('Error loading data preview:', error);
         setHasErrors(true);
+      } finally {
         setIsLoading(false);
       }
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, [fieldMappings]);
+    };
+
+    loadRealDataPreview();
+  }, [fieldMappings, objectType]);
 
   if (hasErrors) {
     return (
       <Alert variant="destructive" className="mt-4">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          There was an error generating the preview. This might be due to invalid transformation rules.
+          Error loading real data preview. Please check your CRM connection and try again.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (sourceData.length === 0 && !isLoading) {
+    return (
+      <Alert className="mt-4">
+        <AlertDescription>
+          Connect a CRM system to see real data preview. Real data preview will show once you've established a connection and configured your migration.
         </AlertDescription>
       </Alert>
     );

@@ -91,29 +91,29 @@ export class MigrationROIReportService {
   }
 
   private static async getDuplicationResults(projectId: string) {
-    // Mock data - in real implementation, this would fetch from DeduplicationService results
+    // TODO: Implement real deduplication data from DeduplicationService results
     return {
-      totalDuplicates: Math.floor(Math.random() * 50) + 10,
-      duplicatePercentage: Math.random() * 15 + 2,
-      potentialDuplicates: Math.floor(Math.random() * 20) + 5
+      totalDuplicates: 0,
+      duplicatePercentage: 0,
+      potentialDuplicates: 0
     };
   }
 
   private static async getPIIResults(projectId: string) {
-    // Mock data - in real implementation, this would fetch from PIIDetectionService results
+    // TODO: Implement real PII detection data from PIIDetectionService results
     return {
-      piiFieldsDetected: Math.floor(Math.random() * 25) + 8,
-      highRiskFields: Math.floor(Math.random() * 8) + 2,
-      fieldsSecured: Math.floor(Math.random() * 20) + 6
+      piiFieldsDetected: 0,
+      highRiskFields: 0,
+      fieldsSecured: 0
     };
   }
 
   private static async getQualityResults(projectId: string) {
-    // Mock data - in real implementation, this would fetch from MLQualityService results
+    // TODO: Implement real quality data from MLQualityService results
     return {
-      overallQualityScore: Math.random() * 30 + 70,
-      fieldsImproved: Math.floor(Math.random() * 40) + 15,
-      completenessImprovement: Math.random() * 25 + 5
+      overallQualityScore: 0,
+      fieldsImproved: 0,
+      completenessImprovement: 0
     };
   }
 

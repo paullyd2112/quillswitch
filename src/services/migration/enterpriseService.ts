@@ -123,20 +123,11 @@ const fetchEnterpriseContactsFromSource = async (sourceSystem: string, filters?:
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
   
-  // Generate mock data
-  const count = filters?.limit || 1000;
-  const mockContacts = Array.from({ length: count }, (_, i) => ({
-    id: `SRC-${i + 1000}`,
-    firstName: `Contact${i}`,
-    lastName: `Surname${i}`,
-    email: `contact${i}@example.com`,
-    phone: `+1555${(1000000 + i).toString().substring(1)}`,
-    title: i % 5 === 0 ? 'CEO' : 'Employee',
-    company: `Company ${Math.floor(i / 10)}`,
-    createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString()
-  }));
+  // TODO: Implement real contact data extraction from CRM APIs
+  console.warn('Real contact extraction not yet implemented');
   
-  return mockContacts;
+  // Return empty array instead of mock data for authenticated users
+  return [];
 };
 
 /**

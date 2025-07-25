@@ -3,7 +3,7 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import DemoLayout from "@/components/layout/DemoLayout";
-import TryItExperience from "@/components/demo/TryItExperience";
+
 import MigrationDemoSection from "@/components/home/MigrationDemoSection";
 import DemoFooterCta from "@/components/demo/DemoFooterCta";
 import DemoNavigation from "@/components/demo/DemoNavigation";
@@ -98,17 +98,24 @@ const Demo = () => {
             
             <Separator className="opacity-30" />
             
-            {/* Try It Yourself */}
-            <section id="try-it-experience" className="scroll-mt-20">
+            {/* Real Migration Experience */}
+            <section id="real-migration-experience" className="scroll-mt-20">
               <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white to-primary/80 bg-clip-text text-transparent">
-                  Try It Yourself
+                  Start Your Migration
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Experience the complete migration workflow from CRM connection to data transfer with our guided simulation.
+                  Ready to migrate your CRM data? Connect your systems and start your real migration with QuillSwitch.
                 </p>
               </div>
-              <TryItExperience />
+              <div className="text-center">
+                <button 
+                  onClick={() => navigate('/auth')}
+                  className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                >
+                  Start Real Migration
+                </button>
+              </div>
             </section>
             
             <Separator className="opacity-30" />

@@ -30,7 +30,7 @@ export const useCrmConnections = () => {
         
       if (error) throw error;
       
-      console.log('🔍 DEBUG: Connected credentials loaded:', data);
+      
       setConnectedCredentials(data || []);
     } catch (error) {
       console.error('Failed to load connected credentials:', error);
@@ -149,9 +149,7 @@ export const useCrmConnections = () => {
   };
 
   const isProviderConnected = (providerId: string) => {
-    const isConnected = connectedCredentials.some(cred => cred.service_name === providerId);
-    console.log(`🔍 DEBUG: Provider ${providerId} connected?`, isConnected, 'Credentials:', connectedCredentials);
-    return isConnected;
+    return connectedCredentials.some(cred => cred.service_name === providerId);
   };
 
   return {

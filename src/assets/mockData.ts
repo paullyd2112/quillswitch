@@ -29,5 +29,5 @@ export const mockKnowledgeArticles: KnowledgeArticle[] = [
   },
 ];
 
-// Empty mock data - no fake migrations
+// No mock migrations - real user data only
 export const mockMigrations: MigrationProject[] = [];
