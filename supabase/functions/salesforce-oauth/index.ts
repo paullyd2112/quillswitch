@@ -127,42 +127,52 @@ serve(async (req) => {
   }
 
   try {
-    // Create Supabase client - let it handle auth automatically
+    console.log('=== Starting auth check ===');
+    
+    // Check if we have authorization header
+    const authHeader = req.headers.get('Authorization');
+    console.log('Auth header exists:', !!authHeader);
+    console.log('Auth header value preview:', authHeader ? authHeader.substring(0, 20) + '...' : 'null');
+    
+    if (!authHeader) {
+      console.log('No auth header - returning 401');
+      return new Response(
+        JSON.stringify({ success: false, error: 'No authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Simple auth check - create client and try to get user
+    console.log('Creating Supabase client...');
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
+          headers: { Authorization: authHeader },
         },
       }
-    )
-
-    // Get the authenticated user - this will use the Authorization header automatically
+    );
+    
+    console.log('Getting user...');
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     
-    console.log('User validation result:', { 
-      userId: user?.id, 
-      email: user?.email,
+    console.log('Auth result:', {
       hasUser: !!user,
-      error: userError?.message
+      userId: user?.id,
+      error: userError?.message,
+      errorCode: userError?.code
     });
     
-    if (userError || !user) {
-      console.error('Authentication failed:', userError?.message);
+    if (!user || userError) {
+      console.log('Auth failed - returning 401');
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: `Authentication failed: ${userError?.message || 'Invalid token'}` 
-        }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
+        JSON.stringify({ success: false, error: userError?.message || 'Authentication failed' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     
-    console.log('User authenticated successfully:', user.id);
+    console.log('Auth successful for user:', user.id);
 
     const body: SalesforceOAuthRequest = await req.json()
     console.log('Request body:', { action: body.action, sandbox: body.sandbox });
