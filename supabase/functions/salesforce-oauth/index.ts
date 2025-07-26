@@ -132,6 +132,7 @@ serve(async (req) => {
     // Get the authenticated user
     const authHeader = req.headers.get('Authorization')
     console.log('Auth header present:', !!authHeader);
+    console.log('Auth header preview:', authHeader ? authHeader.substring(0, 20) + '...' : 'none');
     
     if (!authHeader) {
       console.error('No authorization header provided');
@@ -139,13 +140,41 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
+    console.log('Token extracted, length:', token.length);
+    console.log('Token preview:', token.substring(0, 50) + '...');
     
-    console.log('User auth result:', { userId: user?.id, error: userError?.message });
+    // Try to get user with enhanced error logging
+    let userResult;
+    try {
+      userResult = await supabase.auth.getUser(token);
+      console.log('supabase.auth.getUser call completed');
+    } catch (authCallError) {
+      console.error('supabase.auth.getUser call failed:', authCallError);
+      throw authCallError;
+    }
+    
+    const { data: { user }, error: userError } = userResult;
+    
+    console.log('User auth result:', { 
+      userId: user?.id, 
+      email: user?.email,
+      hasUser: !!user,
+      error: userError?.message,
+      errorCode: userError?.code,
+      errorStatus: userError?.status
+    });
     
     if (userError || !user) {
-      console.error('Authentication failed:', userError);
-      throw new Error('Invalid token')
+      console.error('Authentication failed:', {
+        error: userError,
+        hasUser: !!user,
+        userErrorDetails: userError ? {
+          message: userError.message,
+          code: userError.code,
+          status: userError.status
+        } : null
+      });
+      throw new Error(`Authentication failed: ${userError?.message || 'No user found'}`)
     }
 
     const body: SalesforceOAuthRequest = await req.json()
