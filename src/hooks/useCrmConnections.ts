@@ -60,6 +60,18 @@ export const useCrmConnections = () => {
       if (provider === 'salesforce') {
         console.log('Starting Salesforce OAuth flow for user:', session.user.id);
         
+        // Open popup immediately to avoid popup blockers
+        const popup = window.open('about:blank', '_blank', 'width=500,height=600,scrollbars=yes,resizable=yes');
+        
+        if (!popup) {
+          toast({
+            title: "Popup blocked",
+            description: "Please allow popups for this site and try again.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
         // Debug: Check session and token before invoking function
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         console.log('Current session debug:', {
@@ -70,46 +82,43 @@ export const useCrmConnections = () => {
           tokenPreview: currentSession?.access_token?.substring(0, 50) + '...'
         });
         
-        // Call the edge function to start OAuth flow
-        const { data, error } = await supabase.functions.invoke('salesforce-oauth', {
-          body: {
-            action: 'authorize',
-            redirectUri: `${window.location.origin}/oauth/callback`,
-            sandbox: false, // Default to production, could be made configurable
-          },
-        });
+        try {
+          // Call the edge function to start OAuth flow
+          const { data, error } = await supabase.functions.invoke('salesforce-oauth', {
+            body: {
+              action: 'authorize',
+              redirectUri: `${window.location.origin}/oauth/callback`,
+              sandbox: false, // Default to production, could be made configurable
+            },
+          });
 
-        console.log('Salesforce OAuth authorize response:', { data, error });
+          console.log('Salesforce OAuth authorize response:', { data, error });
 
-        if (error) {
-          console.error('OAuth authorize error:', error);
-          throw error;
-        }
+          if (error) {
+            console.error('OAuth authorize error:', error);
+            popup.close();
+            throw error;
+          }
 
-        if (data?.authUrl) {
-          console.log('Opening Salesforce OAuth in new tab:', data.authUrl);
-          
-          // Open in new tab - more reliable than redirect
-          const newWindow = window.open(data.authUrl, '_blank');
-          
-          if (!newWindow) {
-            toast({
-              title: "Popup blocked",
-              description: "Please allow popups and try again, or copy this URL: " + data.authUrl,
-              variant: "destructive"
-            });
-          } else {
+          if (data?.authUrl) {
+            console.log('Redirecting popup to Salesforce OAuth URL:', data.authUrl);
+            popup.location.href = data.authUrl;
+            
             toast({
               title: "Redirected to Salesforce",
-              description: "Complete the login in the new tab, then return here."
+              description: "Complete the login in the popup window, then return here."
             });
+          } else {
+            console.error('No authorization URL returned from OAuth');
+            popup.close();
+            throw new Error('No authorization URL returned');
           }
-          
-          return; // Exit early to prevent finally block from running
-        } else {
-          console.error('No authorization URL returned from OAuth');
-          throw new Error('No authorization URL returned');
+        } catch (error) {
+          popup.close();
+          throw error;
         }
+        
+        return; // Exit early to prevent finally block from running
       } else {
         throw new Error(`Provider ${provider} not yet implemented`);
       }
