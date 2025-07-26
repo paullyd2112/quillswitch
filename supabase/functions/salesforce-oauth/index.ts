@@ -124,6 +124,18 @@ serve(async (req) => {
   }
 
   try {
+    // Create Supabase client with service role key for this edge function
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     // Get the JWT token from the Authorization header
     const authHeader = req.headers.get('Authorization')
     console.log('Auth header present:', !!authHeader);
@@ -142,20 +154,15 @@ serve(async (req) => {
     const token = authHeader.replace('Bearer ', '')
     console.log('Token extracted, length:', token.length);
     
-    // Create auth client to validate the user token
-    const authClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    )
+    // Get user from JWT token using service client
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
     
-    // Create service client for database operations
-    const serviceClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-
-    // Validate the user's JWT token
-    const { data: { user }, error: userError } = await authClient.auth.getUser(token);
+    console.log('User validation result:', { 
+      userId: user?.id, 
+      email: user?.email,
+      hasUser: !!user,
+      error: userError?.message
+    });
     
     if (userError || !user) {
       console.error('Authentication failed:', userError?.message);
@@ -172,8 +179,6 @@ serve(async (req) => {
     }
     
     console.log('User authenticated successfully:', user.id);
-    
-    // Use serviceClient for database operations
 
     const body: SalesforceOAuthRequest = await req.json()
     console.log('Request body:', { action: body.action, sandbox: body.sandbox });
@@ -217,7 +222,7 @@ serve(async (req) => {
         console.log('Generated auth URL:', authUrl);
         
         // Store the code verifier in the database temporarily
-        const { error: storeError } = await serviceClient
+        const { error: storeError } = await supabase
           .from('oauth_state')
           .insert({
             user_id: user.id,
@@ -253,7 +258,7 @@ serve(async (req) => {
         }
 
         // Get the stored code verifier from the database
-        const { data: oauthData, error: fetchError } = await serviceClient
+        const { data: oauthData, error: fetchError } = await supabase
           .from('oauth_state')
           .select('code_verifier, state_key')
           .eq('user_id', user.id)
@@ -329,7 +334,7 @@ serve(async (req) => {
           scope: tokens.scope
         }
 
-        const { data: credentialId, error: storeError } = await serviceClient
+        const { data: credentialId, error: storeError } = await supabase
           .rpc('encrypt_and_store_credential', {
             p_service_name: 'salesforce',
             p_credential_name: 'Salesforce OAuth',
@@ -353,7 +358,7 @@ serve(async (req) => {
         }
 
         // Clean up PKCE data from database
-        await serviceClient
+        await supabase
           .from('oauth_state')
           .delete()
           .eq('user_id', user.id)
