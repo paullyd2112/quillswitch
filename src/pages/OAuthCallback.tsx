@@ -47,6 +47,14 @@ const OAuthCallback: React.FC = () => {
         }
 
         setMessage('Completing Salesforce OAuth flow...');
+        
+        console.log('Calling salesforce-oauth with callback action:', {
+          action: 'callback',
+          code: code.substring(0, 20) + '...',
+          state: state,
+          redirectUri: `${window.location.origin}/oauth/callback`,
+          sandbox: false
+        });
 
         // For Salesforce, call the salesforce-oauth edge function directly
         const { data: callbackData, error: callbackError } = await supabase.functions.invoke('salesforce-oauth', {
@@ -59,8 +67,24 @@ const OAuthCallback: React.FC = () => {
           }
         });
 
+        console.log('Salesforce OAuth callback response:', { 
+          callbackData, 
+          callbackError,
+          errorDetails: callbackError ? {
+            message: callbackError.message,
+            details: callbackError.details,
+            hint: callbackError.hint,
+            code: callbackError.code,
+            context: callbackError.context
+          } : null
+        });
+
         if (callbackError || !callbackData?.success) {
-          console.error('OAuth callback error:', callbackError, callbackData);
+          console.error('OAuth callback failed:', { 
+            callbackError, 
+            callbackData,
+            fullError: callbackError
+          });
           setStatus('error');
           setMessage(callbackData?.error || callbackError?.message || 'Failed to complete OAuth flow');
           toast({
