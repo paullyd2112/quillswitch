@@ -124,64 +124,54 @@ serve(async (req) => {
   }
 
   try {
-    // Create two clients: one for user auth validation, one for service operations
+    // Get the JWT token from the Authorization header
+    const authHeader = req.headers.get('Authorization')
+    console.log('Auth header present:', !!authHeader);
+    
+    if (!authHeader) {
+      console.error('No authorization header provided');
+      return new Response(
+        JSON.stringify({ success: false, error: 'No authorization header provided' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '')
+    console.log('Token extracted, length:', token.length);
+    
+    // Create auth client to validate the user token
     const authClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
     
+    // Create service client for database operations
     const serviceClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Get the authenticated user using the anon client
-    const authHeader = req.headers.get('Authorization')
-    console.log('Auth header present:', !!authHeader);
-    console.log('Auth header preview:', authHeader ? authHeader.substring(0, 20) + '...' : 'none');
-    
-    if (!authHeader) {
-      console.error('No authorization header provided');
-      throw new Error('No authorization header')
-    }
-
-    const token = authHeader.replace('Bearer ', '')
-    console.log('Token extracted, length:', token.length);
-    console.log('Token preview:', token.substring(0, 50) + '...');
-    
-    // Try to get user with the anon client and the user's JWT token
-    let userResult;
-    try {
-      userResult = await authClient.auth.getUser(token);
-      console.log('authClient.auth.getUser call completed');
-    } catch (authCallError) {
-      console.error('authClient.auth.getUser call failed:', authCallError);
-      throw authCallError;
-    }
-    
-    const { data: { user }, error: userError } = userResult;
-    
-    console.log('User auth result:', { 
-      userId: user?.id, 
-      email: user?.email,
-      hasUser: !!user,
-      error: userError?.message,
-      errorCode: userError?.code,
-      errorStatus: userError?.status
-    });
+    // Validate the user's JWT token
+    const { data: { user }, error: userError } = await authClient.auth.getUser(token);
     
     if (userError || !user) {
-      console.error('Authentication failed:', {
-        error: userError,
-        hasUser: !!user,
-        userErrorDetails: userError ? {
-          message: userError.message,
-          code: userError.code,
-          status: userError.status
-        } : null
-      });
-      throw new Error(`Authentication failed: ${userError?.message || 'No user found'}`)
+      console.error('Authentication failed:', userError?.message);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: `Authentication failed: ${userError?.message || 'Invalid token'}` 
+        }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
+    
+    console.log('User authenticated successfully:', user.id);
     
     // Use serviceClient for database operations
 
