@@ -77,26 +77,23 @@ export const useCrmConnections = () => {
         }
 
         if (data?.authUrl) {
-          console.log('Redirecting to Salesforce OAuth URL:', data.authUrl);
+          console.log('Opening Salesforce OAuth in new tab:', data.authUrl);
           
-          // Cross-browser compatible redirect for Mac Chrome and Safari
-          // Use a small delay to ensure the UI state is properly set
-          setTimeout(() => {
-            // Primary method: direct assignment (works in most browsers)
-            try {
-              window.location.href = data.authUrl;
-            } catch (error) {
-              console.warn('Primary redirect failed, trying fallback:', error);
-              // Fallback: location.replace (prevents back button issues)
-              try {
-                window.location.replace(data.authUrl);
-              } catch (fallbackError) {
-                console.error('All redirect methods failed:', fallbackError);
-                // Last resort: open in same tab
-                window.open(data.authUrl, '_self');
-              }
-            }
-          }, 100);
+          // Open in new tab - more reliable than redirect
+          const newWindow = window.open(data.authUrl, '_blank');
+          
+          if (!newWindow) {
+            toast({
+              title: "Popup blocked",
+              description: "Please allow popups and try again, or copy this URL: " + data.authUrl,
+              variant: "destructive"
+            });
+          } else {
+            toast({
+              title: "Redirected to Salesforce",
+              description: "Complete the login in the new tab, then return here."
+            });
+          }
           
           return; // Exit early to prevent finally block from running
         } else {
