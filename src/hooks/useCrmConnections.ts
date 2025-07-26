@@ -60,6 +60,16 @@ export const useCrmConnections = () => {
       if (provider === 'salesforce') {
         console.log('Starting Salesforce OAuth flow for user:', session.user.id);
         
+        // Debug: Check session and token before invoking function
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        console.log('Current session debug:', {
+          hasSession: !!currentSession,
+          hasAccessToken: !!currentSession?.access_token,
+          userId: currentSession?.user?.id,
+          tokenLength: currentSession?.access_token?.length,
+          tokenPreview: currentSession?.access_token?.substring(0, 50) + '...'
+        });
+        
         // Call the edge function to start OAuth flow
         const { data, error } = await supabase.functions.invoke('salesforce-oauth', {
           body: {

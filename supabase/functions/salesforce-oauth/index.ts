@@ -463,7 +463,7 @@ serve(async (req) => {
         success: false, 
         error: userMessage,
         errorType: errorType,
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: Deno.env.get('NODE_ENV') === 'development' ? error.message : undefined
       }),
       { 
         status: errorType === 'auth_error' ? 401 : 400,
