@@ -115,7 +115,10 @@ async function enhancedFetch(
 }
 
 serve(async (req) => {
-  console.log(`Salesforce OAuth request: ${req.method} ${req.url}`);
+  console.log(`=== Salesforce OAuth Function Start ===`);
+  console.log(`Method: ${req.method}`);
+  console.log(`URL: ${req.url}`);
+  console.log(`Headers:`, Object.fromEntries(req.headers.entries()));
   
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
