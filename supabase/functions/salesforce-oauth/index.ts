@@ -124,38 +124,19 @@ serve(async (req) => {
   }
 
   try {
-    // Create Supabase client with service role key for this edge function
+    // Create Supabase client - let it handle auth automatically
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
+        global: {
+          headers: { Authorization: req.headers.get('Authorization')! },
+        },
       }
     )
 
-    // Get the JWT token from the Authorization header
-    const authHeader = req.headers.get('Authorization')
-    console.log('Auth header present:', !!authHeader);
-    
-    if (!authHeader) {
-      console.error('No authorization header provided');
-      return new Response(
-        JSON.stringify({ success: false, error: 'No authorization header provided' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
-    }
-
-    const token = authHeader.replace('Bearer ', '')
-    console.log('Token extracted, length:', token.length);
-    
-    // Get user from JWT token using service client
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    // Get the authenticated user - this will use the Authorization header automatically
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
     
     console.log('User validation result:', { 
       userId: user?.id, 
