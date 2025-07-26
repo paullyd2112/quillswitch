@@ -78,17 +78,26 @@ export const useCrmConnections = () => {
 
         if (data?.authUrl) {
           console.log('Redirecting to Salesforce OAuth URL:', data.authUrl);
-          console.log('About to execute window.location.href assignment...');
           
-          // Use a more forceful redirect method
-          try {
-            window.location.assign(data.authUrl);
-            console.log('window.location.assign executed');
-          } catch (redirectError) {
-            console.error('Redirect failed:', redirectError);
-            // Fallback to window.open
-            window.open(data.authUrl, '_self');
-          }
+          // Cross-browser compatible redirect for Mac Chrome and Safari
+          // Use a small delay to ensure the UI state is properly set
+          setTimeout(() => {
+            // Primary method: direct assignment (works in most browsers)
+            try {
+              window.location.href = data.authUrl;
+            } catch (error) {
+              console.warn('Primary redirect failed, trying fallback:', error);
+              // Fallback: location.replace (prevents back button issues)
+              try {
+                window.location.replace(data.authUrl);
+              } catch (fallbackError) {
+                console.error('All redirect methods failed:', fallbackError);
+                // Last resort: open in same tab
+                window.open(data.authUrl, '_self');
+              }
+            }
+          }, 100);
+          
           return; // Exit early to prevent finally block from running
         } else {
           console.error('No authorization URL returned from OAuth');
