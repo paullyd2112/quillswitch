@@ -32,7 +32,6 @@ const CrmConnectionCard: React.FC<CrmConnectionCardProps> = ({
           {provider.name}
           {isConnected && <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />}
         </CardTitle>
-        <CardDescription>{provider.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex justify-between items-center">
