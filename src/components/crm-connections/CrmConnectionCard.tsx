@@ -23,8 +23,12 @@ const CrmConnectionCard: React.FC<CrmConnectionCardProps> = ({
   return (
     <Card className="transition-all hover:shadow-md">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <span className="text-2xl">{provider.icon}</span>
+        <CardTitle className="flex items-center gap-3">
+          <img 
+            src={provider.icon} 
+            alt={`${provider.name} logo`}
+            className="w-8 h-8 object-contain"
+          />
           {provider.name}
           {isConnected && <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />}
         </CardTitle>
