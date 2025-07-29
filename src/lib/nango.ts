@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 // In production, you should get this from your environment variables
 export const nango = new Nango({
   host: 'https://api.nango.dev',
-  publicKey: 'pk_test_replace_with_your_actual_nango_public_key', // Replace with your actual Nango public key
+  publicKey: 'YOUR_ACTUAL_NANGO_PUBLIC_KEY_HERE', // Replace this with your real Nango public key (UUID v4 format)
 });
 
 // CRM provider configurations for Nango
