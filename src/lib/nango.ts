@@ -1,9 +1,11 @@
 import Nango from '@nangohq/frontend';
+import { supabase } from "@/integrations/supabase/client";
 
-// Initialize Nango client
+// Initialize Nango client with a simple public key
+// In production, you should get this from your environment variables
 export const nango = new Nango({
-  host: 'https://api.nango.dev', // Use Nango cloud
-  publicKey: process.env.VITE_NANGO_PUBLIC_KEY || '', // Will be set via environment
+  host: 'https://api.nango.dev',
+  publicKey: 'pk_test_replace_with_your_actual_nango_public_key', // Replace with your actual Nango public key
 });
 
 // CRM provider configurations for Nango
@@ -50,9 +52,14 @@ export const checkNangoConnection = async (provider: NangoProvider, userId: stri
   
   try {
     // Use the proxy function to check connection via Nango API
-    const response = await fetch('/api/nango-proxy', {
+    const { data: { session } } = await supabase.auth.getSession();
+    const response = await fetch('https://kxjidapjtcxwzpwdomnm.supabase.co/functions/v1/nango-proxy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token}`,
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4amlkYXBqdGN4d3pwd2RvbW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5NjUzNzUsImV4cCI6MjA1ODU0MTM3NX0.U1kLjAztYB-Jfye3dIkJ7gx9U7aNDYHrorkI1Bax_g8'
+      },
       body: JSON.stringify({
         provider: config.providerId,
         endpoint: `connections/${connectionId}`,
@@ -79,9 +86,14 @@ export const deleteNangoConnection = async (provider: NangoProvider, userId: str
   
   try {
     // Use the proxy function to delete connection via Nango API
-    const response = await fetch('/api/nango-proxy', {
+    const { data: { session } } = await supabase.auth.getSession();
+    const response = await fetch('https://kxjidapjtcxwzpwdomnm.supabase.co/functions/v1/nango-proxy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token}`,
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4amlkYXBqdGN4d3pwd2RvbW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI5NjUzNzUsImV4cCI6MjA1ODU0MTM3NX0.U1kLjAztYB-Jfye3dIkJ7gx9U7aNDYHrorkI1Bax_g8'
+      },
       body: JSON.stringify({
         provider: config.providerId,
         endpoint: `connections/${connectionId}`,
