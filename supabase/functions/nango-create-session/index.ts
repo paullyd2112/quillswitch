@@ -35,7 +35,7 @@ serve(async (req) => {
       throw new Error('Nango secret key not configured')
     }
 
-    // Create Connect session with Nango
+    // Create Connect session with Nango using correct API format
     const sessionResponse = await fetch('https://api.nango.dev/connect/sessions', {
       method: 'POST',
       headers: {
@@ -44,10 +44,12 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         allowed_integrations: [integrationId],
-        user_id: user.id,
-        user_email: user.email,
-        end_user_organization_id: user.id, // Using user ID as org ID for simplicity
-        end_user_organization_display_name: user.email?.split('@')[0] || 'User'
+        end_user: {
+          id: user.id,
+          email: user.email,
+          display_name: user.email?.split('@')[0] || 'User',
+          organization_id: user.id // Using user ID as org ID for simplicity
+        }
       })
     })
 
