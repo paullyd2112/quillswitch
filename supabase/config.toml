@@ -47,3 +47,9 @@ verify_jwt = true
 
 [functions.scheduled-migrations]
 verify_jwt = false
+
+[functions.nango-webhook]
+verify_jwt = false
+
+[functions.nango-proxy] 
+verify_jwt = true

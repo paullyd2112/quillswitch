@@ -1,0 +1,107 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    const body = await req.json()
+    console.log('Nango webhook received:', body)
+
+    const { type, connectionId, providerId } = body
+
+    // Handle different webhook events from Nango
+    switch (type) {
+      case 'auth':
+        // Connection was successfully created
+        console.log(`New connection created: ${providerId} for ${connectionId}`)
+        
+        // Extract user ID from connection ID (format: provider_userId)
+        const userId = connectionId.split('_')[1]
+        
+        if (userId) {
+          // Store connection info in our database
+          const { error } = await supabaseClient
+            .from('service_credentials')
+            .upsert({
+              user_id: userId,
+              service_name: providerId,
+              credential_name: `${providerId} OAuth via Nango`,
+              credential_type: 'oauth_nango',
+              credential_value: '', // Nango handles the actual tokens
+              metadata: {
+                nango_connection_id: connectionId,
+                nango_provider_id: providerId,
+                connected_at: new Date().toISOString()
+              }
+            })
+
+          if (error) {
+            console.error('Error storing connection:', error)
+          } else {
+            console.log('Connection stored successfully')
+          }
+        }
+        break
+
+      case 'auth.token_refresh':
+        // Access token was refreshed
+        console.log(`Token refreshed for ${providerId} connection ${connectionId}`)
+        break
+
+      case 'auth.connection_deleted':
+        // Connection was deleted
+        console.log(`Connection deleted: ${providerId} for ${connectionId}`)
+        
+        // Remove from our database
+        const userIdForDeletion = connectionId.split('_')[1]
+        if (userIdForDeletion) {
+          const { error } = await supabaseClient
+            .from('service_credentials')
+            .delete()
+            .eq('user_id', userIdForDeletion)
+            .eq('service_name', providerId)
+            .eq('credential_type', 'oauth_nango')
+
+          if (error) {
+            console.error('Error deleting connection:', error)
+          }
+        }
+        break
+
+      default:
+        console.log(`Unhandled webhook type: ${type}`)
+    }
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200 
+      },
+    )
+
+  } catch (error) {
+    console.error('Webhook error:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500 
+      },
+    )
+  }
+})

@@ -4,6 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { ConnectedCredential } from "@/components/crm-connections/types";
+import { 
+  initiateNangoOAuth, 
+  deleteNangoConnection, 
+  checkNangoConnection,
+  NangoProvider 
+} from "@/lib/nango";
 
 export const useCrmConnections = () => {
   const { toast } = useToast();
@@ -22,16 +28,31 @@ export const useCrmConnections = () => {
   }, [session, sessionLoading]);
 
   const loadConnectedCredentials = async () => {
+    if (!session?.user) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { data, error } = await supabase
-        .from('service_credentials')
-        .select('id, service_name, credential_name, credential_type, created_at, expires_at')
-        .in('credential_type', ['oauth', 'oauth_token']);
-        
-      if (error) throw error;
+      // Check Nango connections for each provider
+      const providers: NangoProvider[] = ['salesforce', 'hubspot', 'pipedrive'];
+      const connectedCreds: ConnectedCredential[] = [];
       
+      await Promise.all(providers.map(async (provider) => {
+        const { isConnected } = await checkNangoConnection(provider, session.user.id);
+        if (isConnected) {
+          connectedCreds.push({
+            id: `nango_${provider}_${session.user.id}`,
+            service_name: provider,
+            credential_name: `${provider} OAuth`,
+            credential_type: 'oauth',
+            created_at: new Date().toISOString(),
+            expires_at: null
+          });
+        }
+      }));
       
-      setConnectedCredentials(data || []);
+      setConnectedCredentials(connectedCreds);
     } catch (error) {
       console.error('Failed to load connected credentials:', error);
       toast({
@@ -57,70 +78,21 @@ export const useCrmConnections = () => {
     setConnectingProvider(provider);
 
     try {
-      if (provider === 'salesforce') {
-        console.log('Starting Salesforce OAuth flow for user:', session.user.id);
-        
-        // Open popup immediately to avoid popup blockers
-        const popup = window.open('about:blank', '_blank', 'width=500,height=600,scrollbars=yes,resizable=yes');
-        
-        if (!popup) {
-          toast({
-            title: "Popup blocked",
-            description: "Please allow popups for this site and try again.",
-            variant: "destructive"
-          });
-          return;
-        }
-        
-        // Debug: Check session and token before invoking function
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        console.log('Current session debug:', {
-          hasSession: !!currentSession,
-          hasAccessToken: !!currentSession?.access_token,
-          userId: currentSession?.user?.id,
-          tokenLength: currentSession?.access_token?.length,
-          tokenPreview: currentSession?.access_token?.substring(0, 50) + '...'
+      console.log(`Starting ${provider} OAuth flow via Nango for user:`, session.user.id);
+      
+      // Use Nango for OAuth flow
+      const result = await initiateNangoOAuth(provider as NangoProvider, session.user.id);
+      
+      if (result.success) {
+        toast({
+          title: "Connected successfully!",
+          description: `Successfully connected to ${provider}`,
         });
         
-        try {
-          // Call the edge function to start OAuth flow
-          const { data, error } = await supabase.functions.invoke('salesforce-oauth', {
-            body: {
-              action: 'authorize',
-              redirectUri: `${window.location.origin}/oauth/callback`,
-              sandbox: false, // Default to production, could be made configurable
-            },
-          });
-
-          console.log('Salesforce OAuth authorize response:', { data, error });
-
-          if (error) {
-            console.error('OAuth authorize error:', error);
-            popup.close();
-            throw error;
-          }
-
-          if (data?.authUrl) {
-            console.log('Redirecting popup to Salesforce OAuth URL:', data.authUrl);
-            popup.location.href = data.authUrl;
-            
-            toast({
-              title: "Redirected to Salesforce",
-              description: "Complete the login in the popup window, then return here."
-            });
-          } else {
-            console.error('No authorization URL returned from OAuth');
-            popup.close();
-            throw new Error('No authorization URL returned');
-          }
-        } catch (error) {
-          popup.close();
-          throw error;
-        }
-        
-        return; // Exit early to prevent finally block from running
+        // Refresh the credentials list
+        await loadConnectedCredentials();
       } else {
-        throw new Error(`Provider ${provider} not yet implemented`);
+        throw new Error(result.error?.message || `Failed to connect to ${provider}`);
       }
     } catch (error) {
       console.error('Connection error:', error);
@@ -135,44 +107,25 @@ export const useCrmConnections = () => {
   };
 
   const handleDisconnect = async (credentialId: string, serviceName: string) => {
+    if (!session?.user) return;
+    
     try {
-      // For Salesforce, we can call the revoke endpoint
-      if (serviceName === 'salesforce') {
-        // Get credential first to revoke properly
-        const { data: credentials, error: getError } = await supabase
-          .rpc('get_decrypted_credential_with_logging', {
-            p_credential_id: credentialId
-          });
-
-        if (!getError && credentials && credentials.length > 0) {
-          const credentialData = JSON.parse(credentials[0].credential_value);
-          
-          // Call revoke endpoint
-          await supabase.functions.invoke('salesforce-oauth', {
-            body: {
-              action: 'revoke',
-              refreshToken: credentialData.refresh_token,
-              redirectUri: `${window.location.origin}/oauth/callback`
-            }
-          });
-        }
-      }
-
-      // Delete the credential from our database
-      const { error } = await supabase
-        .from('service_credentials')
-        .delete()
-        .eq('id', credentialId);
+      console.log(`Disconnecting ${serviceName} via Nango for user:`, session.user.id);
+      
+      // Use Nango to delete the connection
+      const result = await deleteNangoConnection(serviceName as NangoProvider, session.user.id);
+      
+      if (result.success) {
+        // Refresh the list
+        await loadConnectedCredentials();
         
-      if (error) throw error;
-      
-      // Refresh the list
-      await loadConnectedCredentials();
-      
-      toast({
-        title: "Disconnected",
-        description: `Successfully disconnected from ${serviceName}`
-      });
+        toast({
+          title: "Disconnected",
+          description: `Successfully disconnected from ${serviceName}`
+        });
+      } else {
+        throw new Error(result.error?.message || `Failed to disconnect from ${serviceName}`);
+      }
     } catch (error) {
       console.error('Failed to disconnect:', error);
       toast({
