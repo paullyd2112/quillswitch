@@ -34,23 +34,26 @@ export const useCrmConnections = () => {
     }
 
     try {
-      // Check Nango connections for each provider
-      const providers: NangoProvider[] = ['salesforce', 'hubspot', 'pipedrive'];
-      const connectedCreds: ConnectedCredential[] = [];
-      
-      await Promise.all(providers.map(async (provider) => {
-        const { isConnected } = await checkNangoConnection(provider, session.user.id);
-        if (isConnected) {
-          connectedCreds.push({
-            id: `nango_${provider}_${session.user.id}`,
-            service_name: provider,
-            credential_name: `${provider} OAuth`,
-            credential_type: 'oauth',
-            created_at: new Date().toISOString(),
-            expires_at: null
-          });
-        }
-      }));
+      // Check our database for stored Nango connections
+      const { data: credentials, error } = await supabase
+        .from('service_credentials')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .eq('credential_type', 'oauth_nango_connect');
+
+      if (error) {
+        console.error('Error loading credentials:', error);
+        return;
+      }
+
+      const connectedCreds: ConnectedCredential[] = credentials?.map(cred => ({
+        id: cred.id,
+        service_name: cred.service_name,
+        credential_name: cred.credential_name,
+        credential_type: 'oauth',
+        created_at: cred.created_at,
+        expires_at: cred.expires_at
+      })) || [];
       
       setConnectedCredentials(connectedCreds);
     } catch (error) {
@@ -110,12 +113,34 @@ export const useCrmConnections = () => {
     if (!session?.user) return;
     
     try {
-      console.log(`Disconnecting ${serviceName} via Nango for user:`, session.user.id);
+      console.log(`Disconnecting ${serviceName} credential:`, credentialId);
       
-      // Use Nango to delete the connection
-      const result = await deleteNangoConnection(serviceName as NangoProvider, session.user.id);
+      // Get the credential to find the Nango connection ID
+      const { data: credential, error: fetchError } = await supabase
+        .from('service_credentials')
+        .select('metadata')
+        .eq('id', credentialId)
+        .single();
+
+      const metadata = credential?.metadata as any;
+      if (fetchError || !metadata?.nango_connection_id) {
+        throw new Error('Could not find Nango connection ID');
+      }
+
+      // Delete via Nango API
+      const result = await deleteNangoConnection(serviceName as NangoProvider, metadata.nango_connection_id);
       
       if (result.success) {
+        // Remove from our database
+        const { error: deleteError } = await supabase
+          .from('service_credentials')
+          .delete()
+          .eq('id', credentialId);
+
+        if (deleteError) {
+          console.error('Error removing from database:', deleteError);
+        }
+
         // Refresh the list
         await loadConnectedCredentials();
         
