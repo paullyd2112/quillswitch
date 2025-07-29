@@ -35,7 +35,7 @@ serve(async (req) => {
       throw new Error('Nango secret key not configured')
     }
 
-    // Create Connect session with Nango using correct API format
+    // Create Connect session with Nango using the correct API format
     const sessionResponse = await fetch('https://api.nango.dev/connect/sessions', {
       method: 'POST',
       headers: {
@@ -43,30 +43,41 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        allowed_integrations: [integrationId],
         end_user: {
           id: user.id,
           email: user.email,
-          display_name: user.email?.split('@')[0] || 'User',
-          organization_id: user.id // Using user ID as org ID for simplicity
-        }
+          display_name: user.email?.split('@')[0] || 'User'
+        },
+        organization: {
+          id: user.id, // Using user ID as org ID for simplicity
+          display_name: user.email?.split('@')[1] || 'Organization'
+        },
+        allowed_integrations: [integrationId],
+        integrations_config_defaults: {}
       })
     })
 
     if (!sessionResponse.ok) {
       const errorData = await sessionResponse.json()
-      console.error('Nango session creation error:', errorData)
-      throw new Error(`Failed to create Nango session: ${errorData.message || 'Unknown error'}`)
+      console.error('Nango session creation error:', JSON.stringify(errorData, null, 2))
+      console.error('Request body was:', JSON.stringify({
+        end_user: { id: user.id, email: user.email, display_name: user.email?.split('@')[0] || 'User' },
+        organization: { id: user.id, display_name: user.email?.split('@')[1] || 'Organization' },
+        allowed_integrations: [integrationId],
+        integrations_config_defaults: {}
+      }, null, 2))
+      throw new Error(`Failed to create Nango session: ${errorData.error?.message || errorData.message || JSON.stringify(errorData)}`)
     }
 
     const sessionData = await sessionResponse.json()
     
-    console.log('Nango Connect session created successfully')
+    console.log('Nango Connect session created successfully:', sessionData)
 
+    // Nango returns data in nested format: { data: { token, expires_at } }
     return new Response(
       JSON.stringify({
-        sessionToken: sessionData.token,
-        expiresAt: sessionData.expires_at
+        sessionToken: sessionData.data.token,
+        expiresAt: sessionData.data.expires_at
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
