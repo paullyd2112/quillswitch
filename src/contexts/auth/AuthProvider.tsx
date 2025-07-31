@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { supabase } from '../../integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
 import { AuthContextType, AuthResponse } from './types';
+import { logger } from '@/utils/logging/productionLogger';
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -25,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener FIRST to avoid missing events
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
-        console.log('Auth state change:', event, currentSession?.user?.email);
+        logger.debug('Auth', 'Auth state change', { event, userEmail: currentSession?.user?.email });
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      console.log('Initial session check:', currentSession?.user?.email);
+      logger.debug('Auth', 'Initial session check', { userEmail: currentSession?.user?.email });
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
@@ -96,11 +97,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   
   const signInWithGoogle = async (): Promise<AuthResponse> => {
     try {
-      console.log('Starting Google OAuth flow...');
+      logger.info('Auth', 'Starting Google OAuth flow');
       
       // Get the current URL origin to ensure we redirect to the right place
       const currentOrigin = window.location.origin;
-      console.log('Current origin:', currentOrigin);
+      logger.debug('Auth', 'OAuth redirect origin configured', { origin: currentOrigin });
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -113,16 +114,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       });
       
-      console.log('Google OAuth response:', { data, error });
+      logger.debug('Auth', 'Google OAuth response received', { 
+        hasData: !!data, 
+        hasError: !!error,
+        errorMessage: error?.message 
+      });
       
       if (error) {
-        console.error('Google OAuth error:', error);
+        logger.error('Auth', 'Google OAuth error', error);
         return { error };
       }
       
       return { data, error: null };
     } catch (error: any) {
-      console.error('Unexpected Google OAuth error:', error);
+      logger.error('Auth', 'Unexpected Google OAuth error', error);
       return { error };
     }
   };

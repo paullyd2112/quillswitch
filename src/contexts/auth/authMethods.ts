@@ -1,10 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
 import { AuthError } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import { logger } from '@/utils/logging/productionLogger';
 
 export async function signIn(email: string, password: string) {
   try {
-    console.log("Attempting sign in with email:", email);
+    logger.info('Auth', 'Sign in attempt with email');
     
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -12,7 +13,7 @@ export async function signIn(email: string, password: string) {
     });
     
     if (error) {
-      console.error("Sign in error:", error.message);
+      logger.error('Auth', 'Sign in error', error);
       let errorMessage = "Failed to sign in";
       
       // Provide more user-friendly error messages
@@ -27,7 +28,7 @@ export async function signIn(email: string, password: string) {
     
     return { error };
   } catch (error) {
-    console.error("Unexpected error signing in:", error);
+    logger.error('Auth', 'Unexpected error signing in', error as Error);
     toast.error("An unexpected error occurred. Please try again later.");
     return { error: error as AuthError };
   }
@@ -35,7 +36,7 @@ export async function signIn(email: string, password: string) {
 
 export async function signInWithGoogle(setIsLoading: (loading: boolean) => void) {
   try {
-    console.log("Attempting sign in with Google");
+    logger.info('Auth', 'Sign in attempt with Google');
     setIsLoading(true);
     
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -50,13 +51,13 @@ export async function signInWithGoogle(setIsLoading: (loading: boolean) => void)
     });
     
     if (error) {
-      console.error("Google sign in error:", error.message);
+      logger.error('Auth', 'Google sign in error', error);
       toast.error(`Failed to sign in with Google: ${error.message}`);
     }
     
     return { error };
   } catch (error) {
-    console.error("Unexpected error signing in with Google:", error);
+    logger.error('Auth', 'Unexpected error signing in with Google', error as Error);
     toast.error("An unexpected error occurred. Please try again later.");
     return { error: error as AuthError };
   } finally {
@@ -66,7 +67,7 @@ export async function signInWithGoogle(setIsLoading: (loading: boolean) => void)
 
 export async function signUp(email: string, password: string) {
   try {
-    console.log("Attempting sign up with email:", email);
+    logger.info('Auth', 'Sign up attempt with email');
     
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -77,7 +78,7 @@ export async function signUp(email: string, password: string) {
     });
     
     if (error) {
-      console.error("Sign up error:", error.message);
+      logger.error('Auth', 'Sign up error', error);
       let errorMessage = "Failed to create account";
       
       // Provide more user-friendly error messages
@@ -95,7 +96,7 @@ export async function signUp(email: string, password: string) {
     const isEmailConfirmationRequired = data.user && !data.user.confirmed_at;
     
     if (data.user) {
-      console.log("Sign up successful, user created:", data.user.id);
+      logger.info('Auth', 'Sign up successful', { userId: data.user.id });
       
       // Check if this is an existing user (identities length is 0)
       if (data.user.identities?.length === 0) {
@@ -113,7 +114,7 @@ export async function signUp(email: string, password: string) {
     
     return { error: null };
   } catch (error) {
-    console.error("Unexpected error signing up:", error);
+    logger.error('Auth', 'Unexpected error signing up', error as Error);
     toast.error("An unexpected error occurred. Please try again later.");
     return { error: error as AuthError };
   }
@@ -121,17 +122,17 @@ export async function signUp(email: string, password: string) {
 
 export async function signOut(setIsLoading: (loading: boolean) => void) {
   try {
-    console.log("Signing out user");
+    logger.info('Auth', 'User sign out initiated');
     setIsLoading(true);
     
     const { error } = await supabase.auth.signOut();
     
     if (error) {
-      console.error("Error signing out:", error);
+      logger.error('Auth', 'Error signing out', error);
       toast.error("Error signing out: " + error.message);
     }
   } catch (error) {
-    console.error("Unexpected error signing out:", error);
+    logger.error('Auth', 'Unexpected error signing out', error as Error);
     toast.error("An unexpected error occurred while signing out.");
   } finally {
     setIsLoading(false);
@@ -140,7 +141,7 @@ export async function signOut(setIsLoading: (loading: boolean) => void) {
 
 export async function resetPassword(email: string, setIsLoading: (loading: boolean) => void) {
   try {
-    console.log("Requesting password reset for:", email);
+    logger.info('Auth', 'Password reset requested');
     setIsLoading(true);
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -148,7 +149,7 @@ export async function resetPassword(email: string, setIsLoading: (loading: boole
     });
     
     if (error) {
-      console.error("Password reset error:", error.message);
+      logger.error('Auth', 'Password reset error', error);
       toast.error("Failed to send password reset email: " + error.message);
       return { error };
     }
@@ -156,7 +157,7 @@ export async function resetPassword(email: string, setIsLoading: (loading: boole
     toast.success("Password reset email sent. Please check your inbox.");
     return { error: null, emailSent: true };
   } catch (error) {
-    console.error("Unexpected error resetting password:", error);
+    logger.error('Auth', 'Unexpected error resetting password', error as Error);
     toast.error("An unexpected error occurred. Please try again later.");
     return { error: error as AuthError };
   } finally {

@@ -4,6 +4,7 @@ import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { sessionManager } from "@/utils/secureStorage";
+import { logger } from "@/utils/logging/productionLogger";
 
 export function useAuthState() {
   const [session, setSession] = useState<Session | null>(null);
@@ -14,7 +15,7 @@ export function useAuthState() {
     // Set up auth state listener FIRST to avoid race conditions
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log("Auth state changed:", event);
+        logger.debug('Auth', 'Auth state changed', { event });
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -50,7 +51,7 @@ export function useAuthState() {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Initial session check:", session ? "Session found" : "No session");
+      logger.debug('Auth', 'Initial session check', { hasSession: !!session });
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);

@@ -24,6 +24,7 @@ import {
 import { securityAuditor, SecurityAuditResult } from '@/utils/securityAudit';
 import { checkSecurityHeaders, isConnectionSecure } from '@/utils/encryptionUtils';
 import { toast } from 'sonner';
+import { logger } from '@/utils/logging/productionLogger';
 
 const ComprehensiveSecurityAudit = () => {
   const [auditResult, setAuditResult] = useState<SecurityAuditResult | null>(null);
@@ -33,7 +34,7 @@ const ComprehensiveSecurityAudit = () => {
   const performFullAudit = async () => {
     setIsLoading(true);
     try {
-      console.log('Starting comprehensive security audit...');
+      logger.info('Security', 'Starting comprehensive security audit');
       
       // Perform the main security audit
       const result = await securityAuditor.performComprehensiveAudit();
@@ -55,7 +56,11 @@ const ComprehensiveSecurityAudit = () => {
       setAuditResult(enhancedResult);
       setLastAuditTime(new Date());
       
-      console.log('Security audit completed:', enhancedResult);
+      logger.info('Security', 'Security audit completed', { 
+        score: enhancedResult.score, 
+        issueCount: enhancedResult.issues.length,
+        compliant: enhancedResult.compliant 
+      });
       toast.success('Security audit completed successfully');
     } catch (error) {
       console.error('Security audit failed:', error);
