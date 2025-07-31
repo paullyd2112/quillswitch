@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QuillSwitch Security Audit Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .score { font-size: 2em; font-weight: bold; margin: 20px 0; }
+        .score.good { color: #16a34a; }
+        .score.warning { color: #ca8a04; }
+        .score.danger { color: #dc2626; }
+        .issue { margin: 10px 0; padding: 15px; border-radius: 6px; border-left: 4px solid; }
+        .critical { border-left-color: #dc2626; background: #fef2f2; }
+        .high { border-left-color: #ea580c; background: #fff7ed; }
+        .medium { border-left-color: #ca8a04; background: #fffbeb; }
+        .low { border-left-color: #16a34a; background: #f0fdf4; }
+        .recommendation { margin: 10px 0; padding: 15px; background: #f0f9ff; border-radius: 6px; border-left: 4px solid #0284c7; }
+        .loading { text-align: center; padding: 40px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 QuillSwitch Security Audit</h1>
+        <div id="loading" class="loading">
+            <h2>Running comprehensive security audit...</h2>
+            <p>Analyzing credentials, authentication, database, and security policies...</p>
+        </div>
+        <div id="results" style="display: none;"></div>
+    </div>
+
+    <script type="module">
+        try {
+            // Import the security auditor
+            const { securityAuditor } = await import('/src/utils/securityAudit.ts');
+            
+            console.log('🔍 Starting comprehensive security audit...');
+            
+            // Run the comprehensive audit
+            const auditResult = await securityAuditor.performComprehensiveAudit();
+            
+            console.log('📊 Security Audit Results:', auditResult);
+            
+            // Hide loading and show results
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            // Display results
+            const resultsDiv = document.getElementById('results');
+            
+            // Security Score
+            const scoreClass = auditResult.score >= 80 ? 'good' : auditResult.score >= 60 ? 'warning' : 'danger';
+            const complianceStatus = auditResult.compliant ? '✅ COMPLIANT' : '❌ NON-COMPLIANT';
+            
+            resultsDiv.innerHTML = `
+                <div class="score ${scoreClass}">
+                    Security Score: ${auditResult.score}/100
+                </div>
+                <div class="score ${auditResult.compliant ? 'good' : 'danger'}">
+                    ${complianceStatus}
+                </div>
+                
+                <h2>📋 Summary</h2>
+                <ul>
+                    <li><strong>${auditResult.issues.length}</strong> security issues found</li>
+                    <li><strong>${auditResult.recommendations.length}</strong> recommendations provided</li>
+                    <li><strong>${auditResult.issues.filter(i => i.severity === 'critical').length}</strong> critical issues</li>
+                    <li><strong>${auditResult.issues.filter(i => i.severity === 'high').length}</strong> high severity issues</li>
+                </ul>
+                
+                ${auditResult.issues.length > 0 ? `
+                <h2>🚨 Security Issues</h2>
+                ${auditResult.issues.map(issue => `
+                    <div class="issue ${issue.severity}">
+                        <h3>${issue.severity.toUpperCase()}: ${issue.title}</h3>
+                        <p><strong>Category:</strong> ${issue.category}</p>
+                        <p><strong>Description:</strong> ${issue.description}</p>
+                        <p><strong>Remediation:</strong> ${issue.remediation}</p>
+                        ${issue.affectedResources ? `<p><strong>Affected:</strong> ${issue.affectedResources.join(', ')}</p>` : ''}
+                    </div>
+                `).join('')}
+                ` : '<h2>✅ No Security Issues Found</h2>'}
+                
+                ${auditResult.recommendations.length > 0 ? `
+                <h2>💡 Security Recommendations</h2>
+                ${auditResult.recommendations.map(rec => `
+                    <div class="recommendation">
+                        <h3>${rec.priority.toUpperCase()} PRIORITY: ${rec.title}</h3>
+                        <p><strong>Description:</strong> ${rec.description}</p>
+                        <p><strong>Implementation:</strong> ${rec.implementation}</p>
+                        <p><strong>Estimated Effort:</strong> ${rec.estimatedEffort}</p>
+                    </div>
+                `).join('')}
+                ` : ''}
+                
+                <h2>🔧 Next Steps</h2>
+                <ol>
+                    <li>Address all critical and high severity issues immediately</li>
+                    <li>Implement medium severity fixes within this sprint</li>
+                    <li>Plan implementation of high-priority recommendations</li>
+                    <li>Schedule regular security audits (weekly/monthly)</li>
+                </ol>
+                
+                <p><small>Audit completed at: ${new Date().toISOString()}</small></p>
+            `;
+            
+        } catch (error) {
+            console.error('❌ Security audit failed:', error);
+            document.getElementById('loading').innerHTML = `
+                <h2>❌ Security Audit Failed</h2>
+                <p><strong>Error:</strong> ${error.message}</p>
+                <p>Please check the console for more details.</p>
+            `;
+        }
+    </script>
+</body>
+</html>
