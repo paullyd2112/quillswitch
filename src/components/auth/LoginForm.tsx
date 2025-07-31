@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { authLog } from "@/utils/logging/consoleReplacer";
 import { 
   Card,
   CardContent,
@@ -35,7 +36,7 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
       const result = await signIn(loginEmail, loginPassword);
 
       if (result?.error) {
-        console.error('Sign in error:', result.error);
+        authLog.error('Sign in failed', undefined, { email: loginEmail, hasPassword: !!loginPassword });
         toast.error(result.error.message || "Failed to sign in");
         return;
       }
@@ -43,7 +44,7 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
       toast.success("Signed in successfully!");
       navigate("/app/dashboard");
     } catch (error: any) {
-      console.error('Unexpected sign in error:', error);
+      authLog.error('Unexpected sign in error', error instanceof Error ? error : undefined, { email: loginEmail });
       toast.error(error.message || "Something went wrong");
     } finally {
       setIsLoading(false);
@@ -53,12 +54,12 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
-      console.log('Attempting Google sign in...');
+      authLog.info('Attempting Google sign in');
       
       const result = await signInWithGoogle();
       
       if (result?.error) {
-        console.error('Google sign in error:', result.error);
+        authLog.error('Google sign in failed', undefined, { provider: 'google' });
         
         // Provide more specific error messages for common Google OAuth issues
         let errorMessage = result.error.message;
@@ -81,7 +82,7 @@ const LoginForm = ({ openForgotPassword }: LoginFormProps) => {
       toast.success("Redirecting to Google...");
       
     } catch (error: any) {
-      console.error('Unexpected Google sign in error:', error);
+      authLog.error('Unexpected Google sign in error', error instanceof Error ? error : undefined, { provider: 'google' });
       toast.error("Failed to start Google sign-in. Please try again.");
     } finally {
       setIsGoogleLoading(false);

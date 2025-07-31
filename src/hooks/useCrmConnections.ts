@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from '@supabase/auth-helpers-react';
+import { crmLog } from "@/utils/logging/consoleReplacer";
 import { ConnectedCredential } from "@/components/crm-connections/types";
 import { 
   initiateNangoOAuth, 
@@ -42,7 +43,7 @@ export const useCrmConnections = () => {
         .eq('credential_type', 'oauth_nango_connect');
 
       if (error) {
-        console.error('Error loading credentials:', error);
+        crmLog.error('Error loading credentials', error instanceof Error ? error : undefined, { userId: session.user.id });
         return;
       }
 
@@ -57,7 +58,9 @@ export const useCrmConnections = () => {
       
       setConnectedCredentials(connectedCreds);
     } catch (error) {
-      console.error('Failed to load connected credentials:', error);
+      crmLog.error('Failed to load connected credentials', error instanceof Error ? error : undefined, { 
+        userId: session?.user?.id 
+      });
       toast({
         title: "Error",
         description: "Failed to load connected CRMs",
@@ -81,7 +84,7 @@ export const useCrmConnections = () => {
     setConnectingProvider(provider);
 
     try {
-      console.log(`Starting ${provider} OAuth flow via Nango for user:`, session.user.id);
+      crmLog.info(`Starting ${provider} OAuth flow via Nango`, { provider, userId: session.user.id });
       
       // Use Nango for OAuth flow
       const result = await initiateNangoOAuth(provider as NangoProvider, session.user.id);
@@ -98,7 +101,10 @@ export const useCrmConnections = () => {
         throw new Error(result.error?.message || `Failed to connect to ${provider}`);
       }
     } catch (error) {
-      console.error('Connection error:', error);
+      crmLog.error('Connection error', error instanceof Error ? error : undefined, { 
+        provider, 
+        userId: session.user.id 
+      });
       toast({
         title: "Connection failed",
         description: error.message || "Failed to connect to CRM service",
@@ -113,7 +119,7 @@ export const useCrmConnections = () => {
     if (!session?.user) return;
     
     try {
-      console.log(`Disconnecting ${serviceName} credential:`, credentialId);
+      crmLog.info(`Disconnecting ${serviceName} credential`, { credentialId, serviceName, userId: session.user.id });
       
       // Get the credential to find the Nango connection ID
       const { data: credential, error: fetchError } = await supabase
@@ -138,7 +144,9 @@ export const useCrmConnections = () => {
           .eq('id', credentialId);
 
         if (deleteError) {
-          console.error('Error removing from database:', deleteError);
+          crmLog.error('Error removing from database', deleteError instanceof Error ? deleteError : undefined, { 
+            credentialId, serviceName 
+          });
         }
 
         // Refresh the list
@@ -152,7 +160,9 @@ export const useCrmConnections = () => {
         throw new Error(result.error?.message || `Failed to disconnect from ${serviceName}`);
       }
     } catch (error) {
-      console.error('Failed to disconnect:', error);
+      crmLog.error('Failed to disconnect', error instanceof Error ? error : undefined, { 
+        credentialId, serviceName, userId: session?.user?.id 
+      });
       toast({
         title: "Error", 
         description: "Failed to disconnect. Please try again.",

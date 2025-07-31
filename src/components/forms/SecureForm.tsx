@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { useSecurity } from '@/components/security/SecurityProvider';
 import { useAuth } from '@/contexts/auth';
 import { Loader2 } from 'lucide-react';
+import { securityLog } from '@/utils/logging/consoleReplacer';
 
 interface SecureFormProps {
   onSubmit: (data: Record<string, any>) => Promise<void>;
@@ -81,7 +82,11 @@ export function SecureForm({
       setFormData({});
       
     } catch (error) {
-      console.error('Form submission error:', error);
+      securityLog.error('Form submission error', error instanceof Error ? error : undefined, { 
+        formType, 
+        userId: user?.id,
+        fieldCount: fields.length 
+      });
     } finally {
       setIsSubmitting(false);
     }

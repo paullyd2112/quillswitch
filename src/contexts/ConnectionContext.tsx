@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { toast } from "sonner";
 import { storeSecureData, getSecureData, encryptData } from "@/utils/encryptionUtils";
+import { crmLog, securityLog } from "@/utils/logging/consoleReplacer";
 
 
 interface ConnectedSystem {
@@ -48,7 +49,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         // TODO: Load from native CRM connections stored in Supabase
         setConnectedSystems([]);
       } catch (error) {
-        console.error("Failed to load connected systems", error);
+        crmLog.error('Failed to load connected systems', error instanceof Error ? error : undefined);
       }
     };
     
@@ -90,7 +91,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       
     } catch (error) {
       toast.error(`Failed to connect to ${systemId} with OAuth`);
-      console.error("OAuth connection error:", error);
+      crmLog.error('OAuth connection error', error instanceof Error ? error : undefined, { systemId, type });
     } finally {
       setIsConnecting(false);
       setCurrentSystem(null);
@@ -117,7 +118,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       try {
         await storeSecureData(secureKeyId, apiKey, true); // Store temporarily encrypted
       } catch (error) {
-        console.error('Failed to store API key securely:', error);
+        securityLog.error('Failed to store API key securely', error instanceof Error ? error : undefined, { systemId });
         toast.error('Failed to store API key securely');
         return;
       }
@@ -151,7 +152,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       toast.success(`Successfully connected to ${systemId}`);
     } catch (error) {
       toast.error(`Failed to connect to ${systemId}`);
-      console.error("Connection error:", error);
+      crmLog.error('Connection error', error instanceof Error ? error : undefined, { systemId, type });
     } finally {
       setIsConnecting(false);
       setCurrentSystem(null);
@@ -172,7 +173,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       toast.success(`Disconnected from ${systemId}`);
     } catch (error) {
       toast.error(`Failed to disconnect from ${systemId}`);
-      console.error("Disconnect error:", error);
+      crmLog.error('Disconnect error', error instanceof Error ? error : undefined, { systemId });
     }
   };
 
@@ -200,7 +201,7 @@ export const ConnectionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         message: "API key format validated (native CRM validation pending)"
       };
     } catch (error) {
-      console.error("Validation error:", error);
+      crmLog.error('Validation error', error instanceof Error ? error : undefined, { systemId });
       return {
         valid: false,
         message: "Connection validation failed due to a network error. Please try again."

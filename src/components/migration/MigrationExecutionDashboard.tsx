@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Play, Pause, RotateCcw, CheckCircle, XCircle, Clock, Database } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { migrationLog } from '@/utils/logging/consoleReplacer';
 
 interface MigrationProject {
   id: string;
@@ -72,7 +73,7 @@ const MigrationExecutionDashboard: React.FC<MigrationExecutionDashboardProps> = 
       if (error) throw error;
       setProject(data);
     } catch (error) {
-      console.error('Error loading project:', error);
+      migrationLog.error('Error loading project', error instanceof Error ? error : undefined, { projectId });
     }
   };
 
@@ -87,7 +88,7 @@ const MigrationExecutionDashboard: React.FC<MigrationExecutionDashboardProps> = 
       if (error) throw error;
       setObjectTypes(data || []);
     } catch (error) {
-      console.error('Error loading object types:', error);
+      migrationLog.error('Error loading object types', error instanceof Error ? error : undefined, { projectId });
     }
   };
 
@@ -114,7 +115,11 @@ const MigrationExecutionDashboard: React.FC<MigrationExecutionDashboardProps> = 
       loadProject();
       loadObjectTypes();
     } catch (error) {
-      console.error('Error during data extraction:', error);
+      migrationLog.error('Error during data extraction', error instanceof Error ? error : undefined, { 
+        projectId, 
+        sourceConnectionId, 
+        destinationConnectionId 
+      });
       toast({
         title: "Extraction Failed",
         description: error instanceof Error ? error.message : "Failed to extract data",
@@ -154,7 +159,12 @@ const MigrationExecutionDashboard: React.FC<MigrationExecutionDashboardProps> = 
       loadProject();
       loadObjectTypes();
     } catch (error) {
-      console.error('Error during migration:', error);
+      migrationLog.error('Error during migration', error instanceof Error ? error : undefined, { 
+        objectType, 
+        projectId, 
+        sourceConnectionId, 
+        destinationConnectionId 
+      });
       toast({
         title: "Migration Failed",
         description: error instanceof Error ? error.message : "Failed to migrate data",
