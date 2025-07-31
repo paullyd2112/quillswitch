@@ -1,5 +1,6 @@
 import Nango from '@nangohq/frontend';
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logging/productionLogger";
 
 // NOTE: Nango has deprecated public keys in favor of Connect session tokens
 // We now create session tokens on the backend and pass them to the frontend
