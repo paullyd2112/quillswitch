@@ -494,6 +494,39 @@ export type Database = {
           },
         ]
       }
+      encryption_status: {
+        Row: {
+          created_at: string
+          credential_count: number
+          encryption_algorithm: string
+          id: string
+          last_encrypted_at: string
+          service_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credential_count?: number
+          encryption_algorithm?: string
+          id?: string
+          last_encrypted_at?: string
+          service_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credential_count?: number
+          encryption_algorithm?: string
+          id?: string
+          last_encrypted_at?: string
+          service_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       field_mappings: {
         Row: {
           destination_field: string
@@ -1449,6 +1482,39 @@ export type Database = {
           phone_number?: string | null
           sms_delivery?: boolean
           status_changes?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_security_settings: {
+        Row: {
+          backup_codes: string[] | null
+          created_at: string
+          id: string
+          last_totp_used_at: string | null
+          totp_secret: string | null
+          two_factor_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          backup_codes?: string[] | null
+          created_at?: string
+          id?: string
+          last_totp_used_at?: string | null
+          totp_secret?: string | null
+          two_factor_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          backup_codes?: string[] | null
+          created_at?: string
+          id?: string
+          last_totp_used_at?: string | null
+          totp_secret?: string | null
+          two_factor_enabled?: boolean
           updated_at?: string
           user_id?: string
         }
