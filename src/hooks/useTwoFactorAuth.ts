@@ -83,17 +83,22 @@ export const useTwoFactorAuth = () => {
       }
 
       // Store encrypted settings in database
-      const { error } = await supabase.functions.invoke('store-2fa-secret', {
+      const { data, error } = await supabase.functions.invoke('store-2fa-secret', {
         body: {
           secret,
-          backupCodes,
-          userId: user.id
+          code,
+          backupCodes
         }
       });
 
       if (error) {
         authLog.error('Failed to store 2FA secret', error);
         toast.error('Failed to enable 2FA');
+        return false;
+      }
+
+      if (!data?.success) {
+        toast.error(data?.error || 'Failed to enable 2FA');
         return false;
       }
 
@@ -120,13 +125,18 @@ export const useTwoFactorAuth = () => {
     try {
       const { data, error } = await supabase.functions.invoke('verify-and-disable-2fa', {
         body: {
-          code: verificationCode,
-          userId: user.id
+          verificationCode
         }
       });
 
-      if (error || !data?.success) {
-        toast.error('Invalid verification code');
+      if (error) {
+        authLog.error('Error disabling 2FA:', error);
+        toast.error('Failed to disable 2FA');
+        return false;
+      }
+
+      if (!data?.success) {
+        toast.error(data?.error || 'Invalid verification code');
         return false;
       }
 
@@ -153,13 +163,18 @@ export const useTwoFactorAuth = () => {
     try {
       const { data, error } = await supabase.functions.invoke('regenerate-backup-codes', {
         body: {
-          code: verificationCode,
-          userId: user.id
+          verificationCode
         }
       });
 
-      if (error || !data?.backupCodes) {
-        toast.error('Invalid verification code');
+      if (error) {
+        authLog.error('Error regenerating backup codes:', error);
+        toast.error('Failed to regenerate backup codes');
+        return null;
+      }
+
+      if (!data?.success) {
+        toast.error(data?.error || 'Invalid verification code');
         return null;
       }
 

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, Smartphone, KeyRound, LogOut, CheckCircle } from "lucide-react";
+import TwoFactorAuth from "@/components/security/TwoFactorAuth";
 
 const SecuritySettings = () => {
   const [passwordData, setPasswordData] = useState({
@@ -217,90 +218,7 @@ const SecuritySettings = () => {
         </CardContent>
       </Card>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Two-Factor Authentication (2FA)</CardTitle>
-          <CardDescription>
-            Add an extra layer of security to your account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between py-2">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="font-medium">Two-Factor Authentication</p>
-                <p className="text-sm text-muted-foreground">Protect your account with an additional security layer</p>
-              </div>
-            </div>
-            <Switch
-              checked={isTwoFactorEnabled}
-              onCheckedChange={handle2FAToggle}
-            />
-          </div>
-          
-          {isTwoFactorEnabled && (
-            <div className="mt-4">
-              <Tabs defaultValue="authenticator" value={twoFactorMethod} onValueChange={setTwoFactorMethod}>
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="authenticator">Authenticator App</TabsTrigger>
-                  <TabsTrigger value="sms">SMS</TabsTrigger>
-                  <TabsTrigger value="backup">Backup Codes</TabsTrigger>
-                </TabsList>
-                <TabsContent value="authenticator" className="py-4">
-                  <div className="text-center space-y-4">
-                    <div className="bg-gray-100 dark:bg-gray-800 p-4 mx-auto w-40 h-40 rounded-lg flex items-center justify-center">
-                      <p className="text-sm text-muted-foreground">QR Code Placeholder</p>
-                    </div>
-                    <p className="text-sm">
-                      Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
-                    </p>
-                    <div className="pt-2">
-                      <Label htmlFor="verificationCode">Enter verification code</Label>
-                      <div className="flex mt-1">
-                        <Input
-                          id="verificationCode"
-                          placeholder="000000"
-                          className="w-32 mx-auto text-center"
-                          maxLength={6}
-                        />
-                      </div>
-                      <Button className="mt-4" size="sm">Verify</Button>
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="sms" className="py-4">
-                  <div className="space-y-4">
-                    <p className="text-sm">
-                      We'll send a verification code to your phone each time you log in.
-                    </p>
-                    <div className="space-y-2">
-                      <Label htmlFor="phoneNumber">Phone Number</Label>
-                      <Input id="phoneNumber" placeholder="+1 (555) 123-4567" />
-                    </div>
-                    <Button size="sm">Send Code</Button>
-                  </div>
-                </TabsContent>
-                <TabsContent value="backup" className="py-4">
-                  <div className="space-y-4">
-                    <p className="text-sm">
-                      Save these backup codes in a secure place. You can use each one once if you can't access your authenticator app or phone.
-                    </p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {Array.from({ length: 8 }).map((_, i) => (
-                        <div key={i} className="bg-gray-100 dark:bg-gray-800 p-2 rounded text-center">
-                          <code>XXXX-XXXX</code>
-                        </div>
-                      ))}
-                    </div>
-                    <Button size="sm">Download Codes</Button>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <TwoFactorAuth />
       
       <Card>
         <CardHeader>
