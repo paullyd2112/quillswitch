@@ -177,7 +177,7 @@ const ConnectionHub = () => {
                       
                       {/* Logo Centerpiece */}
                       <div className="flex flex-col items-center text-center mb-6">
-                        <div className="w-32 h-32 flex items-center justify-center mb-4 p-4">
+                        <div className="w-40 h-40 flex items-center justify-center mb-4 p-4">
                           {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
                             <img src={system.logo} alt={system.name} className="w-full h-full object-contain" />
                           ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (
@@ -242,7 +242,7 @@ const ConnectionHub = () => {
                   <CardContent className="p-6">
                     {/* Logo Centerpiece */}
                     <div className="flex flex-col items-center text-center mb-6">
-                      <div className="w-28 h-28 flex items-center justify-center mb-4 p-4">
+                      <div className="w-36 h-36 flex items-center justify-center mb-4 p-4">
                         {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
                           <img src={system.logo} alt={system.name} className="w-full h-full object-contain" />
                         ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (
