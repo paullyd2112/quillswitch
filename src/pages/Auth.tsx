@@ -19,12 +19,18 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState<'select' | 'signup' | 'signin'>('select');
 
-  // Redirect if already authenticated
+  // Force logout first if there's a session but user is on auth page
   useEffect(() => {
-    if (session) {
-      navigate("/app/setup");
-    }
-  }, [session, navigate]);
+    const checkAndClearSession = async () => {
+      if (session) {
+        console.log('Clearing existing session for fresh login');
+        await supabase.auth.signOut();
+      }
+    };
+    checkAndClearSession();
+  }, []);
+
+  // Only redirect after successful auth operations, not on page load
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +81,11 @@ const Auth = () => {
         } else {
           setError(error.message);
         }
+      }
+
+      if (!error) {
+        // Only navigate on successful login
+        navigate("/app/setup");
       }
       // Navigation will happen automatically via useEffect when session changes
     } catch (error) {
