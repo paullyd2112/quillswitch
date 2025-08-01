@@ -38,14 +38,17 @@ export const NANGO_INTEGRATIONS = {
   salesforce: {
     providerId: 'salesforce',
     connectionId: (userId: string) => `salesforce_${userId}`,
+    scopes: ['id', 'api', 'refresh_token', 'offline_access'],
   },
   hubspot: {
     providerId: 'hubspot', 
     connectionId: (userId: string) => `hubspot_${userId}`,
+    scopes: ['crm.objects.contacts.read', 'crm.objects.companies.read', 'crm.objects.deals.read'],
   },
   pipedrive: {
     providerId: 'pipedrive',
     connectionId: (userId: string) => `pipedrive_${userId}`,
+    scopes: ['read', 'write'],
   },
 } as const;
 
