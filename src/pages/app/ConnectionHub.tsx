@@ -10,8 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import salesforceLogo from "@/assets/salesforce-logo.png";
 import hubspotLogo from "@/assets/hubspot-logo.png";
-import pipedriveLogo from "@/assets/pipedrive-official-logo.png";
-import microsoftDynamicsLogo from "@/assets/microsoft-dynamics-365-logo.png";
+import pipedriveLogo from "@/assets/pipedrive-official-logo.svg";
+import microsoftDynamicsLogo from "@/assets/microsoft-dynamics-logo.svg";
 import zohoLogo from "@/assets/zoho-official-logo.svg";
 import freshsalesLogo from "@/assets/freshsales-logo.svg";
 
@@ -70,14 +70,6 @@ const ConnectionHub = () => {
     return logoMap[serviceName.toLowerCase()] || '🔗';
   };
 
-  const handleConnectSystem = (systemName: string) => {
-    // TODO: Implement OAuth connection flow for each system
-    console.log(`Attempting to connect to ${systemName}`);
-    
-    // For now, show a message that this functionality is being implemented
-    alert(`${systemName} connection functionality is being implemented. Please check back soon!`);
-  };
-
   const availableSystems = [
     { name: "Salesforce", type: "CRM", logo: salesforceLogo },
     { name: "HubSpot", type: "CRM", logo: hubspotLogo },
@@ -100,7 +92,7 @@ const ConnectionHub = () => {
           description="Connect and manage your CRM systems and business tools in one secure location"
           maxWidth="full"
           headerAction={
-            <Button onClick={() => handleConnectSystem('New System')}>
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               Add Connection
             </Button>
@@ -262,7 +254,6 @@ const ConnectionHub = () => {
                     <Button 
                       className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
                       variant="outline"
-                      onClick={() => handleConnectSystem(system.name)}
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Connect
