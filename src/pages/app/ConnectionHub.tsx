@@ -10,7 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import salesforceLogo from "@/assets/salesforce-logo.png";
 import hubspotLogo from "@/assets/hubspot-logo.png";
-import pipedriveLogo from "@/assets/pipedrive-logo.png";
+import pipedriveLogo from "@/assets/pipedrive-official-logo.svg";
+import microsoftDynamicsLogo from "@/assets/microsoft-dynamics-logo.svg";
+import zohoLogo from "@/assets/zoho-official-logo.svg";
+import freshsalesLogo from "@/assets/freshsales-logo.svg";
 
 const ConnectionHub = () => {
   const { session } = useSessionContext();
@@ -60,8 +63,9 @@ const ConnectionHub = () => {
       'salesforce': salesforceLogo,
       'hubspot': hubspotLogo,
       'pipedrive': pipedriveLogo,
-      'microsoft_dynamics': '🔷',
-      'zoho': '🟠'
+      'microsoft_dynamics': microsoftDynamicsLogo,
+      'zoho': zohoLogo,
+      'freshsales': freshsalesLogo
     };
     return logoMap[serviceName.toLowerCase()] || '🔗';
   };
@@ -70,9 +74,9 @@ const ConnectionHub = () => {
     { name: "Salesforce", type: "CRM", logo: salesforceLogo, popular: true },
     { name: "HubSpot", type: "CRM", logo: hubspotLogo, popular: true },
     { name: "Pipedrive", type: "CRM", logo: pipedriveLogo, popular: true },
-    { name: "Microsoft Dynamics", type: "CRM", logo: "🔷", popular: true },
-    { name: "Zoho CRM", type: "CRM", logo: "🟠", popular: false },
-    { name: "Freshsales", type: "CRM", logo: "🌿", popular: false },
+    { name: "Microsoft Dynamics", type: "CRM", logo: microsoftDynamicsLogo, popular: true },
+    { name: "Zoho CRM", type: "CRM", logo: zohoLogo, popular: false },
+    { name: "Freshsales", type: "CRM", logo: freshsalesLogo, popular: false },
   ];
 
   return (
@@ -173,7 +177,7 @@ const ConnectionHub = () => {
                       
                       {/* Logo Centerpiece */}
                       <div className="flex flex-col items-center text-center mb-6">
-                        <div className="w-20 h-20 flex items-center justify-center mb-4 bg-background/50 rounded-2xl p-3">
+                        <div className="w-24 h-24 flex items-center justify-center mb-4 bg-background/50 rounded-2xl p-4">
                           {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
                             <img src={system.logo} alt={system.name} className="w-full h-full object-contain" />
                           ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (
@@ -238,7 +242,7 @@ const ConnectionHub = () => {
                   <CardContent className="p-6">
                     {/* Logo Centerpiece */}
                     <div className="flex flex-col items-center text-center mb-6">
-                      <div className="w-16 h-16 flex items-center justify-center mb-4 bg-background/30 rounded-xl p-3 group-hover:bg-background/50 transition-colors">
+                      <div className="w-20 h-20 flex items-center justify-center mb-4 bg-background/30 rounded-xl p-4 group-hover:bg-background/50 transition-colors">
                         {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
                           <img src={system.logo} alt={system.name} className="w-full h-full object-contain" />
                         ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (

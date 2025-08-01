@@ -2,7 +2,7 @@
 import { CrmProvider } from "./types";
 import salesforceLogo from "@/assets/salesforce-logo.png";
 import hubspotLogo from "@/assets/hubspot-logo.png";
-import pipedriveLogo from "@/assets/pipedrive-logo.svg";
+import pipedriveLogo from "@/assets/pipedrive-official-logo.svg";
 
 export const CRM_PROVIDERS: CrmProvider[] = [
   {
