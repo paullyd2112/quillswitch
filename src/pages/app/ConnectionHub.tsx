@@ -160,23 +160,9 @@ const ConnectionHub = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {connectedSystems.map((system) => (
                   <EnhancedCard key={system.id} variant="elevated" className="overflow-hidden">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 flex items-center justify-center">
-                            {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
-                              <img src={system.logo} alt={system.name} className="w-6 h-6" />
-                            ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (
-                              <div className="text-2xl">{system.logo}</div>
-                            ) : (
-                              <img src={system.logo as string} alt={system.name} className="w-6 h-6" />
-                            )}
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg">{system.name}</CardTitle>
-                            <CardDescription>{system.credential_name || system.type}</CardDescription>
-                          </div>
-                        </div>
+                    <CardContent className="p-6">
+                      {/* Status Badge */}
+                      <div className="flex justify-end mb-4">
                         <StatusBadge 
                           status={system.status === 'active' ? 'success' : system.status === 'expired' ? 'error' : 'pending'}
                           size="sm"
@@ -184,19 +170,36 @@ const ConnectionHub = () => {
                           {system.status}
                         </StatusBadge>
                       </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <p className="text-muted-foreground">Records</p>
-                          <p className="font-semibold">{system.recordCount}</p>
+                      
+                      {/* Logo Centerpiece */}
+                      <div className="flex flex-col items-center text-center mb-6">
+                        <div className="w-20 h-20 flex items-center justify-center mb-4 bg-background/50 rounded-2xl p-3">
+                          {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
+                            <img src={system.logo} alt={system.name} className="w-full h-full object-contain" />
+                          ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (
+                            <div className="text-4xl">{system.logo}</div>
+                          ) : (
+                            <img src={system.logo as string} alt={system.name} className="w-full h-full object-contain" />
+                          )}
                         </div>
-                        <div>
-                          <p className="text-muted-foreground">Last Sync</p>
-                          <p className="font-semibold">{system.lastSync}</p>
+                        <CardTitle className="text-xl mb-1">{system.name}</CardTitle>
+                        <CardDescription className="text-sm">{system.credential_name || system.type}</CardDescription>
+                      </div>
+
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-muted/30 rounded-lg">
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground mb-1">Records</p>
+                          <p className="font-semibold text-sm">{system.recordCount}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground mb-1">Last Sync</p>
+                          <p className="font-semibold text-sm">{system.lastSync}</p>
                         </div>
                       </div>
-                      <div className="flex gap-2 pt-2">
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
                         <Button variant="outline" size="sm" className="flex-1">
                           Configure
                         </Button>
@@ -224,33 +227,33 @@ const ConnectionHub = () => {
                 <EnhancedCard 
                   key={index} 
                   variant="glass" 
-                  className="relative overflow-hidden group cursor-pointer"
+                  className="relative overflow-hidden group cursor-pointer hover:border-primary/30 transition-all duration-300"
                 >
                   {system.popular && (
-                    <div className="absolute top-3 right-3">
+                    <div className="absolute top-4 right-4 z-10">
                       <StatusBadge status="warning" size="sm">Popular</StatusBadge>
                     </div>
                   )}
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 flex items-center justify-center">
+                  
+                  <CardContent className="p-6">
+                    {/* Logo Centerpiece */}
+                    <div className="flex flex-col items-center text-center mb-6">
+                      <div className="w-16 h-16 flex items-center justify-center mb-4 bg-background/30 rounded-xl p-3 group-hover:bg-background/50 transition-colors">
                         {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
-                          <img src={system.logo} alt={system.name} className="w-6 h-6" />
+                          <img src={system.logo} alt={system.name} className="w-full h-full object-contain" />
                         ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (
-                          <div className="text-2xl">{system.logo}</div>
+                          <div className="text-3xl">{system.logo}</div>
                         ) : (
-                          <img src={system.logo as string} alt={system.name} className="w-6 h-6" />
+                          <img src={system.logo as string} alt={system.name} className="w-full h-full object-contain" />
                         )}
                       </div>
-                      <div>
-                        <CardTitle className="text-lg">{system.name}</CardTitle>
-                        <CardDescription>{system.type}</CardDescription>
-                      </div>
+                      <CardTitle className="text-lg mb-1 group-hover:text-primary transition-colors">{system.name}</CardTitle>
+                      <CardDescription className="text-sm">{system.type}</CardDescription>
                     </div>
-                  </CardHeader>
-                  <CardContent>
+
+                    {/* Connect Button */}
                     <Button 
-                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
                       variant="outline"
                     >
                       <Plus className="h-4 w-4 mr-2" />
