@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/ui/status-badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
+import salesforceLogo from "@/assets/salesforce-logo.svg";
+import hubspotLogo from "@/assets/hubspot-logo.svg";
+import pipedriveLogo from "@/assets/pipedrive-logo.svg";
 
 const ConnectionHub = () => {
   const { session } = useSessionContext();
@@ -52,21 +55,21 @@ const ConnectionHub = () => {
     }
   };
 
-  const getSystemLogo = (serviceName: string) => {
-    const logos: Record<string, string> = {
-      'salesforce': '🌟',
-      'hubspot': '🧡', 
-      'pipedrive': '💚',
+  const getSystemLogo = (serviceName: string): string | React.ReactElement => {
+    const logoMap: Record<string, string> = {
+      'salesforce': salesforceLogo,
+      'hubspot': hubspotLogo,
+      'pipedrive': pipedriveLogo,
       'microsoft_dynamics': '🔷',
       'zoho': '🟠'
     };
-    return logos[serviceName.toLowerCase()] || '🔗';
+    return logoMap[serviceName.toLowerCase()] || '🔗';
   };
 
   const availableSystems = [
-    { name: "Salesforce", type: "CRM", logo: "🌟", popular: true },
-    { name: "HubSpot", type: "CRM", logo: "🧡", popular: true },
-    { name: "Pipedrive", type: "CRM", logo: "💚", popular: true },
+    { name: "Salesforce", type: "CRM", logo: salesforceLogo, popular: true },
+    { name: "HubSpot", type: "CRM", logo: hubspotLogo, popular: true },
+    { name: "Pipedrive", type: "CRM", logo: pipedriveLogo, popular: true },
     { name: "Microsoft Dynamics", type: "CRM", logo: "🔷", popular: true },
     { name: "Zoho CRM", type: "CRM", logo: "🟠", popular: false },
     { name: "Freshsales", type: "CRM", logo: "🌿", popular: false },
@@ -160,7 +163,15 @@ const ConnectionHub = () => {
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="text-2xl">{system.logo}</div>
+                          <div className="w-8 h-8 flex items-center justify-center">
+                            {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
+                              <img src={system.logo} alt={system.name} className="w-6 h-6" />
+                            ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (
+                              <div className="text-2xl">{system.logo}</div>
+                            ) : (
+                              <img src={system.logo as string} alt={system.name} className="w-6 h-6" />
+                            )}
+                          </div>
                           <div>
                             <CardTitle className="text-lg">{system.name}</CardTitle>
                             <CardDescription>{system.credential_name || system.type}</CardDescription>
@@ -222,7 +233,15 @@ const ConnectionHub = () => {
                   )}
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="text-2xl">{system.logo}</div>
+                      <div className="w-8 h-8 flex items-center justify-center">
+                        {typeof system.logo === 'string' && system.logo.startsWith('/') ? (
+                          <img src={system.logo} alt={system.name} className="w-6 h-6" />
+                        ) : typeof system.logo === 'string' && !system.logo.includes('.') ? (
+                          <div className="text-2xl">{system.logo}</div>
+                        ) : (
+                          <img src={system.logo as string} alt={system.name} className="w-6 h-6" />
+                        )}
+                      </div>
                       <div>
                         <CardTitle className="text-lg">{system.name}</CardTitle>
                         <CardDescription>{system.type}</CardDescription>
