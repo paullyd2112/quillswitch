@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { Plus, Shield, Zap, CheckCircle } from "lucide-react";
+import { useCrmConnections } from "@/hooks/useCrmConnections";
+import { useToast } from "@/hooks/use-toast";
 import EnhancedContentSection from "@/components/layout/enhanced-content-section";
 import { EnhancedCard, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/enhanced-card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,14 @@ const ConnectionHub = () => {
   const { session } = useSessionContext();
   const [connectedSystems, setConnectedSystems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+  const { 
+    connectedCredentials, 
+    connectingProvider, 
+    isLoading: crmLoading, 
+    handleConnect, 
+    handleDisconnect 
+  } = useCrmConnections();
 
   useEffect(() => {
     if (session?.user) {
@@ -71,13 +81,36 @@ const ConnectionHub = () => {
   };
 
   const availableSystems = [
-    { name: "Salesforce", type: "CRM", logo: salesforceLogo },
-    { name: "HubSpot", type: "CRM", logo: hubspotLogo },
-    { name: "Pipedrive", type: "CRM", logo: pipedriveLogo },
-    { name: "Microsoft Dynamics", type: "CRM", logo: microsoftDynamicsLogo },
-    { name: "Zoho CRM", type: "CRM", logo: zohoLogo },
-    { name: "Freshsales", type: "CRM", logo: freshsalesLogo },
+    { name: "Salesforce", type: "CRM", logo: salesforceLogo, provider: "salesforce" as const },
+    { name: "HubSpot", type: "CRM", logo: hubspotLogo, provider: "hubspot" as const },
+    { name: "Pipedrive", type: "CRM", logo: pipedriveLogo, provider: "pipedrive" as const },
+    { name: "Microsoft Dynamics", type: "CRM", logo: microsoftDynamicsLogo, provider: null },
+    { name: "Zoho CRM", type: "CRM", logo: zohoLogo, provider: null },
+    { name: "Freshsales", type: "CRM", logo: freshsalesLogo, provider: null },
   ];
+
+  const handleConnectSystem = async (system: typeof availableSystems[0]) => {
+    if (!system.provider) {
+      toast({
+        title: "Coming Soon",
+        description: `${system.name} integration is coming soon!`,
+        variant: "default"
+      });
+      return;
+    }
+
+    if (!session?.user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to connect to CRM systems.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log(`Attempting to connect to ${system.name}`);
+    await handleConnect(system.provider);
+  };
 
   return (
     <>
@@ -254,9 +287,20 @@ const ConnectionHub = () => {
                     <Button 
                       className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
                       variant="outline"
+                      onClick={() => handleConnectSystem(system)}
+                      disabled={connectingProvider === system.provider || crmLoading}
                     >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Connect
+                      {connectingProvider === system.provider ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                          Connecting...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Connect
+                        </>
+                      )}
                     </Button>
                   </CardContent>
                 </EnhancedCard>
