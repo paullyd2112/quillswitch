@@ -71,12 +71,12 @@ const ConnectionHub = () => {
   };
 
   const availableSystems = [
-    { name: "Salesforce", type: "CRM", logo: salesforceLogo, popular: true },
-    { name: "HubSpot", type: "CRM", logo: hubspotLogo, popular: true },
-    { name: "Pipedrive", type: "CRM", logo: pipedriveLogo, popular: true },
-    { name: "Microsoft Dynamics", type: "CRM", logo: microsoftDynamicsLogo, popular: true },
-    { name: "Zoho CRM", type: "CRM", logo: zohoLogo, popular: false },
-    { name: "Freshsales", type: "CRM", logo: freshsalesLogo, popular: false },
+    { name: "Salesforce", type: "CRM", logo: salesforceLogo },
+    { name: "HubSpot", type: "CRM", logo: hubspotLogo },
+    { name: "Pipedrive", type: "CRM", logo: pipedriveLogo },
+    { name: "Microsoft Dynamics", type: "CRM", logo: microsoftDynamicsLogo },
+    { name: "Zoho CRM", type: "CRM", logo: zohoLogo },
+    { name: "Freshsales", type: "CRM", logo: freshsalesLogo },
   ];
 
   return (
@@ -233,11 +233,6 @@ const ConnectionHub = () => {
                   variant="glass" 
                   className="relative overflow-hidden group cursor-pointer hover:border-primary/30 transition-all duration-300"
                 >
-                  {system.popular && (
-                    <div className="absolute top-4 right-4 z-10">
-                      <StatusBadge status="warning" size="sm">Popular</StatusBadge>
-                    </div>
-                  )}
                   
                   <CardContent className="p-6">
                     {/* Logo Centerpiece */}
