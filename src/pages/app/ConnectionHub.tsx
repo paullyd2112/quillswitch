@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/ui/status-badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import salesforceLogo from "@/assets/salesforce-logo.svg";
-import hubspotLogo from "@/assets/hubspot-logo.svg";
-import pipedriveLogo from "@/assets/pipedrive-logo.svg";
+import salesforceLogo from "@/assets/salesforce-logo.png";
+import hubspotLogo from "@/assets/hubspot-logo.png";
+import pipedriveLogo from "@/assets/pipedrive-logo.png";
 
 const ConnectionHub = () => {
   const { session } = useSessionContext();
