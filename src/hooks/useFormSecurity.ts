@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/auth';
 import { checkRateLimit, rateLimiters, sanitizeHtml, validateInput } from '@/utils/security';
 import { errorHandler, ERROR_CODES } from '@/services/errorHandling/globalErrorHandler';
+import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 
 interface FormSecurityOptions {
@@ -24,10 +25,26 @@ export const useFormSecurity = (options: FormSecurityOptions) => {
     setIsSubmitting(true);
     
     try {
-      // Rate limiting
-      const identifier = user?.id || 'anonymous';
-      const limiter = rateLimiters[options.rateLimitType || 'api'];
-      checkRateLimit(identifier, limiter, `form_${options.formName}`);
+      // Enhanced rate limiting using database
+      const keyPrefix = user?.id ? `user:${user.id}` : `anonymous:${navigator.userAgent}`;
+      const maxRequests = options.rateLimitType === 'auth' ? 5 : 20;
+      const windowMinutes = 1;
+
+      const { data: isAllowed, error: rateLimitError } = await supabase.rpc('check_rate_limit', {
+        key_prefix: keyPrefix,
+        max_requests: maxRequests,
+        window_minutes: windowMinutes
+      });
+
+      if (rateLimitError) {
+        console.error('Database rate limit check failed, falling back to local:', rateLimitError);
+        // Fall back to local rate limiting
+        const identifier = user?.id || 'anonymous';
+        const limiter = rateLimiters[options.rateLimitType || 'api'];
+        checkRateLimit(identifier, limiter, `form_${options.formName}`);
+      } else if (!isAllowed) {
+        throw new Error('Rate limit exceeded. Please wait before submitting again.');
+      }
 
       // Input validation
       let validatedData = formData;

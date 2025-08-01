@@ -4,6 +4,7 @@ import { supabase } from '../../integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
 import { AuthContextType, AuthResponse } from './types';
 import { logger } from '@/utils/logging/productionLogger';
+import { toast } from '@/hooks/use-toast';
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -48,18 +49,119 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
+  // Helper function to get client IP (best effort)
+  const getClientIP = (): string | null => {
+    // In a real application, you'd get this from your server
+    // For now, we'll use a placeholder or try to get it from headers
+    return null; // Will be handled by the database function
+  };
+
+  // Helper function to get user agent
+  const getUserAgent = (): string => {
+    return navigator.userAgent || '';
+  };
+
   // Authentication methods
   const signIn = async (email: string, password: string): Promise<AuthResponse> => {
+    const clientIP = getClientIP();
+    const userAgent = getUserAgent();
+
     try {
+      // First check if account is locked
+      const { data: lockoutData, error: lockoutError } = await supabase.rpc('check_account_lockout', {
+        user_email: email,
+        client_ip: clientIP
+      });
+
+      if (lockoutError) {
+        logger.error('Auth', 'Failed to check account lockout', lockoutError);
+      } else if (lockoutData && lockoutData.length > 0) {
+        const lockoutInfo = lockoutData[0];
+        if (lockoutInfo.is_locked) {
+          const lockoutUntil = new Date(lockoutInfo.lockout_until);
+          const minutesLeft = Math.ceil((lockoutUntil.getTime() - Date.now()) / (1000 * 60));
+          
+          toast({
+            title: "Account Temporarily Locked",
+            description: `Too many failed login attempts. Please try again in ${minutesLeft} minutes.`,
+            variant: "destructive"
+          });
+          
+          return { 
+            error: new Error(`Account locked. Please try again in ${minutesLeft} minutes.`) 
+          };
+        }
+      }
+
+      // Attempt sign in
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      // Log the attempt (success or failure)
+      try {
+        await supabase.rpc('log_login_attempt', {
+          user_email: email,
+          client_ip: clientIP,
+          is_success: !error,
+          client_user_agent: userAgent
+        });
+      } catch (logError) {
+        logger.error('Auth', 'Failed to log login attempt', logError);
+      }
+
+      if (error) {
+        // Show user-friendly error message for failed attempts
+        if (error.message.includes('Invalid login credentials')) {
+          toast({
+            title: "Login Failed",
+            description: "Invalid email or password. Please check your credentials and try again.",
+            variant: "destructive"
+          });
+        }
+      } else {
+        logger.info('Auth', 'Successful login', { email });
+      }
+
       return { data, error };
     } catch (error: any) {
+      logger.error('Auth', 'Unexpected sign in error', error);
+      // Log failed attempt even on unexpected errors
+      try {
+        await supabase.rpc('log_login_attempt', {
+          user_email: email,
+          client_ip: clientIP,
+          is_success: false,
+          client_user_agent: userAgent
+        });
+      } catch (logError) {
+        logger.error('Auth', 'Failed to log failed login attempt', logError);
+      }
+      
       return { error };
     }
   };
 
   const signUp = async (email: string, password: string, metadata?: { [key: string]: any }): Promise<AuthResponse> => {
     try {
+      // Validate password strength before attempting signup
+      const { data: isStrongPassword, error: validationError } = await supabase.rpc('validate_password_strength', {
+        password: password
+      });
+
+      if (validationError) {
+        logger.error('Auth', 'Password validation failed', validationError);
+        return { error: validationError };
+      }
+
+      if (!isStrongPassword) {
+        const passwordError = new Error('Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character');
+        toast({
+          title: "Weak Password",
+          description: "Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character (!@#$%^&*(),.?\":{}|<>)",
+          variant: "destructive"
+        });
+        return { error: passwordError };
+      }
+
       const { data, error } = await supabase.auth.signUp({ 
         email, 
         password,

@@ -47,7 +47,8 @@ export function SecureForm({
     
     try {
       // Check rate limit
-      if (!checkFormRateLimit(user.id, formType)) {
+      const isAllowed = await checkFormRateLimit(formType);
+      if (!isAllowed) {
         return;
       }
 

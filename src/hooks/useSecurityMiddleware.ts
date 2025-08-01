@@ -7,27 +7,60 @@ import {
   securitySchemas 
 } from '@/utils/security';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/auth';
 
 /**
  * Security middleware hook for forms and user inputs
  */
 export function useSecurityMiddleware() {
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  // Rate limiting for form submissions
-  const checkFormRateLimit = useCallback((userId: string, formType: string = 'general') => {
+  // Enhanced rate limiting using database
+  const checkFormRateLimit = useCallback(async (formType: string = 'general'): Promise<boolean> => {
     try {
-      checkRateLimit(userId, rateLimiters.api, `${formType}_form_submission`);
+      const keyPrefix = user?.id ? `user:${user.id}` : `anonymous:${navigator.userAgent}`;
+      const maxRequests = formType === 'auth' ? 5 : 20; // Stricter limits for auth forms
+      const windowMinutes = 1;
+
+      const { data: isAllowed, error } = await supabase.rpc('check_rate_limit', {
+        key_prefix: keyPrefix,
+        max_requests: maxRequests,
+        window_minutes: windowMinutes
+      });
+
+      if (error) {
+        console.error('Rate limit check failed:', error);
+        // Fall back to local rate limiting
+        try {
+          checkRateLimit(keyPrefix, rateLimiters.api, `${formType}_form_submission`);
+          return true;
+        } catch (fallbackError) {
+          toast({
+            title: "Rate limit exceeded",
+            description: "Please wait before submitting again.",
+            variant: "destructive"
+          });
+          return false;
+        }
+      }
+
+      if (!isAllowed) {
+        toast({
+          title: "Rate limit exceeded",
+          description: "Please wait before submitting again.",
+          variant: "destructive"
+        });
+        return false;
+      }
+
       return true;
     } catch (error) {
-      toast({
-        title: "Rate limit exceeded",
-        description: "Please wait before submitting again.",
-        variant: "destructive"
-      });
-      return false;
+      console.error('Rate limiting error:', error);
+      return true; // Allow on error to avoid blocking legitimate users
     }
-  }, [toast]);
+  }, [user?.id, toast]);
 
   // Secure input validation
   const validateSecureInput = useCallback((input: unknown, fieldType: keyof typeof securitySchemas, fieldName: string) => {

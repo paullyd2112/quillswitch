@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +19,11 @@ export interface UseRegisterReturn {
   isLoading: boolean;
   signupStatus: SignupStatus;
   errorMessage: string;
+  passwordStrength: {
+    score: number;
+    isValid: boolean;
+    requirements: Array<{ label: string; passed: boolean; }>;
+  };
   handleSignUp: (e: React.FormEvent) => Promise<void>;
   handleGoogleSignIn: () => Promise<void>;
 }
@@ -34,11 +39,37 @@ export const useRegister = (): UseRegisterReturn => {
   const [signupStatus, setSignupStatus] = useState<SignupStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Password strength validation
+  const passwordStrength = useMemo(() => {
+    const requirements = [
+      { label: 'At least 8 characters long', test: (p: string) => p.length >= 8 },
+      { label: 'Contains uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
+      { label: 'Contains lowercase letter', test: (p: string) => /[a-z]/.test(p) },
+      { label: 'Contains number', test: (p: string) => /[0-9]/.test(p) },
+      { label: 'Contains special character', test: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p) }
+    ];
+
+    const results = requirements.map(req => ({
+      label: req.label,
+      passed: req.test(password)
+    }));
+
+    const score = results.filter(r => r.passed).length;
+    const isValid = score === requirements.length;
+
+    return { score, isValid, requirements: results };
+  }, [password]);
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!acceptTerms) {
       toast.error("Please accept the terms and privacy policy");
+      return;
+    }
+
+    if (!passwordStrength.isValid) {
+      toast.error("Please ensure your password meets all security requirements");
       return;
     }
 
@@ -110,6 +141,7 @@ export const useRegister = (): UseRegisterReturn => {
     isLoading,
     signupStatus,
     errorMessage,
+    passwordStrength,
     handleSignUp,
     handleGoogleSignIn
   };

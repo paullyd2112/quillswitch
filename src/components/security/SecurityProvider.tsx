@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import SecurityHeaders from './SecurityHeaders';
 
 interface SecurityContextType {
-  checkFormRateLimit: (userId: string, formType?: string) => boolean;
+  checkFormRateLimit: (formType?: string) => Promise<boolean>;
   validateSecureInput: (input: unknown, fieldType: any, fieldName: string) => any;
   sanitizeContent: (content: string) => string;
   extendSession: () => Promise<void>;
