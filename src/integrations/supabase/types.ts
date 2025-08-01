@@ -700,6 +700,33 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          attempted_at: string
+          email: string
+          id: string
+          ip_address: unknown | null
+          success: boolean
+          user_agent: string | null
+        }
+        Insert: {
+          attempted_at?: string
+          email: string
+          id?: string
+          ip_address?: unknown | null
+          success?: boolean
+          user_agent?: string | null
+        }
+        Update: {
+          attempted_at?: string
+          email?: string
+          id?: string
+          ip_address?: unknown | null
+          success?: boolean
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       lookup_mappings: {
         Row: {
           created_at: string
@@ -1319,6 +1346,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          role: Database["public"]["Enums"]["user_role"]
           updated_at: string
         }
         Insert: {
@@ -1327,6 +1355,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
         Update: {
@@ -1335,7 +1364,26 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          created_at: string
+          key: string
+          request_count: number
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          request_count?: number
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          request_count?: number
         }
         Relationships: []
       }
@@ -1691,6 +1739,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_account_lockout: {
+        Args: { user_email: string; client_ip?: unknown }
+        Returns: {
+          is_locked: boolean
+          lockout_until: string
+        }[]
+      }
       check_demo_access: {
         Args: { p_email_domain: string }
         Returns: {
@@ -1700,7 +1755,19 @@ export type Database = {
           reason: string
         }[]
       }
+      check_rate_limit: {
+        Args: {
+          key_prefix: string
+          max_requests: number
+          window_minutes?: number
+        }
+        Returns: boolean
+      }
       cleanup_expired_oauth_state: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_old_records: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -1800,6 +1867,15 @@ export type Database = {
           member_count: number
         }[]
       }
+      log_login_attempt: {
+        Args: {
+          user_email: string
+          client_ip?: unknown
+          is_success?: boolean
+          client_user_agent?: string
+        }
+        Returns: undefined
+      }
       update_demo_access: {
         Args: {
           p_email_domain: string
@@ -1807,6 +1883,10 @@ export type Database = {
           p_data_record_limit?: number
         }
         Returns: string
+      }
+      validate_password_strength: {
+        Args: { password: string }
+        Returns: boolean
       }
     }
     Enums: {
@@ -1836,6 +1916,7 @@ export type Database = {
         | "DATE_FORMAT"
         | "NUMBER_FORMAT"
         | "CUSTOM_FUNCTION"
+      user_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1991,6 +2072,7 @@ export const Constants = {
         "NUMBER_FORMAT",
         "CUSTOM_FUNCTION",
       ],
+      user_role: ["admin", "user"],
     },
   },
 } as const
