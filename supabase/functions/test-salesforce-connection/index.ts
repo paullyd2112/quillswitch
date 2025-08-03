@@ -37,6 +37,10 @@ serve(async (req) => {
       throw new Error('Credential ID is required')
     }
 
+    console.log('=== STARTING SALESFORCE CONNECTION TEST ===');
+    console.log('User ID:', user.id);
+    console.log('Credential ID:', credentialId);
+
     // Get the credential record to find the Nango connection ID
     const { data: credential, error: credError } = await supabase
       .from('service_credentials')
@@ -50,12 +54,10 @@ serve(async (req) => {
       throw new Error('Failed to retrieve credential from database')
     }
 
-    console.log('Retrieved credential:', {
-      id: credential.id,
-      service_name: credential.service_name,
-      credential_type: credential.credential_type,
-      metadata: credential.metadata
-    })
+    console.log('=== CREDENTIAL INFO ===');
+    console.log('Service name:', credential.service_name);
+    console.log('Credential type:', credential.credential_type);
+    console.log('Metadata:', JSON.stringify(credential.metadata, null, 2));
 
     // For OAuth connections managed by Nango
     if (credential.credential_type === 'oauth_token') {
@@ -66,62 +68,65 @@ serve(async (req) => {
         throw new Error('Missing Nango connection ID in credential metadata')
       }
 
-      console.log('Using Nango connection ID:', nangoConnectionId)
-      console.log('Provider config key:', providerConfigKey)
+      console.log('=== NANGO CONNECTION INFO ===');
+      console.log('Connection ID:', nangoConnectionId);
+      console.log('Provider config key:', providerConfigKey);
 
-      // Get the OAuth token from Nango using the correct API format
-      const nangoUrl = `https://api.nango.dev/connection/${nangoConnectionId}?provider_config_key=${encodeURIComponent(providerConfigKey)}`;
-      console.log('Calling Nango API at:', nangoUrl)
+      // Instead of calling Nango directly, use the nango-proxy edge function
+      // This is the same approach your app uses for connections
+      console.log('=== CALLING NANGO PROXY ===');
       
-      const nangoResponse = await fetch(nangoUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${Deno.env.get('NANGO_SECRET_KEY')}`,
-          'Content-Type': 'application/json'
+      const nangoProxyResponse = await supabase.functions.invoke('nango-proxy', {
+        body: {
+          provider: providerConfigKey,
+          endpoint: `/connection/${nangoConnectionId}`,
+          method: 'GET'
         }
       });
 
-      console.log('Nango API response status:', nangoResponse.status);
+      console.log('Nango proxy response:', JSON.stringify(nangoProxyResponse, null, 2));
 
-      if (!nangoResponse.ok) {
-        const errorText = await nangoResponse.text();
-        console.error('Nango API error:', errorText);
-        throw new Error(`Failed to get OAuth token from Nango: ${nangoResponse.status} - ${errorText}`)
+      if (nangoProxyResponse.error) {
+        console.error('Nango proxy error:', nangoProxyResponse.error);
+        throw new Error(`Failed to get OAuth token via proxy: ${nangoProxyResponse.error.message}`);
       }
 
-      const nangoData = await nangoResponse.json();
-      console.log('=== FULL NANGO RESPONSE ===');
-      console.log('Nango response data:', JSON.stringify(nangoData, null, 2));
-      console.log('Nango response keys:', Object.keys(nangoData || {}));
-      
-      // Nango might return credentials in different formats
+      const nangoData = nangoProxyResponse.data;
+      console.log('=== NANGO DATA STRUCTURE ===');
+      console.log('Keys:', Object.keys(nangoData || {}));
+      console.log('Full data:', JSON.stringify(nangoData, null, 2));
+
+      // Extract credentials from Nango response
       let accessToken, instanceUrl;
       
-      // Log all possible credential structures
-      if (nangoData.credentials) {
-        console.log('Found credentials object:', JSON.stringify(nangoData.credentials, null, 2));
+      if (nangoData?.credentials) {
+        console.log('Using credentials object');
         accessToken = nangoData.credentials.access_token;
         instanceUrl = nangoData.credentials.instance_url;
-      } else {
-        console.log('No credentials object, checking root level');
+      } else if (nangoData?.access_token) {
+        console.log('Using root level tokens');
         accessToken = nangoData.access_token;
         instanceUrl = nangoData.instance_url;
       }
-      
-      console.log('Extracted values:');
-      console.log('- accessToken:', accessToken ? '[PRESENT]' : '[MISSING]');
-      console.log('- instanceUrl:', instanceUrl || '[MISSING]');
+
+      console.log('=== EXTRACTED VALUES ===');
+      console.log('Access token present:', !!accessToken);
+      console.log('Instance URL:', instanceUrl || '[MISSING]');
 
       if (!accessToken) {
-        console.error('No access token in Nango response:', nangoData);
+        console.error('No access token found in Nango response');
         throw new Error('No access token received from Nango')
       }
 
-      console.log('Got access token from Nango, instance URL:', instanceUrl);
+      if (!instanceUrl) {
+        console.error('No instance URL found in Nango response');
+        throw new Error('No Salesforce instance URL received from Nango')
+      }
 
       // Test the connection by making a simple API call to Salesforce
       const testUrl = `${instanceUrl}/services/data/v59.0/sobjects/Organization/`;
-      console.log('Testing Salesforce connection at:', testUrl);
+      console.log('=== TESTING SALESFORCE CONNECTION ===');
+      console.log('Test URL:', testUrl);
       
       const response = await fetch(testUrl, {
         method: 'GET',
@@ -166,6 +171,9 @@ serve(async (req) => {
         console.log('Could not fetch organization name:', error)
       }
 
+      console.log('=== CONNECTION TEST SUCCESSFUL ===');
+      console.log('Organization:', organizationName);
+
       return new Response(
         JSON.stringify({ 
           success: true,
@@ -184,7 +192,9 @@ serve(async (req) => {
     }
 
   } catch (error) {
-    console.error('Salesforce connection test error:', error)
+    console.error('=== SALESFORCE CONNECTION TEST ERROR ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     
     return new Response(
       JSON.stringify({ 
