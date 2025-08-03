@@ -67,13 +67,19 @@ serve(async (req) => {
         }
       });
 
+      console.log('Nango API response status:', nangoResponse.status);
+
       if (!nangoResponse.ok) {
-        throw new Error('Failed to get OAuth token from Nango')
+        const errorText = await nangoResponse.text();
+        console.log('Nango API error:', errorText);
+        throw new Error(`Failed to get OAuth token from Nango: ${nangoResponse.status} - ${errorText}`)
       }
 
       const nangoData = await nangoResponse.json();
-      const accessToken = nangoData.credentials.access_token;
-      const instanceUrl = nangoData.credentials.instance_url;
+      console.log('Nango response data:', JSON.stringify(nangoData, null, 2));
+      
+      const accessToken = nangoData.credentials?.access_token;
+      const instanceUrl = nangoData.credentials?.instance_url;
 
       if (!accessToken || !instanceUrl) {
         throw new Error('Invalid OAuth credentials from Nango')
