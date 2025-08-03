@@ -1525,6 +1525,148 @@ export type Database = {
           },
         ]
       }
+      pii_findings: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          field_name: string
+          id: string
+          masked_value: string | null
+          masking_applied: boolean | null
+          masking_method: string | null
+          original_value: string
+          pii_type: string
+          record_id: string
+          scan_job_id: string
+        }
+        Insert: {
+          confidence_score: number
+          created_at?: string
+          field_name: string
+          id?: string
+          masked_value?: string | null
+          masking_applied?: boolean | null
+          masking_method?: string | null
+          original_value: string
+          pii_type: string
+          record_id: string
+          scan_job_id: string
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          field_name?: string
+          id?: string
+          masked_value?: string | null
+          masking_applied?: boolean | null
+          masking_method?: string | null
+          original_value?: string
+          pii_type?: string
+          record_id?: string
+          scan_job_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pii_findings_scan_job_id_fkey"
+            columns: ["scan_job_id"]
+            isOneToOne: false
+            referencedRelation: "pii_scan_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pii_masking_policies: {
+        Row: {
+          created_at: string
+          id: string
+          is_default: boolean | null
+          masking_method: string
+          pii_type: string
+          policy_name: string
+          retention_days: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          masking_method: string
+          pii_type: string
+          policy_name: string
+          retention_days?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          masking_method?: string
+          pii_type?: string
+          policy_name?: string
+          retention_days?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pii_scan_jobs: {
+        Row: {
+          completed_at: string | null
+          compliance_report: Json | null
+          created_at: string
+          id: string
+          migration_project_id: string | null
+          pii_findings_count: number
+          processed_records: number
+          scan_results: Json | null
+          source_data: Json
+          status: string
+          total_records: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          compliance_report?: Json | null
+          created_at?: string
+          id?: string
+          migration_project_id?: string | null
+          pii_findings_count?: number
+          processed_records?: number
+          scan_results?: Json | null
+          source_data: Json
+          status?: string
+          total_records?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          compliance_report?: Json | null
+          created_at?: string
+          id?: string
+          migration_project_id?: string | null
+          pii_findings_count?: number
+          processed_records?: number
+          scan_results?: Json | null
+          source_data?: Json
+          status?: string
+          total_records?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pii_scan_jobs_migration_project_id_fkey"
+            columns: ["migration_project_id"]
+            isOneToOne: false
+            referencedRelation: "migration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       preview_jobs: {
         Row: {
           completed_at: string | null

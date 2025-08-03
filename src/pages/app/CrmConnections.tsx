@@ -8,6 +8,7 @@ import CrmConnectionCard from "@/components/crm-connections/CrmConnectionCard";
 import ConnectedCrmsList from "@/components/crm-connections/ConnectedCrmsList";
 import QuillCleanseCard from "@/components/quill-cleanse/QuillCleanseCard";
 import QuillPreviewCard from "@/components/quill-preview/QuillPreviewCard";
+import QuillShieldCard from "@/components/quill-shield/QuillShieldCard";
 import { LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -130,7 +131,7 @@ const CrmConnections: React.FC = () => {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <QuillCleanseCard 
           onStartCleansing={() => {
             navigate('/app/quill-cleanse');
@@ -140,6 +141,12 @@ const CrmConnections: React.FC = () => {
         <QuillPreviewCard 
           onStartPreview={() => {
             navigate('/app/quill-preview');
+          }}
+        />
+        
+        <QuillShieldCard 
+          onStartScan={() => {
+            navigate('/app/quill-shield');
           }}
         />
       </div>
