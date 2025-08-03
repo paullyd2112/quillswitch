@@ -104,28 +104,45 @@ export const useCrmConnections = () => {
         
         // Store the connection in our database (OAuth tokens are managed by Nango)
         console.log('Storing connection in database for provider:', provider);
+        console.log('Connection result from Nango:', authResult);
         
-        // Use the utility function for safer table access
-        const { data: insertData, error: insertError } = await safeTable('service_credentials')
-          .insert({
-            user_id: session.user.id,
-            service_name: provider,
-            credential_name: `${provider} Connection`,
-            credential_type: 'oauth_nango_connect',
-            credential_value: new TextEncoder().encode('oauth_managed_by_nango'), // Encode as bytes
-            metadata: {
-              nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
-              provider_config_key: authResult.providerConfigKey || provider,
-              is_pending: authResult.isPending || false,
-              connected_at: new Date().toISOString()
-            }
-          })
-          .select();
-        
-        console.log('Insert result:', { insertData, insertError });
-
-        if (insertError) {
-          crmLog.error('Failed to store connection in database', insertError, { provider, userId: session.user.id });
+        try {
+          const credentialValue = JSON.stringify({
+            nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
+            provider_config_key: authResult.providerConfigKey || provider,
+            is_pending: authResult.isPending || false,
+            connected_at: new Date().toISOString()
+          });
+          
+          console.log('About to insert credential with value:', credentialValue);
+          
+          const { data: insertData, error: insertError } = await safeTable('service_credentials')
+            .insert({
+              user_id: session.user.id,
+              service_name: provider,
+              credential_name: `${provider} Connection`,
+              credential_type: 'oauth_nango_connect',
+              credential_value: new TextEncoder().encode(credentialValue), // Encode as bytes
+              metadata: {
+                nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
+                provider_config_key: authResult.providerConfigKey || provider,
+                is_pending: authResult.isPending || false,
+                connected_at: new Date().toISOString()
+              }
+            })
+            .select();
+          
+          console.log('Insert result:', { insertData, insertError });
+          
+          if (insertError) {
+            console.error('Database insert error details:', insertError);
+            throw insertError;
+          }
+          
+          console.log('Successfully stored connection in database');
+        } catch (dbError) {
+          console.error('Failed to store connection in database:', dbError);
+          crmLog.error('Failed to store connection in database', dbError instanceof Error ? dbError : undefined, { provider, userId: session.user.id });
           // Continue anyway since the OAuth was successful
         }
 
