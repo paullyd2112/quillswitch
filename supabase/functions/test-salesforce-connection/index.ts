@@ -38,57 +38,89 @@ serve(async (req) => {
       throw new Error('Credential ID is required')
     }
 
-    // Get the decrypted credential
-    const { data: credentials, error: credError } = await supabase
-      .rpc('get_decrypted_credential_with_logging', {
-        p_credential_id: credentialId
-      });
+    // For OAuth connections, get the credential and use Nango to get the actual token
+    const { data: credential, error: credError } = await supabase
+      .from('service_credentials')
+      .select('*')
+      .eq('id', credentialId)
+      .eq('user_id', user.id)
+      .single();
 
-    if (credError || !credentials || credentials.length === 0) {
+    if (credError || !credential) {
       throw new Error('Failed to retrieve Salesforce credentials')
     }
 
-    const credentialData = JSON.parse(credentials[0].credential_value)
-
-    // Test the connection by making a simple API call to Salesforce
-    const response = await fetch(`${credentialData.instance_url}/services/data/v59.0/sobjects/Organization/`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${credentialData.access_token}`,
-        'Content-Type': 'application/json'
+    // If this is an OAuth token, we need to get the actual access token from Nango
+    if (credential.credential_type === 'oauth_token') {
+      const nangoConnectionId = credential.metadata?.nango_connection_id;
+      if (!nangoConnectionId) {
+        throw new Error('Missing Nango connection ID')
       }
-    })
 
-    if (!response.ok) {
-      // If the request fails, the token might be expired
-      if (response.status === 401) {
-        throw new Error('Access token expired. Please reconnect your Salesforce account.')
-      }
-      throw new Error(`Salesforce API error: ${response.status} ${response.statusText}`)
-    }
-
-    const orgData = await response.json()
-    
-    // Try to get organization details
-    let organizationName = 'Connected Organization'
-    
-    try {
-      const orgResponse = await fetch(`${credentialData.instance_url}/services/data/v59.0/query/?q=SELECT+Name+FROM+Organization+LIMIT+1`, {
+      // Make a request to Nango to get the current access token
+      const nangoResponse = await fetch(`https://api.nango.dev/connection/${nangoConnectionId}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${credentialData.access_token}`,
+          'Authorization': `Bearer ${Deno.env.get('NANGO_SECRET_KEY')}`,
+          'Provider-Config-Key': credential.service_name,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!nangoResponse.ok) {
+        throw new Error('Failed to get OAuth token from Nango')
+      }
+
+      const nangoData = await nangoResponse.json();
+      const accessToken = nangoData.credentials.access_token;
+      const instanceUrl = nangoData.credentials.instance_url;
+
+      if (!accessToken || !instanceUrl) {
+        throw new Error('Invalid OAuth credentials from Nango')
+      }
+
+      // Test the connection by making a simple API call to Salesforce
+      const response = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Organization/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
         }
       })
-      
-      if (orgResponse.ok) {
-        const orgQueryResult = await orgResponse.json()
-        if (orgQueryResult.records && orgQueryResult.records.length > 0) {
-          organizationName = orgQueryResult.records[0].Name
+
+      if (!response.ok) {
+        // If the request fails, the token might be expired
+        if (response.status === 401) {
+          throw new Error('Access token expired. Please reconnect your Salesforce account.')
         }
+        throw new Error(`Salesforce API error: ${response.status} ${response.statusText}`)
       }
-    } catch (error) {
-      console.log('Could not fetch organization name:', error)
+
+      const orgData = await response.json()
+      
+      // Try to get organization details
+      let organizationName = 'Connected Organization'
+      
+      try {
+        const orgResponse = await fetch(`${instanceUrl}/services/data/v59.0/query/?q=SELECT+Name+FROM+Organization+LIMIT+1`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        if (orgResponse.ok) {
+          const orgQueryResult = await orgResponse.json()
+          if (orgQueryResult.records && orgQueryResult.records.length > 0) {
+            organizationName = orgQueryResult.records[0].Name
+          }
+        }
+      } catch (error) {
+        console.log('Could not fetch organization name:', error)
+      }
+    } else {
+      throw new Error('Only OAuth connections are supported for testing')
     }
 
     return new Response(
