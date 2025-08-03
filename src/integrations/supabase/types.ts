@@ -56,6 +56,133 @@ export type Database = {
         }
         Relationships: []
       }
+      cleansing_jobs: {
+        Row: {
+          completed_at: string | null
+          confidence_threshold: number
+          created_at: string
+          duplicates_found: number
+          id: string
+          migration_project_id: string | null
+          processed_records: number
+          source_data: Json
+          status: string
+          target_data: Json | null
+          total_records: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          confidence_threshold?: number
+          created_at?: string
+          duplicates_found?: number
+          id?: string
+          migration_project_id?: string | null
+          processed_records?: number
+          source_data: Json
+          status?: string
+          target_data?: Json | null
+          total_records?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          confidence_threshold?: number
+          created_at?: string
+          duplicates_found?: number
+          id?: string
+          migration_project_id?: string | null
+          processed_records?: number
+          source_data?: Json
+          status?: string
+          target_data?: Json | null
+          total_records?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cleansing_jobs_migration_project_id_fkey"
+            columns: ["migration_project_id"]
+            isOneToOne: false
+            referencedRelation: "migration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cleansing_reports: {
+        Row: {
+          cleansing_job_id: string
+          created_at: string
+          id: string
+          report_data: Json
+          report_type: string
+        }
+        Insert: {
+          cleansing_job_id: string
+          created_at?: string
+          id?: string
+          report_data: Json
+          report_type: string
+        }
+        Update: {
+          cleansing_job_id?: string
+          created_at?: string
+          id?: string
+          report_data?: Json
+          report_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cleansing_reports_cleansing_job_id_fkey"
+            columns: ["cleansing_job_id"]
+            isOneToOne: false
+            referencedRelation: "cleansing_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cleansing_rules: {
+        Row: {
+          actions: Json
+          conditions: Json
+          created_at: string
+          id: string
+          is_active: boolean
+          priority: number
+          rule_name: string
+          rule_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actions: Json
+          conditions: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          priority?: number
+          rule_name: string
+          rule_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          priority?: number
+          rule_name?: string
+          rule_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       credential_access_log: {
         Row: {
           accessed_at: string | null
@@ -490,6 +617,65 @@ export type Database = {
             columns: ["document_id"]
             isOneToOne: false
             referencedRelation: "document_migration"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      duplicate_matches: {
+        Row: {
+          cleansing_job_id: string
+          confidence_score: number
+          conflict_fields: Json | null
+          created_at: string
+          id: string
+          match_type: string
+          reconciliation_strategy: Json | null
+          source_record_data: Json
+          source_record_id: string
+          suggested_action: string
+          target_record_data: Json | null
+          target_record_id: string | null
+          updated_at: string
+          user_action: string | null
+        }
+        Insert: {
+          cleansing_job_id: string
+          confidence_score: number
+          conflict_fields?: Json | null
+          created_at?: string
+          id?: string
+          match_type: string
+          reconciliation_strategy?: Json | null
+          source_record_data: Json
+          source_record_id: string
+          suggested_action: string
+          target_record_data?: Json | null
+          target_record_id?: string | null
+          updated_at?: string
+          user_action?: string | null
+        }
+        Update: {
+          cleansing_job_id?: string
+          confidence_score?: number
+          conflict_fields?: Json | null
+          created_at?: string
+          id?: string
+          match_type?: string
+          reconciliation_strategy?: Json | null
+          source_record_data?: Json
+          source_record_id?: string
+          suggested_action?: string
+          target_record_data?: Json | null
+          target_record_id?: string | null
+          updated_at?: string
+          user_action?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "duplicate_matches_cleansing_job_id_fkey"
+            columns: ["cleansing_job_id"]
+            isOneToOne: false
+            referencedRelation: "cleansing_jobs"
             referencedColumns: ["id"]
           },
         ]
