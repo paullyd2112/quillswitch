@@ -89,7 +89,35 @@ export const useCrmConnections = () => {
       // Use Nango for OAuth flow
       const result = await initiateNangoOAuth(provider as NangoProvider, session.user.id);
       
-      if (result.success) {
+      if (result.success && result.result) {
+        // Type the result properly
+        const authResult = result.result as {
+          connectionId?: string;
+          providerConfigKey?: string;
+          isPending?: boolean;
+        };
+        
+        // Store the connection in our database
+        const { error: insertError } = await supabase
+          .from('service_credentials')
+          .insert({
+            user_id: session.user.id,
+            service_name: provider,
+            credential_name: `${provider} Connection`,
+            credential_type: 'oauth_nango_connect',
+            credential_value: 'nango_oauth_token', // Placeholder since actual tokens are in Nango
+            metadata: {
+              nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
+              provider_config_key: authResult.providerConfigKey || provider,
+              is_pending: authResult.isPending || false
+            }
+          });
+
+        if (insertError) {
+          crmLog.error('Failed to store connection in database', insertError, { provider, userId: session.user.id });
+          // Continue anyway since the OAuth was successful
+        }
+
         toast({
           title: "Connected successfully!",
           description: `Successfully connected to ${provider}`,
