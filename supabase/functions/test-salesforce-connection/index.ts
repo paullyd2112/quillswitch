@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -38,7 +37,7 @@ serve(async (req) => {
       throw new Error('Credential ID is required')
     }
 
-    // For OAuth connections, get the credential and use Nango to get the actual token
+    // Get the credential record to find the Nango connection ID
     const { data: credential, error: credError } = await supabase
       .from('service_credentials')
       .select('*')
@@ -47,22 +46,38 @@ serve(async (req) => {
       .single();
 
     if (credError || !credential) {
-      throw new Error('Failed to retrieve Salesforce credentials')
+      console.error('Failed to retrieve credential:', credError)
+      throw new Error('Failed to retrieve credential from database')
     }
 
-    // If this is an OAuth token, we need to get the actual access token from Nango
+    console.log('Retrieved credential:', {
+      id: credential.id,
+      service_name: credential.service_name,
+      credential_type: credential.credential_type,
+      metadata: credential.metadata
+    })
+
+    // For OAuth connections managed by Nango
     if (credential.credential_type === 'oauth_token') {
       const nangoConnectionId = credential.metadata?.nango_connection_id;
+      const providerConfigKey = credential.metadata?.provider_config_key || credential.service_name;
+      
       if (!nangoConnectionId) {
-        throw new Error('Missing Nango connection ID')
+        throw new Error('Missing Nango connection ID in credential metadata')
       }
 
-      // Make a request to Nango to get the current access token
-      const nangoResponse = await fetch(`https://api.nango.dev/connection/${nangoConnectionId}`, {
+      console.log('Using Nango connection ID:', nangoConnectionId)
+      console.log('Provider config key:', providerConfigKey)
+
+      // Get the OAuth token from Nango using the correct API format
+      const nangoUrl = `https://api.nango.dev/connection/${nangoConnectionId}`;
+      console.log('Calling Nango API at:', nangoUrl)
+      
+      const nangoResponse = await fetch(nangoUrl, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${Deno.env.get('NANGO_SECRET_KEY')}`,
-          'Provider-Config-Key': credential.service_name,
+          'Provider-Config-Key': providerConfigKey,
           'Content-Type': 'application/json'
         }
       });
@@ -71,22 +86,39 @@ serve(async (req) => {
 
       if (!nangoResponse.ok) {
         const errorText = await nangoResponse.text();
-        console.log('Nango API error:', errorText);
+        console.error('Nango API error:', errorText);
         throw new Error(`Failed to get OAuth token from Nango: ${nangoResponse.status} - ${errorText}`)
       }
 
       const nangoData = await nangoResponse.json();
-      console.log('Nango response data:', JSON.stringify(nangoData, null, 2));
+      console.log('Nango response data structure:', Object.keys(nangoData));
       
-      const accessToken = nangoData.credentials?.access_token;
-      const instanceUrl = nangoData.credentials?.instance_url;
-
-      if (!accessToken || !instanceUrl) {
-        throw new Error('Invalid OAuth credentials from Nango')
+      // Nango might return credentials in different formats
+      let accessToken, instanceUrl;
+      
+      if (nangoData.credentials) {
+        accessToken = nangoData.credentials.access_token;
+        instanceUrl = nangoData.credentials.instance_url;
+      } else if (nangoData.access_token) {
+        accessToken = nangoData.access_token;
+        instanceUrl = nangoData.instance_url;
+      } else {
+        console.error('Unexpected Nango response format:', nangoData);
+        throw new Error('Invalid OAuth credentials format from Nango')
       }
 
+      if (!accessToken) {
+        console.error('No access token in Nango response:', nangoData);
+        throw new Error('No access token received from Nango')
+      }
+
+      console.log('Got access token from Nango, instance URL:', instanceUrl);
+
       // Test the connection by making a simple API call to Salesforce
-      const response = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Organization/`, {
+      const testUrl = `${instanceUrl}/services/data/v59.0/sobjects/Organization/`;
+      console.log('Testing Salesforce connection at:', testUrl);
+      
+      const response = await fetch(testUrl, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -94,7 +126,12 @@ serve(async (req) => {
         }
       })
 
+      console.log('Salesforce API response status:', response.status);
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Salesforce API error:', errorText);
+        
         // If the request fails, the token might be expired
         if (response.status === 401) {
           throw new Error('Access token expired. Please reconnect your Salesforce account.')
@@ -102,8 +139,6 @@ serve(async (req) => {
         throw new Error(`Salesforce API error: ${response.status} ${response.statusText}`)
       }
 
-      const orgData = await response.json()
-      
       // Try to get organization details
       let organizationName = 'Connected Organization'
       
@@ -125,23 +160,23 @@ serve(async (req) => {
       } catch (error) {
         console.log('Could not fetch organization name:', error)
       }
-    } else {
-      throw new Error('Only OAuth connections are supported for testing')
-    }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true,
-        organizationName,
-        message: 'Connection test successful'
-      }),
-      { 
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        } 
-      }
-    )
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          organizationName,
+          message: 'Connection test successful - OAuth via Nango'
+        }),
+        { 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          } 
+        }
+      )
+    } else {
+      throw new Error('Only OAuth connections via Nango are supported for testing')
+    }
 
   } catch (error) {
     console.error('Salesforce connection test error:', error)
