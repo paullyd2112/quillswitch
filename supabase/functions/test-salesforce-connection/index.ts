@@ -70,14 +70,13 @@ serve(async (req) => {
       console.log('Provider config key:', providerConfigKey)
 
       // Get the OAuth token from Nango using the correct API format
-      const nangoUrl = `https://api.nango.dev/connection/${nangoConnectionId}`;
+      const nangoUrl = `https://api.nango.dev/connection/${nangoConnectionId}?provider_config_key=${encodeURIComponent(providerConfigKey)}`;
       console.log('Calling Nango API at:', nangoUrl)
       
       const nangoResponse = await fetch(nangoUrl, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${Deno.env.get('NANGO_SECRET_KEY')}`,
-          'Provider-Config-Key': providerConfigKey,
           'Content-Type': 'application/json'
         }
       });
