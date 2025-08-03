@@ -1525,6 +1525,112 @@ export type Database = {
           },
         ]
       }
+      preview_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          estimated_success_rate: number | null
+          health_report: Json | null
+          id: string
+          migration_project_id: string | null
+          potential_issues: Json | null
+          preview_results: Json | null
+          source_data: Json
+          source_system: string
+          status: string
+          target_system: string
+          transformation_rules: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          estimated_success_rate?: number | null
+          health_report?: Json | null
+          id?: string
+          migration_project_id?: string | null
+          potential_issues?: Json | null
+          preview_results?: Json | null
+          source_data: Json
+          source_system: string
+          status?: string
+          target_system: string
+          transformation_rules?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          estimated_success_rate?: number | null
+          health_report?: Json | null
+          id?: string
+          migration_project_id?: string | null
+          potential_issues?: Json | null
+          preview_results?: Json | null
+          source_data?: Json
+          source_system?: string
+          status?: string
+          target_system?: string
+          transformation_rules?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preview_jobs_migration_project_id_fkey"
+            columns: ["migration_project_id"]
+            isOneToOne: false
+            referencedRelation: "migration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      preview_warnings: {
+        Row: {
+          affected_records: number | null
+          created_at: string
+          field_name: string | null
+          id: string
+          message: string
+          preview_job_id: string
+          recommendation: string | null
+          severity: string
+          warning_type: string
+        }
+        Insert: {
+          affected_records?: number | null
+          created_at?: string
+          field_name?: string | null
+          id?: string
+          message: string
+          preview_job_id: string
+          recommendation?: string | null
+          severity: string
+          warning_type: string
+        }
+        Update: {
+          affected_records?: number | null
+          created_at?: string
+          field_name?: string | null
+          id?: string
+          message?: string
+          preview_job_id?: string
+          recommendation?: string | null
+          severity?: string
+          warning_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preview_warnings_preview_job_id_fkey"
+            columns: ["preview_job_id"]
+            isOneToOne: false
+            referencedRelation: "preview_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1628,6 +1734,50 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transformation_previews: {
+        Row: {
+          created_at: string
+          data_loss_risk: string | null
+          field_name: string
+          id: string
+          original_value: string | null
+          preview_job_id: string
+          transformation_type: string
+          transformed_value: string | null
+          warning_message: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_loss_risk?: string | null
+          field_name: string
+          id?: string
+          original_value?: string | null
+          preview_job_id: string
+          transformation_type: string
+          transformed_value?: string | null
+          warning_message?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_loss_risk?: string | null
+          field_name?: string
+          id?: string
+          original_value?: string | null
+          preview_job_id?: string
+          transformation_type?: string
+          transformed_value?: string | null
+          warning_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transformation_previews_preview_job_id_fkey"
+            columns: ["preview_job_id"]
+            isOneToOne: false
+            referencedRelation: "preview_jobs"
             referencedColumns: ["id"]
           },
         ]
