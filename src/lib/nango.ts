@@ -83,9 +83,18 @@ export const initiateNangoOAuth = async (provider: NangoProvider, userId: string
     
     try {
       console.log('🚀 About to call nango.auth(), checking for popup blockers...');
+      console.log('🔍 Nango auth parameters:', {
+        providerId: config.providerId,
+        nangoInstance: !!nango,
+        userId: userId
+      });
+      
+      // For Salesforce sandbox, try with connection ID
+      const connectionId = `salesforce_${userId}`;
+      console.log('🔧 Using connection ID:', connectionId);
       
       // Add a timeout to catch hanging auth calls
-      const authPromise = nango.auth(config.providerId);
+      const authPromise = nango.auth(config.providerId, connectionId);
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('OAuth timeout after 30 seconds')), 30000)
       );
