@@ -6,6 +6,7 @@ import { useCrmConnections } from "@/hooks/useCrmConnections";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import CrmConnectionCard from "@/components/crm-connections/CrmConnectionCard";
 import ConnectedCrmsList from "@/components/crm-connections/ConnectedCrmsList";
+import QuillCleanseCard from "@/components/quill-cleanse/QuillCleanseCard";
 import { LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -127,6 +128,13 @@ const CrmConnections: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      <QuillCleanseCard 
+        onStartCleansing={() => {
+          // TODO: Integrate with actual data upload/selection flow
+          navigate('/app/quill-cleanse');
+        }}
+      />
     </div>
   );
 };
