@@ -82,7 +82,17 @@ export const initiateNangoOAuth = async (provider: NangoProvider, userId: string
     console.log('🚀 Starting auth flow with providerId:', config.providerId);
     
     try {
-      const result = await nango.auth(config.providerId);
+      console.log('🚀 About to call nango.auth(), checking for popup blockers...');
+      
+      // Add a timeout to catch hanging auth calls
+      const authPromise = nango.auth(config.providerId);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('OAuth timeout after 30 seconds')), 30000)
+      );
+      
+      console.log('⏱️ Waiting for OAuth response (30s timeout)...');
+      const result = await Promise.race([authPromise, timeoutPromise]);
+      
       console.log('✅ Nango auth completed successfully:', result);
       crmLog.info('Nango OAuth flow initiated successfully');
       return { success: true, result };
@@ -90,7 +100,8 @@ export const initiateNangoOAuth = async (provider: NangoProvider, userId: string
       console.error('❌ nango.auth() failed:', {
         error: authError instanceof Error ? authError.message : 'Unknown auth error',
         errorDetails: authError,
-        providerId: config.providerId
+        providerId: config.providerId,
+        errorType: typeof authError
       });
       throw authError;
     }
