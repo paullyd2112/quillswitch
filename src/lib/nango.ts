@@ -86,15 +86,31 @@ export const initiateNangoOAuth = async (provider: NangoProvider, userId: string
       console.log('🔍 Nango auth parameters:', {
         providerId: config.providerId,
         nangoInstance: !!nango,
-        userId: userId
+        userId: userId,
+        nangoHost: NANGO_CONFIG.host
       });
       
-      // For Salesforce sandbox, try with connection ID
-      const connectionId = `salesforce_${userId}`;
+      // For Salesforce, use connection ID with proper options
+      const connectionId = `${provider}_${userId}`;
       console.log('🔧 Using connection ID:', connectionId);
       
+      // Try with different auth approaches for Salesforce sandbox
+      const authOptions = provider === 'salesforce' ? {
+        userInfo: { id: userId },
+        params: { 
+          isSandbox: 'true',
+          // Force refresh to avoid cached credentials
+          refresh: 'true'
+        }
+      } : undefined;
+      
+      console.log('🎯 Auth options:', authOptions);
+      
       // Add a timeout to catch hanging auth calls
-      const authPromise = nango.auth(config.providerId, connectionId);
+      const authPromise = authOptions 
+        ? nango.auth(config.providerId, connectionId, authOptions)
+        : nango.auth(config.providerId, connectionId);
+        
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('OAuth timeout after 30 seconds')), 30000)
       );
