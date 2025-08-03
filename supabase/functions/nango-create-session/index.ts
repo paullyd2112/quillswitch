@@ -28,7 +28,11 @@ serve(async (req) => {
 
     const { integrationId } = await req.json()
     
-    console.log(`Creating Nango Connect session for user ${user.id} and integration ${integrationId}`)
+    console.log(`🔍 Creating Nango Connect session:`, {
+      userId: user.id,
+      userEmail: user.email,
+      integrationId
+    })
 
     const nangoSecretKey = Deno.env.get('NANGO_SECRET_KEY')
     if (!nangoSecretKey) {
