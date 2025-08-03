@@ -89,26 +89,24 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
 
     setIsValidating(true);
     try {
-      const result = await validateConnection(system.id, apiKey);
+      const result = await validateConnection(system.id);
       
-      if (result.valid) {
+      if (result) {
         setValidationState('valid');
-        connectSystem(system.id, type, apiKey);
+        connectSystem(system.id, type);
         setStep('success');
         // Clear the API key from the component state as soon as it's no longer needed
         setTimeout(() => setApiKey(""), 100);
       } else {
         setValidationState('invalid');
-        setErrorMessage(result.message || "Invalid API key");
+        setErrorMessage("Connection validation failed");
         
-        // If there's a specific permission error, show the error dialog
-        if (result.message?.includes("permission")) {
-          setStep('error');
-          setErrorDetails({
-            type: "permissions",
-            message: result.message
-          });
-        }
+        // Show generic error dialog
+        setStep('error');
+        setErrorDetails({
+          type: "connection_failed",
+          message: "Failed to validate connection"
+        });
       }
     } catch (error) {
       setValidationState('invalid');
@@ -120,7 +118,7 @@ const ConnectionModal: React.FC<ConnectionModalProps> = ({
 
   const handleErrorHelp = () => {
     if (errorDetails) {
-      showHelpGuide(errorDetails.type, system.name);
+      showHelpGuide(system.name);
       onClose();
     }
   };
