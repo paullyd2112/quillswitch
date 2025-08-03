@@ -116,30 +116,29 @@ export const useCrmConnections = () => {
           
           console.log('About to insert credential with value:', credentialValue);
           
-          const { data: insertData, error: insertError } = await safeTable('service_credentials')
-            .insert({
-              user_id: session.user.id,
-              service_name: provider,
-              credential_name: `${provider} Connection`,
-              credential_type: 'oauth_nango_connect',
-              credential_value: new TextEncoder().encode(credentialValue), // Encode as bytes
-              metadata: {
+          // Use a transaction to insert the credential and then log separately
+          const { data: insertData, error: insertError } = await supabase
+            .rpc('encrypt_and_store_credential', {
+              p_service_name: provider,
+              p_credential_name: `${provider} Connection`,
+              p_credential_type: 'oauth_nango_connect',
+              p_credential_value: credentialValue,
+              p_metadata: {
                 nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
                 provider_config_key: authResult.providerConfigKey || provider,
                 is_pending: authResult.isPending || false,
                 connected_at: new Date().toISOString()
               }
-            })
-            .select();
+            });
           
-          console.log('Insert result:', { insertData, insertError });
+          console.log('Insert result using RPC:', { insertData, insertError });
           
           if (insertError) {
             console.error('Database insert error details:', insertError);
             throw insertError;
           }
           
-          console.log('Successfully stored connection in database');
+          console.log('Successfully stored connection in database using encrypted function');
         } catch (dbError) {
           console.error('Failed to store connection in database:', dbError);
           crmLog.error('Failed to store connection in database', dbError instanceof Error ? dbError : undefined, { provider, userId: session.user.id });
