@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { crmLog } from "@/utils/logging/consoleReplacer";
+import { safeTable } from "@/services/utils/supabaseUtils";
 import { ConnectedCredential } from "@/components/crm-connections/types";
 import { 
   initiateNangoOAuth, 
@@ -101,28 +102,25 @@ export const useCrmConnections = () => {
           isPending?: boolean;
         };
         
-        // Store the connection in our database using the secure function
+        // Store the connection in our database (OAuth tokens are managed by Nango)
         console.log('Storing connection in database for provider:', provider);
         
-        const { data: insertData, error: insertError } = await supabase.rpc(
-          'encrypt_and_store_credential', 
-          {
-            p_service_name: provider,
-            p_credential_name: `${provider} Connection`,
-            p_credential_type: 'oauth_nango_connect',
-            p_credential_value: JSON.stringify({
+        // Use the utility function for safer table access
+        const { data: insertData, error: insertError } = await safeTable('service_credentials')
+          .insert({
+            user_id: session.user.id,
+            service_name: provider,
+            credential_name: `${provider} Connection`,
+            credential_type: 'oauth_nango_connect',
+            credential_value: new TextEncoder().encode('oauth_managed_by_nango'), // Encode as bytes
+            metadata: {
               nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
               provider_config_key: authResult.providerConfigKey || provider,
               is_pending: authResult.isPending || false,
               connected_at: new Date().toISOString()
-            }),
-            p_metadata: {
-              nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
-              provider_config_key: authResult.providerConfigKey || provider,
-              is_pending: authResult.isPending || false
             }
-          }
-        );
+          })
+          .select();
         
         console.log('Insert result:', { insertData, insertError });
 
