@@ -43,7 +43,7 @@ export const useCrmConnections = () => {
         .from('service_credentials')
         .select('*')
         .eq('user_id', session.user.id)
-        .eq('credential_type', 'oauth_nango_connect');
+        .eq('credential_type', 'oauth_token');
 
       console.log('Query result:', { credentials, error });
 
@@ -112,7 +112,7 @@ export const useCrmConnections = () => {
               user_id: session.user.id,
               service_name: provider,
               credential_name: `${provider} Connection`,
-              credential_type: 'oauth_nango_connect',
+              credential_type: 'oauth_token',
               credential_value: 'oauth_managed_by_nango', // Simple string
               metadata: {
                 nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
