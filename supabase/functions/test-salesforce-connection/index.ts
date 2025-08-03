@@ -90,21 +90,27 @@ serve(async (req) => {
       }
 
       const nangoData = await nangoResponse.json();
-      console.log('Nango response data structure:', Object.keys(nangoData));
+      console.log('=== FULL NANGO RESPONSE ===');
+      console.log('Nango response data:', JSON.stringify(nangoData, null, 2));
+      console.log('Nango response keys:', Object.keys(nangoData || {}));
       
       // Nango might return credentials in different formats
       let accessToken, instanceUrl;
       
+      // Log all possible credential structures
       if (nangoData.credentials) {
+        console.log('Found credentials object:', JSON.stringify(nangoData.credentials, null, 2));
         accessToken = nangoData.credentials.access_token;
         instanceUrl = nangoData.credentials.instance_url;
-      } else if (nangoData.access_token) {
+      } else {
+        console.log('No credentials object, checking root level');
         accessToken = nangoData.access_token;
         instanceUrl = nangoData.instance_url;
-      } else {
-        console.error('Unexpected Nango response format:', nangoData);
-        throw new Error('Invalid OAuth credentials format from Nango')
       }
+      
+      console.log('Extracted values:');
+      console.log('- accessToken:', accessToken ? '[PRESENT]' : '[MISSING]');
+      console.log('- instanceUrl:', instanceUrl || '[MISSING]');
 
       if (!accessToken) {
         console.error('No access token in Nango response:', nangoData);
