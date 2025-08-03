@@ -1880,6 +1880,145 @@ export type Database = {
           },
         ]
       }
+      sync_conflicts: {
+        Row: {
+          conflict_details: Json
+          created_at: string
+          id: string
+          record_id: string
+          resolution_rule: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          sync_project_id: string
+        }
+        Insert: {
+          conflict_details?: Json
+          created_at?: string
+          id?: string
+          record_id: string
+          resolution_rule?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          sync_project_id: string
+        }
+        Update: {
+          conflict_details?: Json
+          created_at?: string
+          id?: string
+          record_id?: string
+          resolution_rule?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          sync_project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_sync_conflicts_project"
+            columns: ["sync_project_id"]
+            isOneToOne: false
+            referencedRelation: "sync_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_maps: {
+        Row: {
+          created_at: string
+          destination_object: string
+          field_map: Json
+          id: string
+          source_object: string
+          sync_direction: string
+          sync_project_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          destination_object: string
+          field_map?: Json
+          id?: string
+          source_object: string
+          sync_direction?: string
+          sync_project_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          destination_object?: string
+          field_map?: Json
+          id?: string
+          source_object?: string
+          sync_direction?: string
+          sync_project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_sync_maps_project"
+            columns: ["sync_project_id"]
+            isOneToOne: false
+            referencedRelation: "sync_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_projects: {
+        Row: {
+          created_at: string
+          destination_crm_id: string
+          id: string
+          last_sync_run: string | null
+          project_name: string
+          source_crm_id: string
+          sync_settings: Json | null
+          sync_status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          destination_crm_id: string
+          id?: string
+          last_sync_run?: string | null
+          project_name: string
+          source_crm_id: string
+          sync_settings?: Json | null
+          sync_status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          destination_crm_id?: string
+          id?: string
+          last_sync_run?: string | null
+          project_name?: string
+          source_crm_id?: string
+          sync_settings?: Json | null
+          sync_status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_sync_projects_destination_crm"
+            columns: ["destination_crm_id"]
+            isOneToOne: false
+            referencedRelation: "service_credentials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_sync_projects_source_crm"
+            columns: ["source_crm_id"]
+            isOneToOne: false
+            referencedRelation: "service_credentials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transformation_previews: {
         Row: {
           created_at: string
