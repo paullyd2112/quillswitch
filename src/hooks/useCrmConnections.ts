@@ -35,12 +35,16 @@ export const useCrmConnections = () => {
     }
 
     try {
+      console.log('Loading connected credentials for user:', session.user.id);
+      
       // Check our database for stored Nango connections
       const { data: credentials, error } = await supabase
         .from('service_credentials')
         .select('*')
         .eq('user_id', session.user.id)
         .eq('credential_type', 'oauth_nango_connect');
+
+      console.log('Query result:', { credentials, error });
 
       if (error) {
         crmLog.error('Error loading credentials', error instanceof Error ? error : undefined, { userId: session.user.id });
@@ -97,21 +101,30 @@ export const useCrmConnections = () => {
           isPending?: boolean;
         };
         
-        // Store the connection in our database
-        const { error: insertError } = await supabase
-          .from('service_credentials')
-          .insert({
-            user_id: session.user.id,
-            service_name: provider,
-            credential_name: `${provider} Connection`,
-            credential_type: 'oauth_nango_connect',
-            credential_value: 'nango_oauth_token', // Placeholder since actual tokens are in Nango
-            metadata: {
+        // Store the connection in our database using the secure function
+        console.log('Storing connection in database for provider:', provider);
+        
+        const { data: insertData, error: insertError } = await supabase.rpc(
+          'encrypt_and_store_credential', 
+          {
+            p_service_name: provider,
+            p_credential_name: `${provider} Connection`,
+            p_credential_type: 'oauth_nango_connect',
+            p_credential_value: JSON.stringify({
+              nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
+              provider_config_key: authResult.providerConfigKey || provider,
+              is_pending: authResult.isPending || false,
+              connected_at: new Date().toISOString()
+            }),
+            p_metadata: {
               nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
               provider_config_key: authResult.providerConfigKey || provider,
               is_pending: authResult.isPending || false
             }
-          });
+          }
+        );
+        
+        console.log('Insert result:', { insertData, insertError });
 
         if (insertError) {
           crmLog.error('Failed to store connection in database', insertError, { provider, userId: session.user.id });
