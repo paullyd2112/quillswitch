@@ -8,6 +8,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
 import Home from "./pages/Home";
+import QuillSandbox from "./pages/QuillSandbox";
 import Auth from "./pages/Auth";
 import Setup from "./pages/Setup";
 import AppMigrations from "./pages/AppMigrations";
@@ -27,7 +28,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/quill-sandbox" element={<QuillSandbox />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             {/* Redirect old CRM connections route to new app route */}
             <Route path="/crm-connections" element={
