@@ -5,7 +5,7 @@ import BaseLayout from "@/components/layout/BaseLayout";
 import Dashboard from "./Dashboard";
 import ConnectionHub from "./ConnectionHub";
 {/* CrmConnections removed - now using main route */}
-import QuillSandbox from "../QuillSandbox";
+import QuillRevert from "../QuillRevert";
 import Migrations from "./Migrations";
 import CredentialsVault from "../CredentialsVault";
 import SetupWizard from "../SetupWizard";
@@ -22,7 +22,7 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="connections" element={<ConnectionHub />} />
         {/* CRM connections now handled by main route */}
-        <Route path="quill-sandbox" element={<QuillSandbox />} />
+        <Route path="quill-revert" element={<QuillRevert />} />
         <Route path="migrations" element={<Migrations />} />
         <Route path="migrations/:id" element={<MigrationDashboard />} />
         <Route path="cloud-migration" element={<CloudMigration />} />
