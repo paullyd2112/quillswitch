@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import BaseLayout from "@/components/layout/BaseLayout";
 import Dashboard from "./Dashboard";
 import ConnectionHub from "./ConnectionHub";
-import CrmConnections from "./CrmConnections";
+{/* CrmConnections removed - now using main route */}
 import QuillCleanse from "./QuillCleanse";
 import Migrations from "./Migrations";
 import CredentialsVault from "../CredentialsVault";
@@ -21,7 +21,7 @@ const AppRoutes = () => {
       <Routes>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="connections" element={<ConnectionHub />} />
-        <Route path="crm-connections" element={<CrmConnections />} />
+        {/* CRM connections now handled by main route */}
         <Route path="quill-cleanse" element={<QuillCleanse />} />
         <Route path="migrations" element={<Migrations />} />
         <Route path="migrations/:id" element={<MigrationDashboard />} />
