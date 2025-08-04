@@ -20,7 +20,7 @@ const NotFound = () => {
       return { path: '/app/setup', label: 'Go to Migration Setup' };
     }
     if (pathname.includes('/connect')) {
-      return { path: '/app/crm-connections', label: 'Go to CRM Connections' };
+      return { path: '/app/connections', label: 'Go to Connections' };
     }
     if (pathname.includes('/dashboard')) {
       return { path: '/app/setup', label: 'Go to Dashboard' };

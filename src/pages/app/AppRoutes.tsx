@@ -21,7 +21,10 @@ const AppRoutes = () => {
       <Routes>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="connections" element={<ConnectionHub />} />
-        {/* CRM connections now handled by main route */}
+        {/* Add alias routes for consistency */}
+        <Route path="connect" element={<ConnectionHub />} />
+        <Route path="migrate" element={<Migrations />} />
+        <Route path="try-it" element={<Dashboard />} />
         <Route path="quill-revert" element={<QuillRevert />} />
         <Route path="migrations" element={<Migrations />} />
         <Route path="migrations/:id" element={<MigrationDashboard />} />

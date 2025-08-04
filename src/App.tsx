@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
@@ -30,12 +30,9 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/quill-revert" element={<QuillRevert />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
-            {/* Redirect old CRM connections route to new app route */}
-            <Route path="/crm-connections" element={
-              <ConnectionProvider>
-                <CrmConnections />
-              </ConnectionProvider>
-            } />
+            {/* Redirect old routes to new app routes */}
+            <Route path="/crm-connections" element={<Navigate to="/app/connections" replace />} />
+            <Route path="/migrations/setup" element={<Navigate to="/app/setup" replace />} />
             
             {/* App routes wrapped with ConnectionProvider */}
             <Route path="/app/*" element={

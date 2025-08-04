@@ -129,7 +129,7 @@ const QuillCleanse: React.FC = () => {
           </p>
         </div>
         <Button 
-          onClick={() => navigate('/app/crm-connections')}
+          onClick={() => navigate('/app/connections')}
           variant="outline"
         >
           <Upload className="h-4 w-4 mr-2" />
@@ -173,7 +173,7 @@ const QuillCleanse: React.FC = () => {
                   <p className="text-muted-foreground mb-4">
                     Start your first QuillCleanse operation to see results here
                   </p>
-                  <Button onClick={() => navigate('/app/crm-connections')}>
+                  <Button onClick={() => navigate('/app/connections')}>
                     <Upload className="h-4 w-4 mr-2" />
                     Start Cleansing
                   </Button>

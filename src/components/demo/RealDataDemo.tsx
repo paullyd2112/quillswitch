@@ -129,7 +129,7 @@ const RealDataDemo: React.FC<RealDataDemoProps> = ({ userEmail }) => {
   };
 
   const handleContinueWithDemo = () => {
-    window.location.href = '/app/try-it';
+    window.location.href = '/app/dashboard';
   };
 
   if (accessLoading) {

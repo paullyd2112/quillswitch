@@ -24,7 +24,7 @@ const SetupMigrationContent: React.FC = () => {
       title: "Connection Required",
       description: "Please connect your CRM systems before proceeding"
     });
-    navigate("/app/connect");
+    navigate("/app/connections");
   };
   
   // Handle starting the migration setup wizard

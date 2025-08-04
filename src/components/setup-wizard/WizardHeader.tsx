@@ -23,7 +23,7 @@ const WizardHeader: React.FC = () => {
           </Button>
           
           <Button variant="outline" asChild>
-            <Link to="/app/connect">
+            <Link to="/app/connections">
               Connection Hub
             </Link>
           </Button>

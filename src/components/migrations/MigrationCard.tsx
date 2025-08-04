@@ -16,7 +16,7 @@ const MigrationCard = ({ isCreateCard = false }: MigrationCardProps) => {
     return (
       <Card 
         className="relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow duration-200"
-        onClick={() => navigate("/migrations/setup")}
+        onClick={() => navigate("/app/setup")}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/20 opacity-50"></div>
         <CardHeader>

@@ -24,7 +24,7 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-            <Button size="lg" onClick={() => navigate("/migrations/setup")} className="gap-2 bg-friendly-accent hover:bg-friendly-accent/90 border-none rounded-sm">
+            <Button size="lg" onClick={() => navigate("/app/setup")} className="gap-2 bg-friendly-accent hover:bg-friendly-accent/90 border-none rounded-sm">
               Get My Free Assessment <ArrowRight size={16} />
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate("/features")} className="gap-2 border-friendly-border text-friendly-text-primary bg-friendly-card hover:bg-friendly-card/80 rounded-sm">

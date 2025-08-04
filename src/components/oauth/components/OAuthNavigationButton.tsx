@@ -13,7 +13,7 @@ const OAuthNavigationButton: React.FC<OAuthNavigationButtonProps> = ({ status })
   const navigate = useNavigate();
 
   const handleNavigation = () => {
-    navigate("/crm-connections");
+    navigate("/app/connections");
   };
 
   if (status === "loading") {

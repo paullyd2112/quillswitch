@@ -87,7 +87,7 @@ const ConnectionHub: React.FC = () => {
                     <p className="text-muted-foreground">
                       Native CRM connection management is being developed. Use the Salesforce integration in the migration flow for now.
                     </p>
-                    <Button onClick={() => navigate("/app/migrate")}>
+                    <Button onClick={() => navigate("/app/migrations")}>
                       Go to Migration
                     </Button>
                   </div>
