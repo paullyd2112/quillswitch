@@ -29,15 +29,15 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/connections" element={
+            <Route path="/crm-connections" element={
               <ConnectionProvider>
                 <CrmConnections />
               </ConnectionProvider>
             } />
             <Route path="/quill-revert" element={<QuillRevert />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
-            {/* Redirect old routes to new app routes */}
-            <Route path="/crm-connections" element={<Navigate to="/connections" replace />} />
+            {/* Redirect broken routes to working crm-connections */}
+            <Route path="/connections" element={<Navigate to="/crm-connections" replace />} />
             <Route path="/migrations/setup" element={<Navigate to="/app/setup" replace />} />
             
             {/* App routes wrapped with ConnectionProvider */}
