@@ -26,90 +26,7 @@ interface AuditLogEntry {
   notes?: string;
 }
 
-const mockAuditLogs: AuditLogEntry[] = [
-  {
-    id: "audit-001",
-    timestamp: "2024-01-16 14:30:25",
-    userId: "user-123",
-    userName: "Sarah Johnson",
-    action: "Complete Rollback Executed",
-    operation: "rollback",
-    status: "completed",
-    objectsAffected: ["Accounts", "Contacts", "Opportunities"],
-    recordsAffected: 15750,
-    snapshotVersion: "v2.0.8",
-    riskLevel: "medium",
-    duration: "18m 32s",
-    ipAddress: "192.168.1.100",
-    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-    notes: "Emergency rollback due to data corruption in migration"
-  },
-  {
-    id: "audit-002",
-    timestamp: "2024-01-16 11:15:42",
-    userId: "user-456",
-    userName: "Mike Chen",
-    action: "Impact Analysis Generated",
-    operation: "analysis",
-    status: "completed",
-    objectsAffected: ["Contacts", "Activities"],
-    recordsAffected: 8400,
-    snapshotVersion: "v2.1.0",
-    riskLevel: "low",
-    duration: "2m 15s",
-    ipAddress: "10.0.0.25",
-    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
-  },
-  {
-    id: "audit-003",
-    timestamp: "2024-01-16 09:45:18",
-    userId: "user-789",
-    userName: "Alex Rivera",
-    action: "Snapshot Created",
-    operation: "snapshot",
-    status: "completed",
-    objectsAffected: ["All Objects"],
-    recordsAffected: 125000,
-    snapshotVersion: "v2.1.0",
-    riskLevel: "low",
-    duration: "12m 08s",
-    ipAddress: "172.16.0.50",
-    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-  },
-  {
-    id: "audit-004",
-    timestamp: "2024-01-15 16:20:33",
-    userId: "user-123",
-    userName: "Sarah Johnson",
-    action: "Selective Rollback Failed",
-    operation: "rollback",
-    status: "failed",
-    objectsAffected: ["Opportunities"],
-    recordsAffected: 0,
-    snapshotVersion: "v2.0.7",
-    riskLevel: "high",
-    duration: "0m 45s",
-    ipAddress: "192.168.1.100",
-    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-    notes: "Rollback cancelled due to dependency conflicts"
-  },
-  {
-    id: "audit-005",
-    timestamp: "2024-01-15 14:10:20",
-    userId: "user-456",
-    userName: "Mike Chen",
-    action: "Preview Mode Executed",
-    operation: "preview",
-    status: "completed",
-    objectsAffected: ["Accounts", "Contacts"],
-    recordsAffected: 12000,
-    snapshotVersion: "v2.0.7",
-    riskLevel: "medium",
-    duration: "5m 22s",
-    ipAddress: "10.0.0.25",
-    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
-  }
-];
+const mockAuditLogs: AuditLogEntry[] = [];
 
 const RollbackAuditTrail: React.FC = () => {
   const [logs, setLogs] = useState<AuditLogEntry[]>(mockAuditLogs);
@@ -211,7 +128,7 @@ const RollbackAuditTrail: React.FC = () => {
               <div className="flex items-center gap-3">
                 <RotateCcw className="h-5 w-5 text-orange-500" />
                 <div>
-                  <div className="text-2xl font-bold">23</div>
+                  <div className="text-2xl font-bold">{logs.filter(l => l.operation === "rollback").length}</div>
                   <div className="text-sm text-muted-foreground">Total Rollbacks</div>
                 </div>
               </div>
@@ -220,7 +137,7 @@ const RollbackAuditTrail: React.FC = () => {
               <div className="flex items-center gap-3">
                 <CheckCircle className="h-5 w-5 text-green-500" />
                 <div>
-                  <div className="text-2xl font-bold">21</div>
+                  <div className="text-2xl font-bold">{logs.filter(l => l.status === "completed").length}</div>
                   <div className="text-sm text-muted-foreground">Successful</div>
                 </div>
               </div>

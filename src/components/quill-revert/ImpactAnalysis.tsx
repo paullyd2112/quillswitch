@@ -29,52 +29,21 @@ interface ObjectImpact {
   dependencies: string[];
 }
 
-const mockMetrics: ImpactMetrics = {
-  recordsToRevert: 15750,
-  recordsToDelete: 3200,
-  recordsToRestore: 1850,
-  recordsUnaffected: 104200,
-  dependentRecords: 8400,
-  estimatedDuration: "18 minutes",
-  riskScore: "medium",
-  dataIntegrityScore: 94
+const emptyMetrics: ImpactMetrics = {
+  recordsToRevert: 0,
+  recordsToDelete: 0,
+  recordsToRestore: 0,
+  recordsUnaffected: 0,
+  dependentRecords: 0,
+  estimatedDuration: "—",
+  riskScore: "low",
+  dataIntegrityScore: 0
 };
 
-const mockObjectImpacts: ObjectImpact[] = [
-  {
-    objectType: "Accounts",
-    totalRecords: 15000,
-    affectedRecords: 4500,
-    revertCount: 3200,
-    deleteCount: 800,
-    restoreCount: 500,
-    riskLevel: "low",
-    dependencies: ["Contacts", "Opportunities", "Cases"]
-  },
-  {
-    objectType: "Contacts",
-    totalRecords: 45000,
-    affectedRecords: 12000,
-    revertCount: 8500,
-    deleteCount: 2100,
-    restoreCount: 1400,
-    riskLevel: "medium",
-    dependencies: ["Activities", "Opportunities"]
-  },
-  {
-    objectType: "Opportunities",
-    totalRecords: 8500,
-    affectedRecords: 2800,
-    revertCount: 2400,
-    deleteCount: 300,
-    restoreCount: 100,
-    riskLevel: "high",
-    dependencies: ["OpportunityLineItems", "Activities"]
-  }
-];
+const objectImpacts: ObjectImpact[] = [];
 
 const ImpactAnalysis: React.FC = () => {
-  const [analysisComplete, setAnalysisComplete] = useState(true);
+  const [analysisComplete, setAnalysisComplete] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
   const getRiskBadge = (risk: string) => {
@@ -123,7 +92,7 @@ const ImpactAnalysis: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <TrendingDown className="h-5 w-5 text-blue-500" />
                       <div>
-                        <div className="text-2xl font-bold text-blue-600">{mockMetrics.recordsToRevert.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-blue-600">{emptyMetrics.recordsToRevert.toLocaleString()}</div>
                         <div className="text-sm text-muted-foreground">Records to Revert</div>
                       </div>
                     </div>
@@ -133,7 +102,7 @@ const ImpactAnalysis: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <AlertTriangle className="h-5 w-5 text-red-500" />
                       <div>
-                        <div className="text-2xl font-bold text-red-600">{mockMetrics.recordsToDelete.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-red-600">{emptyMetrics.recordsToDelete.toLocaleString()}</div>
                         <div className="text-sm text-muted-foreground">Records to Delete</div>
                       </div>
                     </div>
@@ -143,7 +112,7 @@ const ImpactAnalysis: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <TrendingUp className="h-5 w-5 text-green-500" />
                       <div>
-                        <div className="text-2xl font-bold text-green-600">{mockMetrics.recordsToRestore.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-green-600">{emptyMetrics.recordsToRestore.toLocaleString()}</div>
                         <div className="text-sm text-muted-foreground">Records to Restore</div>
                       </div>
                     </div>
@@ -153,7 +122,7 @@ const ImpactAnalysis: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <Shield className="h-5 w-5 text-gray-500" />
                       <div>
-                        <div className="text-2xl font-bold text-gray-600">{mockMetrics.recordsUnaffected.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-gray-600">{emptyMetrics.recordsUnaffected.toLocaleString()}</div>
                         <div className="text-sm text-muted-foreground">Unaffected Records</div>
                       </div>
                     </div>
@@ -169,22 +138,22 @@ const ImpactAnalysis: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">Estimated Duration:</span>
-                        <Badge variant="outline">{mockMetrics.estimatedDuration}</Badge>
+                        <Badge variant="outline">{emptyMetrics.estimatedDuration}</Badge>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">Risk Level:</span>
-                        {getRiskBadge(mockMetrics.riskScore)}
+                        {getRiskBadge(emptyMetrics.riskScore)}
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">Data Integrity Score:</span>
                         <div className="flex items-center gap-2">
-                          <Progress value={mockMetrics.dataIntegrityScore} className="w-20" />
-                          <span className="font-medium">{mockMetrics.dataIntegrityScore}%</span>
+                          <Progress value={emptyMetrics.dataIntegrityScore} className="w-20" />
+                          <span className="font-medium">{emptyMetrics.dataIntegrityScore}%</span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">Dependent Records:</span>
-                        <span className="font-medium">{mockMetrics.dependentRecords.toLocaleString()}</span>
+                        <span className="font-medium">{emptyMetrics.dependentRecords.toLocaleString()}</span>
                       </div>
                     </div>
                   </Card>
@@ -198,30 +167,48 @@ const ImpactAnalysis: React.FC = () => {
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span>Records to Revert</span>
-                          <span>75.3%</span>
+                          <span>
+                            {(() => {
+                              const total = emptyMetrics.recordsToRevert + emptyMetrics.recordsToDelete + emptyMetrics.recordsToRestore;
+                              const pct = total ? (emptyMetrics.recordsToRevert / total) * 100 : 0;
+                              return `${pct.toFixed(1)}%`;
+                            })()}
+                          </span>
                         </div>
-                        <Progress value={75.3} className="h-2" />
+                        <Progress value={(() => { const total = emptyMetrics.recordsToRevert + emptyMetrics.recordsToDelete + emptyMetrics.recordsToRestore; return total ? (emptyMetrics.recordsToRevert / total) * 100 : 0; })()} className="h-2" />
                       </div>
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span>Records to Delete</span>
-                          <span>15.3%</span>
+                          <span>
+                            {(() => {
+                              const total = emptyMetrics.recordsToRevert + emptyMetrics.recordsToDelete + emptyMetrics.recordsToRestore;
+                              const pct = total ? (emptyMetrics.recordsToDelete / total) * 100 : 0;
+                              return `${pct.toFixed(1)}%`;
+                            })()}
+                          </span>
                         </div>
-                        <Progress value={15.3} className="h-2" />
+                        <Progress value={(() => { const total = emptyMetrics.recordsToRevert + emptyMetrics.recordsToDelete + emptyMetrics.recordsToRestore; return total ? (emptyMetrics.recordsToDelete / total) * 100 : 0; })()} className="h-2" />
                       </div>
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span>Records to Restore</span>
-                          <span>8.8%</span>
+                          <span>
+                            {(() => {
+                              const total = emptyMetrics.recordsToRevert + emptyMetrics.recordsToDelete + emptyMetrics.recordsToRestore;
+                              const pct = total ? (emptyMetrics.recordsToRestore / total) * 100 : 0;
+                              return `${pct.toFixed(1)}%`;
+                            })()}
+                          </span>
                         </div>
-                        <Progress value={8.8} className="h-2" />
+                        <Progress value={(() => { const total = emptyMetrics.recordsToRevert + emptyMetrics.recordsToDelete + emptyMetrics.recordsToRestore; return total ? (emptyMetrics.recordsToRestore / total) * 100 : 0; })()} className="h-2" />
                       </div>
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span>Dependent Records</span>
-                          <span>40.1%</span>
+                          <span>0%</span>
                         </div>
-                        <Progress value={40.1} className="h-2" />
+                        <Progress value={0} className="h-2" />
                       </div>
                     </div>
                   </Card>
@@ -250,7 +237,7 @@ const ImpactAnalysis: React.FC = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {mockObjectImpacts.map((impact) => (
+                        {objectImpacts.map((impact) => (
                           <TableRow key={impact.objectType}>
                             <TableCell className="font-medium">{impact.objectType}</TableCell>
                             <TableCell>{impact.totalRecords.toLocaleString()}</TableCell>
@@ -290,7 +277,7 @@ const ImpactAnalysis: React.FC = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-6">
-                      {mockObjectImpacts.map((impact) => (
+                      {objectImpacts.map((impact) => (
                         <Card key={impact.objectType} className="p-4">
                           <div className="flex items-center justify-between mb-3">
                             <h4 className="font-semibold">{impact.objectType}</h4>
@@ -369,7 +356,7 @@ const ImpactAnalysis: React.FC = () => {
                 Please configure and run a rollback analysis to see the impact assessment.
               </p>
               <Button onClick={() => setAnalysisComplete(true)}>
-                Run Sample Analysis
+                Run Analysis
               </Button>
             </div>
           )}
