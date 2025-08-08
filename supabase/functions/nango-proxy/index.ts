@@ -26,7 +26,7 @@ serve(async (req) => {
       throw new Error('Unauthorized')
     }
 
-    const { provider, endpoint, method = 'GET', data: requestData } = await req.json()
+    const { provider, endpoint, method = 'GET', data: requestData, connectionId } = await req.json()
     
     console.log(`Nango proxy request: ${method} ${endpoint} for ${provider}`)
 
@@ -35,8 +35,8 @@ serve(async (req) => {
       throw new Error('Nango secret key not configured')
     }
 
-    // Connection ID format: provider_userId
-    const connectionId = `${provider}_${user.id}`
+    // Resolve connection ID: prefer explicit id from caller (e.g., Nango Connect), fallback to provider_userId
+    const resolvedConnectionId = connectionId || `${provider}_${user.id}`
     
     // Make request to Nango API
     const nangoUrl = `https://api.nango.dev/v1/${endpoint}`
@@ -44,7 +44,7 @@ serve(async (req) => {
       'Authorization': `Bearer ${nangoSecretKey}`,
       'Content-Type': 'application/json',
       'Provider-Config-Key': provider,
-      'Connection-Id': connectionId,
+      'Connection-Id': resolvedConnectionId,
     }
 
     const nangoOptions: RequestInit = {

@@ -77,10 +77,14 @@ serve(async (req) => {
       console.log('=== CALLING NANGO PROXY ===');
       
       const nangoProxyResponse = await supabase.functions.invoke('nango-proxy', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: {
           provider: providerConfigKey,
           endpoint: `/connection/${nangoConnectionId}`,
-          method: 'GET'
+          method: 'GET',
+          connectionId: nangoConnectionId,
         }
       });
 
