@@ -140,8 +140,9 @@ export const checkNangoConnection = async (provider: NangoProvider, userId: stri
       headers: createAuthHeaders(session?.access_token || ''),
       body: JSON.stringify({
         provider: config.providerId,
-        endpoint: `connections/${connectionId}`,
-        method: 'GET'
+        endpoint: `connection/${connectionId}`,
+        method: 'GET',
+        connectionId
       })
     });
     
@@ -167,8 +168,9 @@ export const deleteNangoConnection = async (provider: NangoProvider, connectionI
       headers: createAuthHeaders(session?.access_token || ''),
       body: JSON.stringify({
         provider,
-        endpoint: `connections/${connectionId}`,
-        method: 'DELETE'
+        endpoint: `connection/${connectionId}`,
+        method: 'DELETE',
+        connectionId
       })
     });
     

@@ -23,60 +23,7 @@ interface Snapshot {
   retentionDays: number;
 }
 
-const mockSnapshots: Snapshot[] = [
-  {
-    id: "snap-001",
-    version: "v2.1.0",
-    name: "Pre-Migration Snapshot",
-    type: "automatic",
-    status: "completed",
-    createdAt: "2024-01-16 10:30:00",
-    size: "2.4 GB",
-    recordCount: 125000,
-    sourceSystem: "Salesforce Production",
-    triggerEvent: "Migration Start",
-    retentionDays: 90
-  },
-  {
-    id: "snap-002",
-    version: "v2.0.8",
-    name: "Weekly Backup",
-    type: "scheduled",
-    status: "completed",
-    createdAt: "2024-01-15 02:00:00",
-    size: "2.2 GB",
-    recordCount: 118000,
-    sourceSystem: "HubSpot Production",
-    triggerEvent: "Weekly Schedule",
-    retentionDays: 365
-  },
-  {
-    id: "snap-003",
-    version: "v2.0.7",
-    name: "Manual Checkpoint",
-    type: "manual",
-    status: "completed",
-    createdAt: "2024-01-14 16:45:00",
-    size: "2.1 GB",
-    recordCount: 115000,
-    sourceSystem: "Salesforce Production",
-    triggerEvent: "User Request",
-    retentionDays: 30
-  },
-  {
-    id: "snap-004",
-    version: "v2.0.6",
-    name: "Emergency Backup",
-    type: "manual",
-    status: "in_progress",
-    createdAt: "2024-01-16 11:15:00",
-    size: "1.8 GB",
-    recordCount: 95000,
-    sourceSystem: "Pipedrive Production",
-    triggerEvent: "Emergency Protocol",
-    retentionDays: 180
-  }
-];
+const mockSnapshots: Snapshot[] = [];
 
 const SnapshotManager: React.FC = () => {
   const [snapshots, setSnapshots] = useState<Snapshot[]>(mockSnapshots);
@@ -145,7 +92,7 @@ const SnapshotManager: React.FC = () => {
               <div className="flex items-center gap-3">
                 <Database className="h-5 w-5 text-blue-500" />
                 <div>
-                  <div className="text-2xl font-bold">12</div>
+                  <div className="text-2xl font-bold">{snapshots.length}</div>
                   <div className="text-sm text-muted-foreground">Total Snapshots</div>
                 </div>
               </div>
@@ -154,7 +101,7 @@ const SnapshotManager: React.FC = () => {
               <div className="flex items-center gap-3">
                 <HardDrive className="h-5 w-5 text-green-500" />
                 <div>
-                  <div className="text-2xl font-bold">28.4 GB</div>
+                  <div className="text-2xl font-bold">0 GB</div>
                   <div className="text-sm text-muted-foreground">Storage Used</div>
                 </div>
               </div>
@@ -163,7 +110,7 @@ const SnapshotManager: React.FC = () => {
               <div className="flex items-center gap-3">
                 <Clock className="h-5 w-5 text-purple-500" />
                 <div>
-                  <div className="text-2xl font-bold">2.3 min</div>
+                  <div className="text-2xl font-bold">—</div>
                   <div className="text-sm text-muted-foreground">Avg Creation Time</div>
                 </div>
               </div>
@@ -172,7 +119,7 @@ const SnapshotManager: React.FC = () => {
               <div className="flex items-center gap-3">
                 <RefreshCw className="h-5 w-5 text-orange-500" />
                 <div>
-                  <div className="text-2xl font-bold">5</div>
+                  <div className="text-2xl font-bold">0</div>
                   <div className="text-sm text-muted-foreground">Auto Scheduled</div>
                 </div>
               </div>

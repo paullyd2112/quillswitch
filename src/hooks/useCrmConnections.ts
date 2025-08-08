@@ -115,7 +115,7 @@ export const useCrmConnections = () => {
               credential_type: 'oauth_token',
               credential_value: 'oauth_managed_by_nango', // Simple string
               metadata: {
-                nango_connection_id: authResult.connectionId || `${provider}_${Date.now()}`,
+                nango_connection_id: authResult.connectionId || null,
                 provider_config_key: authResult.providerConfigKey || provider,
                 is_pending: authResult.isPending || false,
                 connected_at: new Date().toISOString()
