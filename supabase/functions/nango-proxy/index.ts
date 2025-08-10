@@ -28,27 +28,36 @@ serve(async (req) => {
 
     const { provider, endpoint, method = 'GET', data: requestData, connectionId } = await req.json()
     
-    console.log(`Nango proxy request: ${method} ${endpoint} for ${provider}`)
-    console.log(`Raw endpoint received: "${endpoint}"`)
-    console.log(`Endpoint starts with slash: ${endpoint.startsWith('/')}`)
-    
+    console.log('=== NANGO PROXY DEBUG START ===')
+    console.log('Request method:', method)
+    console.log('Provider:', provider)
+    console.log('Raw endpoint received:', JSON.stringify(endpoint))
+    console.log('Connection ID from request:', connectionId)
+    console.log('Request data:', requestData)
+
     const nangoSecretKey = Deno.env.get('NANGO_SECRET_KEY')
     if (!nangoSecretKey) {
       throw new Error('Nango secret key not configured')
     }
+    console.log('Nango secret key present:', !!nangoSecretKey)
 
     // Resolve connection ID: prefer explicit id from caller (e.g., Nango Connect), fallback to provider_userId
     const resolvedConnectionId = connectionId || `${provider}_${user.id}`
+    console.log('Resolved connection ID:', resolvedConnectionId)
     
     // Make request to Nango API (remove /v1/ prefix as per Nango docs)
-    const nangoUrl = `https://api.nango.dev/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
-    console.log(`Building URL: ${nangoUrl}`)
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint
+    const nangoUrl = `https://api.nango.dev/${cleanEndpoint}`
+    console.log('Clean endpoint:', cleanEndpoint)
+    console.log('Final Nango URL:', nangoUrl)
+    
     const nangoHeaders = {
       'Authorization': `Bearer ${nangoSecretKey}`,
       'Content-Type': 'application/json',
       'Provider-Config-Key': provider,
       'Connection-Id': resolvedConnectionId,
     }
+    console.log('Nango headers:', JSON.stringify(nangoHeaders, null, 2))
 
     const nangoOptions: RequestInit = {
       method,
@@ -57,16 +66,25 @@ serve(async (req) => {
 
     if (requestData && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
       nangoOptions.body = JSON.stringify(requestData)
+      console.log('Request body:', nangoOptions.body)
     }
 
+    console.log('Making request to Nango...')
     const nangoResponse = await fetch(nangoUrl, nangoOptions)
+    console.log('Nango response status:', nangoResponse.status)
+    console.log('Nango response headers:', Object.fromEntries(nangoResponse.headers.entries()))
+    
     const responseData = await nangoResponse.json()
+    console.log('Nango response data:', JSON.stringify(responseData, null, 2))
 
     if (!nangoResponse.ok) {
-      console.error('Nango API error:', responseData)
+      console.error('=== NANGO API ERROR ===')
+      console.error('Status:', nangoResponse.status)
+      console.error('Response:', responseData)
       throw new Error(responseData.message || 'Nango API request failed')
     }
 
+    console.log('=== NANGO PROXY SUCCESS ===')
     return new Response(
       JSON.stringify(responseData),
       { 
