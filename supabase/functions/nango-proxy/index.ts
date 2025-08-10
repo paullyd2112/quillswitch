@@ -41,7 +41,13 @@ serve(async (req) => {
     console.log('Request data:', requestData)
 
     const nangoSecretKey = Deno.env.get('NANGO_SECRET_KEY')
+    console.log('=== NANGO SECRET KEY CHECK ===');
+    console.log('NANGO_SECRET_KEY exists:', !!nangoSecretKey);
+    console.log('NANGO_SECRET_KEY length:', nangoSecretKey?.length || 0);
+    console.log('All env vars:', Object.keys(Deno.env.toObject()));
+    
     if (!nangoSecretKey) {
+      console.error('NANGO_SECRET_KEY not found in environment');
       throw new Error('Nango secret key not configured')
     }
     console.log('Nango secret key present:', !!nangoSecretKey)
