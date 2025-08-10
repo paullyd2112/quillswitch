@@ -47,15 +47,19 @@ serve(async (req) => {
     
     // Make request to Nango API (remove /v1/ prefix as per Nango docs)
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint
-    const nangoUrl = `https://api.nango.dev/${cleanEndpoint}`
+    
+    // Add query parameters for provider_config_key and connection_id
+    const url = new URL(`https://api.nango.dev/${cleanEndpoint}`)
+    url.searchParams.set('provider_config_key', provider)
+    url.searchParams.set('connection_id', resolvedConnectionId)
+    
+    const nangoUrl = url.toString()
     console.log('Clean endpoint:', cleanEndpoint)
     console.log('Final Nango URL:', nangoUrl)
     
     const nangoHeaders = {
       'Authorization': `Bearer ${nangoSecretKey}`,
       'Content-Type': 'application/json',
-      'Provider-Config-Key': provider,
-      'Connection-Id': resolvedConnectionId,
     }
     console.log('Nango headers:', JSON.stringify(nangoHeaders, null, 2))
 
