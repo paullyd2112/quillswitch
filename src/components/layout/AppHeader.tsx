@@ -1,5 +1,5 @@
 import React from "react";
-import { SidebarTrigger } from "@/components/ui/sidebar/sidebar-trigger";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const AppHeader: React.FC = () => {

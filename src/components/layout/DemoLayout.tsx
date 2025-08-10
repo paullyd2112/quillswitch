@@ -1,8 +1,8 @@
 
 import React from "react";
-import { SidebarProvider } from "@/components/ui/sidebar/context"; // Changed import path
+import { SidebarProvider } from "@/components/ui/sidebar";
 import DemoSidebar from "./DemoSidebar";
-import { SidebarTrigger } from "@/components/ui/sidebar/sidebar-trigger";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface DemoLayoutProps {
   children?: React.ReactNode;
