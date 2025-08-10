@@ -39,7 +39,7 @@ serve(async (req) => {
     const resolvedConnectionId = connectionId || `${provider}_${user.id}`
     
     // Make request to Nango API
-    const nangoUrl = `https://api.nango.dev/v1/${endpoint}`
+    const nangoUrl = `https://api.nango.dev/v1/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
     const nangoHeaders = {
       'Authorization': `Bearer ${nangoSecretKey}`,
       'Content-Type': 'application/json',
