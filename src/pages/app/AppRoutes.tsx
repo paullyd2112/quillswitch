@@ -3,7 +3,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import BaseLayout from "@/components/layout/BaseLayout";
 import Dashboard from "./Dashboard";
-import ConnectionHub from "./ConnectionHub";
+import CrmConnections from "../CrmConnections";
 {/* CrmConnections removed - now using main route */}
 import QuillRevert from "../QuillRevert";
 import Migrations from "./Migrations";
@@ -20,7 +20,7 @@ const AppRoutes = () => {
     <BaseLayout>
       <Routes>
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="connections" element={<ConnectionHub />} />
+        <Route path="connections" element={<CrmConnections />} />
         {/* Add alias routes for consistency */}
         <Route path="try-it" element={<Dashboard />} />
         <Route path="quill-revert" element={<QuillRevert />} />
