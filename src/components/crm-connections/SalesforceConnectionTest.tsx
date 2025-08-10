@@ -17,14 +17,18 @@ const SalesforceConnectionTest: React.FC<SalesforceConnectionTestProps> = ({ cre
   const { toast } = useToast();
 
   const testConnection = async () => {
+    console.log('Test Connection button clicked');
     setIsLoading(true);
     setTestResult(null);
 
     try {
+      console.log('Calling Supabase function with credentialId:', credentialId);
       // Test the connection by making a simple API call
       const { data, error } = await supabase.functions.invoke('test-salesforce-connection', {
         body: { credentialId }
       });
+
+      console.log('Supabase function response:', { data, error });
 
       if (error) {
         throw new Error(error.message);
