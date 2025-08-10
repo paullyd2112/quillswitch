@@ -82,7 +82,7 @@ serve(async (req) => {
         },
         body: {
           provider: providerConfigKey,
-          endpoint: `connection/${nangoConnectionId}`,
+          endpoint: `connections/${nangoConnectionId}`,
           method: 'GET',
           connectionId: nangoConnectionId,
         }
