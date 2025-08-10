@@ -1,11 +1,21 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
+import { useSetupWizard } from "@/contexts/SetupWizardContext";
+import { toast } from "@/hooks/use-toast";
 
 const WizardHeader: React.FC = () => {
   const { user } = useAuth();
+  const { saveProgress } = useSetupWizard();
+  const navigate = useNavigate();
+  
+  const handleSaveExit = () => {
+    saveProgress();
+    toast({ title: "Progress saved", description: "You can resume the setup later." });
+    navigate(user ? "/app/migrations" : "/");
+  };
   
   return (
     <div className="border-b dark:border-slate-800/70">
@@ -15,13 +25,15 @@ const WizardHeader: React.FC = () => {
           <span className="font-bold text-lg">QuillSwitch</span>
         </Link>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Button variant="ghost" asChild>
             <Link to={user ? "/app/migrations" : "/"}>
               Cancel
             </Link>
           </Button>
-          
+          <Button variant="outline" onClick={handleSaveExit}>
+            Save & Exit
+          </Button>
           <Button variant="outline" asChild>
             <Link to="/app/connections">
               Connection Hub

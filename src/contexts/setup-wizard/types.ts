@@ -77,4 +77,7 @@ export interface SetupWizardContextType {
   handleNext: () => void;
   handlePrevious: () => void;
   handleSubmit: () => void;
+  // Persistence helpers
+  saveProgress: () => void;
+  clearProgress: () => void;
 }

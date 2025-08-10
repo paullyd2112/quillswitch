@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ConnectionProvider } from "@/contexts/ConnectionContext";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import CommandPalette from "@/components/global/CommandPalette";
+import { AuthProvider } from "@/contexts/auth";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Home from "./pages/Home";
 import QuillRevert from "./pages/QuillRevert";
 import Auth from "./pages/Auth";
@@ -35,61 +37,65 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SessionContextProvider supabaseClient={supabase}>
-      <TooltipProvider>
-        <ThemeProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/crm-connections" element={
-                <ConnectionProvider>
-                  <CrmConnections />
-                </ConnectionProvider>
-              } />
-              <Route path="/quill-revert" element={<QuillRevert />} />
-              <Route path="/oauth/callback" element={<OAuthCallback />} />
-              <Route path="/comparison" element={<Comparison />} />
-              {/* Public site routes */}
-              <Route path="/connections" element={<Navigate to="/crm-connections" replace />} />
-              <Route path="/migrations/setup" element={<Navigate to="/app/setup" replace />} />
-              <Route path="/demo" element={<Demo />} />
-              <Route path="/pricing" element={<Navigate to="/comparison" replace />} />
-              <Route path="/resources" element={<Resources />} />
-              <Route path="/api-docs" element={<ApiDocs />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/cookies" element={<Navigate to="/privacy" replace />} />
-              <Route path="/features" element={<Navigate to="/comparison" replace />} />
-              <Route path="/knowledge-base" element={<KnowledgeBase />} />
-              <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
-              <Route path="/pricing-estimator" element={<Navigate to="/comparison" replace />} />
-              
-              {/* App routes wrapped with ConnectionProvider */}
-              <Route path="/app/*" element={
-                <ConnectionProvider>
-                  <Routes>
-                    {/* Core app routes - candidates for future overhaul */}
-                    <Route path="setup" element={<Setup />} />
-                    <Route path="migrations" element={<AppMigrations />} />
-                    <Route path="migrations/:id" element={<MigrationDashboard />} />
-                    
-                    {/* New app routes structure */}
-                    <Route path="*" element={<AppRoutes />} />
-                  </Routes>
-                </ConnectionProvider>
-              } />
+      <AuthProvider>
+        <TooltipProvider>
+          <ThemeProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/crm-connections" element={
+                  <ConnectionProvider>
+                    <CrmConnections />
+                  </ConnectionProvider>
+                } />
+                <Route path="/quill-revert" element={<QuillRevert />} />
+                <Route path="/oauth/callback" element={<OAuthCallback />} />
+                <Route path="/comparison" element={<Comparison />} />
+                {/* Public site routes */}
+                <Route path="/connections" element={<Navigate to="/crm-connections" replace />} />
+                <Route path="/migrations/setup" element={<Navigate to="/app/setup" replace />} />
+                <Route path="/demo" element={<Demo />} />
+                <Route path="/pricing" element={<Navigate to="/comparison" replace />} />
+                <Route path="/resources" element={<Resources />} />
+                <Route path="/api-docs" element={<ApiDocs />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/cookies" element={<Navigate to="/privacy" replace />} />
+                <Route path="/features" element={<Navigate to="/comparison" replace />} />
+                <Route path="/knowledge-base" element={<KnowledgeBase />} />
+                <Route path="/knowledge-base/:categoryId/:subcategoryId/:articleId" element={<KnowledgeArticle />} />
+                <Route path="/pricing-estimator" element={<Navigate to="/comparison" replace />} />
+                
+                {/* App routes with auth guard */}
+                <Route path="/app/*" element={
+                  <ProtectedRoute>
+                    <ConnectionProvider>
+                      <Routes>
+                        {/* Core app routes - candidates for future overhaul */}
+                        <Route path="setup" element={<Setup />} />
+                        <Route path="migrations" element={<AppMigrations />} />
+                        <Route path="migrations/:id" element={<MigrationDashboard />} />
+                        
+                        {/* New app routes structure */}
+                        <Route path="*" element={<AppRoutes />} />
+                      </Routes>
+                    </ConnectionProvider>
+                  </ProtectedRoute>
+                } />
 
-              {/* 404 fallback */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <CommandPalette />
-          </BrowserRouter>
-        </ThemeProvider>
-      </TooltipProvider>
+                {/* 404 fallback */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <CommandPalette />
+            </BrowserRouter>
+          </ThemeProvider>
+        </TooltipProvider>
+      </AuthProvider>
     </SessionContextProvider>
   </QueryClientProvider>
 );

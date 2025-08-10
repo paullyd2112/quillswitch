@@ -35,7 +35,9 @@ const WizardContainer: React.FC = () => {
           </AlertDescription>
         </Alert>
         
-        <WizardContent />
+        <div id="wizard-content">
+          <WizardContent />
+        </div>
       </GlassPanel>
     </div>
   );
