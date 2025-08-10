@@ -4,9 +4,9 @@ import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, C
 
 const navItems = [
   { label: "Home", path: "/" },
-  { label: "Dashboard", path: "/app/migrations" },
+  { label: "Dashboard", path: "/app/dashboard" },
   { label: "Setup Wizard", path: "/app/setup" },
-  { label: "Connections", path: "/crm-connections" },
+  { label: "Connections", path: "/app/connections" },
   { label: "Comparison", path: "/comparison" },
   { label: "Knowledge Base", path: "/knowledge-base" },
   { label: "Support", path: "/support" },
