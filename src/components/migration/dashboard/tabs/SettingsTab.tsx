@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const SettingsTab: React.FC = () => {
   const [activeTab, setActiveTab] = useState("general");
@@ -137,9 +138,9 @@ const SettingsTab: React.FC = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         These settings only affect notifications for this specific project. 
                         To manage your global notification preferences, visit the 
-                        <a href="/settings?tab=notifications" className="text-primary ml-1 hover:underline">
+                        <Link to="/app/settings?tab=notifications" className="text-primary ml-1 hover:underline">
                           Account Settings
-                        </a>.
+                        </Link>.
                       </p>
                       
                       <div className="flex justify-end">

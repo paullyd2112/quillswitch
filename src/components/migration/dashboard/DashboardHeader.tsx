@@ -27,7 +27,7 @@ const DashboardHeader: React.FC = () => {
             variant="ghost"
             size="sm"
             className="gap-1"
-            onClick={() => navigate("/migrations")}
+            onClick={() => navigate("/app/migrations")}
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Back</span>

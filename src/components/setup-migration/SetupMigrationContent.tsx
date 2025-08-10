@@ -54,7 +54,7 @@ const SetupMigrationContent: React.FC = () => {
         title: "Success",
         description: "Migration setup initialized successfully!"
       });
-      navigate("/setup-wizard");
+      navigate("/app/setup");
       // In a real implementation, this would create a migration and redirect to its dashboard
     }, 1500);
   };

@@ -71,7 +71,7 @@ export const useProjectData = ({
 
   const fetchMigrationData = useCallback(async (isRefresh = false) => {
     if (!projectId) {
-      navigate("/migrations");
+      navigate("/app/migrations");
       return;
     }
 

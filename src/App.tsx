@@ -16,6 +16,7 @@ import MigrationDashboard from "./pages/MigrationDashboard";
 import AppRoutes from "./pages/app/AppRoutes";
 import CrmConnections from "./pages/CrmConnections";
 import OAuthCallback from "./pages/OAuthCallback";
+import Comparison from "./pages/Comparison";
 
 const queryClient = new QueryClient();
 
@@ -36,9 +37,23 @@ const App = () => (
             } />
             <Route path="/quill-revert" element={<QuillRevert />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
-            {/* Redirect broken routes to working crm-connections */}
+            <Route path="/comparison" element={<Comparison />} />
+            {/* Redirect broken routes to working destinations */}
             <Route path="/connections" element={<Navigate to="/crm-connections" replace />} />
             <Route path="/migrations/setup" element={<Navigate to="/app/setup" replace />} />
+            <Route path="/demo" element={<Navigate to="/" replace />} />
+            <Route path="/pricing" element={<Navigate to="/" replace />} />
+            <Route path="/resources" element={<Navigate to="/" replace />} />
+            <Route path="/api-docs" element={<Navigate to="/" replace />} />
+            <Route path="/support" element={<Navigate to="/" replace />} />
+            <Route path="/about" element={<Navigate to="/" replace />} />
+            <Route path="/privacy" element={<Navigate to="/" replace />} />
+            <Route path="/terms" element={<Navigate to="/" replace />} />
+            <Route path="/cookies" element={<Navigate to="/" replace />} />
+            <Route path="/features" element={<Navigate to="/comparison" replace />} />
+            <Route path="/knowledge-base" element={<Navigate to="/" replace />} />
+            <Route path="/knowledge-base/*" element={<Navigate to="/" replace />} />
+            <Route path="/pricing-estimator" element={<Navigate to="/comparison" replace />} />
             
             {/* App routes wrapped with ConnectionProvider */}
             <Route path="/app/*" element={

@@ -42,12 +42,12 @@ const OnboardingTemplatesList = () => {
   const navigate = useNavigate();
   
   const handleCustomMigration = () => {
-    navigate("/setup");
+    navigate("/app/setup");
   };
   
   const handleUseTemplate = (templateId: string) => {
     // In a real implementation, you might pass the template ID to the setup wizard
-    navigate("/setup", { state: { templateId } });
+    navigate("/app/setup", { state: { templateId } });
   };
   
   return (

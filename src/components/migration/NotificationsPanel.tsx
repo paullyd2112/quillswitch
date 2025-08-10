@@ -34,6 +34,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface NotificationsPanelProps {
   projectId: string;
@@ -245,10 +246,10 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ projectId }) =>
             className="w-full justify-center text-xs"
             asChild
           >
-            <a href="/settings?tab=notifications">
+            <Link to="/app/settings?tab=notifications">
               Manage Notification Settings
               <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
+            </Link>
           </Button>
         </div>
       </PopoverContent>

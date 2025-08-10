@@ -60,7 +60,7 @@ const HeroSection = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                onClick={() => navigate("/demo")}
+                onClick={() => navigate("/app/setup")}
                 className="gap-2 px-8 bg-transparent text-slate-200 border-slate-500 hover:bg-slate-800/50 hover:border-slate-400"
               >
                 <Play size={16} className="mr-1" /> See How It Works
@@ -69,7 +69,7 @@ const HeroSection = () => {
               <Button 
                 variant="outline" 
                 size="lg"
-                onClick={user ? showOnboardingTour : () => navigate("/features")}
+                onClick={user ? showOnboardingTour : () => navigate("/comparison")}
                 className="gap-2 px-8 bg-transparent text-slate-200 border-slate-500 hover:bg-slate-800/50 hover:border-slate-400"
               >
                 {user ? "Take a Tour" : "Learn More"} <Info size={16} />

@@ -24,7 +24,7 @@ const ResetPassword = () => {
     
     if (!hash) {
       toast.error("Invalid password reset link. Please request a new one.");
-      setTimeout(() => navigate("/auth/login"), 2000);
+      setTimeout(() => navigate("/auth?mode=login"), 2000);
     }
   }, [navigate]);
 
@@ -51,7 +51,7 @@ const ResetPassword = () => {
       if (error) throw error;
       
       toast.success("Password has been reset successfully");
-      setTimeout(() => navigate("/auth/login"), 2000);
+      setTimeout(() => navigate("/auth?mode=login"), 2000);
     } catch (error: any) {
       console.error("Error resetting password:", error);
       toast.error(error.message || "Failed to reset password");

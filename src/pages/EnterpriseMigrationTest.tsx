@@ -29,7 +29,7 @@ const EnterpriseMigrationTest = () => {
                   variant="ghost"
                   size="sm"
                   className="gap-1 mb-2"
-                  onClick={() => navigate("/migrations")}
+                  onClick={() => navigate("/app/migrations")}
                 >
                   <ArrowLeft className="h-4 w-4" />
                   <span>Back to Migrations</span>

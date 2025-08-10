@@ -122,7 +122,7 @@ export const useChatbot = () => {
       case "Show Me What I Could Save":
       case "See All Pricing Options":
       case "Compare My Options":
-        navigate("/pricing-estimator");
+        navigate("/comparison");
         break;
       case "Start Setting Up My Migration":
       case "Help Me Get Started":
@@ -138,7 +138,7 @@ export const useChatbot = () => {
         window.open("https://calendly.com/paul-aqua-quillswitch/30min", "_blank");
         break;
       case "Get the Migration Playbook":
-        navigate("/resources");
+        navigate("/comparison");
         break;
     }
     setIsOpen(false);

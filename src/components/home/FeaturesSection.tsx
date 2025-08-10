@@ -89,7 +89,7 @@ const FeaturesSection = () => {
         
         <div className="text-center">
           <Button asChild variant="outline" className="gap-2 px-8 py-6 border-slate-700 hover:bg-slate-800 hover:border-primary/50">
-            <Link to="/features">
+            <Link to="/comparison">
               See All Features <ArrowRight size={16} />
             </Link>
           </Button>

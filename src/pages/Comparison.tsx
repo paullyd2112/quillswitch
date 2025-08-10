@@ -7,6 +7,7 @@ import { ComparisonSummary } from "@/components/demo/product-comparison/Comparis
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Comparison = () => {
   return (
@@ -252,18 +253,18 @@ const Comparison = () => {
                 See why businesses choose QuillSwitch over traditional migration methods.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a 
-                  href="/demo" 
+                <Link 
+                  to="/app/setup" 
                   className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
                 >
                   Try Interactive Demo
-                </a>
-                <a 
-                  href="/auth" 
+                </Link>
+                <Link 
+                  to="/auth" 
                   className="bg-transparent border border-blue-500 text-blue-400 hover:bg-blue-500/10 px-8 py-3 rounded-lg font-medium transition-colors"
                 >
                   Start Free Migration
-                </a>
+                </Link>
               </div>
             </div>
           </ContentSection>
