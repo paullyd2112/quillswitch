@@ -45,15 +45,9 @@ serve(async (req) => {
     const resolvedConnectionId = connectionId || `${provider}_${user.id}`
     console.log('Resolved connection ID:', resolvedConnectionId)
     
-    // Make request to Nango API (remove /v1/ prefix as per Nango docs)
+    // Make request to Nango API - use simple connection endpoint
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint
-    
-    // Add query parameters for provider_config_key and connection_id
-    const url = new URL(`https://api.nango.dev/${cleanEndpoint}`)
-    url.searchParams.set('provider_config_key', provider)
-    url.searchParams.set('connection_id', resolvedConnectionId)
-    
-    const nangoUrl = url.toString()
+    const nangoUrl = `https://api.nango.dev/${cleanEndpoint}`
     console.log('Clean endpoint:', cleanEndpoint)
     console.log('Final Nango URL:', nangoUrl)
     
