@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, BookOpen } from "lucide-react";
 import KnowledgeBaseCategory from "@/components/resources/KnowledgeBaseCategory";
 import { knowledgeBaseData } from "@/components/resources/knowledgeBaseData";
+import { Link } from "react-router-dom";
 
 const KnowledgeBase = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,13 +65,13 @@ const KnowledgeBase = () => {
                             )
                             .map((article, i) => (
                               <li key={i}>
-                                <a 
-                                  href={`/knowledge-base/${sub.categoryId}/${sub.id}/${article.id}`}
+                                <Link 
+                                  to={`/knowledge-base/${sub.categoryId}/${sub.id}/${article.id}`}
                                   className="text-brand-500 hover:underline flex items-center"
                                 >
                                   <BookOpen className="h-3.5 w-3.5 mr-1.5" />
                                   {article.title}
-                                </a>
+                                </Link>
                               </li>
                             ))}
                         </ul>
