@@ -29,6 +29,9 @@ serve(async (req) => {
     const { provider, endpoint, method = 'GET', data: requestData, connectionId } = await req.json()
     
     console.log(`Nango proxy request: ${method} ${endpoint} for ${provider}`)
+    console.log(`Raw endpoint received: "${endpoint}"`)
+    console.log(`Endpoint starts with slash: ${endpoint.startsWith('/')}`)
+    console.log(`Building URL: https://api.nango.dev/v1/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`)
 
     const nangoSecretKey = Deno.env.get('NANGO_SECRET_KEY')
     if (!nangoSecretKey) {
