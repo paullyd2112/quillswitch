@@ -10,6 +10,7 @@ import AuthButtons from "./AuthButtons";
 import { mainNav, userNav } from "./navConfig";
 import { useAuth } from "@/contexts/auth";
 import { throttle } from "@/utils/performance";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -76,6 +77,7 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             {/* Auth Buttons Component */}
             <AuthButtons />
             

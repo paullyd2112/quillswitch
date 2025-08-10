@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Github, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface FormStatusAlertProps {
   status: "idle" | "success" | "error";
@@ -114,7 +115,7 @@ export const TermsCheckbox: React.FC<TermsCheckboxProps> = ({ checked, onChecked
       onCheckedChange={(checked) => onCheckedChange(checked === true)}
     />
     <Label htmlFor="terms" className="text-sm">
-      I agree to the <a href="#" className="text-primary hover:underline">Terms of Service</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+      I agree to the <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
     </Label>
   </div>
 );
