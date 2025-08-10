@@ -31,8 +31,7 @@ serve(async (req) => {
     console.log(`Nango proxy request: ${method} ${endpoint} for ${provider}`)
     console.log(`Raw endpoint received: "${endpoint}"`)
     console.log(`Endpoint starts with slash: ${endpoint.startsWith('/')}`)
-    console.log(`Building URL: https://api.nango.dev/v1/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`)
-
+    
     const nangoSecretKey = Deno.env.get('NANGO_SECRET_KEY')
     if (!nangoSecretKey) {
       throw new Error('Nango secret key not configured')
@@ -41,8 +40,9 @@ serve(async (req) => {
     // Resolve connection ID: prefer explicit id from caller (e.g., Nango Connect), fallback to provider_userId
     const resolvedConnectionId = connectionId || `${provider}_${user.id}`
     
-    // Make request to Nango API
-    const nangoUrl = `https://api.nango.dev/v1/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
+    // Make request to Nango API (remove /v1/ prefix as per Nango docs)
+    const nangoUrl = `https://api.nango.dev/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`
+    console.log(`Building URL: ${nangoUrl}`)
     const nangoHeaders = {
       'Authorization': `Bearer ${nangoSecretKey}`,
       'Content-Type': 'application/json',
