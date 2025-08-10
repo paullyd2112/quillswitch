@@ -18,7 +18,7 @@ import Setup from "./pages/Setup";
 import AppMigrations from "./pages/AppMigrations";
 import MigrationDashboard from "./pages/MigrationDashboard";
 import AppRoutes from "./pages/app/AppRoutes";
-import CrmConnections from "./pages/CrmConnections";
+
 import OAuthCallback from "./pages/OAuthCallback";
 import Comparison from "./pages/Comparison";
 import Demo from "./pages/Demo";
@@ -46,16 +46,13 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/crm-connections" element={
-                  <ConnectionProvider>
-                    <CrmConnections />
-                  </ConnectionProvider>
-                } />
+                <Route path="/crm-connections" element={<Navigate to="/app/connections" replace />} />
                 <Route path="/quill-revert" element={<QuillRevert />} />
                 <Route path="/oauth/callback" element={<OAuthCallback />} />
                 <Route path="/comparison" element={<Comparison />} />
                 {/* Public site routes */}
-                <Route path="/connections" element={<Navigate to="/crm-connections" replace />} />
+                <Route path="/connections" element={<Navigate to="/app/connections" replace />} />
+                <Route path="/migrate" element={<Navigate to="/app/migrations" replace />} />
                 <Route path="/migrations/setup" element={<Navigate to="/app/setup" replace />} />
                 <Route path="/demo" element={<Demo />} />
                 <Route path="/pricing" element={<Navigate to="/comparison" replace />} />
@@ -72,6 +69,7 @@ const App = () => (
                 <Route path="/pricing-estimator" element={<Navigate to="/comparison" replace />} />
                 
                 {/* App routes with auth guard */}
+                <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="/app/*" element={
                   <ProtectedRoute>
                     <ConnectionProvider>

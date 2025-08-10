@@ -22,8 +22,6 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="connections" element={<ConnectionHub />} />
         {/* Add alias routes for consistency */}
-        <Route path="connect" element={<ConnectionHub />} />
-        <Route path="migrate" element={<Migrations />} />
         <Route path="try-it" element={<Dashboard />} />
         <Route path="quill-revert" element={<QuillRevert />} />
         <Route path="migrations" element={<Migrations />} />

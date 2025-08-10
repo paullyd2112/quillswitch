@@ -16,6 +16,12 @@ const NotFound = () => {
 
   // Common redirect suggestions based on the attempted path
   const getRedirectSuggestion = (pathname: string) => {
+    if (pathname === '/crm-connections' || pathname.includes('crm-connection')) {
+      return { path: '/app/connections', label: 'Go to Connections' };
+    }
+    if (pathname === '/migrate' || pathname.includes('/migrate')) {
+      return { path: '/app/migrations', label: 'Go to Migrations' };
+    }
     if (pathname.includes('/migration')) {
       return { path: '/app/setup', label: 'Go to Migration Setup' };
     }
@@ -23,9 +29,9 @@ const NotFound = () => {
       return { path: '/app/connections', label: 'Go to Connections' };
     }
     if (pathname.includes('/dashboard')) {
-      return { path: '/app/setup', label: 'Go to Dashboard' };
+      return { path: '/app/dashboard', label: 'Go to Dashboard' };
     }
-    return { path: '/app/setup', label: 'Go to App' };
+    return { path: '/app/dashboard', label: 'Go to App' };
   };
 
   const suggestion = getRedirectSuggestion(location.pathname);
