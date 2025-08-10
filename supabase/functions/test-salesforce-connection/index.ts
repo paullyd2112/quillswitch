@@ -7,31 +7,47 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  console.log('=== TEST SALESFORCE CONNECTION FUNCTION STARTED ===');
+  console.log('Request method:', req.method);
+  console.log('Request URL:', req.url);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Returning CORS preflight response');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    console.log('=== CREATING SUPABASE CLIENT ===');
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+    console.log('Supabase client created successfully');
 
     // Get the authenticated user
+    console.log('=== CHECKING AUTHORIZATION ===');
     const authHeader = req.headers.get('Authorization')
+    console.log('Auth header present:', !!authHeader);
     if (!authHeader) {
+      console.error('No authorization header found');
       throw new Error('No authorization header')
     }
 
     const token = authHeader.replace('Bearer ', '')
+    console.log('Token extracted, length:', token.length);
+    
     const { data: { user }, error: userError } = await supabase.auth.getUser(token)
+    console.log('User lookup result:', { user: !!user, userError });
     
     if (userError || !user) {
+      console.error('User authentication failed:', userError);
       throw new Error('Invalid token')
     }
 
+    console.log('=== PARSING REQUEST BODY ===');
     const { credentialId } = await req.json()
+    console.log('Request body parsed, credentialId:', credentialId);
 
     if (!credentialId) {
       throw new Error('Credential ID is required')

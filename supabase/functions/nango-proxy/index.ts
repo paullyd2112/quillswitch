@@ -7,8 +7,13 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  console.log('=== NANGO PROXY FUNCTION STARTED ===');
+  console.log('Request method:', req.method);
+  console.log('Request URL:', req.url);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Returning CORS preflight response');
     return new Response(null, { headers: corsHeaders });
   }
 
