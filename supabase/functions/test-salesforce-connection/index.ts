@@ -18,36 +18,39 @@ serve(async (req) => {
   }
 
   try {
-    console.log('=== CREATING SUPABASE CLIENT ===');
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
-    console.log('Supabase client created successfully');
-
-    // Get the authenticated user
-    console.log('=== CHECKING AUTHORIZATION ===');
-    const authHeader = req.headers.get('Authorization')
+    console.log('=== AUTHENTICATION CHECK ===');
+    const authHeader = req.headers.get('Authorization')!
     console.log('Auth header present:', !!authHeader);
-    if (!authHeader) {
-      console.error('No authorization header found');
-      throw new Error('No authorization header')
-    }
-
-    const token = authHeader.replace('Bearer ', '')
-    console.log('Token extracted, length:', token.length);
     
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-    console.log('User lookup result:', { user: !!user, userError });
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    )
+
+    // Get the current user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
+    console.log('User authentication result:', { user: !!user, error: userError });
     
     if (userError || !user) {
-      console.error('User authentication failed:', userError);
-      throw new Error('Invalid token')
+      console.error('Authentication failed:', userError);
+      throw new Error('Unauthorized')
     }
 
-    console.log('=== PARSING REQUEST BODY ===');
-    const { credentialId } = await req.json()
-    console.log('Request body parsed, credentialId:', credentialId);
+    console.log('=== REQUEST PARSING ===');
+    const requestBody = await req.text()
+    console.log('Raw request body:', requestBody);
+    
+    let parsedBody
+    try {
+      parsedBody = JSON.parse(requestBody)
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      throw new Error('Invalid JSON in request body')
+    }
+    
+    const { credentialId } = parsedBody
+    console.log('Credential ID received:', credentialId);
 
     if (!credentialId) {
       throw new Error('Credential ID is required')
@@ -58,7 +61,7 @@ serve(async (req) => {
     console.log('Credential ID:', credentialId);
 
     // Get the credential record to find the Nango connection ID
-    const { data: credential, error: credError } = await supabase
+    const { data: credential, error: credError } = await supabaseClient
       .from('service_credentials')
       .select('*')
       .eq('id', credentialId)
@@ -92,10 +95,7 @@ serve(async (req) => {
       // This is the same approach your app uses for connections
       console.log('=== CALLING NANGO PROXY ===');
       
-      const nangoProxyResponse = await supabase.functions.invoke('nango-proxy', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const nangoProxyResponse = await supabaseClient.functions.invoke('nango-proxy', {
         body: {
           provider: providerConfigKey,
           endpoint: `connection/${nangoConnectionId}`,
