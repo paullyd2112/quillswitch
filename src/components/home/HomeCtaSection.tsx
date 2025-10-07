@@ -18,45 +18,46 @@ const HomeCtaSection = () => {
   };
 
   return (
-    <section className="py-32 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
-      <div className="container max-w-6xl mx-auto">
-        <div className="text-center space-y-10 text-white">
-          <h2 className="text-4xl md:text-6xl font-black leading-tight">
-            Ready to Switch Without<br />the Stress?
+    <section className="py-24 px-6 bg-slate-900">
+      <div className="container max-w-4xl mx-auto text-center">
+        <div className="space-y-8 text-white">
+          <h2 className="text-3xl md:text-5xl font-bold">
+            Ready to switch?
           </h2>
-          <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto font-medium">
-            Join hundreds of teams who've made the smart move. Start your free assessment and see exactly how we'll migrate your data safely.
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+            Start your free assessment. See exactly how we'll move your data safely.
           </p>
           
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-6">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 pt-4">
             <Button 
               size="lg"
               onClick={handleGetStarted}
-              className="px-12 py-7 text-lg bg-white text-slate-900 hover:bg-slate-100 font-black rounded-xl shadow-2xl hover:scale-105 transition-transform"
+              className="px-8 py-6 bg-white text-slate-900 hover:bg-slate-100 font-medium"
             >
-              Start Free Migration <ArrowRight className="ml-2 h-5 w-5" />
+              Start Free Migration
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button 
               size="lg"
               variant="outline"
               onClick={() => navigate("/pricing")}
-              className="px-12 py-7 text-lg border-2 border-white text-white hover:bg-white/10 font-black rounded-xl"
+              className="px-8 py-6 border-slate-600 text-white hover:bg-slate-800 font-medium"
             >
               View Pricing
             </Button>
           </div>
           
-          <div className="flex flex-wrap justify-center items-center gap-8 pt-8 text-base font-bold opacity-90">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5" />
+          <div className="flex flex-wrap justify-center items-center gap-6 pt-6 text-sm text-slate-400">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4" />
               <span>No credit card</span>
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5" />
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4" />
               <span>5 min setup</span>
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5" />
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4" />
               <span>Cancel anytime</span>
             </div>
           </div>

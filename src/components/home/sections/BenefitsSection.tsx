@@ -30,56 +30,45 @@ const benefits = [
 
 const BenefitsSection: React.FC = () => {
   return (
-    <section className="py-32 px-4 bg-gradient-to-b from-slate-50 to-white">
-      <div className="container max-w-7xl mx-auto">
-        <FadeIn>
-          <div className="text-center mb-20">
-            <div className="inline-block px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-bold text-sm mb-6">
-              THE QUILLSWITCH ADVANTAGE
-            </div>
-            <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6">
-              Migration That Actually Works
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium">
-              Stop worrying. Start switching. We've solved the problems that keep teams stuck.
-            </p>
-          </div>
-        </FadeIn>
+    <section className="py-24 px-6 bg-white border-t border-slate-200">
+      <div className="container max-w-6xl mx-auto">
+        <div className="mb-20">
+          <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 text-center">
+            Why teams choose us
+          </h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto text-center">
+            Built by people who've done hundreds of migrations. We know where things go wrong.
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-12">
           {benefits.map((benefit, index) => (
-            <FadeIn key={index} delay={`${(index + 1) * 100}` as any}>
-              <div className="group p-10 rounded-3xl bg-white border-2 border-slate-200 hover:border-blue-300 hover:shadow-2xl transition-all hover:-translate-y-2 duration-300 h-full">
-                {/* Icon */}
-                <div className="mb-8 w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                  <benefit.icon className="h-8 w-8 text-white" strokeWidth={2} />
+            <div key={index} className="space-y-4">
+              {/* Icon */}
+              <div className="w-12 h-12 rounded bg-slate-900 flex items-center justify-center">
+                <benefit.icon className="h-6 w-6 text-white" strokeWidth={2} />
+              </div>
+              
+              <h3 className="text-xl font-bold text-slate-900">
+                {benefit.title}
+              </h3>
+              
+              <p className="text-slate-600 leading-relaxed">
+                {benefit.description}
+              </p>
+              
+              {/* Comparison */}
+              <div className="space-y-3 pt-4 border-t border-slate-100">
+                <div className="flex items-start gap-2">
+                  <X className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-slate-500">{benefit.challenge}</span>
                 </div>
-                
-                <h3 className="text-2xl font-black text-slate-900 mb-4">
-                  {benefit.title}
-                </h3>
-                
-                <p className="text-slate-600 leading-relaxed mb-8 font-medium">
-                  {benefit.description}
-                </p>
-                
-                {/* Comparison */}
-                <div className="space-y-4 pt-6 border-t-2 border-slate-100">
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1 w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                      <X className="h-3 w-3 text-red-600" strokeWidth={3} />
-                    </div>
-                    <span className="text-sm text-slate-500 font-medium line-through">{benefit.challenge}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                      <Check className="h-3 w-3 text-green-600" strokeWidth={3} />
-                    </div>
-                    <span className="text-sm text-slate-900 font-bold">{benefit.solution}</span>
-                  </div>
+                <div className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-slate-900 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-slate-900 font-medium">{benefit.solution}</span>
                 </div>
               </div>
-            </FadeIn>
+            </div>
           ))}
         </div>
       </div>
