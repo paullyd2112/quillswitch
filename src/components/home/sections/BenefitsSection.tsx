@@ -30,72 +30,48 @@ const benefits = [
 
 const BenefitsSection: React.FC = () => {
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-slate-950 to-slate-900">
-      <div className="container max-w-6xl mx-auto">
+    <section className="py-24 px-4 bg-slate-950">
+      <div className="container max-w-7xl mx-auto">
         <FadeIn>
-          <div className="text-center mb-16">
+          <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Finally, CRM Migration That Works for Your Business
+              Why Teams Choose QuillSwitch
             </h2>
-            <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-              Stop worrying about the usual migration nightmares. We've solved the problems that keep business owners up at night.
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+              Move faster, save money, and sleep better knowing your data is in expert hands.
             </p>
           </div>
         </FadeIn>
 
-        <div className="grid md:grid-cols-3 gap-8 items-stretch">
+        <div className="grid md:grid-cols-3 gap-8">
           {benefits.map((benefit, index) => (
             <FadeIn key={index} delay={`${(index + 1) * 100}` as any}>
-              <EnhancedCard 
-                variant="elevated" 
-                hover={true} 
-                glow={true}
-                className="bg-slate-900/80 border-slate-700 backdrop-blur-sm h-full shadow-2xl"
-              >
-                <CardContent className="p-10 text-center h-full flex flex-col">
-                  {/* Premium Icon */}
-                  <div className="mb-8 mx-auto w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
-                    <benefit.icon className="h-10 w-10 text-white" strokeWidth={1.5} />
+              <div className="group p-8 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-primary/50 transition-all hover:-translate-y-1 h-full">
+                {/* Icon */}
+                <div className="mb-6 w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <benefit.icon className="h-7 w-7 text-primary" strokeWidth={1.5} />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  {benefit.title}
+                </h3>
+                
+                <p className="text-slate-400 leading-relaxed mb-6">
+                  {benefit.description}
+                </p>
+                
+                {/* Comparison */}
+                <div className="space-y-4 pt-6 border-t border-slate-800">
+                  <div className="flex items-start gap-3">
+                    <X className="h-5 w-5 text-slate-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-slate-500 line-through">{benefit.challenge}</span>
                   </div>
-                  
-                  <h3 className="text-2xl font-bold text-white mb-4 leading-tight">
-                    {benefit.title}
-                  </h3>
-                  
-                  <p className="text-slate-300 leading-relaxed mb-6 text-base flex-grow">
-                    {benefit.description}
-                  </p>
-                  
-                  {/* Enhanced Challenge/Solution comparison */}
-                  <div className="bg-slate-800/30 rounded-xl p-6 space-y-5 border border-slate-700/50 mt-auto">
-                    <div className="text-left">
-                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 letterspacing-wide">
-                        The Challenge
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-slate-600/40 flex items-center justify-center mt-0.5 flex-shrink-0">
-                          <X className="h-3 w-3 text-slate-400" strokeWidth={2.5} />
-                        </div>
-                        <span className="text-sm leading-relaxed text-slate-300">{benefit.challenge}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-                    
-                    <div className="text-left">
-                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
-                        With QuillSwitch
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
-                          <Check className="h-3 w-3 text-blue-400" strokeWidth={2.5} />
-                        </div>
-                        <span className="text-sm leading-relaxed text-white font-medium">{benefit.solution}</span>
-                      </div>
-                    </div>
+                  <div className="flex items-start gap-3">
+                    <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-white font-medium">{benefit.solution}</span>
                   </div>
-                </CardContent>
-              </EnhancedCard>
+                </div>
+              </div>
             </FadeIn>
           ))}
         </div>

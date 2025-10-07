@@ -28,43 +28,48 @@ const steps = [
 
 const SimplifiedHowItWorksSection: React.FC = () => {
   return (
-    <section className="py-20 px-4 bg-slate-950">
-      <div className="container max-w-6xl mx-auto">
+    <section className="py-24 px-4 bg-gradient-to-b from-slate-950 to-slate-900">
+      <div className="container max-w-7xl mx-auto">
         <FadeIn>
-          <div className="text-center mb-16">
+          <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              How It Works
+              Migration Made Simple
             </h2>
-            <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-              Four simple steps to switch CRMs without disrupting your business.
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+              Four straightforward steps. No technical expertise required.
             </p>
           </div>
         </FadeIn>
 
-        <div className="grid md:grid-cols-4 gap-8">
-          {steps.map((step, index) => (
-            <FadeIn key={index} delay={`${(index + 1) * 100}` as any}>
-              <div className="text-center">
-                {/* Step number */}
-                <div className="mb-4 mx-auto w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
-                  {index + 1}
+        <div className="relative">
+          {/* Connection line */}
+          <div className="hidden md:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+          
+          <div className="grid md:grid-cols-4 gap-8 relative">
+            {steps.map((step, index) => (
+              <FadeIn key={index} delay={`${(index + 1) * 100}` as any}>
+                <div className="relative">
+                  {/* Step circle */}
+                  <div className="mb-6 mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/30">
+                    {index + 1}
+                  </div>
+                  
+                  {/* Card */}
+                  <div className="p-6 rounded-xl bg-slate-900/50 border border-slate-800 text-center">
+                    <step.icon className="h-8 w-8 text-primary mx-auto mb-4" />
+                    
+                    <h3 className="text-xl font-semibold text-white mb-3">
+                      {step.title}
+                    </h3>
+                    
+                    <p className="text-slate-400 text-sm leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-                
-                {/* Icon */}
-                <div className="mb-4 mx-auto w-16 h-16 rounded-xl bg-slate-800 flex items-center justify-center">
-                  <step.icon className="h-8 w-8 text-blue-400" />
-                </div>
-                
-                <h3 className="text-xl font-semibold text-white mb-3">
-                  {step.title}
-                </h3>
-                
-                <p className="text-slate-400 text-sm leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            </FadeIn>
-          ))}
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </div>
     </section>
