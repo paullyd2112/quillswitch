@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth";
 
@@ -18,44 +18,46 @@ const HomeCtaSection = () => {
   };
 
   return (
-    <section className="py-24 px-4 bg-slate-900">
-      <div className="container max-w-5xl mx-auto">
-        <div className="relative p-12 md:p-16 rounded-3xl bg-gradient-to-br from-primary/10 via-blue-500/5 to-transparent border border-primary/20 overflow-hidden">
-          {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+    <section className="py-32 px-4 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
+      <div className="container max-w-6xl mx-auto">
+        <div className="text-center space-y-10 text-white">
+          <h2 className="text-4xl md:text-6xl font-black leading-tight">
+            Ready to Switch Without<br />the Stress?
+          </h2>
+          <p className="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto font-medium">
+            Join hundreds of teams who've made the smart move. Start your free assessment and see exactly how we'll migrate your data safely.
+          </p>
           
-          <div className="relative text-center space-y-8">
-            <h2 className="text-4xl md:text-5xl font-bold text-white">
-              Ready to Make the Switch?
-            </h2>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              Join hundreds of businesses moving to better CRMs without the stress. 
-              Start your free migration assessment today.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
-              <Button 
-                size="lg"
-                onClick={handleGetStarted}
-                className="px-10 py-6 text-base bg-white text-slate-900 hover:bg-slate-100 font-semibold rounded-lg shadow-xl"
-              >
-                Start Free Assessment <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/pricing")}
-                className="px-10 py-6 text-base border-slate-700 text-white hover:bg-slate-800 font-semibold rounded-lg"
-              >
-                View Pricing
-              </Button>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-6">
+            <Button 
+              size="lg"
+              onClick={handleGetStarted}
+              className="px-12 py-7 text-lg bg-white text-slate-900 hover:bg-slate-100 font-black rounded-xl shadow-2xl hover:scale-105 transition-transform"
+            >
+              Start Free Migration <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              size="lg"
+              variant="outline"
+              onClick={() => navigate("/pricing")}
+              className="px-12 py-7 text-lg border-2 border-white text-white hover:bg-white/10 font-black rounded-xl"
+            >
+              View Pricing
+            </Button>
+          </div>
+          
+          <div className="flex flex-wrap justify-center items-center gap-8 pt-8 text-base font-bold opacity-90">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5" />
+              <span>No credit card</span>
             </div>
-            
-            <div className="flex flex-wrap justify-center items-center gap-6 pt-6 text-sm text-slate-400">
-              <span>✓ No credit card required</span>
-              <span>✓ Setup in 5 minutes</span>
-              <span>✓ Cancel anytime</span>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5" />
+              <span>5 min setup</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5" />
+              <span>Cancel anytime</span>
             </div>
           </div>
         </div>
